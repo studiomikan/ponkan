@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js'
 import { PonRenderer } from './pon-renderer'
 import { PonMouseEvent } from './pon-mouse-event'
+import { PonSprite } from './pon-sprite'
 
 export class PonGame {
   private parentElm: HTMLElement;
@@ -10,6 +11,7 @@ export class PonGame {
   private fpsCount: number = 0;
   private fps: number = 0;
   private ponRenderer: PonRenderer;
+  private sprites: PonSprite[] = [];
 
   public constructor(parentId: string) {
     let elm: HTMLElement | null = document.getElementById(parentId);
@@ -20,7 +22,15 @@ export class PonGame {
 
     this.ponRenderer = new PonRenderer(elm, 800, 450);
 
-    this.initMouseEventOnCanvas()
+    this.initMouseEventOnCanvas();
+
+    // テスト
+    let s = new PonSprite(this.ponRenderer);
+    s.clear();
+    s.createText("HOGE");
+    s.x = 100;
+    s.y = 100;
+
   }
 
   public start(): void {
@@ -51,10 +61,13 @@ export class PonGame {
     }
 
     this.ponRenderer.draw(tick)
-    
+
     this.loopCount++;
     this.fpsCount++;
     window.requestAnimationFrame(() => this.loop());
+  }
+
+  public addSprite(sprite: PonSprite): void {
   }
 
   private initMouseEventOnCanvas(): void {
