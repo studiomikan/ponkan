@@ -13,7 +13,7 @@ export class PonSprite {
     fontSize: 24,
     fontWeight: 'normal',
     fill: 0xffffff,
-  })
+  });
 
   public constructor(renderer: PonRenderer) {
     this.renderer = renderer;
@@ -33,15 +33,23 @@ export class PonSprite {
   }
 
   public createText(text: string) {
-    let sprite = new PIXI.Text(text, this.textStyle);
-    sprite.anchor.set(0)
-    this.pixiSprite = sprite;
-    this.renderer.container.addChild(sprite);
+    this.clear();
+    this.pixiSprite = new PIXI.Text(text, this.textStyle);
+    this.pixiSprite.anchor.set(0)
+    this.width = this.height = <number> +this.textStyle.fontSize;
+    this.renderer.container.addChild(this.pixiSprite);
   }
 
-  public fillColor(color: number) {
+  public fillColor(color: number, width: number, height: number) {
     this.clear();
     // TODO make
+    this.width = width;
+    this.height = height;
+    this.pixiSprite = new PIXI.Graphics();
+    this.pixiSprite.lineStyle(0);
+    this.pixiSprite.beginFill(color, 1);
+    this.pixiSprite.drawRect(0, 0, this.width, this.height);
+    this.renderer.container.addChild(this.pixiSprite);
   }
 
   public onUpdate(tick: number) {

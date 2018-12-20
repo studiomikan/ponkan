@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 import { PonRenderer } from './pon-renderer'
 import { PonMouseEvent } from './pon-mouse-event'
 import { PonSprite } from './pon-sprite'
+import { BaseLayer } from './base-layer'
 
 export class PonGame {
   private parentElm: HTMLElement;
@@ -10,7 +11,7 @@ export class PonGame {
   private fpsPreTick: number = 0;
   private fpsCount: number = 0;
   private fps: number = 0;
-  private ponRenderer: PonRenderer;
+  private renderer: PonRenderer;
   private sprites: PonSprite[] = [];
 
   public constructor(parentId: string) {
@@ -20,16 +21,20 @@ export class PonGame {
     }
     this.parentElm = elm;
 
-    this.ponRenderer = new PonRenderer(elm, 800, 450);
+    this.renderer = new PonRenderer(elm, 800, 450);
 
     this.initMouseEventOnCanvas();
 
     // テスト
-    let s = new PonSprite(this.ponRenderer);
-    s.clear();
+    let s = new PonSprite(this.renderer);
     s.createText("HOGE");
     s.x = 100;
     s.y = 100;
+
+    let f = new PonSprite(this.renderer);
+    f.x = 100;
+    f.y = 0;
+    f.fillColor(0xFF0000, 100, 100);
 
   }
 
@@ -60,7 +65,7 @@ export class PonGame {
       console.log(this.fps);
     }
 
-    this.ponRenderer.draw(tick)
+    this.renderer.draw(tick)
 
     this.loopCount++;
     this.fpsCount++;
@@ -71,7 +76,7 @@ export class PonGame {
   }
 
   private initMouseEventOnCanvas(): void {
-    let canvas = this.ponRenderer.canvasElm;
+    let canvas = this.renderer.canvasElm;
     console.log(canvas);
 
     canvas.addEventListener("mouseenter", e => this.onMouseEnter(new PonMouseEvent(e)));
