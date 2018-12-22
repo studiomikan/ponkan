@@ -2,17 +2,18 @@ import * as PIXI from 'pixi.js'
 import { PonRenderer } from './pon-renderer'
 import { PonMouseEvent } from './pon-mouse-event'
 import { PonSprite } from './pon-sprite'
-import { BaseLayer } from './base-layer'
+import { BaseLayer, BaseLayerCallback } from './base-layer'
 
-export class PonGame {
+export class PonGame implements BaseLayerCallback {
   private parentElm: HTMLElement;
   private loopFlag: boolean = false;
   private loopCount: number = 0;
   private fpsPreTick: number = 0;
   private fpsCount: number = 0;
   private fps: number = 0;
-  private renderer: PonRenderer;
+  public renderer: PonRenderer;
   private sprites: PonSprite[] = [];
+  private layers: BaseLayer[] = [];
 
   public constructor(parentId: string) {
     let elm: HTMLElement | null = document.getElementById(parentId);
@@ -26,16 +27,19 @@ export class PonGame {
     this.initMouseEventOnCanvas();
 
     // テスト
-    let s = new PonSprite(this.renderer);
-    s.createText("HOGE");
-    s.x = 100;
-    s.y = 100;
-
-    let f = new PonSprite(this.renderer);
-    f.x = 100;
-    f.y = 0;
-    f.fillColor(0xFF0000, 100, 100);
-
+    // let f = new PonSprite(this.renderer);
+    // f.x = 100;
+    // f.y = 100;
+    // f.fillColor(0xFF0000, 1.0);
+    //
+    // let s = new PonSprite(this.renderer);
+    // s.createText("HOGE");
+    // s.x = 100;
+    // s.y = 100;
+    //
+    let layer = new BaseLayer(this);
+    this.addLayer(layer);
+    layer.addChar("A");
   }
 
   public start(): void {
@@ -72,7 +76,19 @@ export class PonGame {
     window.requestAnimationFrame(() => this.loop());
   }
 
-  public addSprite(sprite: PonSprite): void {
+  public clearLayer() {
+    this.layers.forEach((layer) => {
+      layer.destroy();
+      this.renderer.removeContainer(layer.container);
+    });
+    this.layers = [];
+  }
+
+  public addLayer(layer: BaseLayer) {
+    // TODO make
+    console.log(layer);
+    this.layers.push(layer);
+    this.renderer.addContainer(layer.container);
   }
 
   private initMouseEventOnCanvas(): void {

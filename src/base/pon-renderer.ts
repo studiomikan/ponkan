@@ -44,9 +44,12 @@ export class PonRenderer {
     this.renderer.render(this._container)
   }
 
-  public addChild(child: PIXI.Container) {
+  public addContainer(child: PIXI.Container) {
     this._container.addChild(child);
   }
 
+  public removeContainer(child: PIXI.Container) {
+    this._container.removeChild(child);
+  }
 }
 
