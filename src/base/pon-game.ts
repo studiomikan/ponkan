@@ -39,7 +39,14 @@ export class PonGame implements BaseLayerCallback {
     //
     let layer = new BaseLayer(this);
     this.addLayer(layer);
-    layer.addChar("A");
+    layer.addChar("あ");
+    layer.addChar("あ");
+    layer.addChar("あ");
+    layer.addChar("あ");
+    layer.addChar("あ");
+    layer.addChar("あ");
+    layer.addChar("あ");
+    layer.addChar("あ");
   }
 
   public start(): void {

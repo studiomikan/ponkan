@@ -29,38 +29,44 @@ export class PonSprite {
 
   public constructor(callbacks: PonSpriteCallback) {
     this.callbacks = callbacks;
-    // this.renderer = renderer;
-    // let sprite = new PIXI.Text("Hello PIXI.js", style);
-    // sprite.anchor.set(0)
-    // sprite.x = 0
-    // sprite.y = 0
-    // this.testsprite = sprite;
-    // this.container.addChild(sprite);
-  }
-
-  public clear() {
-    if (this.pixiSprite != null) this.callbacks.pixiContainerRemoveChild(this.pixiSprite);
-    this.pixiSprite = null;
-  }
-
-  public initSprite() {
-    if (this.pixiSprite == null) return;
-    this.pixiSprite.x = this.x;
-    this.pixiSprite.y = this.y;
-    this.pixiSprite.width = this.width;
-    this.pixiSprite.height = this.height;
   }
 
   /**
+   * 破棄
+   */
+  public destroy() {
+    this.clear();
+  }
+
+  public clear() {
+    if (this.pixiSprite != null) {
+      this.callbacks.pixiContainerRemoveChild(this.pixiSprite);
+      this.pixiSprite.destroy();
+    }
+    this.pixiSprite = null;
+  }
+
+  // public initSprite() {
+  //   if (this.pixiSprite == null) return;
+  //   this.pixiSprite.x = this.x;
+  //   this.pixiSprite.y = this.y;
+  //   this.pixiSprite.width = this.width;
+  //   this.pixiSprite.height = this.height;
+  // }
+
+  /**
    * スプライトにテキストを描画する。
-   * テキストが描画できるだけの十分なwidthとheightを指定しておく必要がある。
+   * テキストに合わせて幅と高さは自動で設定される
    * @param text 文字
    * @param style 描画スタイル
    */
   public createText(text: string, style: PIXI.TextStyle) {
     this.clear();
     this.pixiSprite = new PIXI.Text(text, style);
-    this.initSprite();
+    this.pixiSprite.x = this.x;
+    this.pixiSprite.y = this.y;
+    this._width = this.pixiSprite.width;
+    this._height = this.pixiSprite.height;
 
     this.pixiSprite.anchor.set(0)
     this.callbacks.pixiContainerAddChild(this.pixiSprite);
@@ -75,7 +81,10 @@ export class PonSprite {
   public fillColor(color: number, alpha: number) {
     this.clear();
     this.pixiSprite = new PIXI.Graphics();
-    this.initSprite();
+    this.pixiSprite.x = this.x;
+    this.pixiSprite.y = this.y;
+    this.pixiSprite.width = this.width;
+    this.pixiSprite.height = this.height;
 
     this.pixiSprite.lineStyle(0);
     this.pixiSprite.beginFill(color, alpha);
