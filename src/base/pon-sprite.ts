@@ -5,28 +5,60 @@ import { BaseLayer } from './base-layer'
 const DEFAULT_WIDTH: number = 32;
 const DEFAULT_HEIGHT: number = 32;
 
+/**
+ * PonSpriteのコールバック
+ */
 export interface PonSpriteCallback {
+  /**
+   * コンテナにスプライトを追加する
+   * @param child 追加するスプライト
+   */
   pixiContainerAddChild(child: PIXI.DisplayObject): void;
+  /**
+   * コンテナからスプライトを削除する
+   * @param child 削除するスプライト
+   */
   pixiContainerRemoveChild(child: PIXI.DisplayObject): void;
 }
 
+/**
+ * スプライト
+ */
 export class PonSprite {
+  /** コールバック */
   private callbacks: PonSpriteCallback;
   private _x: number = 0;
   private _y: number = 0;
   private _width: number = DEFAULT_WIDTH;
   private _height: number = DEFAULT_HEIGHT;
+  private _visible: boolean = true;
+  /** PIXIのスプライト */
   private pixiSprite: PIXI.Text | PIXI.Sprite | PIXI.Graphics | null = null;
 
+  /** x座標 */
   public get x(): number { return this._x; }
+  /** x座標 */
   public set x(x) { this._x = x; if (this.pixiSprite != null) this.pixiSprite.x = x; }
+  /** y座標 */
   public get y(): number { return this._y; }
+  /** y座標 */
   public set y(y) { this._y = y; if (this.pixiSprite != null) this.pixiSprite.y = y; }
+  /** 幅 */
   public get width(): number { return this._width; }
+  /** 幅 */
   public set width(width) { this._width = width; if (this.pixiSprite != null) this.pixiSprite.width = width; }
+  /** 高さ */
   public get height(): number { return this._height; }
+  /** 高さ */
   public set height(height) { this._height = height; if (this.pixiSprite != null) this.pixiSprite.height = height; }
+  /** 表示状態 */
+  public get visible(): boolean { return this._visible; }
+  /** 表示状態 */
+  public set visible(visible: boolean) { this._visible = visible; if (this.pixiSprite != null) this.pixiSprite.visible != visible; }
 
+  /**
+   * @param callbacks コールバック
+   */
   public constructor(callbacks: PonSpriteCallback) {
     this.callbacks = callbacks;
   }
@@ -38,6 +70,11 @@ export class PonSprite {
     this.clear();
   }
 
+  /**
+   * スプライトをクリアする。
+   * 内部で保持しているPIXIのスプライトを開放する。
+   * このスプライトの保持している座標、サイズ、表示状態などはクリアされず、そのままの状態を保つ。
+   */
   public clear() {
     if (this.pixiSprite != null) {
       this.callbacks.pixiContainerRemoveChild(this.pixiSprite);
@@ -45,14 +82,6 @@ export class PonSprite {
     }
     this.pixiSprite = null;
   }
-
-  // public initSprite() {
-  //   if (this.pixiSprite == null) return;
-  //   this.pixiSprite.x = this.x;
-  //   this.pixiSprite.y = this.y;
-  //   this.pixiSprite.width = this.width;
-  //   this.pixiSprite.height = this.height;
-  // }
 
   /**
    * スプライトにテキストを描画する。
@@ -85,6 +114,7 @@ export class PonSprite {
     this.pixiSprite.y = this.y;
     this.pixiSprite.width = this.width;
     this.pixiSprite.height = this.height;
+    console.log(this.width);
 
     this.pixiSprite.lineStyle(0);
     this.pixiSprite.beginFill(color, alpha);

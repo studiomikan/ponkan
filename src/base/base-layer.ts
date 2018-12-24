@@ -5,11 +5,18 @@ import { PonSprite, PonSpriteCallback } from './pon-sprite'
 export interface BaseLayerCallback {
 }
 
+/**
+ * 基本レイヤ。PIXI.Containerをラップしたもの
+ */
 export class BaseLayer implements PonSpriteCallback {
+  /** コールバック */
   private callbacks: BaseLayerCallback;
+  /** スプライト表示用コンテナ */
   protected _container: PIXI.Container;
+  /** レイヤサイズでクリッピングするためのマスク */
   protected maskSprite: PIXI.Sprite;
 
+  /** 背景色用スプライト */
   protected backgroundSprite: PonSprite;
 
   // 文字関係
@@ -31,6 +38,7 @@ export class BaseLayer implements PonSpriteCallback {
   protected textLineHeight: number  = 24;
   protected textLinePitch: number  = 5;
   protected textAutoReturn: boolean = true;
+  protected textIndentPoint: number = 0;
 
   public get container(): PIXI.Container{ return this._container; }
   public get x(): number { return this.container.x; }
@@ -43,6 +51,8 @@ export class BaseLayer implements PonSpriteCallback {
   public set height(height: number) { this.container.height = this.maskSprite.height = this.backgroundSprite.height = height; }
   public get visible(): boolean { return this.container.visible; }
   public set visible(visible: boolean) { this.container.visible = visible; }
+  public get alpha(): number { return this.container.alpha; }
+  public set alpha(alpha: number) { this.container.alpha = alpha; }
 
   public constructor(callbacks: BaseLayerCallback) {
     this.callbacks = callbacks;
@@ -60,14 +70,12 @@ export class BaseLayer implements PonSpriteCallback {
     this.backgroundSprite = new PonSprite(this);
 
     // テスト
-    let bg = this.backgroundSprite;
-    bg.width = 100;
-    bg.height = 100;
-    bg.fillColor(0xFF0000, 1.0);
-    this.width = 100;
-    this.height = 100;
-    this.x = 100;
-    this.y = 100;
+    // let bg = this.backgroundSprite;
+    // bg.width = 100;
+    // bg.height = 100;
+    // bg.fillColor(0xFF0000, 1.0);
+    // this.width = 100;
+    // this.height = 100;
   }
 
   /**
@@ -81,11 +89,32 @@ export class BaseLayer implements PonSpriteCallback {
   public pixiContainerAddChild(sprite: PIXI.DisplayObject) { this._container.addChild(sprite); }
   public pixiContainerRemoveChild(sprite: PIXI.DisplayObject) { this._container.removeChild(sprite); }
 
-  public setBackgoundColor(color: number, alpha: number): void {
+  /**
+   * 背景色を設定する
+   * @param color 色 0xRRGGBB
+   * @param alpha アルファ値 0.0〜1.0
+   */
+  public setBackgoundColor(color: number, alpha: number = 1.0): void {
+    this.backgroundSprite.fillColor(color, alpha);
   }
 
+  /**
+   * レイヤにテキストを追加する
+   */
+  public addText(text: string): void {
+    if (text == "") return;
+    for (let i:number = 0; i < text.length; i++) {
+      this.addChar(text[i]);
+    }
+  }
+
+  /**
+   * レイヤに1文字追加する
+   */
   public addChar(ch: string): void {
     if (ch == "") return;
+    if (ch.length > 1) {
+    }
     if (ch == "\n" || ch == "\r") {
       this.addTextReturn();
       return;
@@ -103,11 +132,30 @@ export class BaseLayer implements PonSpriteCallback {
     this.textX += sp.width;
   }
 
+  /**
+   * テキストを改行する
+   */
   public addTextReturn(): void {
-    this.textX = this.textMarginLeft;
+    if (this.textIndentPoint != 0)
+      this.textX = this.textIndentPoint;
+    else
+      this.textX = this.textMarginLeft;
     this.textY += this.textLineHeight + this.textLinePitch;
   }
 
+  /**
+   * 現在のテキスト描画位置でインデントするように設定する
+   */
+  public setIndentPoint(): void {
+    this.textIndentPoint = this.textX;
+  }
+
+  /**
+   * テキストをクリアする。
+   * 描画していたテキストは全削除される。
+   * テキストの描画開始位置は初期化される。
+   * インデント位置は初期化される。
+   */
   public clearText(): void {
     this.textSprites.forEach((sp) => {
       sp.destroy();
