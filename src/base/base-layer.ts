@@ -1,6 +1,6 @@
-import * as PIXI from 'pixi.js'
-import { PonRenderer } from './pon-renderer'
-import { PonSprite, PonSpriteCallback } from './pon-sprite'
+import * as PIXI from 'pixi.js';
+import { Logger } from './logger';
+import { PonSprite, PonSpriteCallback } from './pon-sprite';
 
 export interface BaseLayerCallback {
 }
@@ -69,13 +69,7 @@ export class BaseLayer implements PonSpriteCallback {
 
     this.backgroundSprite = new PonSprite(this);
 
-    // テスト
-    // let bg = this.backgroundSprite;
-    // bg.width = 100;
-    // bg.height = 100;
-    // bg.fillColor(0xFF0000, 1.0);
-    // this.width = 100;
-    // this.height = 100;
+    Logger.debug("new layer =>", this);
   }
 
   /**
