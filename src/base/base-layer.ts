@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { Logger } from './logger';
+import { Resource, LoadImageCallbacks } from './resource'
 import { PonSprite, PonSpriteCallback } from './pon-sprite';
 
 export interface BaseLayerCallback {
@@ -9,6 +10,8 @@ export interface BaseLayerCallback {
  * 基本レイヤ。PIXI.Containerをラップしたもの
  */
 export class BaseLayer implements PonSpriteCallback {
+  /** リソース */
+  private r: Resource;
   /** コールバック */
   private callbacks: BaseLayerCallback;
   /** スプライト表示用コンテナ */
@@ -18,6 +21,10 @@ export class BaseLayer implements PonSpriteCallback {
 
   /** 背景色用スプライト */
   protected backgroundSprite: PonSprite;
+  /** 読み込んでいる画像 */
+  protected image: HTMLImageElement | null = null;
+  /** 画像用スプライト */
+  protected imageSprite: PonSprite | null = null;
 
   // 文字関係
   protected textSprites: PonSprite[] = [];
@@ -54,7 +61,8 @@ export class BaseLayer implements PonSpriteCallback {
   public get alpha(): number { return this.container.alpha; }
   public set alpha(alpha: number) { this.container.alpha = alpha; }
 
-  public constructor(callbacks: BaseLayerCallback) {
+  public constructor(r: Resource, callbacks: BaseLayerCallback) {
+    this.r = r;
     this.callbacks = callbacks;
 
     this._container = new PIXI.Container();
@@ -157,6 +165,31 @@ export class BaseLayer implements PonSpriteCallback {
     this.textSprites = [];
     this.textX = this.textMarginLeft;
     this.textY = this.textMarginTop;
+  }
+
+  /**
+   * 画像読み込み
+   * @param filePath ファイルパス
+   */
+  public loadImage(filePath: string): void {
+    this.freeImage();
+    this.r.loadImage(filePath).done((image) => {
+      Logger.debug("BaseLayer.loadImage success: ", image);
+      this.image = image;
+    }).fail(() => {
+      Logger.debug("BaseLayer.loadImage fail: ");
+    });
+  }
+
+  /**
+   * 画像を開放する
+   */
+  public freeImage(): void {
+    if (this.imageSprite != null) {
+      this.imageSprite.destroy();
+    }
+    this.imageSprite = null;
+    this.image = null;
   }
 
 }

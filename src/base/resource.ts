@@ -3,9 +3,9 @@ export class LoadImageCallbacks {
   public failFunc: null | (() => void) = null;
   public alwaysFunc: null | (() => void) = null;
 
-  public done(func: (data: HTMLImageElement) => void): void { this.doneFunc = func; }
-  public fail(func: () => void): void { this.failFunc = func; }
-  public always(func: () => void): void { this.alwaysFunc = func; }
+  public done(func: (data: HTMLImageElement) => void): LoadImageCallbacks { this.doneFunc = func; return this; }
+  public fail(func: () => void): LoadImageCallbacks { this.failFunc = func; return this; }
+  public always(func: () => void): LoadImageCallbacks { this.alwaysFunc = func; return this; }
 }
 
 export class Resource {

@@ -1,18 +1,19 @@
 import * as PIXI from 'pixi.js'
+import { Logger } from './logger';
+import { Resource } from './resource'
 import { PonRenderer } from './pon-renderer'
 import { PonMouseEvent } from './pon-mouse-event'
-import { PonSprite } from './pon-sprite'
 import { BaseLayer, BaseLayerCallback } from './base-layer'
 
 export class PonGame implements BaseLayerCallback {
   private parentElm: HTMLElement;
+  private resource: Resource;
   private loopFlag: boolean = false;
   private loopCount: number = 0;
   private fpsPreTick: number = 0;
   private fpsCount: number = 0;
   private fps: number = 0;
   public renderer: PonRenderer;
-  private sprites: PonSprite[] = [];
   private layers: BaseLayer[] = [];
 
   public constructor(parentId: string) {
@@ -21,23 +22,13 @@ export class PonGame implements BaseLayerCallback {
       throw new Error(`Not found HTMLElement: ${parentId}`);
     }
     this.parentElm = elm;
-
+    this.resource = new Resource('gamedata');
     this.renderer = new PonRenderer(elm, 800, 450);
 
     this.initMouseEventOnCanvas();
 
     // テスト
-    // let f = new PonSprite(this.renderer);
-    // f.x = 100;
-    // f.y = 100;
-    // f.fillColor(0xFF0000, 1.0);
-    //
-    // let s = new PonSprite(this.renderer);
-    // s.createText("HOGE");
-    // s.x = 100;
-    // s.y = 100;
-    //
-    let layer = new BaseLayer(this);
+    let layer = new BaseLayer(this.resource, this);
     this.addLayer(layer);
     layer.x = 100;
     layer.y = 100;
@@ -47,6 +38,8 @@ export class PonGame implements BaseLayerCallback {
 
     layer.addText("あいうえおかきくけこさしすせそ");
     layer.alpha = 1;
+
+    layer.loadImage('okayu.jpg');
   }
 
   public start(): void {

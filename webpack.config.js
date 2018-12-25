@@ -1,5 +1,7 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+const WriteFilePlugin = require('write-file-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -7,6 +9,7 @@ module.exports = {
   },  
   output: {
     path: path.join(__dirname, 'dist'),
+    publicPath: '/assets',
     filename: '[name].js'
   },
   devServer: {
@@ -25,7 +28,12 @@ module.exports = {
     // new UglifyJSPlugin(),
     new HtmlWebpackPlugin({
       template: "./src/index.html"
-    })
+    }),
+    new CopyWebpackPlugin(
+      [ { from: '', to: 'gamedata/', }, ],
+      { context: 'src/gamedata' }
+    ),
+    new WriteFilePlugin(),
   ]
 }
 
