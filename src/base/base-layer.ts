@@ -29,7 +29,7 @@ export class BaseLayer implements PonSpriteCallback {
   // 文字関係
   protected textSprites: PonSprite[] = [];
   protected textStyle: PIXI.TextStyle = new PIXI.TextStyle({
-    fontFamily: 'monospace',
+    // fontFamily: 'monospace',
     fontSize: 24,
     fontWeight: 'normal',
     fill: 0xffffff,
@@ -75,6 +75,7 @@ export class BaseLayer implements PonSpriteCallback {
     this.container.addChild(this.maskSprite);
     this.container.mask = this.maskSprite;
 
+    // TODO: backgroundSpriteも必要なときだけ確保するようにする
     this.backgroundSprite = new PonSprite(this);
 
     Logger.debug("new layer =>", this);
@@ -176,6 +177,8 @@ export class BaseLayer implements PonSpriteCallback {
     this.r.loadImage(filePath).done((image) => {
       Logger.debug("BaseLayer.loadImage success: ", image);
       this.image = image;
+      this.imageSprite = new PonSprite(this);
+      this.imageSprite.setImage(image);
     }).fail(() => {
       Logger.debug("BaseLayer.loadImage fail: ");
     });

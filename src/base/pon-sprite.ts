@@ -66,7 +66,7 @@ export class PonSprite {
   /**
    * 破棄
    */
-  public destroy() {
+  public destroy(): void {
     this.clear();
   }
 
@@ -75,7 +75,7 @@ export class PonSprite {
    * 内部で保持しているPIXIのスプライトを開放する。
    * このスプライトの保持している座標、サイズ、表示状態などはクリアされず、そのままの状態を保つ。
    */
-  public clear() {
+  public clear(): void {
     if (this.pixiSprite != null) {
       this.callbacks.pixiContainerRemoveChild(this.pixiSprite);
       this.pixiSprite.destroy();
@@ -89,7 +89,7 @@ export class PonSprite {
    * @param text 文字
    * @param style 描画スタイル
    */
-  public createText(text: string, style: PIXI.TextStyle) {
+  public createText(text: string, style: PIXI.TextStyle): void {
     this.clear();
     this.pixiSprite = new PIXI.Text(text, style);
     this.pixiSprite.x = this.x;
@@ -107,25 +107,40 @@ export class PonSprite {
    * @param color 色 0xRRGGBB
    * @param alpha アルファ値 0.0〜1.0
    */
-  public fillColor(color: number, alpha: number) {
+  public fillColor(color: number, alpha: number): void {
     this.clear();
     this.pixiSprite = new PIXI.Graphics();
     this.pixiSprite.x = this.x;
     this.pixiSprite.y = this.y;
     this.pixiSprite.width = this.width;
     this.pixiSprite.height = this.height;
-    console.log(this.width);
 
     this.pixiSprite.lineStyle(0);
     this.pixiSprite.beginFill(color, alpha);
     this.pixiSprite.drawRect(0, 0, this.width, this.height);
     this.callbacks.pixiContainerAddChild(this.pixiSprite);
+  } 
+
+  /**
+   * 画像を設定する
+   */
+  public setImage(image: HTMLImageElement): void {
+    this.clear();
+    let texture: PIXI.Texture = PIXI.Texture.from(image);
+    this.pixiSprite = new PIXI.Sprite(texture);
+    this.pixiSprite.x = this.x;
+    this.pixiSprite.y = this.y;
+    this.pixiSprite.width = image.width;
+    this.pixiSprite.height = image.height;
+
+    this.pixiSprite.anchor.set(0)
+    this.callbacks.pixiContainerAddChild(this.pixiSprite);
   }
 
-  public onUpdate(tick: number) {
+  public onUpdate(tick: number): void {
   }
 
-  public onDraw(tick: number) {
+  public onDraw(tick: number): void {
   }
 
 }

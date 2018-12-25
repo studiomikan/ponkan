@@ -37,6 +37,8 @@ export class PonGame implements BaseLayerCallback {
     layer.setBackgoundColor(0x808080, 1.0);
 
     layer.addText("あいうえおかきくけこさしすせそ");
+    layer.addTextReturn();
+    layer.addText("Hello PIXI.js");
     layer.alpha = 1;
 
     layer.loadImage('okayu.jpg');
