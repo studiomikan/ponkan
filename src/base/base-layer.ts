@@ -76,7 +76,7 @@ export class BaseLayer implements PonSpriteCallback {
     this.container.mask = this.maskSprite;
 
     // TODO: backgroundSpriteも必要なときだけ確保するようにする
-    this.backgroundSprite = new PonSprite(this);
+    this.backgroundSprite = new PonSprite(this, 0);
 
     Logger.debug("new layer =>", this);
   }
@@ -89,8 +89,13 @@ export class BaseLayer implements PonSpriteCallback {
     this.clearText();
   }
 
-  public pixiContainerAddChild(sprite: PIXI.DisplayObject) { this._container.addChild(sprite); }
-  public pixiContainerRemoveChild(sprite: PIXI.DisplayObject) { this._container.removeChild(sprite); }
+  public pixiContainerAddChild(sprite: PIXI.DisplayObject, zIndex: number) {
+    this._container.addChildAt(sprite, zIndex);
+  }
+
+  public pixiContainerRemoveChild(sprite: PIXI.DisplayObject) {
+    this._container.removeChild(sprite);
+  }
 
   /**
    * 背景色を設定する
@@ -122,8 +127,9 @@ export class BaseLayer implements PonSpriteCallback {
       this.addTextReturn();
       return;
     }
-    let sp: PonSprite = new PonSprite(this);
+    let sp: PonSprite = new PonSprite(this, this.textSprites.length + 2);
     let fontSize: number = +this.textStyle.fontSize;
+    this.textSprites.push(sp);
     sp.createText(ch, this.textStyle);
     
     if (this.textAutoReturn && (this.textX + sp.width + this.textMarginRight) > this.width) {
@@ -169,15 +175,17 @@ export class BaseLayer implements PonSpriteCallback {
   }
 
   /**
-   * 画像読み込み
+   * 画像を読み込む。
+   * 同時に、背景所為
    * @param filePath ファイルパス
    */
   public loadImage(filePath: string): void {
+    // this.clearText();
     this.freeImage();
     this.r.loadImage(filePath).done((image) => {
       Logger.debug("BaseLayer.loadImage success: ", image);
       this.image = image;
-      this.imageSprite = new PonSprite(this);
+      this.imageSprite = new PonSprite(this, 1);
       this.imageSprite.setImage(image);
     }).fail(() => {
       Logger.debug("BaseLayer.loadImage fail: ");

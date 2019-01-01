@@ -42,6 +42,7 @@ export class PonGame implements BaseLayerCallback {
     layer.alpha = 1;
 
     layer.loadImage('okayu.jpg');
+    layer.loadImage('okayu.jpg');
   }
 
   public start(): void {

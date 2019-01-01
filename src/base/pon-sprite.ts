@@ -13,7 +13,7 @@ export interface PonSpriteCallback {
    * コンテナにスプライトを追加する
    * @param child 追加するスプライト
    */
-  pixiContainerAddChild(child: PIXI.DisplayObject): void;
+  pixiContainerAddChild(child: PIXI.DisplayObject, zIndex: number): void;
   /**
    * コンテナからスプライトを削除する
    * @param child 削除するスプライト
@@ -29,6 +29,7 @@ export class PonSprite {
   private callbacks: PonSpriteCallback;
   private _x: number = 0;
   private _y: number = 0;
+  private _zIndex: number = 0;
   private _width: number = DEFAULT_WIDTH;
   private _height: number = DEFAULT_HEIGHT;
   private _visible: boolean = true;
@@ -55,12 +56,17 @@ export class PonSprite {
   public get visible(): boolean { return this._visible; }
   /** 表示状態 */
   public set visible(visible: boolean) { this._visible = visible; if (this.pixiSprite != null) this.pixiSprite.visible != visible; }
+  /** 表示順 */
+  public get zIndex(): number { return this._zIndex; }
+  /** 表示順 */
+  public set zIndex(zIndex: number) { this._zIndex = zIndex; }
 
   /**
    * @param callbacks コールバック
    */
-  public constructor(callbacks: PonSpriteCallback) {
+  public constructor(callbacks: PonSpriteCallback, zIndex: number) {
     this.callbacks = callbacks;
+    this.zIndex = zIndex;
   }
 
   /**
@@ -78,7 +84,11 @@ export class PonSprite {
   public clear(): void {
     if (this.pixiSprite != null) {
       this.callbacks.pixiContainerRemoveChild(this.pixiSprite);
-      this.pixiSprite.destroy();
+      this.pixiSprite.destroy({
+        children: true,
+        texture: true,
+        baseTexture: true,
+      });
     }
     this.pixiSprite = null;
   }
@@ -98,7 +108,7 @@ export class PonSprite {
     this._height = this.pixiSprite.height;
 
     this.pixiSprite.anchor.set(0)
-    this.callbacks.pixiContainerAddChild(this.pixiSprite);
+    this.callbacks.pixiContainerAddChild(this.pixiSprite, this.zIndex);
   }
 
   /**
@@ -118,7 +128,7 @@ export class PonSprite {
     this.pixiSprite.lineStyle(0);
     this.pixiSprite.beginFill(color, alpha);
     this.pixiSprite.drawRect(0, 0, this.width, this.height);
-    this.callbacks.pixiContainerAddChild(this.pixiSprite);
+    this.callbacks.pixiContainerAddChild(this.pixiSprite, this.zIndex);
   } 
 
   /**
@@ -134,7 +144,7 @@ export class PonSprite {
     this.pixiSprite.height = image.height;
 
     this.pixiSprite.anchor.set(0)
-    this.callbacks.pixiContainerAddChild(this.pixiSprite);
+    this.callbacks.pixiContainerAddChild(this.pixiSprite, this.zIndex);
   }
 
   public onUpdate(tick: number): void {
