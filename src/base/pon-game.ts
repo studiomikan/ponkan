@@ -35,13 +35,13 @@ export class PonGame implements BaseLayerCallback {
     layer.width = 200;
     layer.height = 200;
     layer.setBackgoundColor(0x808080, 1.0);
+    layer.loadImage('okayu.jpg');
 
     layer.addText("あいうえおかきくけこさしすせそ");
     layer.addTextReturn();
     layer.addText("Hello PIXI.js");
     layer.alpha = 1;
 
-    layer.loadImage('okayu.jpg');
     layer.loadImage('okayu.jpg');
   }
 
@@ -69,7 +69,7 @@ export class PonGame implements BaseLayerCallback {
       this.fps = this.fpsCount;
       this.fpsPreTick = tick;
       this.fpsCount = 0;
-      console.log(this.fps);
+      // console.log(this.fps);
     }
 
     this.renderer.draw(tick)
@@ -103,6 +103,10 @@ export class PonGame implements BaseLayerCallback {
     canvas.addEventListener("mousemove", e => this.onMouseMove(new PonMouseEvent(e)));
     canvas.addEventListener("mousedown", e => this.onMouseDown(new PonMouseEvent(e)));
     canvas.addEventListener("mouseup", e => this.onMouseUp(new PonMouseEvent(e)));
+  }
+
+  public onLoadImage(layer: BaseLayer, image: HTMLImageElement): void {
+    Logger.debug("OnLoadImage ", layer, image);
   }
 
   protected onMouseEnter(e: PonMouseEvent) {}

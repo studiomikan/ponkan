@@ -4,6 +4,7 @@ import { Resource, LoadImageCallbacks } from './resource'
 import { PonSprite, PonSpriteCallback } from './pon-sprite';
 
 export interface BaseLayerCallback {
+  onLoadImage(layer: BaseLayer, image: HTMLImageElement): void;
 }
 
 /**
@@ -182,11 +183,16 @@ export class BaseLayer implements PonSpriteCallback {
   public loadImage(filePath: string): void {
     // this.clearText();
     this.freeImage();
+    let width = this.width;
+    let height = this.height;
     this.r.loadImage(filePath).done((image) => {
       Logger.debug("BaseLayer.loadImage success: ", image);
       this.image = image;
       this.imageSprite = new PonSprite(this, 1);
       this.imageSprite.setImage(image);
+      this.width = image.width;
+      this.height = image.height;
+      this.callbacks.onLoadImage(this, image)
     }).fail(() => {
       Logger.debug("BaseLayer.loadImage fail: ");
     });
