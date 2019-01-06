@@ -58,7 +58,8 @@ export class ScriptParser {
   private parse(): void {
     while(true) {
       let line: string | null = this.getLine();
-      if (line == null || line == "") continue;
+      if (line == null) break;
+      if (line == "") continue;
 
       let ch0 = line.charAt(0);
       let body = line.substring(1).trim();
@@ -101,13 +102,19 @@ export class ScriptParser {
         }
       }
     }
+    this.addTag("s", { "__body__": "s" })
   }
 
   private parseCommand(body: string): void {
-    let tagName: string = body.substring(0, body.indexOf("{")).trim();
-    let values: any = JSON.parse(body.substring(body.indexOf("{")));
-    values["__body__"] = body;
-    this.addTag(tagName, values);
+    try {
+      let tagName: string = body.substring(0, body.indexOf("{")).trim();
+      let valuesStr: string = body.substring(body.indexOf("{"));
+      let values: any = JSON.parse(valuesStr);
+      values["__body__"] = body;
+      this.addTag(tagName, values);
+    } catch (e) {
+      throw e;
+    }
   }
 
   private parseLabel(body: string): void {
@@ -137,6 +144,7 @@ export class ScriptParser {
 
   private addTag(name: string, values: object) {
     this._tags.push(new Tag(name, values));
+    Logger.debug("ADD TAG: ", name, values)
   }
 
 }

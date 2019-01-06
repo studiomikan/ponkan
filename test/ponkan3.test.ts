@@ -1,6 +1,6 @@
 import { assert } from "chai";
 
-import { ScriptParserTest } from "./script-parser.test";
+import { ScriptParserTest } from "./base/script-parser.test";
 
 ScriptParserTest();
 

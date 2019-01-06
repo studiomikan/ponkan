@@ -519,6 +519,42 @@ eval("var g;\n\n// This works in non-strict mode\ng = (function() {\n\treturn th
 
 /***/ }),
 
+/***/ "./src/base/logger.ts":
+/*!****************************!*\
+  !*** ./src/base/logger.ts ***!
+  \****************************/
+/*! exports provided: Logger */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"Logger\", function() { return Logger; });\nvar Logger = /** @class */ (function () {\n    function Logger() {\n    }\n    Logger.debug = function () {\n        var messages = [];\n        for (var _i = 0; _i < arguments.length; _i++) {\n            messages[_i] = arguments[_i];\n        }\n        if (Logger.level >= Logger.LEVEL_DEBUG) {\n            console.log.apply(console, messages);\n        }\n    };\n    Logger.LEVEL_DEBUG = 0;\n    Logger.LEVEL_INFO = 1;\n    Logger.level = Logger.LEVEL_DEBUG;\n    return Logger;\n}());\n\n\n\n//# sourceURL=webpack:///./src/base/logger.ts?");
+
+/***/ }),
+
+/***/ "./src/base/script-parser.ts":
+/*!***********************************!*\
+  !*** ./src/base/script-parser.ts ***!
+  \***********************************/
+/*! exports provided: Tag, ScriptParser */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"Tag\", function() { return Tag; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"ScriptParser\", function() { return ScriptParser; });\n/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./logger */ \"./src/base/logger.ts\");\n\nvar Tag = /** @class */ (function () {\n    function Tag(name, values) {\n        this._name = name;\n        this._values = values;\n    }\n    Object.defineProperty(Tag.prototype, \"name\", {\n        get: function () { return this._name; },\n        enumerable: true,\n        configurable: true\n    });\n    Object.defineProperty(Tag.prototype, \"values\", {\n        get: function () { return this._values; },\n        enumerable: true,\n        configurable: true\n    });\n    Tag.prototype.debugPrint = function () {\n        _logger__WEBPACK_IMPORTED_MODULE_0__[\"Logger\"].debug(\"TAG: \", this.name, this.values);\n    };\n    return Tag;\n}());\n\nvar ScriptParser = /** @class */ (function () {\n    function ScriptParser(scriptText) {\n        this.lines = [];\n        this.currentLineNum = 0;\n        this._tags = [];\n        this.scriptText = scriptText;\n        this.currentLineNum = 0;\n        this.lines = this.scriptText.split(/\\n/g);\n        this.parse();\n    }\n    Object.defineProperty(ScriptParser.prototype, \"tags\", {\n        get: function () { return this.tags; },\n        enumerable: true,\n        configurable: true\n    });\n    ScriptParser.prototype.debugPrint = function () {\n        this._tags.forEach(function (tag) {\n            tag.debugPrint();\n        });\n    };\n    ScriptParser.prototype.getLine = function () {\n        if (this.currentLineNum < this.lines.length) {\n            return this.lines[this.currentLineNum++].trim();\n        }\n        else {\n            return null;\n        }\n    };\n    ScriptParser.prototype.getLineWithoutTrim = function () {\n        if (this.currentLineNum < this.lines.length) {\n            return this.lines[this.currentLineNum++];\n        }\n        else {\n            return null;\n        }\n    };\n    ScriptParser.prototype.parse = function () {\n        while (true) {\n            var line = this.getLine();\n            if (line == null)\n                break;\n            if (line == \"\")\n                continue;\n            var ch0 = line.charAt(0);\n            var body = line.substring(1).trim();\n            _logger__WEBPACK_IMPORTED_MODULE_0__[\"Logger\"].debug(\"line: \", ch0, body);\n            if (line == \"---\") {\n                // JavaScript部\n                var js = body + \"\\n\";\n                while (true) {\n                    var tmp = this.getLineWithoutTrim();\n                    if (tmp == null || tmp == \"\" || tmp.trim() == \"---\")\n                        break;\n                    js += body;\n                }\n                this.addTag(\"__js__\", { \"__body__\": js });\n            }\n            else {\n                // その他の一行コマンド類\n                switch (ch0) {\n                    case '#':\n                        // コメント\n                        break;\n                    case ';':\n                        // コマンド\n                        this.parseCommand(body);\n                        break;\n                    case ':':\n                        // ラベル\n                        this.parseLabel(body);\n                        break;\n                    case '-':\n                        // JavaScript / JavaScript部\n                        this.parseJs(body);\n                        break;\n                    case '=':\n                        // JavaScript出力\n                        this.parseJsPrint(body);\n                        break;\n                    default:\n                        this.parseText(body);\n                        break;\n                }\n            }\n        }\n        this.addTag(\"s\", { \"__body__\": \"s\" });\n    };\n    ScriptParser.prototype.parseCommand = function (body) {\n        try {\n            var tagName = body.substring(0, body.indexOf(\"{\")).trim();\n            var valuesStr = body.substring(body.indexOf(\"{\"));\n            _logger__WEBPACK_IMPORTED_MODULE_0__[\"Logger\"].debug(\"=========================\");\n            _logger__WEBPACK_IMPORTED_MODULE_0__[\"Logger\"].debug(tagName);\n            _logger__WEBPACK_IMPORTED_MODULE_0__[\"Logger\"].debug(valuesStr);\n            _logger__WEBPACK_IMPORTED_MODULE_0__[\"Logger\"].debug(\"=========================\");\n            var values = JSON.parse(valuesStr);\n            values[\"__body__\"] = body;\n            this.addTag(tagName, values);\n        }\n        catch (e) {\n            throw e;\n        }\n    };\n    ScriptParser.prototype.parseLabel = function (body) {\n        this.addTag(\"__label__\", { \"__body__\": body });\n    };\n    ScriptParser.prototype.parseJs = function (body) {\n        this.addTag(\"__js__\", { \"__body__\": body, \"print\": false });\n    };\n    ScriptParser.prototype.parseJsPrint = function (body) {\n        this.addTag(\"__js__\", { \"__body__\": body, \"print\": true });\n    };\n    ScriptParser.prototype.parseText = function (body) {\n        for (var i = 0; i < body.length; i++) {\n            var ch = body.charAt(i);\n            if (ch == \"\")\n                continue;\n            if (ch == \"$\") {\n                this.addTag(\"br\", { \"__body__\": body });\n            }\n            else {\n                this.addTag(\"ch\", { \"__body__\": ch, \"text\": ch });\n            }\n        }\n    };\n    ScriptParser.prototype.addTag = function (name, values) {\n        this._tags.push(new Tag(name, values));\n        _logger__WEBPACK_IMPORTED_MODULE_0__[\"Logger\"].debug(\"ADD TAG: \", name, values);\n    };\n    return ScriptParser;\n}());\n\n\n\n//# sourceURL=webpack:///./src/base/script-parser.ts?");
+
+/***/ }),
+
+/***/ "./test/base/script-parser.test.ts":
+/*!*****************************************!*\
+  !*** ./test/base/script-parser.test.ts ***!
+  \*****************************************/
+/*! exports provided: ScriptParserTest */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"ScriptParserTest\", function() { return ScriptParserTest; });\n/* harmony import */ var chai__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! chai */ \"./node_modules/chai/index.js\");\n/* harmony import */ var chai__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(chai__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _src_base_script_parser_ts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/base/script-parser.ts */ \"./src/base/script-parser.ts\");\n\n\nvar testScript = \"\\n#\\u30B3\\u30E1\\u30F3\\u30C8\\u884C\\n;layout { \\\"width\\\":100, \\\"height\\\":200, \\\"visible\\\":true }\\n\";\nfunction ScriptParserTest() {\n    describe('ScriptParserのテスト', function () {\n        beforeEach(function () {\n        });\n        it('1+1', function () {\n            chai__WEBPACK_IMPORTED_MODULE_0__[\"assert\"].equal(1 + 1, 2);\n        });\n        it('パース', function () {\n            var sp = new _src_base_script_parser_ts__WEBPACK_IMPORTED_MODULE_1__[\"ScriptParser\"](testScript);\n            chai__WEBPACK_IMPORTED_MODULE_0__[\"assert\"].isNotNull(sp);\n        });\n    });\n}\n\n\n//# sourceURL=webpack:///./test/base/script-parser.test.ts?");
+
+/***/ }),
+
 /***/ "./test/ponkan3.test.ts":
 /*!******************************!*\
   !*** ./test/ponkan3.test.ts ***!
@@ -527,19 +563,7 @@ eval("var g;\n\n// This works in non-strict mode\ng = (function() {\n\treturn th
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var chai__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! chai */ \"./node_modules/chai/index.js\");\n/* harmony import */ var chai__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(chai__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _script_parser_test__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./script-parser.test */ \"./test/script-parser.test.ts\");\n\n\nObject(_script_parser_test__WEBPACK_IMPORTED_MODULE_1__[\"ScriptParserTest\"])();\ndescribe('Ponkan3のテスト', function () {\n    it('1+1', function () {\n        chai__WEBPACK_IMPORTED_MODULE_0__[\"assert\"].equal(1 + 1, 2);\n    });\n});\nconsole.log(\"test\");\n\n\n//# sourceURL=webpack:///./test/ponkan3.test.ts?");
-
-/***/ }),
-
-/***/ "./test/script-parser.test.ts":
-/*!************************************!*\
-  !*** ./test/script-parser.test.ts ***!
-  \************************************/
-/*! exports provided: ScriptParserTest */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"ScriptParserTest\", function() { return ScriptParserTest; });\n/* harmony import */ var chai__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! chai */ \"./node_modules/chai/index.js\");\n/* harmony import */ var chai__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(chai__WEBPACK_IMPORTED_MODULE_0__);\n\nfunction ScriptParserTest() {\n    describe('ScriptParserのテスト', function () {\n        it('1+1', function () {\n            chai__WEBPACK_IMPORTED_MODULE_0__[\"assert\"].equal(1 + 1, 2);\n        });\n    });\n}\n\n\n//# sourceURL=webpack:///./test/script-parser.test.ts?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var chai__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! chai */ \"./node_modules/chai/index.js\");\n/* harmony import */ var chai__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(chai__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _base_script_parser_test__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./base/script-parser.test */ \"./test/base/script-parser.test.ts\");\n\n\nObject(_base_script_parser_test__WEBPACK_IMPORTED_MODULE_1__[\"ScriptParserTest\"])();\ndescribe('Ponkan3のテスト', function () {\n    it('1+1', function () {\n        chai__WEBPACK_IMPORTED_MODULE_0__[\"assert\"].equal(1 + 1, 2);\n    });\n});\nconsole.log(\"test\");\n\n\n//# sourceURL=webpack:///./test/ponkan3.test.ts?");
 
 /***/ })
 
