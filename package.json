@@ -6,16 +6,21 @@
   "scripts": {
     "build": "webpack --mode=development",
     "start": "webpack-dev-server --mode=development",
+    "build-test": "webpack --config webpack.config.test.js --mode=development",
     "doc": "typedoc --out ./doc ./src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run build-test && mocha dist/test.js"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.5",
     "@types/pixi.js": "^4.8.6",
+    "chai": "^4.2.0",
     "copy-webpack-plugin": "^4.6.0",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
+    "mocha": "^5.2.0",
     "pixi.js": "^4.8.4",
     "ts-loader": "^5.3.2",
     "typedoc": "^0.13.0",
