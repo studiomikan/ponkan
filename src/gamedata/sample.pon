@@ -6,8 +6,8 @@
 ここも一行目。$
 ここは二行目。$
 
-# コマンド。
-;layopt width=100 height='100' visible="true"
+# コマンド
+;layopt { width:100, height:100, visible:true, name:"layer name" }
 
 # ラベル
 :label-name
