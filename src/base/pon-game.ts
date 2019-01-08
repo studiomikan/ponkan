@@ -5,15 +5,15 @@ import { PonRenderer } from './pon-renderer'
 import { PonMouseEvent } from './pon-mouse-event'
 import { BaseLayer, BaseLayerCallback } from './base-layer'
 
-export class PonGame implements BaseLayerCallback {
-  private parentElm: HTMLElement;
-  private resource: Resource;
+export class PonGame {
+  protected parentElm: HTMLElement;
+  protected resource: Resource;
   private loopFlag: boolean = false;
   private loopCount: number = 0;
   private fpsPreTick: number = 0;
   private fpsCount: number = 0;
   private fps: number = 0;
-  public renderer: PonRenderer;
+  private renderer: PonRenderer;
   private layers: BaseLayer[] = [];
 
   public constructor(parentId: string) {
@@ -28,7 +28,11 @@ export class PonGame implements BaseLayerCallback {
     this.initMouseEventOnCanvas();
 
     // テスト
-    let layer = new BaseLayer(this.resource, this);
+    let layer = new BaseLayer(this.resource, {
+      onLoadImage: (layer: BaseLayer, image: HTMLImageElement) => {
+        Logger.debug("OnLoadImage ", layer, image);
+      }
+    });
     this.addLayer(layer);
     layer.x = 100;
     layer.y = 100;
@@ -110,10 +114,6 @@ export class PonGame implements BaseLayerCallback {
     canvas.addEventListener("mousemove", e => this.onMouseMove(new PonMouseEvent(e)));
     canvas.addEventListener("mousedown", e => this.onMouseDown(new PonMouseEvent(e)));
     canvas.addEventListener("mouseup", e => this.onMouseUp(new PonMouseEvent(e)));
-  }
-
-  public onLoadImage(layer: BaseLayer, image: HTMLImageElement): void {
-    Logger.debug("OnLoadImage ", layer, image);
   }
 
   protected onMouseEnter(e: PonMouseEvent) {}

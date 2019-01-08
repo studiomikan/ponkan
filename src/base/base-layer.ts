@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { Logger } from './logger';
 import { Resource, LoadImageCallbacks } from './resource'
-import { PonSprite, PonSpriteCallback } from './pon-sprite';
+import { PonSprite, PonSpriteCallbacks } from './pon-sprite';
 
 export interface BaseLayerCallback {
   onLoadImage(layer: BaseLayer, image: HTMLImageElement): void;
@@ -10,7 +10,7 @@ export interface BaseLayerCallback {
 /**
  * 基本レイヤ。PIXI.Containerをラップしたもの
  */
-export class BaseLayer implements PonSpriteCallback {
+export class BaseLayer implements PonSpriteCallbacks {
   /** リソース */
   private r: Resource;
   /** コールバック */
@@ -177,7 +177,7 @@ export class BaseLayer implements PonSpriteCallback {
 
   /**
    * 画像を読み込む。
-   * 同時に、背景所為
+   * 同時に、レイヤサイズを画像に合わせて変更する。
    * @param filePath ファイルパス
    */
   public loadImage(filePath: string): void {

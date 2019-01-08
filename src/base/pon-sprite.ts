@@ -8,7 +8,7 @@ const DEFAULT_HEIGHT: number = 32;
 /**
  * PonSpriteのコールバック
  */
-export interface PonSpriteCallback {
+export interface PonSpriteCallbacks {
   /**
    * コンテナにスプライトを追加する
    * @param child 追加するスプライト
@@ -26,7 +26,7 @@ export interface PonSpriteCallback {
  */
 export class PonSprite {
   /** コールバック */
-  private callbacks: PonSpriteCallback;
+  private callbacks: PonSpriteCallbacks;
   private _x: number = 0;
   private _y: number = 0;
   private _zIndex: number = 0;
@@ -64,7 +64,7 @@ export class PonSprite {
   /**
    * @param callbacks コールバック
    */
-  public constructor(callbacks: PonSpriteCallback, zIndex: number) {
+  public constructor(callbacks: PonSpriteCallbacks, zIndex: number) {
     this.callbacks = callbacks;
     this.zIndex = zIndex;
   }

@@ -1,5 +1,4 @@
 const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const WriteFilePlugin = require('write-file-webpack-plugin');
 
@@ -26,12 +25,13 @@ module.exports = {
   },
   plugins: [
     // new UglifyJSPlugin(),
-    new HtmlWebpackPlugin({
-      template: "./src/index.html"
-    }),
     new CopyWebpackPlugin(
       [ { from: '', to: 'gamedata/', }, ],
       { context: 'src/gamedata' }
+    ),
+    new CopyWebpackPlugin(
+      [ { from: '', to: '', }, ],
+      { context: 'src/index.html' }
     ),
     new WriteFilePlugin(),
   ]

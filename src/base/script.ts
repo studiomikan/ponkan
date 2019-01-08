@@ -21,16 +21,14 @@ export class Script {
     this.tagPoint = point;
   }
 
-  public getNextTag(): Tag {
+  public getNextTag(): Tag | null {
     let tags = this.parser.tags;
-    if (tags.length > this.tagPoint) {
-      return tags[this.tagPoint++];
-    } else {
-      return tags[tags.length - 1];
-    }
+    if (tags.length <= this.tagPoint) return null;
+    
+    let tag = tags[this.tagPoint++];
+    return tag;
   }
 
   // TODO ifなどの処理
-
 }
 

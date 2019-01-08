@@ -90,9 +90,17 @@ export class ScriptParser {
 
   private parseCommand(body: string): void {
     try {
-      let tagName: string = body.substring(0, body.indexOf("{")).trim();
-      let valuesStr: string = body.substring(body.indexOf("{"));
-      let values: any = JSON.parse(valuesStr);
+      let tagName: string;
+      let valuesStr: string;
+      let values: any;
+      if (body.indexOf("{") == -1) {
+        tagName = body.substring(0).trim();
+        values = {};
+      } else {
+        tagName = body.substring(0, body.indexOf("{")).trim();
+        valuesStr = body.substring(body.indexOf("{"));
+        values = JSON.parse(valuesStr);
+      }
       values["__body__"] = body;
       this.addTag(tagName, values);
     } catch (e) {

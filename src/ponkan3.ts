@@ -1,9 +1,21 @@
 import { PonGame } from './base/pon-game'
+import { Tag } from './base/tag'
+import { Conductor, ConductorEvent } from './base/conductor'
 
-console.log("START Ponkan3")
+class Ponkan3 extends PonGame implements ConductorEvent {
+  public conductor: Conductor;
 
-let game: PonGame = new PonGame("game");
-game.start()
+  public constructor(parentId: string) {
+    super(parentId);
 
-console.log("END ponkan3")
+    this.conductor = new Conductor(this.resource);
+
+  }
+
+  public onTag(tag: Tag) {
+  }
+
+}
+
+(<any>window).Ponkan3 = Ponkan3;
 
