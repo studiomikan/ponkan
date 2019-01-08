@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "clear": "rm -rf ./dist",
     "build": "webpack --mode=development",
     "start": "webpack-dev-server --mode=development",
     "build-test": "webpack --config webpack.config.test.js --mode=development",

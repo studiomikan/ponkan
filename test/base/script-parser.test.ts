@@ -112,4 +112,4 @@ export function ScriptParserTest() {
       assert.deepEqual(sp.tags[0].values, { "__body__":"  var hoge = 100;\n  console.log(hoge);\n", print: false });
     });
   });
-
+}

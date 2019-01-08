@@ -43,6 +43,13 @@ export class PonGame implements BaseLayerCallback {
     layer.alpha = 1;
 
     layer.loadImage('okayu.jpg');
+
+    this.resource.loadScript('sample.pon').done((script) => {
+      console.log("done callback");
+      console.log(script);
+    }).fail(() => {
+      console.log("fail callback");
+    });
   }
 
   public start(): void {
