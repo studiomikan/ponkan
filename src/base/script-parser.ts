@@ -24,7 +24,7 @@ export class ScriptParser {
   private currentLineNum: number = 0;
   private _tags: Tag[] = [];
 
-  public get tags(): Tag[] { return this.tags; }
+  public get tags(): Tag[] { return this._tags; }
 
   public constructor(scriptText: string) {
     this.scriptText = scriptText;
@@ -63,17 +63,17 @@ export class ScriptParser {
 
       let ch0 = line.charAt(0);
       let body = line.substring(1).trim();
-      Logger.debug("line: ", ch0, body);
+      // Logger.debug("line: ", ch0, body);
 
       if (line == "---") {
         // JavaScript部
-        let js: string = body + "\n";
+        let js: string = "";
         while (true) {
           let tmp: string | null = this.getLineWithoutTrim();
           if (tmp == null || tmp == "" || tmp.trim() == "---") break;
-          js += body;
+          js += tmp + "\n";
         }
-        this.addTag("__js__", { "__body__": js });
+        this.addTag("__js__", { "__body__": js, print: false });
       } else {
         // その他の一行コマンド類
         switch (ch0) {
@@ -97,7 +97,7 @@ export class ScriptParser {
             this.parseJsPrint(body);
             break;
           default:
-            this.parseText(body);
+            this.parseText(line);
             break;
         }
       }
@@ -129,13 +129,13 @@ export class ScriptParser {
     this.addTag("__js__", { "__body__": body, "print": true });
   }
 
-  private parseText(body: string): void {
-    for (let i = 0; i < body.length; i++) {
-      let ch = body.charAt(i);
+  private parseText(line: string): void {
+    for (let i = 0; i < line.length; i++) {
+      let ch = line.charAt(i);
       if (ch == "") continue;
 
       if (ch == "$") {
-        this.addTag("br", { "__body__": body });
+        this.addTag("br", { "__body__": line});
       } else {
         this.addTag("ch", { "__body__": ch, "text": ch});
       }
@@ -144,8 +144,7 @@ export class ScriptParser {
 
   private addTag(name: string, values: object) {
     this._tags.push(new Tag(name, values));
-    Logger.debug("ADD TAG: ", name, values)
+    // Logger.debug("ADD TAG: ", name, values)
   }
-
 }
 
