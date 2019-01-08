@@ -83,11 +83,15 @@ export class PonGame {
       // console.log(this.fps);
     }
 
+    this.update(tick);
     this.renderer.draw(tick)
 
     this.loopCount++;
     this.fpsCount++;
     window.requestAnimationFrame(() => this.loop());
+  }
+
+  protected update(tick: number): void {
   }
 
   public clearLayer() {
