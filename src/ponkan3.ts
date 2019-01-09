@@ -2,9 +2,13 @@ import { PonGame } from './base/pon-game'
 import { Logger } from './base/logger'
 import { Tag } from './base/tag'
 import { Conductor, ConductorEvent } from './base/conductor'
+import { TagValue, TagAction, generateTagActions } from './tag-action'
 
-class Ponkan3 extends PonGame implements ConductorEvent {
-  public conductor: Conductor;
+export class Ponkan3 extends PonGame implements ConductorEvent {
+  protected _conductor: Conductor;
+  public get conductor(): Conductor { return this._conductor;}
+
+  protected tagAction: any = {};
 
   public tmpVar: object = {};
   public gameVar: object = {};
@@ -12,7 +16,17 @@ class Ponkan3 extends PonGame implements ConductorEvent {
 
   public constructor(parentId: string) {
     super(parentId);
-    this.conductor = new Conductor(this.resource, this);
+    this._conductor = new Conductor(this.resource, this);
+
+    this.initTagAction();
+  }
+
+  private initTagAction() {
+    generateTagActions(this).forEach((tagAction) => {
+      Logger.debug(tagAction);
+      this.tagAction[tagAction.name] = tagAction;
+    });
+    Logger.debug("TagActionMap: ", this.tagAction);
   }
 
   protected update(tick: number): void {
@@ -40,6 +54,17 @@ class Ponkan3 extends PonGame implements ConductorEvent {
 
   public onJs(js: string): void {
     Logger.debug("onJs: ", js);
+    this.evalJs(js);
+  }
+
+  public evalJs(js: string): any {
+    let pon = this
+    let tf = this.tmpVar;
+    let gf = this.gameVar;
+    let sf = this.systemVar;
+    return (function() {
+      return eval(js);
+    })();
   }
 
 }
