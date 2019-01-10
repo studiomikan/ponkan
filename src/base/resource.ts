@@ -33,9 +33,21 @@ export class LoadImageCallbacks {
 
 export class Resource {
   private basePath: string;
+  public tmpVar: object = {};
+  public gameVar: object = {};
+  public systemVar: object = {};
   
   public constructor(basePath: string = "") {
     this.basePath = this.fixPath(basePath);
+  }
+
+  public evalJs(js: string): any {
+    let tv = this.tmpVar;
+    let gv = this.gameVar;
+    let sv = this.systemVar;
+    return (function() {
+      return eval(js);
+    })();
   }
 
   /**

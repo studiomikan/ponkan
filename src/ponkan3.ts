@@ -3,20 +3,25 @@ import { Logger } from './base/logger'
 import { Tag } from './base/tag'
 import { Conductor, ConductorEvent } from './base/conductor'
 import { TagValue, TagAction, generateTagActions } from './tag-action'
+import { LayerManager } from './layer/layer-manager'
 
 export class Ponkan3 extends PonGame implements ConductorEvent {
   protected _conductor: Conductor;
   public get conductor(): Conductor { return this._conductor;}
 
+  protected _layerManager: LayerManager;
+  public get layerManager(): LayerManager { return this._layerManager }
+
   protected tagAction: any = {};
 
-  public tmpVar: object = {};
-  public gameVar: object = {};
-  public systemVar: object = {};
+  public get tmpVar(): object { return this.resource.tmpVar; }
+  public get gameVar(): object { return this.resource.gameVar; }
+  public get systemVar(): object { return this.resource.systemVar; }
 
   public constructor(parentId: string) {
     super(parentId);
     this._conductor = new Conductor(this.resource, this);
+    this._layerManager = new LayerManager(this.resource);
 
     this.initTagAction();
   }
@@ -54,17 +59,7 @@ export class Ponkan3 extends PonGame implements ConductorEvent {
 
   public onJs(js: string): void {
     Logger.debug("onJs: ", js);
-    this.evalJs(js);
-  }
-
-  public evalJs(js: string): any {
-    let pon = this
-    let tf = this.tmpVar;
-    let gf = this.gameVar;
-    let sf = this.systemVar;
-    return (function() {
-      return eval(js);
-    })();
+    this.resource.evalJs(js);
   }
 
 }
