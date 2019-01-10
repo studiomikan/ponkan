@@ -1,20 +1,20 @@
-import * as PIXI from 'pixi.js';
-import { Logger } from './logger';
-import { Resource, LoadImageCallbacks } from './resource'
-import { PonSprite, PonSpriteCallbacks } from './pon-sprite';
+import * as PIXI from "pixi.js";
+import { Logger } from "./logger";
+import { IPonSpriteCallbacks, PonSprite } from "./pon-sprite";
+import { LoadImageCallbacks, Resource } from "./resource";
 
-export interface BaseLayerCallback {
+export interface IBaseLayerCallback {
   onLoadImage(layer: BaseLayer, image: HTMLImageElement): void;
 }
 
 /**
  * 基本レイヤ。PIXI.Containerをラップしたもの
  */
-export class BaseLayer implements PonSpriteCallbacks {
+export class BaseLayer implements IPonSpriteCallbacks {
   /** リソース */
   private r: Resource;
   /** コールバック */
-  private callbacks: BaseLayerCallback;
+  private callbacks: IBaseLayerCallback;
   /** スプライト表示用コンテナ */
   protected _container: PIXI.Container;
   /** レイヤサイズでクリッピングするためのマスク */
@@ -32,7 +32,7 @@ export class BaseLayer implements PonSpriteCallbacks {
   protected textStyle: PIXI.TextStyle = new PIXI.TextStyle({
     // fontFamily: 'monospace',
     fontSize: 24,
-    fontWeight: 'normal',
+    fontWeight: "normal",
     fill: 0xffffff,
   });
   protected textMarginTop: number = 10;
@@ -48,21 +48,25 @@ export class BaseLayer implements PonSpriteCallbacks {
   protected textAutoReturn: boolean = true;
   protected textIndentPoint: number = 0;
 
-  public get container(): PIXI.Container{ return this._container; }
+  public get container(): PIXI.Container { return this._container; }
   public get x(): number { return this.container.x; }
   public set x(x) { this.container.x = x; }
   public get y(): number { return this.container.y; }
   public set y(y) { this.container.y = y; }
   public get width(): number { return this.container.width; }
-  public set width(width: number) { this.container.width = this.maskSprite.width = this.backgroundSprite.width = width; }
+  public set width(width: number) {
+    this.container.width = this.maskSprite.width = this.backgroundSprite.width = width;
+  }
   public get height(): number { return this.container.height; }
-  public set height(height: number) { this.container.height = this.maskSprite.height = this.backgroundSprite.height = height; }
+  public set height(height: number) {
+    this.container.height = this.maskSprite.height = this.backgroundSprite.height = height;
+  }
   public get visible(): boolean { return this.container.visible; }
   public set visible(visible: boolean) { this.container.visible = visible; }
   public get alpha(): number { return this.container.alpha; }
   public set alpha(alpha: number) { this.container.alpha = alpha; }
 
-  public constructor(r: Resource, callbacks: BaseLayerCallback) {
+  public constructor(r: Resource, callbacks: IBaseLayerCallback) {
     this.r = r;
     this.callbacks = callbacks;
 
@@ -111,9 +115,9 @@ export class BaseLayer implements PonSpriteCallbacks {
    * レイヤにテキストを追加する
    */
   public addText(text: string): void {
-    if (text == "") return;
-    for (let i:number = 0; i < text.length; i++) {
-      this.addChar(text[i]);
+    if (text === "") { return; }
+    for (let i = 0; i < text.length; i++) {
+      this.addChar(text.charAt(i));
     }
   }
 
@@ -121,18 +125,20 @@ export class BaseLayer implements PonSpriteCallbacks {
    * レイヤに1文字追加する
    */
   public addChar(ch: string): void {
-    if (ch == "") return;
+    if (ch === "") { return; }
     if (ch.length > 1) {
+      this.addText(ch);
+      return;
     }
-    if (ch == "\n" || ch == "\r") {
+    if (ch === "\n" || ch === "\r") {
       this.addTextReturn();
       return;
     }
-    let sp: PonSprite = new PonSprite(this, this.textSprites.length + 2);
-    let fontSize: number = +this.textStyle.fontSize;
+    const sp: PonSprite = new PonSprite(this, this.textSprites.length + 2);
+    const fontSize: number = +this.textStyle.fontSize;
     this.textSprites.push(sp);
     sp.createText(ch, this.textStyle);
-    
+
     if (this.textAutoReturn && (this.textX + sp.width + this.textMarginRight) > this.width) {
       // 文字がレイヤをはみ出すので、自動改行する。
       this.addTextReturn();
@@ -146,10 +152,11 @@ export class BaseLayer implements PonSpriteCallbacks {
    * テキストを改行する
    */
   public addTextReturn(): void {
-    if (this.textIndentPoint != 0)
+    if (this.textIndentPoint !== 0) {
       this.textX = this.textIndentPoint;
-    else
+    } else {
       this.textX = this.textMarginLeft;
+    }
     this.textY += this.textLineHeight + this.textLinePitch;
   }
 
@@ -183,8 +190,8 @@ export class BaseLayer implements PonSpriteCallbacks {
   public loadImage(filePath: string): void {
     // this.clearText();
     this.freeImage();
-    let width = this.width;
-    let height = this.height;
+    const width = this.width;
+    const height = this.height;
     this.r.loadImage(filePath).done((image) => {
       Logger.debug("BaseLayer.loadImage success: ", image);
       this.image = image;
@@ -192,7 +199,7 @@ export class BaseLayer implements PonSpriteCallbacks {
       this.imageSprite.setImage(image);
       this.width = image.width;
       this.height = image.height;
-      this.callbacks.onLoadImage(this, image)
+      this.callbacks.onLoadImage(this, image);
     }).fail(() => {
       Logger.debug("BaseLayer.loadImage fail: ");
     });

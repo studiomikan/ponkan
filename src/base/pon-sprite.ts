@@ -1,6 +1,6 @@
-import * as PIXI from 'pixi.js'
-import { PonRenderer } from './pon-renderer'
-import { BaseLayer } from './base-layer'
+import * as PIXI from "pixi.js";
+import { BaseLayer } from "./base-layer";
+import { PonRenderer } from "./pon-renderer";
 
 const DEFAULT_WIDTH: number = 32;
 const DEFAULT_HEIGHT: number = 32;
@@ -8,7 +8,7 @@ const DEFAULT_HEIGHT: number = 32;
 /**
  * PonSpriteのコールバック
  */
-export interface PonSpriteCallbacks {
+export interface IPonSpriteCallbacks {
   /**
    * コンテナにスプライトを追加する
    * @param child 追加するスプライト
@@ -26,7 +26,7 @@ export interface PonSpriteCallbacks {
  */
 export class PonSprite {
   /** コールバック */
-  private callbacks: PonSpriteCallbacks;
+  private callbacks: IPonSpriteCallbacks;
   private _x: number = 0;
   private _y: number = 0;
   private _zIndex: number = 0;
@@ -39,23 +39,38 @@ export class PonSprite {
   /** x座標 */
   public get x(): number { return this._x; }
   /** x座標 */
-  public set x(x) { this._x = x; if (this.pixiSprite != null) this.pixiSprite.x = x; }
+  public set x(x) {
+    this._x = x;
+    if (this.pixiSprite != null) { this.pixiSprite.x = x; }
+  }
   /** y座標 */
   public get y(): number { return this._y; }
   /** y座標 */
-  public set y(y) { this._y = y; if (this.pixiSprite != null) this.pixiSprite.y = y; }
+  public set y(y) {
+    this._y = y;
+    if (this.pixiSprite != null) { this.pixiSprite.y = y; }
+  }
   /** 幅 */
   public get width(): number { return this._width; }
   /** 幅 */
-  public set width(width) { this._width = width; if (this.pixiSprite != null) this.pixiSprite.width = width; }
+  public set width(width) {
+    this._width = width;
+    if (this.pixiSprite != null) { this.pixiSprite.width = width; }
+  }
   /** 高さ */
   public get height(): number { return this._height; }
   /** 高さ */
-  public set height(height) { this._height = height; if (this.pixiSprite != null) this.pixiSprite.height = height; }
+  public set height(height) {
+    this._height = height;
+    if (this.pixiSprite != null) { this.pixiSprite.height = height; }
+  }
   /** 表示状態 */
   public get visible(): boolean { return this._visible; }
   /** 表示状態 */
-  public set visible(visible: boolean) { this._visible = visible; if (this.pixiSprite != null) this.pixiSprite.visible != visible; }
+  public set visible(visible: boolean) {
+    this._visible = visible;
+    if (this.pixiSprite != null) { this.pixiSprite.visible = visible; }
+  }
   /** 表示順 */
   public get zIndex(): number { return this._zIndex; }
   /** 表示順 */
@@ -64,7 +79,7 @@ export class PonSprite {
   /**
    * @param callbacks コールバック
    */
-  public constructor(callbacks: PonSpriteCallbacks, zIndex: number) {
+  public constructor(callbacks: IPonSpriteCallbacks, zIndex: number) {
     this.callbacks = callbacks;
     this.zIndex = zIndex;
   }
@@ -79,7 +94,8 @@ export class PonSprite {
   /**
    * スプライトをクリアする。
    * 内部で保持しているPIXIのスプライトを開放する。
-   * このスプライトの保持している座標、サイズ、表示状態などはクリアされず、そのままの状態を保つ。
+   * このスプライトの保持している座標、サイズ、表示状態などはクリアされず、
+   * そのままの状態を保つ。
    */
   public clear(): void {
     if (this.pixiSprite != null) {
@@ -107,7 +123,7 @@ export class PonSprite {
     this._width = this.pixiSprite.width;
     this._height = this.pixiSprite.height;
 
-    this.pixiSprite.anchor.set(0)
+    this.pixiSprite.anchor.set(0);
     this.callbacks.pixiContainerAddChild(this.pixiSprite, this.zIndex);
   }
 
@@ -129,29 +145,30 @@ export class PonSprite {
     this.pixiSprite.beginFill(color, alpha);
     this.pixiSprite.drawRect(0, 0, this.width, this.height);
     this.callbacks.pixiContainerAddChild(this.pixiSprite, this.zIndex);
-  } 
+  }
 
   /**
    * 画像を設定する
    */
   public setImage(image: HTMLImageElement): void {
     this.clear();
-    let texture: PIXI.Texture = PIXI.Texture.from(image);
+    const texture: PIXI.Texture = PIXI.Texture.from(image);
     this.pixiSprite = new PIXI.Sprite(texture);
     this.pixiSprite.x = this.x;
     this.pixiSprite.y = this.y;
     this.pixiSprite.width = image.width;
     this.pixiSprite.height = image.height;
 
-    this.pixiSprite.anchor.set(0)
+    this.pixiSprite.anchor.set(0);
     this.callbacks.pixiContainerAddChild(this.pixiSprite, this.zIndex);
   }
 
   public onUpdate(tick: number): void {
+    // TODO 実装
   }
 
   public onDraw(tick: number): void {
+    // TODO 実装
   }
 
 }
-

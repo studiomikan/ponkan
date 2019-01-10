@@ -1,12 +1,12 @@
-import { Logger } from '../base/logger'
-import { Resource } from '../base/resource'
-import { Tag } from '../base/tag'
-import { TagValue, TagAction, generateTagActions } from '../tag-action'
+import { Logger } from "../base/logger";
+import { Resource } from "../base/resource";
+import { Tag } from "../base/tag";
+import { generateTagActions, TagAction, TagValue } from "../tag-action";
 
-import { BaseLayer, BaseLayerCallback } from '../base/base-layer'
-import { PonLayer } from './pon-layer.ts'
+import { BaseLayer, IBaseLayerCallback } from "../base/base-layer";
+import { PonLayer } from "./pon-layer";
 
-export class LayerManager implements BaseLayerCallback {
+export class LayerManager implements IBaseLayerCallback {
   protected resource: Resource;
   protected layerCount = 20;
   private foreLayers: PonLayer[] = [];
@@ -22,7 +22,7 @@ export class LayerManager implements BaseLayerCallback {
   }
 
   public createLayer(name: string): PonLayer {
-    let layer = new PonLayer(this.resource, this);
+    const layer = new PonLayer(this.resource, this);
     return layer;
   }
 
@@ -31,5 +31,3 @@ export class LayerManager implements BaseLayerCallback {
   }
 
 }
-
-

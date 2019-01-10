@@ -1,5 +1,5 @@
-import { Logger } from './logger';
-import { Script } from './script';
+import { Logger } from "./logger";
+import { Script } from "./script";
 
 export class LoadTextCallbacks {
   public doneFunc: null | ((data: string) => void) = null;
@@ -36,16 +36,18 @@ export class Resource {
   public tmpVar: object = {};
   public gameVar: object = {};
   public systemVar: object = {};
-  
+
   public constructor(basePath: string = "") {
     this.basePath = this.fixPath(basePath);
   }
 
   public evalJs(js: string): any {
-    let tv = this.tmpVar;
-    let gv = this.gameVar;
-    let sv = this.systemVar;
+    const tv = this.tmpVar;
+    const gv = this.gameVar;
+    const sv = this.systemVar;
+    // tslint:disable-next-line
     return (function() {
+      // tslint:disable-next-line
       return eval(js);
     })();
   }
@@ -53,8 +55,8 @@ export class Resource {
   /**
    * パスの末尾からスラッシュを取り除いて返す
    */
-  private fixPath(path: string): string{
-    return path[path.length - 1] == "/" ? path.substring(0, path.length - 1) : path;
+  private fixPath(path: string): string {
+    return path[path.length - 1] === "/" ? path.substring(0, path.length - 1) : path;
   }
 
   /**
@@ -62,7 +64,7 @@ export class Resource {
    * @param filePath ファイルパス（basePathからの相対パス）
    */
   public getPath(filePath: string) {
-    return `${this.basePath}/${filePath}`
+    return `${this.basePath}/${filePath}`;
   }
 
   /**
@@ -71,19 +73,19 @@ export class Resource {
    * @return コールバックオブジェクト
    */
   public loadText(filePath: string): LoadTextCallbacks {
-    let cb = new LoadTextCallbacks();
-    let xhr = new XMLHttpRequest();
+    const cb = new LoadTextCallbacks();
+    const xhr = new XMLHttpRequest();
 
     xhr.onload = () => {
       if (200 <= xhr.status && xhr.status < 300) {
         Logger.debug("AJAX SUCCESS: ", xhr);
-        if (cb.doneFunc != null) cb.doneFunc(xhr.responseText);
+        if (cb.doneFunc != null) { cb.doneFunc(xhr.responseText); }
       } else {
         Logger.debug("AJAX FAILED: ", xhr);
-        if (cb.failFunc != null) cb.failFunc();
+        if (cb.failFunc != null) { cb.failFunc(); }
       }
-    }
-    xhr.open('GET', this.getPath(filePath),true);
+    };
+    xhr.open("GET", this.getPath(filePath), true);
     xhr.send();
 
     return cb;
@@ -95,17 +97,17 @@ export class Resource {
    * @return コールバックオブジェクト
    */
   public loadScript(filePath: string): LoadScriptCallbacks {
-    let cb = new LoadScriptCallbacks();
+    const cb = new LoadScriptCallbacks();
     this.loadText(filePath).done((text) => {
       try {
-        let script = new Script(text);
-        if (cb.doneFunc != null) cb.doneFunc(script);
+        const script = new Script(text);
+        if (cb.doneFunc != null) { cb.doneFunc(script); }
       } catch (e) {
         Logger.error(e);
-        if (cb.failFunc != null) cb.failFunc();
+        if (cb.failFunc != null) { cb.failFunc(); }
       }
     }).fail(() => {
-      if (cb.failFunc != null) cb.failFunc();
+      if (cb.failFunc != null) { cb.failFunc(); }
     });
     return cb;
   }
@@ -116,17 +118,17 @@ export class Resource {
    * @return コールバックオブジェクト
    */
   public loadImage(filePath: string): LoadImageCallbacks {
-    let cb = new LoadImageCallbacks();
-    let path: string = this.getPath(filePath);
-    let image: HTMLImageElement = new Image();
+    const cb = new LoadImageCallbacks();
+    const path: string = this.getPath(filePath);
+    const image: HTMLImageElement = new Image();
 
     image.onload = () => {
-      if (cb.doneFunc != null) cb.doneFunc(image);
-      if (cb.alwaysFunc != null) cb.alwaysFunc();
+      if (cb.doneFunc != null) { cb.doneFunc(image); }
+      if (cb.alwaysFunc != null) { cb.alwaysFunc(); }
     };
     image.onerror = () => {
-      if (cb.failFunc != null) cb.failFunc();
-      if (cb.alwaysFunc != null) cb.alwaysFunc();
+      if (cb.failFunc != null) { cb.failFunc(); }
+      if (cb.alwaysFunc != null) { cb.alwaysFunc(); }
     };
     image.src = path;
 
@@ -134,4 +136,3 @@ export class Resource {
   }
 
 }
-

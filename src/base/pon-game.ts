@@ -1,9 +1,9 @@
-import * as PIXI from 'pixi.js'
-import { Logger } from './logger';
-import { Resource } from './resource'
-import { PonRenderer } from './pon-renderer'
-import { PonMouseEvent } from './pon-mouse-event'
-import { BaseLayer, BaseLayerCallback } from './base-layer'
+import * as PIXI from "pixi.js";
+import { BaseLayer, IBaseLayerCallback } from "./base-layer";
+import { Logger } from "./logger";
+import { PonMouseEvent } from "./pon-mouse-event";
+import { PonRenderer } from "./pon-renderer";
+import { Resource } from "./resource";
 
 export class PonGame {
   protected parentElm: HTMLElement;
@@ -17,21 +17,21 @@ export class PonGame {
   private layers: BaseLayer[] = [];
 
   public constructor(parentId: string) {
-    let elm: HTMLElement | null = document.getElementById(parentId);
+    const elm: HTMLElement | null = document.getElementById(parentId);
     if (elm == null) {
       throw new Error(`Not found HTMLElement: ${parentId}`);
     }
     this.parentElm = elm;
-    this.resource = new Resource('gamedata');
+    this.resource = new Resource("gamedata");
     this.renderer = new PonRenderer(elm, 800, 450);
 
     this.initMouseEventOnCanvas();
 
     // テスト
-    let layer = new BaseLayer(this.resource, {
-      onLoadImage: (layer: BaseLayer, image: HTMLImageElement) => {
-        Logger.debug("OnLoadImage ", layer, image);
-      }
+    const layer = new BaseLayer(this.resource, {
+      onLoadImage: (l: BaseLayer, image: HTMLImageElement) => {
+        Logger.debug("OnLoadImage ", l, image);
+      },
     });
     this.addLayer(layer);
     layer.x = 100;
@@ -39,16 +39,16 @@ export class PonGame {
     layer.width = 200;
     layer.height = 200;
     layer.setBackgoundColor(0x808080, 1.0);
-    layer.loadImage('okayu.jpg');
+    layer.loadImage("okayu.jpg");
 
     layer.addText("あいうえおかきくけこさしすせそ");
     layer.addTextReturn();
     layer.addText("Hello PIXI.js");
     layer.alpha = 1;
 
-    layer.loadImage('okayu.jpg');
+    layer.loadImage("okayu.jpg");
 
-    this.resource.loadScript('sample.pon').done((script) => {
+    this.resource.loadScript("sample.pon").done((script) => {
       console.log("done callback");
       console.log(script);
     }).fail(() => {
@@ -72,9 +72,9 @@ export class PonGame {
   }
 
   private loop(): void {
-    if (!this.loopFlag) return;
+    if (!this.loopFlag) { return; }
 
-    let tick: number = Date.now();
+    const tick: number = Date.now();
 
     if (tick - this.fpsPreTick >= 1000) {
       this.fps = this.fpsCount;
@@ -84,7 +84,7 @@ export class PonGame {
     }
 
     this.update(tick);
-    this.renderer.draw(tick)
+    this.renderer.draw(tick);
 
     this.loopCount++;
     this.fpsCount++;
@@ -92,6 +92,7 @@ export class PonGame {
   }
 
   protected update(tick: number): void {
+    // should to override
   }
 
   public clearLayer() {
@@ -110,19 +111,19 @@ export class PonGame {
   }
 
   private initMouseEventOnCanvas(): void {
-    let canvas = this.renderer.canvasElm;
+    const canvas = this.renderer.canvasElm;
     console.log(canvas);
 
-    canvas.addEventListener("mouseenter", e => this.onMouseEnter(new PonMouseEvent(e)));
-    canvas.addEventListener("mouseleave", e => this.onMouseLeave(new PonMouseEvent(e)));
-    canvas.addEventListener("mousemove", e => this.onMouseMove(new PonMouseEvent(e)));
-    canvas.addEventListener("mousedown", e => this.onMouseDown(new PonMouseEvent(e)));
-    canvas.addEventListener("mouseup", e => this.onMouseUp(new PonMouseEvent(e)));
+    canvas.addEventListener("mouseenter", (e) => this.onMouseEnter(new PonMouseEvent(e)));
+    canvas.addEventListener("mouseleave", (e) => this.onMouseLeave(new PonMouseEvent(e)));
+    canvas.addEventListener("mousemove", (e) => this.onMouseMove(new PonMouseEvent(e)));
+    canvas.addEventListener("mousedown", (e) => this.onMouseDown(new PonMouseEvent(e)));
+    canvas.addEventListener("mouseup", (e) => this.onMouseUp(new PonMouseEvent(e)));
   }
 
-  protected onMouseEnter(e: PonMouseEvent) {}
-  protected onMouseLeave(e: PonMouseEvent) {}
-  protected onMouseMove(e: PonMouseEvent) {}
-  protected onMouseDown(e: PonMouseEvent) {}
-  protected onMouseUp(e: PonMouseEvent) {}
+  protected onMouseEnter(e: PonMouseEvent) { /* TODO 実装 */}
+  protected onMouseLeave(e: PonMouseEvent) { /* TODO 実装 */}
+  protected onMouseMove(e: PonMouseEvent) { /* TODO 実装 */}
+  protected onMouseDown(e: PonMouseEvent) { /* TODO 実装 */}
+  protected onMouseUp(e: PonMouseEvent) { /* TODO 実装 */}
 }

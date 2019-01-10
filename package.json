@@ -9,6 +9,8 @@
     "start": "webpack-dev-server --mode=development",
     "build-test": "webpack --config webpack.config.test.js --mode=development",
     "doc": "typedoc --out ./doc ./src",
+    "lint": "tslint ./src/**/*.ts",
+    "lint-fix": "tslint --fix ./src/**/*.ts",
     "test": "npm run build-test && mocha dist/test.js"
   },
   "author": "",
@@ -24,6 +26,7 @@
     "mocha": "^5.2.0",
     "pixi.js": "^4.8.4",
     "ts-loader": "^5.3.2",
+    "tslint": "^5.12.0",
     "typedoc": "^0.13.0",
     "typescript": "^3.2.2",
     "webpack": "^4.28.3",

@@ -1,4 +1,4 @@
-import { Logger } from './logger';
+import { Logger } from "./logger";
 
 export class Tag {
   protected _name: string;
@@ -9,11 +9,10 @@ export class Tag {
 
   public constructor(name: string, values: any) {
     this._name = name;
-    this._values = values; 
+    this._values = values;
   }
 
   public debugPrint(): void {
     Logger.debug("TAG: ", this.name, this.values);
   }
 }
-

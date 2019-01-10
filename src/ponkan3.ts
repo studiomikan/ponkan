@@ -1,11 +1,11 @@
 import { PonGame } from './base/pon-game'
 import { Logger } from './base/logger'
 import { Tag } from './base/tag'
-import { Conductor, ConductorEvent } from './base/conductor'
+import { Conductor, IConductorEvent } from './base/conductor'
 import { TagValue, TagAction, generateTagActions } from './tag-action'
 import { LayerManager } from './layer/layer-manager'
 
-export class Ponkan3 extends PonGame implements ConductorEvent {
+export class Ponkan3 extends PonGame implements IConductorEvent {
   protected _conductor: Conductor;
   public get conductor(): Conductor { return this._conductor;}
 
@@ -65,4 +65,3 @@ export class Ponkan3 extends PonGame implements ConductorEvent {
 }
 
 (<any>window).Ponkan3 = Ponkan3;
-

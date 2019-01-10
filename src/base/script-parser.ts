@@ -1,5 +1,5 @@
-import { Logger } from './logger';
-import { Tag } from './tag';
+import { Logger } from "./logger";
+import { Tag } from "./tag";
 
 export class ScriptParser {
   private scriptText: string;
@@ -39,43 +39,43 @@ export class ScriptParser {
   }
 
   private parse(): void {
-    while(true) {
-      let line: string | null = this.getLine();
-      if (line == null) break;
-      if (line == "") continue;
+    while (true) {
+      const line: string | null = this.getLine();
+      if (line === null) { break; }
+      if (line === "") { continue; }
 
-      let ch0 = line.charAt(0);
-      let body = line.substring(1).trim();
+      const ch0 = line.charAt(0);
+      const body = line.substring(1).trim();
       // Logger.debug("line: ", ch0, body);
 
-      if (line == "---") {
+      if (line === "---") {
         // JavaScript部
         let js: string = "";
         while (true) {
-          let tmp: string | null = this.getLineWithoutTrim();
-          if (tmp == null || tmp == "" || tmp.trim() == "---") break;
+          const tmp: string | null = this.getLineWithoutTrim();
+          if (tmp === null || tmp === "" || tmp.trim() === "---") { break; }
           js += tmp + "\n";
         }
-        this.addTag("__js__", { "__body__": js, print: false });
+        this.addTag("__js__", { __body__: js, print: false });
       } else {
         // その他の一行コマンド類
         switch (ch0) {
-          case '#':
+          case "#":
             // コメント
             break;
-          case ';':
+          case ";":
             // コマンド
             this.parseCommand(body);
             break;
-          case ':':
+          case ":":
             // ラベル
             this.parseLabel(body);
             break;
-          case '-':
+          case "-":
             // JavaScript / JavaScript部
             this.parseJs(body);
             break;
-          case '=':
+          case "=":
             // JavaScript出力
             this.parseJsPrint(body);
             break;
@@ -85,7 +85,7 @@ export class ScriptParser {
         }
       }
     }
-    this.addTag("s", { "__body__": "s" })
+    this.addTag("s", { __body__: "s" });
   }
 
   private parseCommand(body: string): void {
@@ -93,7 +93,7 @@ export class ScriptParser {
       let tagName: string;
       let valuesStr: string;
       let values: any;
-      if (body.indexOf("{") == -1) {
+      if (body.indexOf("{") === -1) {
         tagName = body.substring(0).trim();
         values = {};
       } else {
@@ -101,7 +101,7 @@ export class ScriptParser {
         valuesStr = body.substring(body.indexOf("{"));
         values = JSON.parse(valuesStr);
       }
-      values["__body__"] = body;
+      values.__body__ = body;
       this.addTag(tagName, values);
     } catch (e) {
       throw e;
@@ -109,26 +109,26 @@ export class ScriptParser {
   }
 
   private parseLabel(body: string): void {
-    this.addTag("__label__", { "__body__": body });
+    this.addTag("__label__", { __body__: body });
   }
 
   private parseJs(body: string): void {
-    this.addTag("__js__", { "__body__": body, "print": false });
+    this.addTag("__js__", { __body__: body, print: false });
   }
 
   private parseJsPrint(body: string): void {
-    this.addTag("__js__", { "__body__": body, "print": true });
+    this.addTag("__js__", { __body__: body, print: true });
   }
 
   private parseText(line: string): void {
     for (let i = 0; i < line.length; i++) {
-      let ch = line.charAt(i);
-      if (ch == "") continue;
+      const ch = line.charAt(i);
+      if (ch === "") { continue; }
 
-      if (ch == "$") {
-        this.addTag("br", { "__body__": line});
+      if (ch === "$") {
+        this.addTag("br", { __body__: line});
       } else {
-        this.addTag("ch", { "__body__": ch, "text": ch});
+        this.addTag("ch", { __body__: ch, text: ch});
       }
     }
   }
@@ -138,4 +138,3 @@ export class ScriptParser {
     // Logger.debug("ADD TAG: ", name, values)
   }
 }
-
