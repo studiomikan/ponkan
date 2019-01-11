@@ -1,11 +1,12 @@
 import * as PIXI from "pixi.js";
 import { Logger } from "./logger";
+import { AsyncCallbacks } from "./async-callbacks";
 import { IPonSpriteCallbacks, PonSprite } from "./pon-sprite";
-import { LoadImageCallbacks, Resource } from "./resource";
+import { Resource } from "./resource";
 
-export interface IBaseLayerCallback {
-  onLoadImage(layer: BaseLayer, image: HTMLImageElement): void;
-}
+// export interface IBaseLayerCallback {
+//   onLoadImage(layer: BaseLayer, image: HTMLImageElement): void;
+// }
 
 /**
  * 基本レイヤ。PIXI.Containerをラップしたもの
@@ -13,8 +14,9 @@ export interface IBaseLayerCallback {
 export class BaseLayer implements IPonSpriteCallbacks {
   /** リソース */
   private r: Resource;
-  /** コールバック */
-  private callbacks: IBaseLayerCallback;
+  /** レイヤ名 */
+  public name: string;
+
   /** スプライト表示用コンテナ */
   protected _container: PIXI.Container;
   /** レイヤサイズでクリッピングするためのマスク */
@@ -26,6 +28,9 @@ export class BaseLayer implements IPonSpriteCallbacks {
   protected image: HTMLImageElement | null = null;
   /** 画像用スプライト */
   protected imageSprite: PonSprite | null = null;
+
+  // 子レイヤ
+  private _children: BaseLayer[] = [];
 
   // 文字関係
   protected textSprites: PonSprite[] = [];
@@ -48,6 +53,7 @@ export class BaseLayer implements IPonSpriteCallbacks {
   protected textAutoReturn: boolean = true;
   protected textIndentPoint: number = 0;
 
+  public get children(): BaseLayer[] { return this._children; }
   public get container(): PIXI.Container { return this._container; }
   public get x(): number { return this.container.x; }
   public set x(x) { this.container.x = x; }
@@ -66,9 +72,9 @@ export class BaseLayer implements IPonSpriteCallbacks {
   public get alpha(): number { return this.container.alpha; }
   public set alpha(alpha: number) { this.container.alpha = alpha; }
 
-  public constructor(r: Resource, callbacks: IBaseLayerCallback) {
+  public constructor(name: string, r: Resource) {
     this.r = r;
-    this.callbacks = callbacks;
+    this.name = name;
 
     this._container = new PIXI.Container();
     this._container.width = 32;
@@ -100,6 +106,26 @@ export class BaseLayer implements IPonSpriteCallbacks {
 
   public pixiContainerRemoveChild(sprite: PIXI.DisplayObject) {
     this._container.removeChild(sprite);
+  }
+
+  public addChild(childLayer: BaseLayer): BaseLayer {
+    this.children.push(childLayer);
+    this.container.addChild(childLayer.container);
+    return childLayer;
+  }
+
+  public deleteChildLayer(childLayer: BaseLayer): void {
+    let tmp: BaseLayer[] = [];
+    this.children.forEach((child) => {
+      if (child !== childLayer) {
+        tmp.push(child);
+      }
+    });
+    this._children = tmp;
+  }
+
+  public child(index: number): BaseLayer {
+    return this.children[index];
   }
 
   /**
@@ -187,22 +213,26 @@ export class BaseLayer implements IPonSpriteCallbacks {
    * 同時に、レイヤサイズを画像に合わせて変更する。
    * @param filePath ファイルパス
    */
-  public loadImage(filePath: string): void {
-    // this.clearText();
+  public loadImage(filePath: string): AsyncCallbacks {
+    let cb = new AsyncCallbacks();
+
     this.freeImage();
     const width = this.width;
     const height = this.height;
     this.r.loadImage(filePath).done((image) => {
       Logger.debug("BaseLayer.loadImage success: ", image);
-      this.image = image;
+      this.image = <HTMLImageElement> image;
       this.imageSprite = new PonSprite(this, 1);
       this.imageSprite.setImage(image);
       this.width = image.width;
       this.height = image.height;
-      this.callbacks.onLoadImage(this, image);
+      cb.callDone(this);
     }).fail(() => {
       Logger.debug("BaseLayer.loadImage fail: ");
+      cb.callFail(this);
     });
+
+    return cb;
   }
 
   /**

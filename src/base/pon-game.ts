@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { BaseLayer, IBaseLayerCallback } from "./base-layer";
+import { BaseLayer } from "./base-layer";
 import { Logger } from "./logger";
 import { PonMouseEvent } from "./pon-mouse-event";
 import { PonRenderer } from "./pon-renderer";
@@ -26,34 +26,6 @@ export class PonGame {
     this.renderer = new PonRenderer(elm, 800, 450);
 
     this.initMouseEventOnCanvas();
-
-    // テスト
-    const layer = new BaseLayer(this.resource, {
-      onLoadImage: (l: BaseLayer, image: HTMLImageElement) => {
-        Logger.debug("OnLoadImage ", l, image);
-      },
-    });
-    this.addLayer(layer);
-    layer.x = 100;
-    layer.y = 100;
-    layer.width = 200;
-    layer.height = 200;
-    layer.setBackgoundColor(0x808080, 1.0);
-    layer.loadImage("okayu.jpg");
-
-    layer.addText("あいうえおかきくけこさしすせそ");
-    layer.addTextReturn();
-    layer.addText("Hello PIXI.js");
-    layer.alpha = 1;
-
-    layer.loadImage("okayu.jpg");
-
-    this.resource.loadScript("sample.pon").done((script) => {
-      console.log("done callback");
-      console.log(script);
-    }).fail(() => {
-      console.log("fail callback");
-    });
   }
 
   public start(): void {
@@ -104,10 +76,10 @@ export class PonGame {
   }
 
   public addLayer(layer: BaseLayer) {
-    // TODO make
-    console.log(layer);
+    // console.log(layer);
     this.layers.push(layer);
     this.renderer.addContainer(layer.container);
+    return layer;
   }
 
   private initMouseEventOnCanvas(): void {

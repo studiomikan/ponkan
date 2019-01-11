@@ -27,7 +27,6 @@ export class TagAction {
   public values: TagValue[];
   public action: (values: any, tick: number) => 'continue' | 'break';
   
-  // public doneFunc: null | ((data: string) => void) = null;
   public constructor(
     name: string,
     comment: string,

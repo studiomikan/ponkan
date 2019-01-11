@@ -1,11 +1,12 @@
 import { Logger } from "./logger";
 import { Resource } from "./resource";
+import { AsyncCallbacks } from "./async-callbacks";
 import { Script } from "./script";
 import { Tag } from "./tag";
 
 export interface IConductorEvent {
   onConductError(messages: string[]): void;
-  onLoadScript(): void;
+  // onLoadScript(): void;
   onLabel(labelName: string): void;
   onJs(js: string, printFlag: boolean): void;
   onTag(tag: Tag): void;
@@ -25,12 +26,16 @@ export class Conductor {
     this.script = new Script(";s");
   }
 
-  public loadScript(filePath: string) {
+  public loadScript(filePath: string): AsyncCallbacks {
+    let cb = new AsyncCallbacks();
     this.resource.loadScript(filePath).done(() => {
-      this.eventCallbacks.onLoadScript();
+      // this.eventCallbacks.onLoadScript();
+      cb.callDone();
     }).fail(() => {
-      this.eventCallbacks.onConductError(["スクリプトの読み込みに失敗しました。", filePath]);
+      // this.eventCallbacks.onConductError(["スクリプトの読み込みに失敗しました。", filePath]);
+      cb.callFail();
     });
+    return cb;
   }
 
   public conduct(tick: number): void {
@@ -48,7 +53,10 @@ export class Conductor {
     }
 
     const tag: Tag | null = this.script.getNextTag();
-    if (tag == null) { return; }
+    if (tag == null) {
+      this.stop();
+      return;
+    }
 
     switch (tag.name) {
       case "__label__":
@@ -67,16 +75,19 @@ export class Conductor {
     this.status = "run";
     this.sleepTime = -1;
     this.sleepStartTick = -1;
+    Logger.debug("Conductor start.");
   }
 
   public stop() {
     this.status = "stop";
+    Logger.debug("Conductor stop.");
   }
 
   public sleep(tick: number, sleepTime: number) {
     this.status = "sleep";
     this.sleepStartTick = tick;
     this.sleepTime = sleepTime;
+    Logger.debug("Conductor sleep.", sleepTime);
   }
 
 }

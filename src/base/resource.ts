@@ -1,35 +1,36 @@
 import { Logger } from "./logger";
+import { AsyncCallbacks } from "./async-callbacks";
 import { Script } from "./script";
-
-export class LoadTextCallbacks {
-  public doneFunc: null | ((data: string) => void) = null;
-  public failFunc: null | (() => void) = null;
-  public alwaysFunc: null | (() => void) = null;
-
-  public done(func: (data: string) => void): LoadTextCallbacks { this.doneFunc = func; return this; }
-  public fail(func: () => void): LoadTextCallbacks { this.failFunc = func; return this; }
-  public always(func: () => void): LoadTextCallbacks { this.alwaysFunc = func; return this; }
-}
-
-export class LoadScriptCallbacks {
-  public doneFunc: null | ((data: Script) => void) = null;
-  public failFunc: null | (() => void) = null;
-  public alwaysFunc: null | (() => void) = null;
-
-  public done(func: (data: Script) => void): LoadScriptCallbacks { this.doneFunc = func; return this; }
-  public fail(func: () => void): LoadScriptCallbacks { this.failFunc = func; return this; }
-  public always(func: () => void): LoadScriptCallbacks { this.alwaysFunc = func; return this; }
-}
-
-export class LoadImageCallbacks {
-  public doneFunc: null | ((data: HTMLImageElement) => void) = null;
-  public failFunc: null | (() => void) = null;
-  public alwaysFunc: null | (() => void) = null;
-
-  public done(func: (data: HTMLImageElement) => void): LoadImageCallbacks { this.doneFunc = func; return this; }
-  public fail(func: () => void): LoadImageCallbacks { this.failFunc = func; return this; }
-  public always(func: () => void): LoadImageCallbacks { this.alwaysFunc = func; return this; }
-}
+//
+// export class LoadTextCallbacks {
+//   public doneFunc: null | ((data: string) => void) = null;
+//   public failFunc: null | (() => void) = null;
+//   public alwaysFunc: null | (() => void) = null;
+//
+//   public done(func: (data: string) => void): LoadTextCallbacks { this.doneFunc = func; return this; }
+//   public fail(func: () => void): LoadTextCallbacks { this.failFunc = func; return this; }
+//   public always(func: () => void): LoadTextCallbacks { this.alwaysFunc = func; return this; }
+// }
+//
+// export class LoadScriptCallbacks {
+//   public doneFunc: null | ((data: Script) => void) = null;
+//   public failFunc: null | (() => void) = null;
+//   public alwaysFunc: null | (() => void) = null;
+//
+//   public done(func: (data: Script) => void): LoadScriptCallbacks { this.doneFunc = func; return this; }
+//   public fail(func: () => void): LoadScriptCallbacks { this.failFunc = func; return this; }
+//   public always(func: () => void): LoadScriptCallbacks { this.alwaysFunc = func; return this; }
+// }
+//
+// export class LoadImageCallbacks {
+//   public doneFunc: null | ((data: HTMLImageElement) => void) = null;
+//   public failFunc: null | (() => void) = null;
+//   public alwaysFunc: null | (() => void) = null;
+//
+//   public done(func: (data: HTMLImageElement) => void): LoadImageCallbacks { this.doneFunc = func; return this; }
+//   public fail(func: () => void): LoadImageCallbacks { this.failFunc = func; return this; }
+//   public always(func: () => void): LoadImageCallbacks { this.alwaysFunc = func; return this; }
+// }
 
 export class Resource {
   private basePath: string;
@@ -72,17 +73,17 @@ export class Resource {
    * @param filePath ファイルパス（basePathからの相対パス）
    * @return コールバックオブジェクト
    */
-  public loadText(filePath: string): LoadTextCallbacks {
-    const cb = new LoadTextCallbacks();
+  public loadText(filePath: string): AsyncCallbacks {
+    const cb = new AsyncCallbacks();
     const xhr = new XMLHttpRequest();
 
     xhr.onload = () => {
       if (200 <= xhr.status && xhr.status < 300) {
         Logger.debug("AJAX SUCCESS: ", xhr);
-        if (cb.doneFunc != null) { cb.doneFunc(xhr.responseText); }
+        cb.callDone(xhr.responseText);
       } else {
         Logger.debug("AJAX FAILED: ", xhr);
-        if (cb.failFunc != null) { cb.failFunc(); }
+        cb.callFail(xhr.responseText);
       }
     };
     xhr.open("GET", this.getPath(filePath), true);
@@ -96,18 +97,18 @@ export class Resource {
    * @param filePath ファイルパス（basePathからの相対パス）
    * @return コールバックオブジェクト
    */
-  public loadScript(filePath: string): LoadScriptCallbacks {
-    const cb = new LoadScriptCallbacks();
+  public loadScript(filePath: string): AsyncCallbacks {
+    const cb = new AsyncCallbacks();
     this.loadText(filePath).done((text) => {
       try {
         const script = new Script(text);
-        if (cb.doneFunc != null) { cb.doneFunc(script); }
+        cb.callDone(script);
       } catch (e) {
         Logger.error(e);
-        if (cb.failFunc != null) { cb.failFunc(); }
+        cb.callFail();
       }
     }).fail(() => {
-      if (cb.failFunc != null) { cb.failFunc(); }
+      cb.callFail();
     });
     return cb;
   }
@@ -117,18 +118,16 @@ export class Resource {
    * @param filePath ファイルパス（basePathからの相対パス）
    * @return コールバックオブジェクト
    */
-  public loadImage(filePath: string): LoadImageCallbacks {
-    const cb = new LoadImageCallbacks();
+  public loadImage(filePath: string): AsyncCallbacks {
+    const cb = new AsyncCallbacks();
     const path: string = this.getPath(filePath);
     const image: HTMLImageElement = new Image();
 
     image.onload = () => {
-      if (cb.doneFunc != null) { cb.doneFunc(image); }
-      if (cb.alwaysFunc != null) { cb.alwaysFunc(); }
+      cb.callDone(image);
     };
     image.onerror = () => {
-      if (cb.failFunc != null) { cb.failFunc(); }
-      if (cb.alwaysFunc != null) { cb.alwaysFunc(); }
+      cb.callFail(image);
     };
     image.src = path;
 
