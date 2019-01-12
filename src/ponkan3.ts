@@ -17,6 +17,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   protected layerCount = 20;
   public forePrimaryLayer: PonLayer;
   public backPrimaryLayer: PonLayer;
+  public foreLayers: PonLayer[] = [];
+  public backLayers: PonLayer[] = [];
+  public currentPage: "fore" | "back" = "fore";
 
   public get tmpVar(): object { return this.resource.tmpVar; }
   public get gameVar(): object { return this.resource.gameVar; }
@@ -113,16 +116,67 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // レイヤ
   //=========================================================
   private initLayers() {
-    // for (let i = 0; i < this.layerCount; i++) {
-    //   this.foreLayers[i] = this.createLayer(`fore layer ${i + 1}`);
-    //   this.backLayers[i] = this.createLayer(`back layer ${i + 1}`);
-    // }
+    for (let i = 0; i < this.layerCount; i++) {
+      this.foreLayers[i] = this.createLayer(`fore layer ${i + 1}`);
+      this.forePrimaryLayer.addChild(this.foreLayers[i]);
+      this.backLayers[i] = this.createLayer(`back layer ${i + 1}`);
+      this.backPrimaryLayer.addChild(this.backLayers[i]);
+    }
   }
 
+  /**
+   * レイヤを作成する。
+   * rendererへの追加は行わないので、別途addLayerを呼ぶか、
+   * 他のレイヤの子レイヤにする必要がある。
+   */
   public createLayer(name: string) {
     const layer = new PonLayer(name, this.resource);
     this.addLayer(layer);
     return layer;
+  }
+
+  protected getTargetLayers(layers: PonLayer[], lay: string): PonLayer[] {
+    let targetLayers: PonLayer[] = [];
+    
+    if (lay == null || lay === "" || lay === "all") {
+      return layers;
+    } else if(lay.indexOf(",") != -1) {
+      lay.split(",").forEach((l) => {
+        this.getTargetLayers(layers, l).forEach((layer) => {
+          targetLayers.push(layer);
+        });
+      });
+    } else if(lay.indexOf("-") != -1) {
+      let numList: string[] = lay.split("-");
+      let start: number = parseInt(numList[0], 10) - 1;
+      let end: number = parseInt(numList[1], 10) - 1;
+      if (start < 0) { throw new Error("レイヤ指定が範囲外です"); }
+      if (end >= this.layerCount) { throw new Error("レイヤ指定が範囲外です"); }
+      for (let i = start; i < end; i++) {
+        targetLayers.push(layers[i]);
+      }
+    } else {
+      targetLayers.push(layers[parseInt(lay, 10)]);
+    }
+    return targetLayers;
+  }
+
+  /**
+   * 操作対象のレイヤーを取得する
+   * @param values タグの値
+   */
+  public getLayers(values: any): PonLayer[] {
+    let lay: string = <string> values.lay;
+    let page: string = <string> values.page;
+
+    let pageLayers : PonLayer[];
+    if (page != null && page == "back") {
+      pageLayers = this.backLayers;
+    } else {
+      pageLayers = this.foreLayers;
+    }
+
+    return this.getTargetLayers(pageLayers, lay);
   }
 
 }

@@ -97,7 +97,13 @@ export class BaseLayer implements IPonSpriteCallbacks {
    */
   public destroy(): void {
     this.maskSprite.destroy();
+    this.backgroundSprite.destroy();
+    if (this.imageSprite != null) { this.imageSprite.destroy(); }
     this.clearText();
+    this.children.forEach((child) => {
+      child.destroy();
+    });
+    this._children = [];
   }
 
   public pixiContainerAddChild(sprite: PIXI.DisplayObject, zIndex: number) {
