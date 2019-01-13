@@ -6,7 +6,6 @@ import { PonRenderer } from "./pon-renderer";
 import { Resource } from "./resource";
 
 export class PonGame {
-  protected parentElm: HTMLElement;
   protected resource: Resource;
   private loopFlag: boolean = false;
   private loopCount: number = 0;
@@ -21,11 +20,15 @@ export class PonGame {
     if (elm == null) {
       throw new Error(`Not found HTMLElement: ${parentId}`);
     }
-    this.parentElm = elm;
     this.resource = new Resource("gamedata");
     this.renderer = new PonRenderer(elm, 800, 450);
 
     this.initMouseEventOnCanvas();
+  }
+
+  public destroy(): void {
+    this.stop();
+    this.renderer.destroy();
   }
 
   public start(): void {

@@ -36,11 +36,6 @@ let testScript_jspart = `
 
 export function ScriptParserTest() {
   describe('ScriptParserのテスト', () => {
-    beforeEach(() => {
-    });
-    it('1+1', () => {
-      assert.equal(1+1, 2);
-    });
     it('一通りパースできるかどうか', () => {
       let sp = new ScriptParser(testScript_01);
       assert.isNotNull(sp);

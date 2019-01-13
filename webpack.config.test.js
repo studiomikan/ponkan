@@ -1,4 +1,6 @@
 const path = require('path')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+const WriteFilePlugin = require('write-file-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -14,7 +16,8 @@ module.exports = {
   },
   module: {
     rules: [
-      { test: /\.ts$/, loader:'ts-loader', exclude: /node_modules/ }
+      { test: /\.ts$/, loader:'ts-loader', exclude: /node_modules/ },
+      { test: /\.html$/, loader:'html-loader' },
     ]
   },
   resolve: {
@@ -22,6 +25,11 @@ module.exports = {
   },
   plugins: [
     // new UglifyJSPlugin(),
+    new CopyWebpackPlugin(
+      [ { from: '', to: '', }, ],
+      { context: 'test/test.html' }
+    ),
+    new WriteFilePlugin(),
   ]
 }
 

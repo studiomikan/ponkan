@@ -60,6 +60,13 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     });
   }
 
+  public destroy() {
+    this.stop();
+    this.forePrimaryLayer.destroy();
+    this.backPrimaryLayer.destroy();
+    super.destroy();
+  }
+
   public start(): void {
     super.start();
     this.conductor.loadScript('start.pon').done(() => {

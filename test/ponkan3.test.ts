@@ -1,32 +1,29 @@
 import { assert } from "chai";
-// import * as JSDOM from "jsdom.js";
-// import { Ponkan3 } from "../src/ponkan3";
+import { Ponkan3 } from "../src/ponkan3";
 import { ScriptParserTest } from "./base/script-parser.test";
 
-let window: any;
-let global: any;
-
-  // ScriptParserTest();
+ScriptParserTest();
 
 describe("Ponkan3のテスト", function() {
+  let ponkan: Ponkan3;
 
-  before(function() {
-    // this.pon = new Ponkan3("dummy");
-    // global.document = jsdom('<html><body></body></html>')
-    // global.window = document.defaultView;
-    // global.navigator = window.navigator;
-    // global.location = window.location;
+  beforeEach(() => {
+    ponkan = new Ponkan3("game");
   });
 
-  it("1+1", function() {
+  afterEach(() => {
+    ponkan.destroy();
+  });
+
+  it("1+1", () => {
     assert.equal(1+1, 2);
   });
 
-  describe("レイヤ取得関係", function() {
+  describe("レイヤ取得関係", () => {
     it("数字のみ", function() {
+      assert.equal(1+1, 2);
     });
   });
 });
 
-console.log("test");
 

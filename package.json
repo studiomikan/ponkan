@@ -7,11 +7,12 @@
     "clear": "rm -rf ./dist",
     "build": "webpack --mode=development",
     "start": "webpack-dev-server --mode=development",
-    "build-test": "webpack --config webpack.config.test.js --mode=development",
     "doc": "typedoc --out ./doc ./src",
     "lint": "tslint ./src/**/*.ts",
     "lint-fix": "tslint --fix ./src/**/*.ts",
-    "test": "npm run build-test && mocha dist/test.js"
+    "build-test": "webpack --config webpack.config.test.js --mode=development",
+    "start-test": "webpack-dev-server --config webpack.config.test.js --mode=development",
+    "test": "npm run start-test"
   },
   "author": "",
   "license": "MIT",
