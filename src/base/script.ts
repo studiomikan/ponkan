@@ -11,6 +11,13 @@ export class Script {
     this.parser = new ScriptParser(scriptText);
   }
 
+  public debugPrint() {
+    Logger.debug("============================================");
+    this.parser.debugPrint();
+    Logger.debug("Script current point: ", this.tagPoint);
+    Logger.debug("============================================");
+  }
+
   public goToStart() {
     this.goTo(0);
   }

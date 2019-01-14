@@ -28,12 +28,11 @@ export class Conductor {
 
   public loadScript(filePath: string): AsyncCallbacks {
     let cb = new AsyncCallbacks();
-    this.resource.loadScript(filePath).done(() => {
-      // this.eventCallbacks.onLoadScript();
-      cb.callDone();
+    this.resource.loadScript(filePath).done((script: Script) => {
+      this.script = script;
+      cb.callDone(filePath);
     }).fail(() => {
-      // this.eventCallbacks.onConductError(["スクリプトの読み込みに失敗しました。", filePath]);
-      cb.callFail();
+      cb.callFail(filePath);
     });
     return cb;
   }
@@ -52,12 +51,15 @@ export class Conductor {
       }
     }
 
-    const tag: Tag | null = this.script.getNextTag();
+    let tag: Tag | null = this.script.getNextTag();
     if (tag == null) {
       this.stop();
       return;
+    } else {
+      tag = tag.clone();
     }
 
+    this.applyJsEntity(tag.values);
     switch (tag.name) {
       case "__label__":
         this.eventCallbacks.onLabel(tag.values.__body__);
@@ -68,6 +70,16 @@ export class Conductor {
       default:
         this.eventCallbacks.onTag(tag);
         break;
+    }
+  }
+
+  private applyJsEntity(values: any): void {
+    for (let key in values) {
+      let value: string = "" + <string> values[key];
+      if (value.indexOf("&") == 0 && value.length >= 2) {
+        let js: string = value.substring(1);
+        values[key] = "" + this.resource.evalJs(js);
+      }
     }
   }
 

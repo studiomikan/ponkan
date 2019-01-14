@@ -39,23 +39,39 @@ export class TagAction {
   }
 }
 
-export function generateTagActions(pon: Ponkan3): TagAction[] {
+export function generateTagActions(ponkan: Ponkan3): TagAction[] {
   return [
     new TagAction(
       's',
       'スクリプトの実行を停止する',
       [],
       (values, tick) => {
-        pon.conductor.stop();
+        ponkan.conductor.stop();
         return 'continue';
       }
     ),
     new TagAction(
       'ch',
       '文字を出力する',
-      [ new TagValue('text', 'string', false) ],
+      [
+        new TagValue('text', 'string', true)
+      ],
       (values, tick) => {
-        pon.conductor.stop();
+        ponkan.conductor.stop();
+        return 'continue';
+      }
+    ),
+    new TagAction(
+      'image',
+      'レイヤに画像を読み込む',
+      [
+        new TagValue('lay', 'string', false, 0),
+        new TagValue('page', 'string', false, "fore"),
+        new TagValue('file', 'string', true),
+        new TagValue('visible', 'boolean', false),
+      ],
+      (values, tick) => {
+        ponkan.conductor.stop();
         return 'continue';
       }
     ),

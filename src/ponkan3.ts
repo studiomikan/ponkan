@@ -11,7 +11,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public get conductor(): Conductor { return this._conductor;}
 
   // タグ関係
-  protected tagAction: any = {};
+  protected tagActions: any = {};
 
   // レイヤ関係
   protected layerCount = 20;
@@ -39,25 +39,25 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.initLayers();
 
     // テスト
-    const layer = this.forePrimaryLayer;
-    layer.x = 100;
-    layer.y = 100;
-    layer.width = 200;
-    layer.height = 200;
-    layer.setBackgoundColor(0x808080, 1.0);
-    layer.loadImage("okayu.jpg").done(() => {
-      layer.addText("あいうえおかきくけこさしすせそ");
-      layer.addTextReturn();
-      layer.addText("Hello PIXI.js");
-      layer.alpha = 1;
-
-      const layer2 = new PonLayer(name, this.resource);
-      layer2.width = 100;
-      layer2.height = 100;
-      layer2.setBackgoundColor(0xff0000, 1.0);
-      // this.addLayer(layer2);
-      layer.addChild(layer2);
-    });
+    // const layer = this.forePrimaryLayer;
+    // layer.x = 100;
+    // layer.y = 100;
+    // layer.width = 200;
+    // layer.height = 200;
+    // layer.setBackgoundColor(0x808080, 1.0);
+    // layer.loadImage("okayu.jpg").done(() => {
+    //   layer.addText("あいうえおかきくけこさしすせそ");
+    //   layer.addTextReturn();
+    //   layer.addText("Hello PIXI.js");
+    //   layer.alpha = 1;
+    //
+    //   const layer2 = new PonLayer(name, this.resource);
+    //   layer2.width = 100;
+    //   layer2.height = 100;
+    //   layer2.setBackgoundColor(0xff0000, 1.0);
+    //   // this.addLayer(layer2);
+    //   layer.addChild(layer2);
+    // });
   }
 
   public destroy() {
@@ -91,9 +91,35 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   private initTagAction() {
     generateTagActions(this).forEach((tagAction) => {
       Logger.debug(tagAction);
-      this.tagAction[tagAction.name] = tagAction;
+      this.tagActions[tagAction.name] = tagAction;
     });
-    Logger.debug("TagActionMap: ", this.tagAction);
+    Logger.debug("TagActionMap: ", this.tagActions);
+  }
+
+  /**
+   * タグの値を正しい値にキャストする
+   * @param tag タグ
+   * @param tagAction タグ動作定義
+   */
+  private castTagValues(tag: Tag, tagAction: TagAction) {
+    tagAction.values.forEach((def: TagValue) => {
+      let value: any = tag.values[def.name];
+      if (value == undefined || value == null) { return; }
+      if (typeof value != def.type) {
+        let str: string = "" + value;
+        switch (def.type) {
+          case "number": 
+            tag.values[def.name] = +str;
+            break;
+          case "boolean": 
+            tag.values[def.name] = (str === "true");
+            break;
+          case "string":
+            tag.values[def.name] = str;
+            break;
+        }
+      }
+    });
   }
 
   //=========================================================
@@ -107,7 +133,14 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   public onTag(tag: Tag): void {
-    Logger.debug("onTag: ", tag);
+    Logger.debug("onTag: ", tag.name, tag.values);
+    let action: TagAction = this.tagActions[tag.name];
+    if (action == null || action == undefined) {
+      // TODO エラーにする
+      return;
+    }
+    this.castTagValues(tag, action);
+    console.log(tag.values);
   }
 
   public onLabel(labelName: string): void {

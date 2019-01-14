@@ -1,3 +1,4 @@
 # ゲームの開始スクリプト
 
+;image {"lay": 1, "page": "fore", "file": "okayu.jpg", "visible": true}
 ;s

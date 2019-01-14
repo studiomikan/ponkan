@@ -15,4 +15,12 @@ export class Tag {
   public debugPrint(): void {
     Logger.debug("TAG: ", this.name, this.values);
   }
+
+  public clone(): Tag {
+    let values2: any = {};
+    for (let key in this.values) {
+      values2[key] = this.values[key];
+    }
+    return new Tag(this.name, values2);
+  }
 }
