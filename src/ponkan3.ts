@@ -124,9 +124,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   //=========================================================
   private initLayers() {
     for (let i = 0; i < this.layerCount; i++) {
-      this.foreLayers[i] = this.createLayer(`fore layer ${i + 1}`);
+      this.foreLayers[i] = this.createLayer(`fore layer ${i}`);
       this.forePrimaryLayer.addChild(this.foreLayers[i]);
-      this.backLayers[i] = this.createLayer(`back layer ${i + 1}`);
+      this.backLayers[i] = this.createLayer(`back layer ${i}`);
       this.backPrimaryLayer.addChild(this.backLayers[i]);
     }
   }
@@ -142,28 +142,37 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     return layer;
   }
 
-  protected getTargetLayers(layers: PonLayer[], lay: string): PonLayer[] {
+  /**
+   * 操作対象となるレイヤーを取得する
+   * @param pageLayers ページのレイヤー
+   * @param lay レイヤー指定の文字列
+   * @return 操作対象レイヤー
+   */
+  protected getTargetLayers(pageLayers: PonLayer[], lay: string): PonLayer[] {
     let targetLayers: PonLayer[] = [];
-    
     if (lay == null || lay === "" || lay === "all") {
-      return layers;
+      return pageLayers;
     } else if(lay.indexOf(",") != -1) {
       lay.split(",").forEach((l) => {
-        this.getTargetLayers(layers, l).forEach((layer) => {
+        this.getTargetLayers(pageLayers, l.trim()).forEach((layer) => {
           targetLayers.push(layer);
         });
       });
     } else if(lay.indexOf("-") != -1) {
       let numList: string[] = lay.split("-");
-      let start: number = parseInt(numList[0], 10) - 1;
-      let end: number = parseInt(numList[1], 10) - 1;
+      let start: number = parseInt(numList[0], 10);
+      let end: number = parseInt(numList[1], 10);
       if (start < 0) { throw new Error("レイヤ指定が範囲外です"); }
       if (end >= this.layerCount) { throw new Error("レイヤ指定が範囲外です"); }
-      for (let i = start; i < end; i++) {
-        targetLayers.push(layers[i]);
+      for (let i = start; i <= end; i++) {
+        targetLayers.push(pageLayers[i]);
       }
     } else {
-      targetLayers.push(layers[parseInt(lay, 10)]);
+      let layerNum: number = parseInt(lay, 10);
+      if (layerNum < 0 || this.layerCount <= layerNum) {
+        throw new Error(`レイヤ指定が範囲外です(${lay})`);
+      }
+      targetLayers.push(pageLayers[layerNum]);
     }
     return targetLayers;
   }
@@ -173,16 +182,14 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
    * @param values タグの値
    */
   public getLayers(values: any): PonLayer[] {
-    let lay: string = <string> values.lay;
-    let page: string = <string> values.page;
-
+    let lay: string = "" + <string> values.lay;
+    let page: string = "" + <string> values.page;
     let pageLayers : PonLayer[];
     if (page != null && page == "back") {
       pageLayers = this.backLayers;
     } else {
       pageLayers = this.foreLayers;
     }
-
     return this.getTargetLayers(pageLayers, lay);
   }
 
