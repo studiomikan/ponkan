@@ -1,21 +1,23 @@
 import * as PIXI from "pixi.js";
 
 export class PonRenderer {
-  private width: number;
-  private height: number;
+  private _width: number;
+  private _height: number;
   private parentElm: HTMLElement;
   private renderer: PIXI.WebGLRenderer | PIXI.CanvasRenderer;
   private _container: PIXI.Container;
 
+  public get width(): number { return this._width; }
+  public get height(): number { return this._height; }
   public get canvasElm(): HTMLCanvasElement { return this.renderer.view; }
   public get container(): PIXI.Container { return this._container; }
 
   public constructor(parentElm: HTMLElement, width: number, height: number) {
-    this.width = width;
-    this.height = height;
+    this._width = width;
+    this._height = height;
     this.parentElm = parentElm;
 
-    this.renderer = PIXI.autoDetectRenderer(this.width, this.height, { backgroundColor: 0xFF000011 });
+    this.renderer = PIXI.autoDetectRenderer(this._width, this._height, { backgroundColor: 0xFF000011 });
     parentElm.appendChild(this.renderer.view);
 
     this._container = new PIXI.Container();

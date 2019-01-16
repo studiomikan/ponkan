@@ -12,8 +12,11 @@ export class PonGame {
   private fpsPreTick: number = 0;
   private fpsCount: number = 0;
   private fps: number = 0;
-  private renderer: PonRenderer;
+  protected renderer: PonRenderer;
   private layers: BaseLayer[] = [];
+
+  public get width(): number { return this.renderer.width; }
+  public get height(): number { return this.renderer.height; }
 
   public constructor(parentId: string) {
     const elm: HTMLElement | null = document.getElementById(parentId);

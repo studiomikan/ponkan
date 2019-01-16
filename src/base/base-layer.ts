@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js";
-import { Logger } from "./logger";
 import { AsyncCallbacks } from "./async-callbacks";
+import { Logger } from "./logger";
 import { IPonSpriteCallbacks, PonSprite } from "./pon-sprite";
 import { Resource } from "./resource";
 
@@ -121,7 +121,7 @@ export class BaseLayer implements IPonSpriteCallbacks {
   }
 
   public deleteChildLayer(childLayer: BaseLayer): void {
-    let tmp: BaseLayer[] = [];
+    const tmp: BaseLayer[] = [];
     this.children.forEach((child) => {
       if (child !== childLayer) {
         tmp.push(child);
@@ -220,14 +220,15 @@ export class BaseLayer implements IPonSpriteCallbacks {
    * @param filePath ファイルパス
    */
   public loadImage(filePath: string): AsyncCallbacks {
-    let cb = new AsyncCallbacks();
+    Logger.debug("BaseLayer.loadImage call: ", filePath);
+    const cb = new AsyncCallbacks();
 
     this.freeImage();
     const width = this.width;
     const height = this.height;
     this.r.loadImage(filePath).done((image) => {
       Logger.debug("BaseLayer.loadImage success: ", image);
-      this.image = <HTMLImageElement> image;
+      this.image = image as HTMLImageElement;
       this.imageSprite = new PonSprite(this, 1);
       this.imageSprite.setImage(image);
       this.width = image.width;

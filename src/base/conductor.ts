@@ -1,15 +1,15 @@
+import { AsyncCallbacks } from "./async-callbacks";
 import { Logger } from "./logger";
 import { Resource } from "./resource";
-import { AsyncCallbacks } from "./async-callbacks";
 import { Script } from "./script";
 import { Tag } from "./tag";
 
 export interface IConductorEvent {
   onConductError(messages: string[]): void;
   // onLoadScript(): void;
-  onLabel(labelName: string): void;
-  onJs(js: string, printFlag: boolean): void;
-  onTag(tag: Tag): void;
+  onLabel(labelName: string, tick: number): "continue" | "break";
+  onJs(js: string, printFlag: boolean, tick: number): "continue" | "break";
+  onTag(tag: Tag, tick: number): "continue" | "break";
 }
 
 export class Conductor {
@@ -27,7 +27,7 @@ export class Conductor {
   }
 
   public loadScript(filePath: string): AsyncCallbacks {
-    let cb = new AsyncCallbacks();
+    const cb = new AsyncCallbacks();
     this.resource.loadScript(filePath).done((script: Script) => {
       this.script = script;
       cb.callDone(filePath);
@@ -62,23 +62,25 @@ export class Conductor {
     this.applyJsEntity(tag.values);
     switch (tag.name) {
       case "__label__":
-        this.eventCallbacks.onLabel(tag.values.__body__);
+        this.eventCallbacks.onLabel(tag.values.__body__, tick);
         break;
       case "__js__":
-        this.eventCallbacks.onJs(tag.values.__body__, tag.values.print);
+        this.eventCallbacks.onJs(tag.values.__body__, tag.values.print, tick);
         break;
       default:
-        this.eventCallbacks.onTag(tag);
+        this.eventCallbacks.onTag(tag, tick);
         break;
     }
   }
 
   private applyJsEntity(values: any): void {
-    for (let key in values) {
-      let value: string = "" + <string> values[key];
-      if (value.indexOf("&") == 0 && value.length >= 2) {
-        let js: string = value.substring(1);
-        values[key] = "" + this.resource.evalJs(js);
+    for (const key in values) {
+      if (values.hasOwnProperty(key)) {
+        const value: string = "" + values[key] as string;
+        if (value.indexOf("&") === 0 && value.length >= 2) {
+          const js: string = value.substring(1);
+          values[key] = "" + this.resource.evalJs(js);
+        }
       }
     }
   }

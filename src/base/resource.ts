@@ -1,5 +1,5 @@
-import { Logger } from "./logger";
 import { AsyncCallbacks } from "./async-callbacks";
+import { Logger } from "./logger";
 import { Script } from "./script";
 //
 // export class LoadTextCallbacks {

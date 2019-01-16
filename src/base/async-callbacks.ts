@@ -25,4 +25,3 @@ export class AsyncCallbacks {
     if (this.alwaysFunc != null) { this.alwaysFunc(data); }
   }
 }
-

@@ -8,8 +8,8 @@
     "build": "webpack --mode=development",
     "start": "webpack-dev-server --mode=development",
     "doc": "typedoc --out ./doc ./src",
-    "lint": "tslint ./src/**/*.ts",
-    "lint-fix": "tslint --fix ./src/**/*.ts",
+    "lint": "tslint ./src/**/*.ts ./src/*.ts",
+    "lint-fix": "tslint --fix ./src/*.ts ./src/*.ts",
     "build-test": "webpack --config webpack.config.test.js --mode=development",
     "start-test": "webpack-dev-server --config webpack.config.test.js --mode=development",
     "test": "npm run start-test"

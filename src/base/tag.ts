@@ -17,9 +17,11 @@ export class Tag {
   }
 
   public clone(): Tag {
-    let values2: any = {};
-    for (let key in this.values) {
-      values2[key] = this.values[key];
+    const values2: any = {};
+    for (const key in this.values) {
+      if (this.values.hasOwnProperty(key)) {
+        values2[key] = this.values[key];
+      }
     }
     return new Tag(this.name, values2);
   }

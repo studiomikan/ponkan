@@ -1,14 +1,14 @@
-import { PonGame } from './base/pon-game'
-import { Logger } from './base/logger'
-import { Tag } from './base/tag'
-import { Conductor, IConductorEvent } from './base/conductor'
-import { TagValue, TagAction, generateTagActions } from './tag-action'
 import { BaseLayer } from "./base/base-layer";
+import { Conductor, IConductorEvent } from "./base/conductor";
+import { Logger } from "./base/logger";
+import { PonGame } from "./base/pon-game";
+import { Tag } from "./base/tag";
 import { PonLayer } from "./layer/pon-layer";
+import { generateTagActions, TagAction, TagValue } from "./tag-action";
 
 export class Ponkan3 extends PonGame implements IConductorEvent {
   protected _conductor: Conductor;
-  public get conductor(): Conductor { return this._conductor;}
+  public get conductor(): Conductor { return this._conductor; }
 
   // タグ関係
   protected tagActions: any = {};
@@ -31,9 +31,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
     this.initTagAction();
 
-    this.forePrimaryLayer = 
+    this.forePrimaryLayer =
       this.addLayer(new PonLayer("Fore primary layer", this.resource));
-    this.backPrimaryLayer = 
+    this.backPrimaryLayer =
       this.addLayer(new PonLayer("Back primary layer", this.resource));
     this.backPrimaryLayer.visible = false;
     this.initLayers();
@@ -69,7 +69,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public start(): void {
     super.start();
-    this.conductor.loadScript('start.pon').done(() => {
+    this.conductor.loadScript("start.pon").done(() => {
       Logger.debug("onLoadScript success");
       this.conductor.start();
     }).fail(() => {
@@ -85,9 +85,14 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.conductor.conduct(tick);
   }
 
-  //=========================================================
+  public error(e: Error): void {
+    Logger.error(e);
+    alert(e.message);
+  }
+
+  // =========================================================
   // タグ動作
-  //=========================================================
+  // =========================================================
   private initTagAction() {
     generateTagActions(this).forEach((tagAction) => {
       Logger.debug(tagAction);
@@ -103,15 +108,15 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
    */
   private castTagValues(tag: Tag, tagAction: TagAction) {
     tagAction.values.forEach((def: TagValue) => {
-      let value: any = tag.values[def.name];
-      if (value == undefined || value == null) { return; }
-      if (typeof value != def.type) {
-        let str: string = "" + value;
+      const value: any = tag.values[def.name];
+      if (value === undefined || value === null) { return; }
+      if (typeof value !== def.type) {
+        const str: string = "" + value;
         switch (def.type) {
-          case "number": 
+          case "number":
             tag.values[def.name] = +str;
             break;
-          case "boolean": 
+          case "boolean":
             tag.values[def.name] = (str === "true");
             break;
           case "string":
@@ -122,9 +127,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     });
   }
 
-  //=========================================================
+  // =========================================================
   // コンダクタ
-  //=========================================================
+  // =========================================================
   public onConductError(messages: string[]) {
     // TODO エラー処理
     messages.forEach((message) => {
@@ -132,30 +137,41 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     });
   }
 
-  public onTag(tag: Tag): void {
+  public onTag(tag: Tag, tick: number): "continue" | "break" {
     Logger.debug("onTag: ", tag.name, tag.values);
-    let action: TagAction = this.tagActions[tag.name];
-    if (action == null || action == undefined) {
+    const tagAction: TagAction = this.tagActions[tag.name];
+    if (tagAction === null || tagAction === undefined) {
       // TODO エラーにする
-      return;
+      return "break";
     }
-    this.castTagValues(tag, action);
+    this.castTagValues(tag, tagAction);
     console.log(tag.values);
+    return tagAction.action(tag.values, tick);
   }
 
-  public onLabel(labelName: string): void {
+  public onLabel(labelName: string, tick: number): "continue" | "break" {
     Logger.debug("onLabel: ", labelName);
+    // TODO
+    return "continue";
   }
 
-  public onJs(js: string): void {
+  public onJs(js: string, printFlag: boolean, tick: number): "continue" | "break" {
     Logger.debug("onJs: ", js);
     this.resource.evalJs(js);
+    // TODO 文字出力など
+    return "continue";
   }
 
-  //=========================================================
+  // =========================================================
   // レイヤ
-  //=========================================================
+  // =========================================================
   private initLayers() {
+    [this.forePrimaryLayer, this.backPrimaryLayer].forEach((primaryLayer: PonLayer) => {
+      primaryLayer.x = 0;
+      primaryLayer.y = 0;
+      primaryLayer.width = this.width;
+      primaryLayer.height = this.height;
+    });
     for (let i = 0; i < this.layerCount; i++) {
       this.foreLayers[i] = this.createLayer(`fore layer ${i}`);
       this.forePrimaryLayer.addChild(this.foreLayers[i]);
@@ -165,7 +181,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   /**
-   * レイヤを作成する。
+   * プライマリレイヤを作成する。
    * rendererへの追加は行わないので、別途addLayerを呼ぶか、
    * 他のレイヤの子レイヤにする必要がある。
    */
@@ -182,26 +198,26 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
    * @return 操作対象レイヤー
    */
   protected getTargetLayers(pageLayers: PonLayer[], lay: string): PonLayer[] {
-    let targetLayers: PonLayer[] = [];
+    const targetLayers: PonLayer[] = [];
     if (lay == null || lay === "" || lay === "all") {
       return pageLayers;
-    } else if(lay.indexOf(",") != -1) {
+    } else if (lay.indexOf(",") !== -1) {
       lay.split(",").forEach((l) => {
         this.getTargetLayers(pageLayers, l.trim()).forEach((layer) => {
           targetLayers.push(layer);
         });
       });
-    } else if(lay.indexOf("-") != -1) {
-      let numList: string[] = lay.split("-");
-      let start: number = parseInt(numList[0], 10);
-      let end: number = parseInt(numList[1], 10);
+    } else if (lay.indexOf("-") !== -1) {
+      const numList: string[] = lay.split("-");
+      const start: number = parseInt(numList[0], 10);
+      const end: number = parseInt(numList[1], 10);
       if (start < 0) { throw new Error("レイヤ指定が範囲外です"); }
       if (end >= this.layerCount) { throw new Error("レイヤ指定が範囲外です"); }
       for (let i = start; i <= end; i++) {
         targetLayers.push(pageLayers[i]);
       }
     } else {
-      let layerNum: number = parseInt(lay, 10);
+      const layerNum: number = parseInt(lay, 10);
       if (layerNum < 0 || this.layerCount <= layerNum) {
         throw new Error(`レイヤ指定が範囲外です(${lay})`);
       }
@@ -215,10 +231,10 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
    * @param values タグの値
    */
   public getLayers(values: any): PonLayer[] {
-    let lay: string = "" + <string> values.lay;
-    let page: string = "" + <string> values.page;
-    let pageLayers : PonLayer[];
-    if (page != null && page == "back") {
+    const lay: string = "" + values.lay as string;
+    const page: string = "" + values.page as string;
+    let pageLayers: PonLayer[];
+    if (page != null && page === "back") {
       pageLayers = this.backLayers;
     } else {
       pageLayers = this.foreLayers;
@@ -228,4 +244,4 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
 }
 
-(<any>window).Ponkan3 = Ponkan3;
+(window as any).Ponkan3 = Ponkan3;
