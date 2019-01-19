@@ -14,12 +14,17 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   protected tagActions: any = {};
 
   // レイヤ関係
-  protected layerCount = 20;
+  protected _layerCount: number = 40;
+  public get layerCount(): number { return this._layerCount; }
   public forePrimaryLayer: PonLayer;
   public backPrimaryLayer: PonLayer;
   public foreLayers: PonLayer[] = [];
   public backLayers: PonLayer[] = [];
   public currentPage: "fore" | "back" = "fore";
+
+  // メッセージ関係
+  public messageLayerNum: number = 20;
+  public textSpeed: number = 100;
 
   public get tmpVar(): object { return this.resource.tmpVar; }
   public get gameVar(): object { return this.resource.gameVar; }
@@ -115,6 +120,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
         switch (def.type) {
           case "number":
             tag.values[def.name] = +str;
+            if (isNaN(tag.values[def.name])) {
+              throw new Error(`${tag.name}タグの${def.name}を数値に変換できませんでした。(${str})`);
+            }
             break;
           case "boolean":
             tag.values[def.name] = (str === "true");
@@ -145,6 +153,19 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       return "break";
     }
     this.castTagValues(tag, tagAction);
+    tagAction.values.forEach((def: TagValue) => {
+      const value: any = tag.values[def.name];
+      if (value === undefined || value === null) {
+        if (def.required) {
+          throw new Error(`${tag.name}タグの${def.name}は必須です。`);
+        }
+        if (def.defaultValue != null) {
+          tag.values[def.name] = def.defaultValue;
+        }
+      }
+    });
+
+    
     console.log(tag.values);
     return tagAction.action(tag.values, tick);
   }
@@ -216,6 +237,8 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       for (let i = start; i <= end; i++) {
         targetLayers.push(pageLayers[i]);
       }
+    } else if (lay == "mes" || lay == "message") {
+      targetLayers.push(pageLayers[this.messageLayerNum]);
     } else {
       const layerNum: number = parseInt(lay, 10);
       if (layerNum < 0 || this.layerCount <= layerNum) {
@@ -240,6 +263,13 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       pageLayers = this.foreLayers;
     }
     return this.getTargetLayers(pageLayers, lay);
+  }
+
+  /**
+   * メッセージレイヤ（表）
+   */
+  public get messageLayer(): PonLayer {
+    return this.foreLayers[this.messageLayerNum];
   }
 
 }

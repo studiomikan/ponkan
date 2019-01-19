@@ -24,6 +24,9 @@ export class BaseLayer implements IPonSpriteCallbacks {
 
   /** 背景色用スプライト */
   protected backgroundSprite: PonSprite;
+  protected _backgroundColor: number = 0x000000;
+  protected _backgroundAlpha: number = 1.0;
+
   /** 読み込んでいる画像 */
   protected image: HTMLImageElement | null = null;
   /** 画像用スプライト */
@@ -71,6 +74,9 @@ export class BaseLayer implements IPonSpriteCallbacks {
   public set visible(visible: boolean) { this.container.visible = visible; }
   public get alpha(): number { return this.container.alpha; }
   public set alpha(alpha: number) { this.container.alpha = alpha; }
+  
+  public get backgroundColor(): number { return this.backgroundColor; }
+  public get backgroundAlpha(): number { return this.backgroundAlpha; }
 
   public constructor(name: string, r: Resource) {
     this.r = r;
@@ -86,7 +92,6 @@ export class BaseLayer implements IPonSpriteCallbacks {
     this.container.addChild(this.maskSprite);
     this.container.mask = this.maskSprite;
 
-    // TODO: backgroundSpriteも必要なときだけ確保するようにする
     this.backgroundSprite = new PonSprite(this, 0);
 
     Logger.debug("new layer =>", this);
@@ -107,7 +112,11 @@ export class BaseLayer implements IPonSpriteCallbacks {
   }
 
   public pixiContainerAddChild(sprite: PIXI.DisplayObject, zIndex: number) {
-    this._container.addChildAt(sprite, zIndex);
+    if (this._container.children.length <= zIndex) {
+      this._container.addChild(sprite);
+    } else {
+      this._container.addChildAt(sprite, zIndex);
+    }
   }
 
   public pixiContainerRemoveChild(sprite: PIXI.DisplayObject) {
@@ -141,6 +150,8 @@ export class BaseLayer implements IPonSpriteCallbacks {
    */
   public setBackgoundColor(color: number, alpha: number = 1.0): void {
     this.backgroundSprite.fillColor(color, alpha);
+    this._backgroundColor = color;
+    this._backgroundAlpha = alpha;
   }
 
   /**

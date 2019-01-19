@@ -27,6 +27,12 @@ describe("Ponkan3のテスト", function() {
       assert.equal(layers.length, 1);
       assert.equal(layers[0].name, "fore layer 1");
     });
+    it("message", function() {
+      let layers: PonLayer[] = ponkan.getLayers({lay: "message"});
+      assert.isNotEmpty(layers);
+      assert.equal(layers.length, 1);
+      assert.equal(layers[0].name, ponkan.messageLayer.name);
+    });
     it("fore 5", function() {
       let layers: PonLayer[] = ponkan.getLayers({page: "fore", lay: 5});
       assert.isNotEmpty(layers);
@@ -59,6 +65,18 @@ describe("Ponkan3のテスト", function() {
     });
     it("0-2  ,4-5, 10 ", function() {
       let layers: PonLayer[] = ponkan.getLayers({lay: "0-2  ,4-5, 10 "});
+      assert.isNotEmpty(layers);
+      assert.equal(layers.length, 6);
+      assert.equal(layers[0].name, "fore layer 0");
+      assert.equal(layers[1].name, "fore layer 1");
+      assert.equal(layers[2].name, "fore layer 2");
+      assert.equal(layers[3].name, "fore layer 4");
+      assert.equal(layers[4].name, "fore layer 5");
+      assert.equal(layers[5].name, "fore layer 10");
+    });
+    it("0-2  ,4-5, mes ", function() {
+      ponkan.messageLayerNum = 10
+      let layers: PonLayer[] = ponkan.getLayers({lay: "0-2  ,4-5, mes "});
       assert.isNotEmpty(layers);
       assert.equal(layers.length, 6);
       assert.equal(layers[0].name, "fore layer 0");

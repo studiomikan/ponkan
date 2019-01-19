@@ -1,4 +1,10 @@
 # ゲームの開始スクリプト
 
-;image {"lay": 0, "page": "fore", "file": "okayu.jpg", "visible": true, "x": 100, "y": 100}
+;image {"lay": 0, "page": "fore", "file": "okayu.jpg", "visible": true, "x": 0, "y": 0}
+;meslay {"lay": 2}
+;layopt {"lay": "mes", "visible": true, "x": 100, "y": 100, "width": 400, "height": 200 }
+;fillcolor {"lay": "mes", "color": "0xFF0000", "alpha": 0.5 }
+あいうえおあいうえお
+;ch {"text": "hoge", "wait": "400"}
+かきくけこかきくけこ
 ;s

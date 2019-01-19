@@ -85,23 +85,26 @@ export class Conductor {
     }
   }
 
-  public start() {
+  public start(): "continue" | "break" {
     this.status = "run";
     this.sleepTime = -1;
     this.sleepStartTick = -1;
     Logger.debug("Conductor start.");
+    return "continue"
   }
 
-  public stop() {
+  public stop(): "continue" | "break" {
     this.status = "stop";
     Logger.debug("Conductor stop.");
+    return "break"
   }
 
-  public sleep(tick: number, sleepTime: number) {
+  public sleep(tick: number, sleepTime: number): "continue" | "break"  {
     this.status = "sleep";
     this.sleepStartTick = tick;
     this.sleepTime = sleepTime;
     Logger.debug("Conductor sleep.", sleepTime);
+    return "break"
   }
 
 }
