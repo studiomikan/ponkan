@@ -1,7 +1,8 @@
+import { PonGame } from "./base/pon-game";
+import { PonMouseEvent } from "./base/pon-mouse-event";
 import { BaseLayer } from "./base/base-layer";
 import { Conductor, IConductorEvent } from "./base/conductor";
 import { Logger } from "./base/logger";
-import { PonGame } from "./base/pon-game";
 import { Tag } from "./base/tag";
 import { PonLayer } from "./layer/pon-layer";
 import { generateTagActions, TagAction, TagValue } from "./tag-action";
@@ -91,8 +92,24 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   public error(e: Error): void {
-    Logger.error(e);
-    alert(e.message);
+    this.conductor.stop();
+    super.error(e);
+  }
+
+  public onMouseEnter(e: PonMouseEvent): boolean  {
+    return this.forePrimaryLayer.onMouseEnter(e);
+  }
+  public onMouseLeave(e: PonMouseEvent): boolean  {
+    return this.forePrimaryLayer.onMouseLeave(e);
+  }
+  public onMouseMove(e: PonMouseEvent): boolean  {
+    return this.forePrimaryLayer.onMouseMove(e);
+  }
+  public onMouseDown(e: PonMouseEvent): boolean  {
+    return this.forePrimaryLayer.onMouseDown(e);
+  }
+  public onMouseUp(e: PonMouseEvent): boolean  {
+    return this.forePrimaryLayer.onMouseUp(e);
   }
 
   // =========================================================
@@ -138,13 +155,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // =========================================================
   // コンダクタ
   // =========================================================
-  public onConductError(messages: string[]) {
-    // TODO エラー処理
-    messages.forEach((message) => {
-      Logger.error(message);
-    });
-  }
-
   public onTag(tag: Tag, tick: number): "continue" | "break" {
     Logger.debug("onTag: ", tag.name, tag.values);
     const tagAction: TagAction = this.tagActions[tag.name];

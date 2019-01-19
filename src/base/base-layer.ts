@@ -1,4 +1,5 @@
 import * as PIXI from "pixi.js";
+import { PonMouseEvent } from "./pon-mouse-event";
 import { AsyncCallbacks } from "./async-callbacks";
 import { Logger } from "./logger";
 import { IPonSpriteCallbacks, PonSprite } from "./pon-sprite";
@@ -141,6 +142,76 @@ export class BaseLayer implements IPonSpriteCallbacks {
 
   public child(index: number): BaseLayer {
     return this.children[index];
+  }
+
+  /**
+   * 座標が、指定の子レイヤーの内側かどうかを調査する
+   */
+  protected isInsideOfChildLayer(child: BaseLayer, x: number, y: number): boolean {
+    let top: number = child.y;
+    let right: number = child.x + child.width;
+    let bottom: number = child.y + child.height;
+    let left: number = child.x;
+    return left <= x && x <= right && top <= y && y <= bottom;
+  }
+
+  public onMouseEnter(e: PonMouseEvent): boolean {
+    console.log("onMouseEnter", this.name, e);
+    return true;
+  }
+
+  public onMouseLeave(e: PonMouseEvent): boolean {
+    console.log("onMouseLeave", this.name, e);
+    return true;
+  }
+
+  /** onMouseEnter等を発生させるためのバッファ */
+  protected isInsideBuffer: boolean = false;
+  public onMouseMove(e: PonMouseEvent): boolean {
+    for (let i = this.children.length - 1; i >= 0; i--) {
+      let child: BaseLayer = this.children[i];
+      let isInside = this.isInsideOfChildLayer(child, e.x, e.y)
+      let result: boolean = true;
+      // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる
+      if (isInside != child.isInsideBuffer) {
+        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y);
+        result = isInside ? child.onMouseEnter(e2) : child.onMouseLeave(e2);
+      }
+      child.isInsideBuffer = isInside;
+      if (!result) { return false; }
+      // onMouseMove
+      if (isInside) {
+        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y);
+        if (!child.onMouseMove(e2)) { return false; }
+      }
+      child.isInsideBuffer = isInside;
+      if (!result) { return false; }
+    }
+    return true;
+  }
+
+  public onMouseDown(e: PonMouseEvent): boolean {
+    for (let i = this.children.length - 1; i >= 0; i--) {
+      let child: BaseLayer = this.children[i];
+      if (this.isInsideOfChildLayer(child, e.x, e.y)) {
+        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y);
+        if (!child.onMouseDown(e2)) { return false; }
+      }
+    }
+    console.log("onMouseDown", this.name, e);
+    return true;
+  }
+
+  public onMouseUp(e: PonMouseEvent): boolean {
+    for (let i = this.children.length - 1; i >= 0; i--) {
+      let child: BaseLayer = this.children[i];
+      if (this.isInsideOfChildLayer(child, e.x, e.y)) {
+        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y);
+        if (!child.onMouseUp(e2)) { return false; }
+      }
+    }
+    console.log("onMouseUp", this.name, e);
+    return true;
   }
 
   /**

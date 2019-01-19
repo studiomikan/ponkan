@@ -50,27 +50,35 @@ export class PonGame {
   }
 
   private loop(): void {
-    if (!this.loopFlag) { return; }
+    try {
+      if (!this.loopFlag) { return; }
+      const tick: number = Date.now();
 
-    const tick: number = Date.now();
+      if (tick - this.fpsPreTick >= 1000) {
+        this.fps = this.fpsCount;
+        this.fpsPreTick = tick;
+        this.fpsCount = 0;
+        // console.log(this.fps);
+      }
 
-    if (tick - this.fpsPreTick >= 1000) {
-      this.fps = this.fpsCount;
-      this.fpsPreTick = tick;
-      this.fpsCount = 0;
-      // console.log(this.fps);
+      this.update(tick);
+      this.renderer.draw(tick);
+
+      this.loopCount++;
+      this.fpsCount++;
+      window.requestAnimationFrame(() => this.loop());
+    } catch (e) {
+      this.error(e);
     }
-
-    this.update(tick);
-    this.renderer.draw(tick);
-
-    this.loopCount++;
-    this.fpsCount++;
-    window.requestAnimationFrame(() => this.loop());
   }
 
   protected update(tick: number): void {
     // should to override
+  }
+
+  public error(e: Error): void {
+    Logger.error(e);
+    alert(e.message);
   }
 
   public clearLayer() {
@@ -99,9 +107,9 @@ export class PonGame {
     canvas.addEventListener("mouseup", (e) => this.onMouseUp(new PonMouseEvent(e)));
   }
 
-  protected onMouseEnter(e: PonMouseEvent) { /* TODO 実装 */}
-  protected onMouseLeave(e: PonMouseEvent) { /* TODO 実装 */}
-  protected onMouseMove(e: PonMouseEvent) { /* TODO 実装 */}
-  protected onMouseDown(e: PonMouseEvent) { /* TODO 実装 */}
-  protected onMouseUp(e: PonMouseEvent) { /* TODO 実装 */}
+  public onMouseEnter(e: PonMouseEvent): boolean { return true; }
+  public onMouseLeave(e: PonMouseEvent): boolean { return true; }
+  public onMouseMove(e: PonMouseEvent): boolean { return true; }
+  public onMouseDown(e: PonMouseEvent): boolean { return true; }
+  public onMouseUp(e: PonMouseEvent): boolean { return true; }
 }

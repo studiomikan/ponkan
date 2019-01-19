@@ -5,8 +5,6 @@ import { Script } from "./script";
 import { Tag } from "./tag";
 
 export interface IConductorEvent {
-  onConductError(messages: string[]): void;
-  // onLoadScript(): void;
   onLabel(labelName: string, tick: number): "continue" | "break";
   onJs(js: string, printFlag: boolean, tick: number): "continue" | "break";
   onTag(tag: Tag, tick: number): "continue" | "break";
