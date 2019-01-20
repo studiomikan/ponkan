@@ -14,7 +14,9 @@ export class Conductor {
   protected resource: Resource;
   protected eventCallbacks: IConductorEvent;
   protected script: Script;
-  protected status: "stop" | "run" | "sleep" = "stop";
+  protected _status: "stop" | "run" | "sleep" = "stop";
+  public get status(): "stop" | "run" | "sleep" { return this._status; }
+
   protected sleepStartTick: number = -1;
   protected sleepTime: number = -1;
 
@@ -36,11 +38,11 @@ export class Conductor {
   }
 
   public conduct(tick: number): void {
-    if (this.status === "stop") { return; }
+    if (this._status === "stop") { return; }
 
     // スリープ処理
     // スリープ中ならretur、終了していたときは後続処理へ進む
-    if (this.status === "sleep") {
+    if (this._status === "sleep") {
       const elapsed: number = tick - this.sleepStartTick;
       if (elapsed < this.sleepTime) {
         return;
@@ -49,25 +51,30 @@ export class Conductor {
       }
     }
 
-    let tag: Tag | null = this.script.getNextTag();
-    if (tag == null) {
-      this.stop();
-      return;
-    } else {
-      tag = tag.clone();
-    }
+    while (true) {
+      let tag: Tag | null = this.script.getNextTag();
+      if (tag == null) {
+        this.stop();
+        return;
+      } else {
+        tag = tag.clone();
+      }
 
-    this.applyJsEntity(tag.values);
-    switch (tag.name) {
-      case "__label__":
-        this.eventCallbacks.onLabel(tag.values.__body__, tick);
-        break;
-      case "__js__":
-        this.eventCallbacks.onJs(tag.values.__body__, tag.values.print, tick);
-        break;
-      default:
-        this.eventCallbacks.onTag(tag, tick);
-        break;
+      this.applyJsEntity(tag.values);
+      let tagReturnValue: "continue" | "break";
+      switch (tag.name) {
+        case "__label__":
+          tagReturnValue = this.eventCallbacks.onLabel(tag.values.__body__, tick);
+          break;
+        case "__js__":
+          tagReturnValue = this.eventCallbacks.onJs(tag.values.__body__, tag.values.print, tick);
+          break;
+        default:
+          tagReturnValue = this.eventCallbacks.onTag(tag, tick);
+          break;
+      }
+
+      if (tagReturnValue === "break") { break; }
     }
   }
 
@@ -77,14 +84,14 @@ export class Conductor {
         const value: string = "" + values[key] as string;
         if (value.indexOf("&") === 0 && value.length >= 2) {
           const js: string = value.substring(1);
-          values[key] = "" + this.resource.evalJs(js);
+          values[key] = this.resource.evalJs(js);
         }
       }
     }
   }
 
   public start(): "continue" | "break" {
-    this.status = "run";
+    this._status = "run";
     this.sleepTime = -1;
     this.sleepStartTick = -1;
     Logger.debug("Conductor start.");
@@ -92,13 +99,13 @@ export class Conductor {
   }
 
   public stop(): "continue" | "break" {
-    this.status = "stop";
+    this._status = "stop";
     Logger.debug("Conductor stop.");
     return "break"
   }
 
   public sleep(tick: number, sleepTime: number): "continue" | "break"  {
-    this.status = "sleep";
+    this._status = "sleep";
     this.sleepStartTick = tick;
     this.sleepTime = sleepTime;
     Logger.debug("Conductor sleep.", sleepTime);

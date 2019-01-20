@@ -1,10 +1,28 @@
 # ゲームの開始スクリプト
 
 ;image {"lay": 0, "page": "fore", "file": "okayu.jpg", "visible": true, "x": 0, "y": 0}
+# ;layopt {"lay": 0, "width": 200}
+
+
 ;meslay {"lay": 2}
 ;layopt {"lay": "mes", "visible": true, "x": 100, "y": 100, "width": 400, "height": 200 }
 ;fillcolor {"lay": "mes", "color": "0xFF0000", "alpha": 0.5 }
-あいうえおあいうえお
+あいうえお
 ;ch {"text": "hoge", "wait": "400"}
-かきくけこかきくけこ
+
+---
+tv.lineBreakFrames = [];
+for (var i = 0; i < 16; i++) {
+  tv.lineBreakFrames.push({"x": 24 * i, "y": 0});
+}
+for (var i = 1; i < 15; i++) {
+  tv.lineBreakFrames.push({"x": 360 - 24 * i, "y": 0});
+}
+console.log(tv.lineBreakFrames);
+---
+;fillcolor {"lay": 1, "color": "0x00FF00", "alpha": 0.5 }
+;image {"lay": 1, "file": "linebreak.png", "visible": true, "x": 300, "y": 0}
+;frameanim {"lay": 1, "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.lineBreakFrames"}
+;startframeanim {"lay": 1}
+# かきくけこかきくけこ
 ;s

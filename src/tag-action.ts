@@ -8,14 +8,14 @@ import { Ponkan3 } from "./ponkan3";
 
 export class TagValue {
   public name: string;
-  public type: "number" | "boolean" | "string";
+  public type: "number" | "boolean" | "string" | "array" | "object";
   public required: boolean;
   public defaultValue: any;
   public comment: string;
 
   public constructor(
     name: string,
-    type: "number" | "boolean" | "string",
+    type: "number" | "boolean" | "string" | "array" | "object",
     required: boolean,
     defaultValue: any,
     comment: string) {
@@ -47,38 +47,45 @@ export class TagAction {
 
 export function generateTagActions(p: Ponkan3): TagAction[] {
   return [
+    // ======================================================================
+    // その他
+    // ======================================================================
     new TagAction(
       "s",
       "スクリプトの実行を停止する",
       [],
       (values, tick) => {
         p.conductor.stop();
+        p.skipMode = "invalid"
         return "break";
       },
     ),
+    // ======================================================================
+    // メッセージ関係
+    // ======================================================================
     new TagAction(
       "ch",
       "文字を出力する",
       [
-        new TagValue("text", "string", true, null, "出力する文字"),
-        new TagValue("wait", "number", false, null, "文字出力後に待つ時間(ms)"),
+        new TagValue("text", "string", true, null, "出力する文字")
       ],
       (values, tick) => {
-        p.conductor.stop();
         p.messageLayer.addChar(values.text);
-        if (values.wait != null) {
-          return p.conductor.sleep(tick, values.wait);
-        } else {
+        if (p.skipMode === "invalid") {
           return p.conductor.sleep(tick, p.textSpeed);
+        } else {
+          return "continue";
         }
       },
     ),
+    // ======================================================================
+    // レイヤー関係
+    // ======================================================================
     new TagAction(
       "meslay",
       "メッセージレイヤーを指定する",
       [
-        new TagValue("lay", "number", true, null, "対象レイヤー"),
-        new TagValue("page", "string", false, "fore", "対象ページ"),
+        new TagValue("lay", "number", true, null, "対象レイヤー")
       ],
       (values, tick) => {
         let lay: number = +values.lay;
@@ -86,9 +93,27 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           throw new Error("メッセージレイヤーの指定が範囲外です");
         }
         p.messageLayerNum = lay;
+        // TODO メッセージレイヤの初期化
         return "continue";
       },
     ),
+    // new TagAction(
+    //   "breaklay",
+    //   "グリフに使用するレイヤーを指定する",
+    //   [
+    //     new TagValue("pagebreak", "number", false, null, "ページ末グリフのレイヤー"),
+    //     new TagValue("linebreak", "number", false, null, "行末グリフのレイヤー")
+    //   ],
+    //   (values, tick) => {
+    //     if (values.pagebreak != null && !isNaN(+values.pagebreak)) {
+    //       p.pageBreakLayerNum = +values.pagebreak;
+    //     }
+    //     if (values.linebreak != null && !isNaN(+values.linebreak)) {
+    //       p.lineBreakLayerNum = +values.linebreak;
+    //     }
+    //     return "continue";
+    //   },
+    // ),
     new TagAction(
       "fillcolor",
       "レイヤーを塗りつぶす",
@@ -158,6 +183,42 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           p.error(new Error("画像読み込みに失敗しました。"));
         });
         return p.conductor.stop();
+      },
+    ),
+    // ======================================================================
+    // アニメーション関係
+    // ======================================================================
+    new TagAction(
+      "frameanim",
+      "フレームアニメーションを設定する",
+      [
+        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("page", "string", false, "fore", "対象ページ"),
+        new TagValue("loop", "boolean", false, false, "アニメーションをループさせるかどうか"),
+        new TagValue("time", "number", true, null, "1フレームの時間"),
+        new TagValue("width", "number", true, null, "1フレームの幅"),
+        new TagValue("height", "number", true, null, "1フレームの高さ"),
+        new TagValue("frames", "array", true, null, "フレーム指定"),
+      ],
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          layer.initFrameAnim(values.loop, values.time, values.width, values.height, values.frames);
+        });
+        return "continue";
+      },
+    ),
+    new TagAction(
+      "startframeanim",
+      "フレームアニメーションを開始する",
+      [
+        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("page", "string", false, "fore", "対象ページ"),
+      ],
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          layer.startFrameAnim(tick);
+        });
+        return "continue";
       },
     ),
   ];

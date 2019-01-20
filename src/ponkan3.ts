@@ -8,8 +8,12 @@ import { PonLayer } from "./layer/pon-layer";
 import { generateTagActions, TagAction, TagValue } from "./tag-action";
 
 export class Ponkan3 extends PonGame implements IConductorEvent {
+  // conductor
   protected _conductor: Conductor;
   public get conductor(): Conductor { return this._conductor; }
+  public skipMode: "invalid" | "nextclick" | "linebreak" | "pagebreak" | "tag" | "force" = "invalid"
+  /** タグで開始したスキップモードをクリックで停止できるかどうか */
+  public canStopSkipByTag: boolean = false;
 
   // タグ関係
   protected tagActions: any = {};
@@ -89,6 +93,8 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   protected update(tick: number): void {
     this.conductor.conduct(tick);
+    this.forePrimaryLayer.update(tick);
+    this.backPrimaryLayer.update(tick);
   }
 
   public error(e: Error): void {
@@ -109,7 +115,24 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     return this.forePrimaryLayer.onMouseDown(e);
   }
   public onMouseUp(e: PonMouseEvent): boolean  {
-    return this.forePrimaryLayer.onMouseUp(e);
+    if (!this.forePrimaryLayer.onMouseUp(e)) {
+      alert("fore is false");
+      return false;
+    }
+
+    // コンダクターのスリープを解除する。
+    // テキスト出力のウェイト、waitタグでのスリープ等を解除する。
+    // TODO canskipタグの判定必要か検討する
+    if (this.conductor.status === "sleep") {
+      this.conductor.start();
+      this.skipMode = "nextclick"
+    }
+    // skipタグで開始されたスキップモードを停止する
+    if (this.skipMode === "tag" && this.canStopSkipByTag) {
+      this.skipMode = "invalid"
+    }
+
+    return true;
   }
 
   // =========================================================
@@ -138,7 +161,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
           case "number":
             tag.values[def.name] = +str;
             if (isNaN(tag.values[def.name])) {
-              throw new Error(`${tag.name}タグの${def.name}を数値に変換できませんでした。(${str})`);
+              throw new Error(`${tag.name}タグの${def.name}を数値に変換できませんでした(${str})`);
             }
             break;
           case "boolean":
@@ -146,6 +169,22 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
             break;
           case "string":
             tag.values[def.name] = str;
+            break;
+          case "array":
+            // Logger.debug(Array.isArray(value));
+            // Logger.debug(typeof value);
+            if (!Array.isArray(value)) {
+              Logger.debug(value);
+              throw new Error(`${tag.name}タグの${def.name}は配列である必要があります`);
+            }
+            tag.values[def.name] = value;
+            break;
+          case "object":
+            if (typeof value !== "object" || Array.isArray(value)) {
+              Logger.debug(value);
+              throw new Error(`${tag.name}タグの${def.name}はオブジェクトである必要があります`);
+            }
+            tag.values[def.name] = value;
             break;
         }
       }
@@ -160,6 +199,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     const tagAction: TagAction = this.tagActions[tag.name];
     if (tagAction === null || tagAction === undefined) {
       // TODO エラーにする
+      Logger.debug("Unknown Tag: ", tag.name, tag);
       return "break";
     }
     this.castTagValues(tag, tagAction);

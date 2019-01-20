@@ -89,7 +89,7 @@ export class PonGame {
     this.layers = [];
   }
 
-  public addLayer(layer: BaseLayer) {
+  public addLayer(layer: any) {
     // console.log(layer);
     this.layers.push(layer);
     this.renderer.addContainer(layer.container);

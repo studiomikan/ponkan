@@ -79,6 +79,11 @@ export class BaseLayer implements IPonSpriteCallbacks {
   public get backgroundColor(): number { return this.backgroundColor; }
   public get backgroundAlpha(): number { return this.backgroundAlpha; }
 
+  public get imageX(): number { return this.imageSprite === null ? 0 : this.imageSprite.x; }
+  public set imageX(imageX: number) { if (this.imageSprite !== null) { this.imageSprite.x = imageX; } }
+  public get imageY(): number { return this.imageSprite === null ? 0 : this.imageSprite.y; }
+  public set imageY(imageY: number) { if (this.imageSprite !== null) { this.imageSprite.y = imageY; } }
+
   public constructor(name: string, r: Resource) {
     this.r = r;
     this.name = name;
@@ -142,6 +147,12 @@ export class BaseLayer implements IPonSpriteCallbacks {
 
   public child(index: number): BaseLayer {
     return this.children[index];
+  }
+
+  public update(tick: number): void {
+    this.children.forEach((child) => {
+      child.update(tick);
+    });
   }
 
   /**
@@ -310,11 +321,13 @@ export class BaseLayer implements IPonSpriteCallbacks {
     const height = this.height;
     this.r.loadImage(filePath).done((image) => {
       Logger.debug("BaseLayer.loadImage success: ", image);
-      this.image = image as HTMLImageElement;
+      this.image = <HTMLImageElement> image;
       this.imageSprite = new PonSprite(this, 1);
       this.imageSprite.setImage(image);
       this.width = image.width;
       this.height = image.height;
+      this.imageX = 0;
+      this.imageY = 0;
       cb.callDone(this);
     }).fail(() => {
       Logger.debug("BaseLayer.loadImage fail: ");
