@@ -38,13 +38,15 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public get messageLayerNum(): number { return this._messageLayerNum; }
   public set messageLayerNum(num: number) { this._messageLayerNum = num; }
 
-  protected _lineBreakLayerNum : number = 21;
-  public get lineBreakLayerNum(): number { return this._lineBreakLayerNum; }
-  public set lineBreakLayerNum(num: number) { this._lineBreakLayerNum = num; }
+  protected _lineBreakGlyphLayerNum : number = 21;
+  public get lineBreakGlyphLayerNum(): number { return this._lineBreakGlyphLayerNum; }
+  public set lineBreakGlyphLayerNum(num: number) { this._lineBreakGlyphLayerNum = num; }
+  public lineBreakGlyphPos: "eol" | "fixed" = "eol";
 
-  protected _pageBreakLayerNum : number = 22;
-  public get pageBreakLayerNum(): number { return this._pageBreakLayerNum; }
-  public set pageBreakLayerNum(num: number) { this._pageBreakLayerNum = num; }
+  protected _pageBreakGlyphLayerNum : number = 22;
+  public get pageBreakGlyphLayerNum(): number { return this._pageBreakGlyphLayerNum; }
+  public set pageBreakGlyphLayerNum(num: number) { this._pageBreakGlyphLayerNum = num; }
+  public pageBreakGlyphPos: "eol" | "fixed" = "eol";
 
   public textSpeed: number = 100;
 
@@ -221,7 +223,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     if (tagAction === null || tagAction === undefined) {
       Logger.debug("Unknown Tag: ", tag.name, tag);
       if (this.raiseError.unknowntag) {
-        throw new Error(`${tag.name}タグは存在しません`);
+        throw new Error(`${tag.name}というタグは存在しません`);
       } else {
         return "continue";
       }
@@ -256,10 +258,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     // TODO 文字出力など
     return "continue";
   }
-
-  // =========================================================
-  // メッセージ
-  // =========================================================
 
   // =========================================================
   // レイヤ
@@ -339,9 +337,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     } else if (lay == "mes" || lay == "message") {
       targetLayers.push(pageLayers[this.messageLayerNum]);
     } else if (lay == "linebreak") {
-      targetLayers.push(pageLayers[this.lineBreakLayerNum]);
+      targetLayers.push(pageLayers[this.lineBreakGlyphLayerNum]);
     } else if (lay == "pagebreak") {
-      targetLayers.push(pageLayers[this.pageBreakLayerNum]);
+      targetLayers.push(pageLayers[this.pageBreakGlyphLayerNum]);
     } else {
       const layerNum: number = parseInt(lay, 10);
       if (layerNum < 0 || this.layerCount <= layerNum) {
@@ -368,6 +366,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     return this.getTargetLayers(pageLayers, lay);
   }
 
+  // =========================================================
+  // メッセージ
+  // =========================================================
   /**
    * メッセージレイヤ（表）
    */
@@ -375,13 +376,32 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     return this.foreLayers[this.messageLayerNum];
   }
 
-  public get lineBreakLayer(): PonLayer {
-    return this.foreLayers[this.lineBreakLayerNum];
+  public get lineBreakGlyphLayer(): PonLayer {
+    return this.foreLayers[this.lineBreakGlyphLayerNum];
   }
 
-  public get pageBreakLayer(): PonLayer {
-    return this.foreLayers[this.pageBreakLayerNum];
+  public get pageBreakGlyphLayer(): PonLayer {
+    return this.foreLayers[this.pageBreakGlyphLayerNum];
   }
+
+  public showLineBreakGlyph(tick: number): void {
+    let lay = this.lineBreakGlyphLayer;
+    let pos = this.lineBreakGlyphPos;
+    let mesLay = this.messageLayer;
+    if (pos == "eol") {
+      let glyphPos = mesLay.getNextTextPos(lay.width);
+      lay.x = mesLay.x + glyphPos.x;
+      lay.y = mesLay.y + glyphPos.y + mesLay.textLineHeight - lay.height;
+      console.log (pos, glyphPos, lay.x, lay.y);
+    }
+    if (lay.hasFrameAnim) {
+      lay.stopFrameAnim();
+      lay.startFrameAnim(tick);
+    }
+    lay.visible = true;
+    console.log(lay);
+  }
+
 
 }
 

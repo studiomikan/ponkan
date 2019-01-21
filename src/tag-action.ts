@@ -111,6 +111,18 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       }
     ),
+    new TagAction(
+      "lb",
+      "行末クリック待ちで停止する",
+      [
+        // TOOD canskip
+      ],
+      (values, tick) => {
+        // TODO 停止
+        p.showLineBreakGlyph(tick);
+        return p.conductor.stop();
+      }
+    ),
     // ======================================================================
     // レイヤー関係
     // ======================================================================
@@ -134,15 +146,21 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "breaklay",
       "グリフに使用するレイヤーを指定する",
       [
+        new TagValue("linebreak", "number", false, null, "行末グリフのレイヤー"),
         new TagValue("pagebreak", "number", false, null, "ページ末グリフのレイヤー"),
-        new TagValue("linebreak", "number", false, null, "行末グリフのレイヤー")
+        new TagValue("linepos", "string", false, null,
+          `行末グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。`),
+        new TagValue("pagepos", "string", false, null,
+          `ページ末グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。`),
       ],
       (values, tick) => {
-        if (values.pagebreak != null && !isNaN(+values.pagebreak)) {
-          p.pageBreakLayerNum = +values.pagebreak;
+        if (values.pagebreak != null) { p.pageBreakGlyphLayerNum = values.pagebreak; }
+        if (values.linebreak != null) { p.lineBreakGlyphLayerNum = values.linebreak; }
+        if (values.pagepos != null && (values.pagepos == "eol" || values.pagepos == "fixed")) {
+          p.pageBreakGlyphPos = values.pagepos;
         }
-        if (values.linebreak != null && !isNaN(+values.linebreak)) {
-          p.lineBreakLayerNum = +values.linebreak;
+        if (values.linepos != null && (values.linepos == "eol" || values.linepos == "fixed")) {
+          p.lineBreakGlyphPos = values.linepos;
         }
         return "continue";
       },

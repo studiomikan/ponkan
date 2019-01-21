@@ -38,24 +38,24 @@ export class BaseLayer implements IPonSpriteCallbacks {
 
   // 文字関係
   protected textSprites: PonSprite[] = [];
-  protected textStyle: PIXI.TextStyle = new PIXI.TextStyle({
+  public textStyle: PIXI.TextStyle = new PIXI.TextStyle({
     // fontFamily: 'monospace',
     fontSize: 24,
     fontWeight: "normal",
     fill: 0xffffff,
   });
-  protected textMarginTop: number = 10;
-  protected textMarginRight: number  = 10;
-  protected textMarginBottom: number  = 10;
-  protected textMarginLeft: number  = 10;
+  public textMarginTop: number = 10;
+  public textMarginRight: number  = 10;
+  public textMarginBottom: number  = 10;
+  public textMarginLeft: number  = 10;
   /** 次の文字を描画する予定の位置。予定であって、自動改行等が発生した場合は次の行になるため注意。 */
-  protected textX: number  = this.textMarginLeft;
+  public textX: number  = this.textMarginLeft;
   /** 次の文字を描画する予定の位置。予定であって、自動改行等が発生した場合は次の行になるため注意。 */
-  protected textY: number  = this.textMarginTop;
-  protected textLineHeight: number  = 24;
-  protected textLinePitch: number  = 5;
-  protected textAutoReturn: boolean = true;
-  protected textIndentPoint: number = 0;
+  public textY: number  = this.textMarginTop;
+  public textLineHeight: number  = 24;
+  public textLinePitch: number  = 5;
+  public textAutoReturn: boolean = true;
+  public textIndentPoint: number = 0;
 
   public get children(): BaseLayer[] { return this._children; }
   public get container(): PIXI.Container { return this._container; }
@@ -268,13 +268,32 @@ export class BaseLayer implements IPonSpriteCallbacks {
     this.textSprites.push(sp);
     sp.createText(ch, this.textStyle);
 
-    if (this.textAutoReturn && (this.textX + sp.width + this.textMarginRight) > this.width) {
-      // 文字がレイヤをはみ出すので、自動改行する。
-      this.addTextReturn();
-    }
+    let pos = this.getNextTextPos(sp.width);
+    this.textX = pos.x;
+    this.textY = pos.y;
+    
     sp.x = this.textX;
     sp.y = this.textY + this.textLineHeight - fontSize;
     this.textX += sp.width;
+  }
+
+  /**
+   * 次の文字の表示位置を取得する
+   * @param chWidth 追加しようとしている文字の横幅
+   * @return 表示位置
+   */
+  public getNextTextPos(chWidth: number): {x: number, y: number} {
+    let x = this.textX;
+    let y = this.textY;
+    if (this.textAutoReturn && (x + chWidth + this.textMarginRight) > this.width) {
+      if (this.textIndentPoint !== 0) {
+        x = this.textIndentPoint;
+      } else {
+        x = this.textMarginLeft;
+      }
+      y = this.textLineHeight + this.textLinePitch;
+    }
+    return {x: x, y: y};
   }
 
   /**

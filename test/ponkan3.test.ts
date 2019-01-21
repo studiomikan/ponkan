@@ -37,13 +37,13 @@ describe("Ponkan3のテスト", function() {
       let layers: PonLayer[] = ponkan.getLayers({lay: "linebreak"});
       assert.isNotEmpty(layers);
       assert.equal(layers.length, 1);
-      assert.equal(layers[0].name, ponkan.lineBreakLayer.name);
+      assert.equal(layers[0].name, ponkan.lineBreakGlyphLayer.name);
     });
     it("page", function() {
       let layers: PonLayer[] = ponkan.getLayers({lay: "pagebreak"});
       assert.isNotEmpty(layers);
       assert.equal(layers.length, 1);
-      assert.equal(layers[0].name, ponkan.pageBreakLayer.name);
+      assert.equal(layers[0].name, ponkan.pageBreakGlyphLayer.name);
     });
     it("fore 5", function() {
       let layers: PonLayer[] = ponkan.getLayers({page: "fore", lay: 5});

@@ -28,6 +28,14 @@ export class FrameAnimLayer extends BaseLayer {
     this.frameAnimFrames = frames;
   }
 
+  public get hasFrameAnim(): boolean {
+    return this.frameAnimFrames.length !== 0;
+  }
+
+  public get frameAnimRunning(): boolean {
+    return this.frameAnimState === "run";
+  }
+
   public startFrameAnim(tick: number): void {
     if (this.frameAnimFrames.length === 0) {
       throw new Error("アニメーション定義が未定義です");
@@ -55,7 +63,7 @@ export class FrameAnimLayer extends BaseLayer {
    */
   public update(tick: number): void {
     super.update(tick);
-    if (this.frameAnimState === "run") {
+    if (this.frameAnimRunning) {
       let start = this.frameAnimStartTick;
       let time = this.frameAnimTime;
       let frames = this.frameAnimFrames;
