@@ -63,13 +63,13 @@ export class BaseLayer implements IPonSpriteCallbacks {
   public set x(x) { this.container.x = x; }
   public get y(): number { return this.container.y; }
   public set y(y) { this.container.y = y; }
-  public get width(): number { return this.container.width; }
+  public get width(): number { return this.maskSprite.width; }
   public set width(width: number) {
-    this.container.width = this.maskSprite.width = this.backgroundSprite.width = width;
+    this.maskSprite.width = this.backgroundSprite.width = width;
   }
-  public get height(): number { return this.container.height; }
+  public get height(): number { return this.maskSprite.height; }
   public set height(height: number) {
-    this.container.height = this.maskSprite.height = this.backgroundSprite.height = height;
+    this.maskSprite.height = this.backgroundSprite.height = height;
   }
   public get visible(): boolean { return this.container.visible; }
   public set visible(visible: boolean) { this.container.visible = visible; }
@@ -135,6 +135,10 @@ export class BaseLayer implements IPonSpriteCallbacks {
     return childLayer;
   }
 
+  /**
+   * 子レイヤーを削除する。
+   * 管理から削除されるだけで、レイヤー自体は初期化されたりしない。
+   */
   public deleteChildLayer(childLayer: BaseLayer): void {
     const tmp: BaseLayer[] = [];
     this.children.forEach((child) => {

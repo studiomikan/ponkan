@@ -51,6 +51,28 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // その他
     // ======================================================================
     new TagAction(
+      "laycount",
+      "レイヤーの数を変更する",
+      [
+        new TagValue("count", "number", true, null, "レイヤー数")
+      ],
+      (values, tick) => {
+        p.layerCount = values.count;
+        return "continue";
+      }
+    ),
+    new TagAction(
+      "raiseerror",
+      "エラーを発生させるかどうかの設定",
+      [
+        new TagValue("unknowntag", "boolean", false, null, "存在しないタグを実行したときにエラーにする")
+      ],
+      (values, tick) => {
+        if (values.unknowntag != null) { p.raiseError.unknowntag = values.unknowntag; }
+        return "continue";
+      }
+    ),
+    new TagAction(
       "s",
       "スクリプトの実行を停止する",
       [],
@@ -58,7 +80,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         p.conductor.stop();
         p.skipMode = "invalid"
         return "break";
-      },
+      }
     ),
     // ======================================================================
     // メッセージ関係
@@ -76,13 +98,24 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         } else {
           return "continue";
         }
-      },
+      }
+    ),
+    new TagAction(
+      "textspeed",
+      "文字出力のインターバルを設定",
+      [
+        new TagValue("time", "number", true, null, "インターバル時間(ms)")
+      ],
+      (values, tick) => {
+        p.textSpeed = values.time;
+        return "continue";
+      }
     ),
     // ======================================================================
     // レイヤー関係
     // ======================================================================
     new TagAction(
-      "meslay",
+      "messagelay",
       "メッセージレイヤーを指定する",
       [
         new TagValue("lay", "number", true, null, "対象レイヤー")
@@ -97,23 +130,23 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    // new TagAction(
-    //   "breaklay",
-    //   "グリフに使用するレイヤーを指定する",
-    //   [
-    //     new TagValue("pagebreak", "number", false, null, "ページ末グリフのレイヤー"),
-    //     new TagValue("linebreak", "number", false, null, "行末グリフのレイヤー")
-    //   ],
-    //   (values, tick) => {
-    //     if (values.pagebreak != null && !isNaN(+values.pagebreak)) {
-    //       p.pageBreakLayerNum = +values.pagebreak;
-    //     }
-    //     if (values.linebreak != null && !isNaN(+values.linebreak)) {
-    //       p.lineBreakLayerNum = +values.linebreak;
-    //     }
-    //     return "continue";
-    //   },
-    // ),
+    new TagAction(
+      "breaklay",
+      "グリフに使用するレイヤーを指定する",
+      [
+        new TagValue("pagebreak", "number", false, null, "ページ末グリフのレイヤー"),
+        new TagValue("linebreak", "number", false, null, "行末グリフのレイヤー")
+      ],
+      (values, tick) => {
+        if (values.pagebreak != null && !isNaN(+values.pagebreak)) {
+          p.pageBreakLayerNum = +values.pagebreak;
+        }
+        if (values.linebreak != null && !isNaN(+values.linebreak)) {
+          p.lineBreakLayerNum = +values.linebreak;
+        }
+        return "continue";
+      },
+    ),
     new TagAction(
       "fillcolor",
       "レイヤーを塗りつぶす",

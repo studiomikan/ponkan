@@ -8,7 +8,10 @@
 <div id="game"></div>
 <script src="./ponkan3.js"></script>
 <script>
-var ponkan = new Ponkan3("game");
+var ponkan = new Ponkan3("game", {
+  "width": 1024,
+  "height": 576,
+});
 ponkan.start();
 </script>
 </body>

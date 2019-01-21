@@ -8,6 +8,11 @@ import { PonLayer } from "./layer/pon-layer";
 import { generateTagActions, TagAction, TagValue } from "./tag-action";
 
 export class Ponkan3 extends PonGame implements IConductorEvent {
+  // ゲーム設定
+  public raiseError: any = {
+    unknowntag: true
+  };
+
   // conductor
   protected _conductor: Conductor;
   public get conductor(): Conductor { return this._conductor; }
@@ -19,24 +24,36 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   protected tagActions: any = {};
 
   // レイヤ関係
-  protected _layerCount: number = 40;
+  protected _layerCount: number = 20;
   public get layerCount(): number { return this._layerCount; }
+  // public set layerCount(layerCount: number) { this._layerCount = layerCount; }
   public forePrimaryLayer: PonLayer;
   public backPrimaryLayer: PonLayer;
-  public foreLayers: PonLayer[] = [];
-  public backLayers: PonLayer[] = [];
+  public get foreLayers(): PonLayer[] { return <PonLayer[]> this.forePrimaryLayer.children; } 
+  public get backLayers(): PonLayer[] { return <PonLayer[]> this.backPrimaryLayer.children; } 
   public currentPage: "fore" | "back" = "fore";
 
   // メッセージ関係
-  public messageLayerNum: number = 20;
+  protected _messageLayerNum: number = 20;
+  public get messageLayerNum(): number { return this._messageLayerNum; }
+  public set messageLayerNum(num: number) { this._messageLayerNum = num; }
+
+  protected _lineBreakLayerNum : number = 21;
+  public get lineBreakLayerNum(): number { return this._lineBreakLayerNum; }
+  public set lineBreakLayerNum(num: number) { this._lineBreakLayerNum = num; }
+
+  protected _pageBreakLayerNum : number = 22;
+  public get pageBreakLayerNum(): number { return this._pageBreakLayerNum; }
+  public set pageBreakLayerNum(num: number) { this._pageBreakLayerNum = num; }
+
   public textSpeed: number = 100;
 
   public get tmpVar(): object { return this.resource.tmpVar; }
   public get gameVar(): object { return this.resource.gameVar; }
   public get systemVar(): object { return this.resource.systemVar; }
 
-  public constructor(parentId: string) {
-    super(parentId);
+  public constructor(parentId: string, config: any = {}) {
+    super(parentId, config);
     this._conductor = new Conductor(this.resource, this);
 
     this.initTagAction();
@@ -101,6 +118,10 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.conductor.stop();
     super.error(e);
   }
+
+  // =========================================================
+  // マウス
+  // =========================================================
 
   public onMouseEnter(e: PonMouseEvent): boolean  {
     return this.forePrimaryLayer.onMouseEnter(e);
@@ -198,9 +219,12 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     Logger.debug("onTag: ", tag.name, tag.values);
     const tagAction: TagAction = this.tagActions[tag.name];
     if (tagAction === null || tagAction === undefined) {
-      // TODO エラーにする
       Logger.debug("Unknown Tag: ", tag.name, tag);
-      return "break";
+      if (this.raiseError.unknowntag) {
+        throw new Error(`${tag.name}タグは存在しません`);
+      } else {
+        return "continue";
+      }
     }
     this.castTagValues(tag, tagAction);
     tagAction.values.forEach((def: TagValue) => {
@@ -234,6 +258,10 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   // =========================================================
+  // メッセージ
+  // =========================================================
+
+  // =========================================================
   // レイヤ
   // =========================================================
   private initLayers() {
@@ -244,11 +272,32 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       primaryLayer.height = this.height;
     });
     for (let i = 0; i < this.layerCount; i++) {
-      this.foreLayers[i] = this.createLayer(`fore layer ${i}`);
-      this.forePrimaryLayer.addChild(this.foreLayers[i]);
-      this.backLayers[i] = this.createLayer(`back layer ${i}`);
-      this.backPrimaryLayer.addChild(this.backLayers[i]);
+      this.forePrimaryLayer.addChild(this.createLayer(`fore layer ${i}`));
+      this.backPrimaryLayer.addChild(this.createLayer(`back layer ${i}`));
     }
+  }
+
+  public set layerCount(layerCount: number) {
+    if (layerCount < this._layerCount) {
+      // 減少するとき
+      [this.forePrimaryLayer, this.backPrimaryLayer].forEach((primaryLayer) => {
+        let oldList = primaryLayer.children;
+        for (let i = 0; i < oldList.length; i++) {
+          if (i < layerCount) {
+            primaryLayer.addChild(oldList[i]);
+          } else {
+            oldList[i].destroy();
+          }
+        }
+      });
+    } else {
+      // 増加するとき
+      for (let i = this.foreLayers.length; i < layerCount; i++) {
+        this.forePrimaryLayer.addChild(this.createLayer(`fore layer ${i}`));
+        this.backPrimaryLayer.addChild(this.createLayer(`back layer ${i}`));
+      }
+    }
+    this._layerCount = layerCount;
   }
 
   /**
@@ -289,6 +338,10 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       }
     } else if (lay == "mes" || lay == "message") {
       targetLayers.push(pageLayers[this.messageLayerNum]);
+    } else if (lay == "linebreak") {
+      targetLayers.push(pageLayers[this.lineBreakLayerNum]);
+    } else if (lay == "pagebreak") {
+      targetLayers.push(pageLayers[this.pageBreakLayerNum]);
     } else {
       const layerNum: number = parseInt(lay, 10);
       if (layerNum < 0 || this.layerCount <= layerNum) {
@@ -320,6 +373,14 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
    */
   public get messageLayer(): PonLayer {
     return this.foreLayers[this.messageLayerNum];
+  }
+
+  public get lineBreakLayer(): PonLayer {
+    return this.foreLayers[this.lineBreakLayerNum];
+  }
+
+  public get pageBreakLayer(): PonLayer {
+    return this.foreLayers[this.pageBreakLayerNum];
   }
 
 }

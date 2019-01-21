@@ -33,6 +33,18 @@ describe("Ponkan3のテスト", function() {
       assert.equal(layers.length, 1);
       assert.equal(layers[0].name, ponkan.messageLayer.name);
     });
+    it("linebreak", function() {
+      let layers: PonLayer[] = ponkan.getLayers({lay: "linebreak"});
+      assert.isNotEmpty(layers);
+      assert.equal(layers.length, 1);
+      assert.equal(layers[0].name, ponkan.lineBreakLayer.name);
+    });
+    it("page", function() {
+      let layers: PonLayer[] = ponkan.getLayers({lay: "pagebreak"});
+      assert.isNotEmpty(layers);
+      assert.equal(layers.length, 1);
+      assert.equal(layers[0].name, ponkan.pageBreakLayer.name);
+    });
     it("fore 5", function() {
       let layers: PonLayer[] = ponkan.getLayers({page: "fore", lay: 5});
       assert.isNotEmpty(layers);
@@ -75,7 +87,7 @@ describe("Ponkan3のテスト", function() {
       assert.equal(layers[5].name, "fore layer 10");
     });
     it("0-2  ,4-5, mes ", function() {
-      ponkan.messageLayerNum = 10
+      ponkan._messageLayerNum = 10
       let layers: PonLayer[] = ponkan.getLayers({lay: "0-2  ,4-5, mes "});
       assert.isNotEmpty(layers);
       assert.equal(layers.length, 6);
@@ -88,5 +100,3 @@ describe("Ponkan3のテスト", function() {
     });
   });
 });
-
-

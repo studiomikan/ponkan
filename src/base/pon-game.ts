@@ -18,13 +18,18 @@ export class PonGame {
   public get width(): number { return this.renderer.width; }
   public get height(): number { return this.renderer.height; }
 
-  public constructor(parentId: string) {
+  public constructor(parentId: string, config: any = {}) {
     const elm: HTMLElement | null = document.getElementById(parentId);
     if (elm == null) {
       throw new Error(`Not found HTMLElement: ${parentId}`);
     }
     this.resource = new Resource("gamedata");
-    this.renderer = new PonRenderer(elm, 800, 450);
+
+    if (config.width == null || config.height == null) {
+      config.width = 800;
+      config.height = 450;
+    }
+    this.renderer = new PonRenderer(elm, config.width, config.height);
 
     this.initMouseEventOnCanvas();
   }
