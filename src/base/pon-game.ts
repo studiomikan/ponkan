@@ -3,6 +3,7 @@ import { BaseLayer } from "./base-layer";
 import { Logger } from "./logger";
 import { PonMouseEvent } from "./pon-mouse-event";
 import { PonRenderer } from "./pon-renderer";
+import { PonEventHandler } from "./pon-event-handler";
 import { Resource } from "./resource";
 
 export class PonGame {
@@ -17,6 +18,8 @@ export class PonGame {
 
   public get width(): number { return this.renderer.width; }
   public get height(): number { return this.renderer.height; }
+
+  protected eventHandlers: any = {};
 
   public constructor(parentId: string, config: any = {}) {
     const elm: HTMLElement | null = document.getElementById(parentId);
@@ -86,7 +89,7 @@ export class PonGame {
     alert(e.message);
   }
 
-  public clearLayer() {
+  public clearLayer(): void {
     this.layers.forEach((layer) => {
       layer.destroy();
       this.renderer.removeContainer(layer.container);
@@ -94,22 +97,55 @@ export class PonGame {
     this.layers = [];
   }
 
-  public addLayer(layer: any) {
+  public addLayer(layer: BaseLayer): BaseLayer {
     // console.log(layer);
     this.layers.push(layer);
     this.renderer.addContainer(layer.container);
     return layer;
   }
 
+  public addEventHandler(eventName: string, handler: PonEventHandler): void {
+    if (this.eventHandlers[eventName] == null) {
+      this.eventHandlers[eventName] = [];
+    }
+    this.eventHandlers[eventName].push(handler);
+  }
+
+  public trigger(eventName: string, receiver: any): void {
+    let handlers: PonEventHandler[] = this.eventHandlers[eventName];
+    if (handlers == null) { return; }
+    handlers.forEach((h) => {
+      Logger.debug("FIRE! ", eventName, h, receiver);
+      h.fire(receiver);
+    });
+  }
+
+  public clearEventHandler(): void {
+    this.eventHandlers = {};
+  }
+
   private initMouseEventOnCanvas(): void {
     const canvas = this.renderer.canvasElm;
-    console.log(canvas);
-
-    canvas.addEventListener("mouseenter", (e) => this.onMouseEnter(new PonMouseEvent(e)));
-    canvas.addEventListener("mouseleave", (e) => this.onMouseLeave(new PonMouseEvent(e)));
-    canvas.addEventListener("mousemove", (e) => this.onMouseMove(new PonMouseEvent(e)));
-    canvas.addEventListener("mousedown", (e) => this.onMouseDown(new PonMouseEvent(e)));
-    canvas.addEventListener("mouseup", (e) => this.onMouseUp(new PonMouseEvent(e)));
+    canvas.addEventListener("mouseenter", (e) => {
+      try { this.onMouseEnter(new PonMouseEvent(e)); }
+      catch (ex) { this.error(ex); }
+    });
+    canvas.addEventListener("mouseleave", (e) => {
+      try { this.onMouseLeave(new PonMouseEvent(e)); }
+      catch (ex) { this.error(ex); }
+    });
+    canvas.addEventListener("mousemove", (e) => {
+      try { this.onMouseMove(new PonMouseEvent(e)); }
+      catch (ex) { this.error(ex); }
+    });
+    canvas.addEventListener("mousedown", (e) => {
+      try { this.onMouseDown(new PonMouseEvent(e)); }
+      catch (ex) { this.error(ex); }
+    });
+    canvas.addEventListener("mouseup", (e) => {
+      try { this.onMouseUp(new PonMouseEvent(e)); }
+      catch (ex) { this.error(ex); }
+    });
   }
 
   public onMouseEnter(e: PonMouseEvent): boolean { return true; }

@@ -61,9 +61,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.initTagAction();
 
     this.forePrimaryLayer =
-      this.addLayer(new PonLayer("Fore primary layer", this.resource));
+      <PonLayer> this.addLayer(new PonLayer("Fore primary layer", this.resource));
     this.backPrimaryLayer =
-      this.addLayer(new PonLayer("Back primary layer", this.resource));
+      <PonLayer> this.addLayer(new PonLayer("Back primary layer", this.resource));
     this.backPrimaryLayer.visible = false;
     this.initLayers();
 
@@ -154,6 +154,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     if (this.skipMode === "tag" && this.canStopSkipByTag) {
       this.skipMode = "invalid"
     }
+
+    // トリガーを発火
+    this.trigger("click", this);
 
     return true;
   }
@@ -305,7 +308,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
    */
   public createLayer(name: string) {
     const layer = new PonLayer(name, this.resource);
-    this.addLayer(layer);
+    this.addLayer(<BaseLayer>layer);
     return layer;
   }
 
@@ -400,6 +403,19 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     }
     lay.visible = true;
     console.log(lay);
+  }
+
+  public waitClickCallback(param: string) {
+    Logger.debug("waitClickCallback " + param);
+    this.conductor.start();
+    switch (param) {
+      case "lb":
+        this.lineBreakGlyphLayer.visible = false;
+        break;
+      case "pb":
+        this.pageBreakGlyphLayer.visible = false;
+        break;
+    }
   }
 
 

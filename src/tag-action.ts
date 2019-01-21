@@ -4,6 +4,7 @@ import { Logger } from "./base/logger";
 import { Resource } from "./base/resource";
 import { Tag } from "./base/tag";
 import { PonLayer } from "./layer/pon-layer";
+import { PonEventHandler} from "./base/pon-event-handler";
 import { Ponkan3 } from "./ponkan3";
 
 export class TagValue {
@@ -120,6 +121,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       (values, tick) => {
         // TODO 停止
         p.showLineBreakGlyph(tick);
+        p.addEventHandler("click", new PonEventHandler("waitClickCallback", "lb"));
         return p.conductor.stop();
       }
     ),
