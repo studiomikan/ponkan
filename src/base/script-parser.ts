@@ -93,12 +93,14 @@ export class ScriptParser {
       let tagName: string;
       let valuesStr: string;
       let values: any;
-      if (body.indexOf("{") === -1) {
+      let reg = /[{ ]/.exec(body);
+      if (reg == null) {
         tagName = body.substring(0).trim();
         values = {};
       } else {
-        tagName = body.substring(0, body.indexOf("{")).trim();
-        valuesStr = body.substring(body.indexOf("{"));
+        tagName = body.substring(0, reg.index).trim();
+        valuesStr = body.substring(reg.index).trim();
+        if (valuesStr.indexOf("{") !== 0) { valuesStr = `{${valuesStr}}` }
         values = JSON.parse(valuesStr);
       }
       values.__body__ = body;
