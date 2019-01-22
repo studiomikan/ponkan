@@ -87,7 +87,6 @@ describe("Ponkan3のテスト", function() {
       assert.equal(layers[5].name, "fore layer 10");
     });
     it("0-2  ,4-5, mes ", function() {
-      ponkan._messageLayerNum = 10
       let layers: PonLayer[] = ponkan.getLayers({lay: "0-2  ,4-5, mes "});
       assert.isNotEmpty(layers);
       assert.equal(layers.length, 6);

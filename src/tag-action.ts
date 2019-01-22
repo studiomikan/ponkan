@@ -83,6 +83,21 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "break";
       }
     ),
+    new TagAction(
+      "jump",
+      "スクリプトファイルを移動する",
+      [
+        new TagValue("file", "string", false, null, "移動先のスクリプトファイル名。省略時は現在のファイル内で移動する"),
+        new TagValue("label", "string", false, null, "移動先のラベル名。省略時はファイルの先頭")
+      ],
+      (values, tick) => {
+        p.conductor.stop();
+        p.conductor.jump(values.file, values.label).done(() => {
+          p.conductor.start();
+        });
+        return "break";
+      }
+    ),
     // ======================================================================
     // メッセージ関係
     // ======================================================================
@@ -145,25 +160,44 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     new TagAction(
-      "breaklay",
-      "グリフに使用するレイヤーを指定する",
+      "lbglyph",
+      "行末グリフに関して設定する",
       [
-        new TagValue("linebreak", "number", false, null, "行末グリフのレイヤー"),
-        new TagValue("pagebreak", "number", false, null, "ページ末グリフのレイヤー"),
-        new TagValue("linepos", "string", false, null,
-          `行末グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。`),
-        new TagValue("pagepos", "string", false, null,
-          `ページ末グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。`),
+        new TagValue("lay", "number", false, null, "グリフとして使用するレイヤー"),
+        new TagValue("pos", "string", false, null,
+          `グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。` +
+          `"eol"を指定すると文章の末尾に表示。` +
+          `"relative"を指定するとメッセージレイヤとの相対位置で固定表示。` +
+          `"absolute"を指定すると画面上の絶対位置で固定表示。`),
+        new TagValue("x", "number", false, null, "グリフの表示位置（メッセージレイヤーからの相対位置）"),
+        new TagValue("y", "number", false, null, "グリフの表示位置（メッセージレイヤーからの相対位置）"),
       ],
       (values, tick) => {
-        if (values.pagebreak != null) { p.pageBreakGlyphLayerNum = values.pagebreak; }
-        if (values.linebreak != null) { p.lineBreakGlyphLayerNum = values.linebreak; }
-        if (values.pagepos != null && (values.pagepos == "eol" || values.pagepos == "fixed")) {
-          p.pageBreakGlyphPos = values.pagepos;
-        }
-        if (values.linepos != null && (values.linepos == "eol" || values.linepos == "fixed")) {
-          p.lineBreakGlyphPos = values.linepos;
-        }
+        if (values.lay != null) { p.lineBreakGlyphLayerNum = values.lay; }
+        if (values.pos != null) { p.lineBreakGlyphPos = values.pos; }
+        if (values.x != null) { p.lineBreakGlyphX = values.x; }
+        if (values.y != null) { p.lineBreakGlyphY = values.y; }
+        return "continue";
+      },
+    ),
+    new TagAction(
+      "pgglyph",
+      "ページ末グリフに関して設定する",
+      [
+        new TagValue("lay", "number", false, null, "グリフとして使用するレイヤー"),
+        new TagValue("pos", "string", false, null,
+          `グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。` +
+          `"eol"を指定すると文章の末尾に表示。` +
+          `"relative"を指定するとメッセージレイヤとの相対位置で固定表示。` +
+          `"absolute"を指定すると画面上の絶対位置で固定表示。`),
+        new TagValue("x", "number", false, null, "グリフの表示位置（メッセージレイヤーからの相対位置）"),
+        new TagValue("y", "number", false, null, "グリフの表示位置（メッセージレイヤーからの相対位置）"),
+      ],
+      (values, tick) => {
+        if (values.lay != null) { p.pageBreakGlyphLayerNum = values.lay; }
+        if (values.pos != null) { p.pageBreakGlyphPos = values.pos; }
+        if (values.x != null) { p.pageBreakGlyphX = values.x; }
+        if (values.y != null) { p.pageBreakGlyphY = values.y; }
         return "continue";
       },
     ),

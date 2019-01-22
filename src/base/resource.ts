@@ -101,7 +101,7 @@ export class Resource {
     const cb = new AsyncCallbacks();
     this.loadText(filePath).done((text) => {
       try {
-        const script: Script = new Script(text);
+        const script: Script = new Script(filePath, text);
         cb.callDone(script);
       } catch (e) {
         Logger.error(e);

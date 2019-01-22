@@ -10,7 +10,7 @@ let testScript_01 = `#コメント行
 二行目だよ。
 
 # ラベル
-:sample-label
+*sample-label
 
 # JavaScript
 - console.log('Test Script.');

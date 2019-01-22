@@ -67,7 +67,7 @@ export class ScriptParser {
             // コマンド
             this.parseCommand(body);
             break;
-          case ":":
+          case "*":
             // ラベル
             this.parseLabel(body);
             break;

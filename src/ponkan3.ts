@@ -41,12 +41,16 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   protected _lineBreakGlyphLayerNum : number = 21;
   public get lineBreakGlyphLayerNum(): number { return this._lineBreakGlyphLayerNum; }
   public set lineBreakGlyphLayerNum(num: number) { this._lineBreakGlyphLayerNum = num; }
-  public lineBreakGlyphPos: "eol" | "fixed" = "eol";
+  public lineBreakGlyphPos: "eol" | "relative" | "absolute" = "eol";
+  public lineBreakGlyphX: number = 0;
+  public lineBreakGlyphY: number = 0;
 
   protected _pageBreakGlyphLayerNum : number = 22;
   public get pageBreakGlyphLayerNum(): number { return this._pageBreakGlyphLayerNum; }
   public set pageBreakGlyphLayerNum(num: number) { this._pageBreakGlyphLayerNum = num; }
-  public pageBreakGlyphPos: "eol" | "fixed" = "eol";
+  public pageBreakGlyphPos: "eol" | "relative" | "absolute" = "eol";
+  public pageBreakGlyphX: number = 0;
+  public pageBreakGlyphY: number = 0;
 
   public textSpeed: number = 100;
 
@@ -388,21 +392,39 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   public showLineBreakGlyph(tick: number): void {
-    let lay = this.lineBreakGlyphLayer;
-    let pos = this.lineBreakGlyphPos;
+    this.showBreakGlyph(tick, this.lineBreakGlyphLayer, this.lineBreakGlyphPos,
+                        this.lineBreakGlyphX, this.lineBreakGlyphY);
+  }
+
+  public showPageBreakGlyph(tick: number): void {
+    this.showBreakGlyph(tick, this.pageBreakGlyphLayer, this.pageBreakGlyphPos,
+                        this.pageBreakGlyphX, this.pageBreakGlyphY);
+  }
+
+  public showBreakGlyph(
+    tick: number,
+    lay: PonLayer,
+    pos: "eol" | "relative" | "absolute" = "eol",
+    x: number,
+    y: number
+  ) {
     let mesLay = this.messageLayer;
     if (pos == "eol") {
       let glyphPos = mesLay.getNextTextPos(lay.width);
       lay.x = mesLay.x + glyphPos.x;
       lay.y = mesLay.y + glyphPos.y + mesLay.textLineHeight - lay.height;
-      console.log (pos, glyphPos, lay.x, lay.y);
+    } else if (pos == "relative") {
+      lay.x = mesLay.x + x;
+      lay.y = mesLay.y + y;
+    } else if (pos == "absolute") {
+      lay.x = x;
+      lay.y = y;
     }
     if (lay.hasFrameAnim) {
       lay.stopFrameAnim();
       lay.startFrameAnim(tick);
     }
     lay.visible = true;
-    console.log(lay);
   }
 
   public waitClickCallback(param: string) {

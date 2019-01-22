@@ -27,15 +27,22 @@ for (var i = 1; i < 15; i++) {
 }
 console.log(tv.lineBreakFrames);
 ---
-;breaklay "linebreak": 21, "linepos": "eol"
+;lbglyph "lay": 21, "pos": "eol"
 ;image "lay": "linebreak", "file": "linebreak.png", "visible": false, "x": 0, "y": 0
 ;frameanim "lay": "linebreak", "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.lineBreakFrames"
 ;startframeanim "lay": "linebreak"
 
+*jump-target-label
 
 ;image "lay": 0, "page": "fore", "file": "okayu.jpg", "visible": true, "x": 0, "y": 0
 あいうえお
 ;lb
+
+;jump "label": "jump-target-label"
+
+ほげ
+
+
 ;ch "text": "hoge", "wait": "400"
 かきくけこかきくけこ
 ;s

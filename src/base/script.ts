@@ -4,10 +4,14 @@ import { ScriptParser } from "./script-parser";
 import { Tag } from "./tag";
 
 export class Script {
+  protected _filePath: string;
   protected parser: ScriptParser;
   protected tagPoint: number = 0;
 
-  public constructor(scriptText: string) {
+  public get filePath(): string { return this._filePath; }
+
+  public constructor(filePath: string, scriptText: string) {
+    this._filePath = filePath;
     this.parser = new ScriptParser(scriptText);
   }
 
