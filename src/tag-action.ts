@@ -92,12 +92,25 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       (values, tick) => {
         p.conductor.jump(values.file, values.label).done(() => {
-          Logger.debug(`complete jump ${values.file} ${values.label}`);
           p.conductor.start();
         });
         return p.conductor.stop();
       }
     ),
+    // new TagAction(
+    //   "call",
+    //   "サブルーチンを呼び出す",
+    //   [
+    //     new TagValue("file", "string", false, null, "移動先のスクリプトファイル名。省略時は現在のファイル内で移動する"),
+    //     new TagValue("label", "string", false, null, "移動先のラベル名。省略時はファイルの先頭")
+    //   ],
+    //   (values, tick) => {
+    //     p.conductor.call(values.file, values.label).done(() => {
+    //       p.conductor.start();
+    //     });
+    //     return p.conductor.stop();
+    //   }
+    // ),
     // ======================================================================
     // メッセージ関係
     // ======================================================================

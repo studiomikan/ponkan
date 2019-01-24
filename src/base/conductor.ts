@@ -10,6 +10,19 @@ export interface IConductorEvent {
   onTag(tag: Tag, tick: number): "continue" | "break";
 }
 
+export class CallStackNode {
+  public readonly script: Script;
+  public constructor(script: Script) {
+    this.script = script;
+  }
+}
+
+export enum ConductorState {
+  Stop = 0,
+  Run,
+  Sleep,
+}
+
 export class Conductor {
   protected resource: Resource;
   protected eventCallbacks: IConductorEvent;
@@ -19,6 +32,8 @@ export class Conductor {
 
   protected sleepStartTick: number = -1;
   protected sleepTime: number = -1;
+
+  protected callStack: CallStackNode[] = [];
 
   public constructor(resource: Resource, eventCallbacks: IConductorEvent) {
     this.resource = resource;
@@ -41,6 +56,7 @@ export class Conductor {
    * 指定のファイル・ラベルの位置へ移動する。
    * ラベルが省略されたときは、ファイルの先頭となる。
    * ファイルが省略されたときは、現在のファイル内でラベル移動のみ行う。
+   * @param file 移動先ファイル
    * @param label 移動先ラベル
    */
   public jump(filePath: string | null, label: string | null = null): AsyncCallbacks {
@@ -61,6 +77,23 @@ export class Conductor {
       }, 0);
     }
     return cb;
+  }
+
+  /**
+   * サブルーチンを呼び出す
+   * @param file 移動先ファイル
+   * @param label 移動先ラベル
+   */
+  public callSubroutine(filePath: string | null, label: string | null = null): AsyncCallbacks {
+    this.callStack.push(new CallStackNode(this.script));
+    return this.jump(filePath, label);
+  }
+
+  /**
+   * サブルーチンから戻る
+   */
+  public returnSubroutine() {
+    // TODO 実装
   }
 
   /**
