@@ -1,37 +1,6 @@
 # ゲームの開始スクリプト
-
 ;call "file": "init_system.pon"
 
-;raiseerror {"unknowntag": true}
-
-#=============================================
-# レイヤーの設定
-#=============================================
-# レイヤーの数
-;laycount "count": 40
-
-#=============================================
-# メッセージレイヤーの設定
-#=============================================
-;messagelay "lay": 20
-;layopt "lay": "message", "x": 20, "y": "&576-20-200", "width": "&1024-20-20", "height": 200, "visible": true
-;fillcolor "lay": "mes", "color": "0x4286f4", "alpha": 0.7 
-;textspeed "time": 50
-
-# 行末グリフの設定
----
-tv.lineBreakFrames = [];
-for (var i = 0; i < 16; i++) {
-  tv.lineBreakFrames.push({"x": 24 * i, "y": 0});
-}
-for (var i = 1; i < 15; i++) {
-  tv.lineBreakFrames.push({"x": 360 - 24 * i, "y": 0});
-}
-console.log(tv.lineBreakFrames);
----
-;lbglyph "lay": 21, "pos": "eol"
-;image "lay": "linebreak", "file": "linebreak.png", "visible": false, "x": 0, "y": 0
-;frameanim "lay": "linebreak", "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.lineBreakFrames"
 ;startframeanim "lay": "linebreak"
 
 *jump-target-label
@@ -41,6 +10,7 @@ console.log(tv.lineBreakFrames);
 
 ;image "lay": 0, "page": "fore", "file": "okayu.jpg", "visible": true, "x": 0, "y": 0
 あいうえお
+= 100 + 200
 ;lb
 
 ;jump "label": "jump-target-label"

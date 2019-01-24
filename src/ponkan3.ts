@@ -261,9 +261,13 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public onJs(js: string, printFlag: boolean, tick: number): "continue" | "break" {
     Logger.debug("onJs: ", js);
-    this.resource.evalJs(js);
-    // TODO 文字出力など
-    return "continue";
+    let text = this.resource.evalJs(js);
+    if (printFlag) {
+      let tag = new Tag("ch", { text: "" + text });
+      return this.onTag(tag, tick);
+    } else {
+      return "continue";
+    }
   }
 
   // =========================================================

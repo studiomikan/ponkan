@@ -93,7 +93,11 @@ export class Conductor {
    * サブルーチンから戻る
    */
   public returnSubroutine() {
-    // TODO 実装
+    let stackData = this.callStack.pop();
+    if (stackData === undefined) {
+      throw new Error("returnで戻れませんでした。callとreturnの対応が取れていません");
+    }
+    this.script = stackData.script;
   }
 
   /**
