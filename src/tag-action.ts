@@ -155,13 +155,20 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       "lb",
       "行末クリック待ちで停止する",
-      [
-        // TOOD canskip
-      ],
+      [],
       (values, tick) => {
-        // TODO 停止
         p.showLineBreakGlyph(tick);
         p.addEventHandler("click", new PonEventHandler("waitClickCallback", "lb"));
+        return p.conductor.stop();
+      }
+    ),
+    new TagAction(
+      "pb",
+      "行末クリック待ちで停止する",
+      [],
+      (values, tick) => {
+        p.showPageBreakGlyph(tick);
+        p.addEventHandler("click", new PonEventHandler("waitClickCallback", "pb"));
         return p.conductor.stop();
       }
     ),
@@ -202,6 +209,27 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         if (values.pos != null) { p.lineBreakGlyphPos = values.pos; }
         if (values.x != null) { p.lineBreakGlyphX = values.x; }
         if (values.y != null) { p.lineBreakGlyphY = values.y; }
+        return "continue";
+      },
+    ),
+    new TagAction(
+      "pbglyph",
+      "ページ末グリフに関して設定する",
+      [
+        new TagValue("lay", "number", false, null, "グリフとして使用するレイヤー"),
+        new TagValue("pos", "string", false, null,
+          `グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。` +
+          `"eol"を指定すると文章の末尾に表示。` +
+          `"relative"を指定するとメッセージレイヤとの相対位置で固定表示。` +
+          `"absolute"を指定すると画面上の絶対位置で固定表示。`),
+        new TagValue("x", "number", false, null, "グリフの表示位置（メッセージレイヤーからの相対位置）"),
+        new TagValue("y", "number", false, null, "グリフの表示位置（メッセージレイヤーからの相対位置）"),
+      ],
+      (values, tick) => {
+        if (values.lay != null) { p.pageBreakGlyphLayerNum = values.lay; }
+        if (values.pos != null) { p.pageBreakGlyphPos = values.pos; }
+        if (values.x != null) { p.pageBreakGlyphX = values.x; }
+        if (values.y != null) { p.pageBreakGlyphY = values.y; }
         return "continue";
       },
     ),

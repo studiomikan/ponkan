@@ -291,7 +291,7 @@ export class BaseLayer implements IPonSpriteCallbacks {
       } else {
         x = this.textMarginLeft;
       }
-      y = this.textLineHeight + this.textLinePitch;
+      y += this.textLineHeight + this.textLinePitch;
     }
     return {x: x, y: y};
   }

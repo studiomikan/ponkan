@@ -10,8 +10,9 @@
 
 ;image "lay": 0, "page": "fore", "file": "okayu.jpg", "visible": true, "x": 0, "y": 0
 あいうえお
-= 100 + 200
 ;lb
+= 100 + 200
+;pb
 
 ;jump "label": "jump-target-label"
 
