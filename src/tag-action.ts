@@ -46,6 +46,67 @@ export class TagAction {
   }
 }
 
+/**
+ * エンティティを適用する
+ */
+export function applyJsEntity(resource: Resource, values: any): void {
+  for (const key in values) {
+    if (values.hasOwnProperty(key)) {
+      const value: string = "" + values[key] as string;
+      if (value.indexOf("&") === 0 && value.length >= 2) {
+        const js: string = value.substring(1);
+        values[key] = resource.evalJs(js);
+      }
+    }
+  }
+}
+
+/**
+ * タグの値を正しい値にキャストする。
+ * tagの値をそのまま変更するため、事前にcloneしたものにしておくこと。
+ * @param tag タグ
+ * @param tagAction タグ動作定義
+ */
+export function castTagValues(tag: Tag, tagAction: TagAction) {
+  tagAction.values.forEach((def: TagValue) => {
+    const value: any = tag.values[def.name];
+    if (value === undefined || value === null) { return; }
+    if (typeof value !== def.type) {
+      const str: string = "" + value;
+      switch (def.type) {
+        case "number":
+          tag.values[def.name] = +str;
+          if (isNaN(tag.values[def.name])) {
+            throw new Error(`${tag.name}タグの${def.name}を数値に変換できませんでした(${str})`);
+          }
+          break;
+        case "boolean":
+          tag.values[def.name] = (str === "true");
+          break;
+        case "string":
+          tag.values[def.name] = str;
+          break;
+        case "array":
+          // Logger.debug(Array.isArray(value));
+          // Logger.debug(typeof value);
+          if (!Array.isArray(value)) {
+            Logger.debug(value);
+            throw new Error(`${tag.name}タグの${def.name}は配列である必要があります`);
+          }
+          tag.values[def.name] = value;
+          break;
+        case "object":
+          if (typeof value !== "object" || Array.isArray(value)) {
+            Logger.debug(value);
+            throw new Error(`${tag.name}タグの${def.name}はオブジェクトである必要があります`);
+          }
+          tag.values[def.name] = value;
+          break;
+      }
+    }
+  });
+}
+
 export function generateTagActions(p: Ponkan3): TagAction[] {
   return [
     // ======================================================================
@@ -120,6 +181,27 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       (values, tick) => {
         p.conductor.returnSubroutine();
+        return "continue";
+      }
+    ),
+    new TagAction(
+      "for",
+      "指定回数繰り返す",
+      [
+        new TagValue("loops", "number", true, null, "繰り替えし回数"),
+        new TagValue("indexvar", "string", false, "__index__", "ループ中のインデックスを格納する変数名")
+      ],
+      (values, tick) => {
+        p.conductor.script.startForLoop(values.loops, values.indexvar);
+        return "continue";
+      }
+    ),
+    new TagAction(
+      "endfor",
+      "forループの終端",
+      [],
+      (values, tick) => {
+        p.conductor.script.endForLoop();
         return "continue";
       }
     ),

@@ -3,14 +3,25 @@ import { Resource } from "./resource";
 import { ScriptParser } from "./script-parser";
 import { Tag } from "./tag";
 
+export interface IForLoopInfo {
+  startTagPoint: number;
+  indexVarName: string;
+  loops: number;
+  count: number;
+}
+
 export class Script {
+  protected resource: Resource;
   protected _filePath: string;
+  public get filePath(): string { return this._filePath; }
+
   protected parser: ScriptParser;
   protected tagPoint: number = 0;
 
-  public get filePath(): string { return this._filePath; }
+  protected forLoopStack: IForLoopInfo[] = [];
 
-  public constructor(filePath: string, scriptText: string) {
+  public constructor(resource: Resource, filePath: string, scriptText: string) {
+    this.resource = resource;
     this._filePath = filePath;
     this.parser = new ScriptParser(scriptText);
   }
@@ -36,9 +47,43 @@ export class Script {
     const tags = this.parser.tags;
     if (tags.length <= this.tagPoint) { return null; }
 
-    const tag = tags[this.tagPoint++];
-    return tag;
+    return tags[this.tagPoint++];
   }
 
-  // TODO ifなどの処理
+  /**
+   * forループを開始
+   * @param loops 繰り返し回数
+   * @param indexVarName indexを格納する一時変数の名前。
+   */
+  public startForLoop(loops: number, indexVarName: string = "__index__"): void {
+    let loopInfo: IForLoopInfo = {
+      startTagPoint: this.tagPoint,
+      indexVarName: indexVarName,
+      loops: loops,
+      count: 0
+    };
+    this.forLoopStack.push(loopInfo);
+    this.resource.evalJs(`tv["${loopInfo.indexVarName}"] = ${loopInfo.count};`);
+  }
+
+  /**
+   * forLoopの終わり
+   */
+  public endForLoop(): void {
+    let loopInfo = this.forLoopStack[this.forLoopStack.length - 1];
+    if (loopInfo == null) {
+      throw new Error("予期しないendforです。forとendforの対応が取れていません");
+    }
+
+    console.log("for", loopInfo);
+    if (++loopInfo.count < loopInfo.loops) {
+      this.resource.evalJs(`tv["${loopInfo.indexVarName}"] = ${loopInfo.count};`);
+      this.goTo(loopInfo.startTagPoint);
+    } else {
+      this.forLoopStack.pop();
+    }
+  }
+
+  // TODO breakforの動作
+
 }

@@ -10,11 +10,8 @@ export interface IConductorEvent {
   onTag(tag: Tag, tick: number): "continue" | "break";
 }
 
-export class CallStackNode {
-  public readonly script: Script;
-  public constructor(script: Script) {
-    this.script = script;
-  }
+export interface ICallStackNode {
+  script: Script;
 }
 
 export enum ConductorState {
@@ -26,25 +23,27 @@ export enum ConductorState {
 export class Conductor {
   protected resource: Resource;
   protected eventCallbacks: IConductorEvent;
-  protected script: Script;
+  protected _script: Script;
+  public get script(): Script { return this._script; }
   protected _status: "stop" | "run" | "sleep" = "stop";
   public get status(): "stop" | "run" | "sleep" { return this._status; }
 
   protected sleepStartTick: number = -1;
   protected sleepTime: number = -1;
 
-  protected callStack: CallStackNode[] = [];
+  protected callStack: ICallStackNode[] = [];
+  protected forLoopDepth: number = 0;
 
   public constructor(resource: Resource, eventCallbacks: IConductorEvent) {
     this.resource = resource;
     this.eventCallbacks = eventCallbacks;
-    this.script = new Script("dummy", ";s");
+    this._script = new Script(this.resource, "dummy", ";s");
   }
 
   public loadScript(filePath: string): AsyncCallbacks {
     const cb = new AsyncCallbacks();
     this.resource.loadScript(filePath).done((script: Script) => {
-      this.script = script;
+      this._script = script;
       cb.callDone(filePath);
     }).fail(() => {
       cb.callFail(filePath);
@@ -85,7 +84,7 @@ export class Conductor {
    * @param label 移動先ラベル
    */
   public callSubroutine(filePath: string | null, label: string | null = null): AsyncCallbacks {
-    this.callStack.push(new CallStackNode(this.script));
+    this.callStack.push({ script: this.script });
     return this.jump(filePath, label);
   }
 
@@ -97,7 +96,7 @@ export class Conductor {
     if (stackData === undefined) {
       throw new Error("returnで戻れませんでした。callとreturnの対応が取れていません");
     }
-    this.script = stackData.script;
+    this._script = stackData.script;
   }
 
   /**
@@ -143,7 +142,6 @@ export class Conductor {
         tag = tag.clone();
       }
 
-      this.applyJsEntity(tag.values);
       let tagReturnValue: "continue" | "break";
       switch (tag.name) {
         case "__label__":

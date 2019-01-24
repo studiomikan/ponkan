@@ -5,7 +5,7 @@ import { Conductor, IConductorEvent } from "./base/conductor";
 import { Logger } from "./base/logger";
 import { Tag } from "./base/tag";
 import { PonLayer } from "./layer/pon-layer";
-import { generateTagActions, TagAction, TagValue } from "./tag-action";
+import { generateTagActions, applyJsEntity, castTagValues, TagAction, TagValue } from "./tag-action";
 
 export class Ponkan3 extends PonGame implements IConductorEvent {
   // ゲーム設定
@@ -176,50 +176,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     Logger.debug("TagActionMap: ", this.tagActions);
   }
 
-  /**
-   * タグの値を正しい値にキャストする
-   * @param tag タグ
-   * @param tagAction タグ動作定義
-   */
-  private castTagValues(tag: Tag, tagAction: TagAction) {
-    tagAction.values.forEach((def: TagValue) => {
-      const value: any = tag.values[def.name];
-      if (value === undefined || value === null) { return; }
-      if (typeof value !== def.type) {
-        const str: string = "" + value;
-        switch (def.type) {
-          case "number":
-            tag.values[def.name] = +str;
-            if (isNaN(tag.values[def.name])) {
-              throw new Error(`${tag.name}タグの${def.name}を数値に変換できませんでした(${str})`);
-            }
-            break;
-          case "boolean":
-            tag.values[def.name] = (str === "true");
-            break;
-          case "string":
-            tag.values[def.name] = str;
-            break;
-          case "array":
-            // Logger.debug(Array.isArray(value));
-            // Logger.debug(typeof value);
-            if (!Array.isArray(value)) {
-              Logger.debug(value);
-              throw new Error(`${tag.name}タグの${def.name}は配列である必要があります`);
-            }
-            tag.values[def.name] = value;
-            break;
-          case "object":
-            if (typeof value !== "object" || Array.isArray(value)) {
-              Logger.debug(value);
-              throw new Error(`${tag.name}タグの${def.name}はオブジェクトである必要があります`);
-            }
-            tag.values[def.name] = value;
-            break;
-        }
-      }
-    });
-  }
 
   // =========================================================
   // コンダクタ
@@ -235,7 +191,8 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
         return "continue";
       }
     }
-    this.castTagValues(tag, tagAction);
+    applyJsEntity(this.resource, tag.values);
+    castTagValues(tag, tagAction);
     tagAction.values.forEach((def: TagValue) => {
       const value: any = tag.values[def.name];
       if (value === undefined || value === null) {

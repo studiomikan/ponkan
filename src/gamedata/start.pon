@@ -1,14 +1,20 @@
 # ゲームの開始スクリプト
 ;call "file": "init_system.pon"
 
-;startframeanim "lay": "linebreak"
+;image "lay": 0, "page": "fore", "file": "okayu.jpg", "visible": true, "x": 0, "y": 0
+
+;for "loops": 5
+
+= tv.__index__
+
+;endfor
+
+TODO breakfor tag. end
+;s
 
 *jump-target-label
 
 
-
-
-;image "lay": 0, "page": "fore", "file": "okayu.jpg", "visible": true, "x": 0, "y": 0
 あいうえお
 ;lb
 = 100 + 200

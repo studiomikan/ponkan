@@ -42,16 +42,16 @@ export class Resource {
     this.basePath = this.fixPath(basePath);
   }
 
+  // tslint:disable
   public evalJs(js: string): any {
-    const tv = this.tmpVar;
-    const gv = this.gameVar;
-    const sv = this.systemVar;
-    // tslint:disable-next-line
+    let tv = this.tmpVar;
+    let gv = this.gameVar;
+    let sv = this.systemVar;
     return (function() {
-      // tslint:disable-next-line
       return eval(js);
     })();
   }
+  // tslint:enable
 
   /**
    * パスの末尾からスラッシュを取り除いて返す
@@ -101,7 +101,7 @@ export class Resource {
     const cb = new AsyncCallbacks();
     this.loadText(filePath).done((text) => {
       try {
-        const script: Script = new Script(filePath, text);
+        const script: Script = new Script(this, filePath, text);
         cb.callDone(script);
       } catch (e) {
         Logger.error(e);
