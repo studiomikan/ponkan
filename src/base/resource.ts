@@ -122,12 +122,19 @@ export class Resource {
     const cb = new AsyncCallbacks();
     const path: string = this.getPath(filePath);
     const image: HTMLImageElement = new Image();
+    let loaded: boolean = false;
 
-    image.onload = () => {
+    image.onload = (e) => {
+      loaded = true;
       cb.callDone(image);
     };
-    image.onerror = () => {
-      cb.callFail(image);
+    image.onerror = (e) => {
+      // 画像がキャッシュされているとき、サーバが302を返すことがある。
+      // その時は、onloadとonerrorの両方が呼ばれてしまうので、
+      // すでにonloadが呼ばれて読み込み済みだとわかっている場合はエラーを無視する。
+      if (!loaded) {
+        cb.callFail(image);
+      }
     };
     image.src = path;
 

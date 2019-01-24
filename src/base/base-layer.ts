@@ -171,12 +171,12 @@ export class BaseLayer implements IPonSpriteCallbacks {
   }
 
   public onMouseEnter(e: PonMouseEvent): boolean {
-    console.log("onMouseEnter", this.name, e);
+    // console.log("onMouseEnter", this.name, e);
     return true;
   }
 
   public onMouseLeave(e: PonMouseEvent): boolean {
-    console.log("onMouseLeave", this.name, e);
+    // console.log("onMouseLeave", this.name, e);
     return true;
   }
 

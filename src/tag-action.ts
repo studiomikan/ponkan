@@ -91,11 +91,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("label", "string", false, null, "移動先のラベル名。省略時はファイルの先頭")
       ],
       (values, tick) => {
-        p.conductor.stop();
         p.conductor.jump(values.file, values.label).done(() => {
+          Logger.debug(`complete jump ${values.file} ${values.label}`);
           p.conductor.start();
         });
-        return "break";
+        return p.conductor.stop();
       }
     ),
     // ======================================================================
