@@ -71,6 +71,10 @@ export class ScriptParser {
             // ラベル
             this.parseLabel(body);
             break;
+          case "|":
+            // セーブ更新マーク
+            this.parseSaveMark(body);
+            break;
           case "-":
             // JavaScript / JavaScript部
             this.parseJs(body);
@@ -112,6 +116,10 @@ export class ScriptParser {
 
   private parseLabel(body: string): void {
     this.addTag("__label__", { __body__: body });
+  }
+
+  private parseSaveMark(body: string): void {
+    this.addTag("__save_mark__", { __body__: body });
   }
 
   private parseJs(body: string): void {

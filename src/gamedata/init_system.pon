@@ -36,6 +36,7 @@ for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
 ;image "lay": "pagebreak", "file": "pagebreak.png", "visible": false, "x": 0, "y": 0
 ;frameanim "lay": "pagebreak", "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.pageBreakFrames"
 
+*jump_target
 
 
 ;return

@@ -218,6 +218,12 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     return "continue";
   }
 
+  public onSaveMark(saveComment: string, tick: number): "continue" | "break" {
+    Logger.debug("onSaveMark: ", saveComment);
+    // TODO
+    return "continue";
+  }
+
   public onJs(js: string, printFlag: boolean, tick: number): "continue" | "break" {
     Logger.debug("onJs: ", js);
     let text = this.resource.evalJs(js);

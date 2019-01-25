@@ -6,6 +6,7 @@ import { Tag } from "./tag";
 
 export interface IConductorEvent {
   onLabel(labelName: string, tick: number): "continue" | "break";
+  onSaveMark(saveComment: string, tick: number): "continue" | "break";
   onJs(js: string, printFlag: boolean, tick: number): "continue" | "break";
   onTag(tag: Tag, tick: number): "continue" | "break";
 }
@@ -146,6 +147,9 @@ export class Conductor {
       switch (tag.name) {
         case "__label__":
           tagReturnValue = this.eventCallbacks.onLabel(tag.values.__body__, tick);
+          break;
+        case "__save_mark__":
+          tagReturnValue = this.eventCallbacks.onSaveMark(tag.values.__body__, tick);
           break;
         case "__js__":
           tagReturnValue = this.eventCallbacks.onJs(tag.values.__body__, tag.values.print, tick);
