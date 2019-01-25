@@ -1,5 +1,6 @@
 import { Logger } from "./logger";
 import { Resource } from "./resource";
+import { AsyncCallbacks } from "./async-callbacks";
 import { ScriptParser } from "./script-parser";
 import { Tag } from "./tag";
 
@@ -25,23 +26,48 @@ export class Script {
     this.parser = new ScriptParser(scriptText);
   }
 
-  public debugPrint() {
+  public debugPrint(): void {
     Logger.debug("============================================");
     this.parser.debugPrint();
     Logger.debug("Script current point: ", this.tagPoint);
     Logger.debug("============================================");
   }
 
-  public goToStart() {
+  public goToStart(): void {
     this.goTo(0);
   }
 
-  public goTo(point: number) {
+  public goTo(point: number): void {
     if (point < 0) { point = 0; }
     if (point >= this.parser.tags.length) { point = this.parser.tags.length - 1; }
     this.tagPoint = point;
   }
 
+  /**
+   * 指定のラベルの位置へ移動する。
+   * ラベルの検索はファイルの先頭から実施するため、
+   * ファイル内に同じラベルが2つ以上あった場合は、1番目の位置へ移動する。
+   * ラベルが見つからなかった場合はエラーになる。
+   * @param label 移動先ラベル
+   */
+  public goToLabel(label: string): void {
+    this.goToStart();
+    while (true) {
+      let tag: Tag | null = this.getNextTag()
+      if (tag == null) {
+        throw new Error(`${this.filePath}内に、${label}が見つかりませんでした`);
+      }
+      if (tag.name === "__label__" && tag.values.__body__ === label) {
+        break;
+      }
+    }
+  }
+
+  /**
+   * 次のタグを取得する。
+   * スクリプトファイル終端の場合はnullが返る
+   * @return 次のタグ。終端の場合はnull
+   */
   public getNextTag(): Tag | null {
     const tags = this.parser.tags;
     if (tags.length <= this.tagPoint) { return null; }

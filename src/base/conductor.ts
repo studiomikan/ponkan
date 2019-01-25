@@ -64,7 +64,7 @@ export class Conductor {
     if (filePath != null) {
       this.loadScript(filePath).done(() => {
         if (label != null) {
-          this.goToLabel(label);
+          this.script.goToLabel(label);
         }
         cb.callDone({filePath: filePath, label: label});
       }).fail(() => {
@@ -72,7 +72,7 @@ export class Conductor {
       });
     } else if (label != null) {
       window.setTimeout(() => {
-        this.goToLabel(label);
+        this.script.goToLabel(label);
         cb.callDone({filePath: filePath, label: label});
       }, 0);
     }
@@ -98,26 +98,6 @@ export class Conductor {
       throw new Error("returnで戻れませんでした。callとreturnの対応が取れていません");
     }
     this._script = stackData.script;
-  }
-
-  /**
-   * 現在のファイルで、指定のラベルの位置へ移動する。
-   * ラベルの検索はファイルの先頭から実施するため、
-   * ファイル内に同じラベルが2つ以上あった場合は、1番目の位置へ移動する。
-   * ラベルが見つからなかった場合はエラーになる。
-   * @param label 移動先ラベル
-   */
-  public goToLabel(label: string) {
-    this.script.goToStart();
-    while (true) {
-      let tag: Tag | null = this.script.getNextTag()
-      if (tag == null) {
-        throw new Error(`${this.script.filePath}内に、${label}が見つかりませんでした`);
-      }
-      if (tag.name === "__label__" && tag.values.__body__ === label) {
-        break;
-      }
-    }
   }
 
   public conduct(tick: number): void {

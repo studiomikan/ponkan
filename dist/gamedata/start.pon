@@ -3,11 +3,11 @@
 |セーブコメント！
 ;image "lay": 0, "page": "fore", "file": "okayu.jpg", "visible": true, "x": 0, "y": 0
 
-;for "loops": 5, "indexvar": "i"
-  ;for "loops": 5, "indexvar": "l"
+;for "loops": 2, "indexvar": "i"
+  ;for "loops": 2, "indexvar": "l"
     = `(${tv.i},${tv.l})`
   ;endfor
-  = "\n"
+  = " "
 ;endfor
 
 ;pb

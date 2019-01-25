@@ -1,22 +1,22 @@
-import { PonGame } from "./base/pon-game";
-import { PonMouseEvent } from "./base/pon-mouse-event";
 import { BaseLayer } from "./base/base-layer";
 import { Conductor, IConductorEvent } from "./base/conductor";
 import { Logger } from "./base/logger";
+import { PonGame } from "./base/pon-game";
+import { PonMouseEvent } from "./base/pon-mouse-event";
 import { Tag } from "./base/tag";
 import { PonLayer } from "./layer/pon-layer";
-import { generateTagActions, applyJsEntity, castTagValues, TagAction, TagValue } from "./tag-action";
+import { applyJsEntity, castTagValues, generateTagActions, TagAction, TagValue } from "./tag-action";
 
 export class Ponkan3 extends PonGame implements IConductorEvent {
   // ゲーム設定
   public raiseError: any = {
-    unknowntag: true
+    unknowntag: true,
   };
 
   // conductor
   protected _conductor: Conductor;
   public get conductor(): Conductor { return this._conductor; }
-  public skipMode: "invalid" | "nextclick" | "linebreak" | "pagebreak" | "tag" | "force" = "invalid"
+  public skipMode: "invalid" | "nextclick" | "linebreak" | "pagebreak" | "tag" | "force" = "invalid";
   /** タグで開始したスキップモードをクリックで停止できるかどうか */
   public canStopSkipByTag: boolean = false;
 
@@ -25,12 +25,11 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   // レイヤ関係
   protected _layerCount: number = 20;
-  public get layerCount(): number { return this._layerCount; }
   // public set layerCount(layerCount: number) { this._layerCount = layerCount; }
   public forePrimaryLayer: PonLayer;
   public backPrimaryLayer: PonLayer;
-  public get foreLayers(): PonLayer[] { return <PonLayer[]> this.forePrimaryLayer.children; } 
-  public get backLayers(): PonLayer[] { return <PonLayer[]> this.backPrimaryLayer.children; } 
+  public get foreLayers(): PonLayer[] { return this.forePrimaryLayer.children as PonLayer[]; }
+  public get backLayers(): PonLayer[] { return this.backPrimaryLayer.children as PonLayer[]; }
   public currentPage: "fore" | "back" = "fore";
 
   // メッセージ関係
@@ -38,14 +37,14 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public get messageLayerNum(): number { return this._messageLayerNum; }
   public set messageLayerNum(num: number) { this._messageLayerNum = num; }
 
-  protected _lineBreakGlyphLayerNum : number = 21;
+  protected _lineBreakGlyphLayerNum: number = 21;
   public get lineBreakGlyphLayerNum(): number { return this._lineBreakGlyphLayerNum; }
   public set lineBreakGlyphLayerNum(num: number) { this._lineBreakGlyphLayerNum = num; }
   public lineBreakGlyphPos: "eol" | "relative" | "absolute" = "eol";
   public lineBreakGlyphX: number = 0;
   public lineBreakGlyphY: number = 0;
 
-  protected _pageBreakGlyphLayerNum : number = 22;
+  protected _pageBreakGlyphLayerNum: number = 22;
   public get pageBreakGlyphLayerNum(): number { return this._pageBreakGlyphLayerNum; }
   public set pageBreakGlyphLayerNum(num: number) { this._pageBreakGlyphLayerNum = num; }
   public pageBreakGlyphPos: "eol" | "relative" | "absolute" = "eol";
@@ -65,9 +64,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.initTagAction();
 
     this.forePrimaryLayer =
-      <PonLayer> this.addLayer(new PonLayer("Fore primary layer", this.resource));
+      this.addLayer(new PonLayer("Fore primary layer", this.resource)) as PonLayer;
     this.backPrimaryLayer =
-      <PonLayer> this.addLayer(new PonLayer("Back primary layer", this.resource));
+      this.addLayer(new PonLayer("Back primary layer", this.resource)) as PonLayer;
     this.backPrimaryLayer.visible = false;
     this.initLayers();
 
@@ -152,11 +151,11 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     // TODO canskipタグの判定必要か検討する
     if (this.conductor.status === "sleep") {
       this.conductor.start();
-      this.skipMode = "nextclick"
+      this.skipMode = "nextclick";
     }
     // skipタグで開始されたスキップモードを停止する
     if (this.skipMode === "tag" && this.canStopSkipByTag) {
-      this.skipMode = "invalid"
+      this.skipMode = "invalid";
     }
 
     // トリガーを発火
@@ -177,7 +176,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     });
     Logger.debug("TagActionMap: ", this.tagActions);
   }
-
 
   // =========================================================
   // コンダクタ
@@ -207,7 +205,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       }
     });
 
-    
     console.log(tag.values);
     return tagAction.action(tag.values, tick);
   }
@@ -226,9 +223,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public onJs(js: string, printFlag: boolean, tick: number): "continue" | "break" {
     Logger.debug("onJs: ", js);
-    let text = this.resource.evalJs(js);
+    const text = this.resource.evalJs(js);
     if (printFlag) {
-      let tag = new Tag("ch", { text: "" + text });
+      const tag = new Tag("ch", { text: "" + text });
       return this.onTag(tag, tick);
     } else {
       return "continue";
@@ -251,11 +248,12 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     }
   }
 
+  public get layerCount(): number { return this._layerCount; }
   public set layerCount(layerCount: number) {
     if (layerCount < this._layerCount) {
       // 減少するとき
       [this.forePrimaryLayer, this.backPrimaryLayer].forEach((primaryLayer) => {
-        let oldList = primaryLayer.children;
+        const oldList = primaryLayer.children;
         for (let i = 0; i < oldList.length; i++) {
           if (i < layerCount) {
             primaryLayer.addChild(oldList[i]);
@@ -281,7 +279,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
    */
   public createLayer(name: string) {
     const layer = new PonLayer(name, this.resource);
-    this.addLayer(<BaseLayer>layer);
+    this.addLayer(layer as BaseLayer);
     return layer;
   }
 
@@ -310,11 +308,11 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       for (let i = start; i <= end; i++) {
         targetLayers.push(pageLayers[i]);
       }
-    } else if (lay == "mes" || lay == "message") {
+    } else if (lay === "mes" || lay === "message") {
       targetLayers.push(pageLayers[this.messageLayerNum]);
-    } else if (lay == "linebreak") {
+    } else if (lay === "linebreak") {
       targetLayers.push(pageLayers[this.lineBreakGlyphLayerNum]);
-    } else if (lay == "pagebreak") {
+    } else if (lay === "pagebreak") {
       targetLayers.push(pageLayers[this.pageBreakGlyphLayerNum]);
     } else {
       const layerNum: number = parseInt(lay, 10);
@@ -375,17 +373,17 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     lay: PonLayer,
     pos: "eol" | "relative" | "absolute" = "eol",
     x: number,
-    y: number
+    y: number,
   ) {
-    let mesLay = this.messageLayer;
-    if (pos == "eol") {
-      let glyphPos = mesLay.getNextTextPos(lay.width);
+    const mesLay = this.messageLayer;
+    if (pos === "eol") {
+      const glyphPos = mesLay.getNextTextPos(lay.width);
       lay.x = mesLay.x + glyphPos.x;
       lay.y = mesLay.y + glyphPos.y + mesLay.textLineHeight - lay.height;
-    } else if (pos == "relative") {
+    } else if (pos === "relative") {
       lay.x = mesLay.x + x;
       lay.y = mesLay.y + y;
-    } else if (pos == "absolute") {
+    } else if (pos === "absolute") {
       lay.x = x;
       lay.y = y;
     }
@@ -408,7 +406,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
         break;
     }
   }
-
 
 }
 
