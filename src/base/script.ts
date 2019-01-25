@@ -9,7 +9,6 @@ export interface IForLoopInfo {
   loops: number;
   count: number;
 }
-
 export class Script {
   protected resource: Resource;
   protected _filePath: string;
@@ -75,7 +74,6 @@ export class Script {
       throw new Error("予期しないendforです。forとendforの対応が取れていません");
     }
 
-    console.log("for", loopInfo);
     if (++loopInfo.count < loopInfo.loops) {
       this.resource.evalJs(`tv["${loopInfo.indexVarName}"] = ${loopInfo.count};`);
       this.goTo(loopInfo.startTagPoint);
@@ -84,6 +82,28 @@ export class Script {
     }
   }
 
-  // TODO breakforの動作
+  /**
+   * forLoopから抜け出す
+   */
+  public breakForLoop(): void {
+    let depth: number = 1;
+    while (true) {
+      let tag: Tag | null = this.getNextTag();
+      if (tag === null) {
+        throw new Error("breakforの動作エラー。forとendforの対応が取れていません");
+        break;
+      }
+      if (tag.name === "for") {
+        depth++;
+      } else if (tag.name === "endfor") {
+        depth--;
+        if (depth === 0) {
+          break;
+        } else if (depth < 0) {
+          throw new Error("breakforの動作エラー。forとendforの対応が取れていません");
+        }
+      }
+    }
+  }
 
 }

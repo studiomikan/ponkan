@@ -205,6 +205,15 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       }
     ),
+    new TagAction(
+      "breakfor",
+      "forループから抜ける",
+      [],
+      (values, tick) => {
+        p.conductor.script.breakForLoop();
+        return "continue";
+      }
+    ),
     // ======================================================================
     // メッセージ関係
     // ======================================================================
@@ -221,6 +230,24 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         } else {
           return "continue";
         }
+      }
+    ),
+    new TagAction(
+      "br",
+      "改行する",
+      [],
+      (values, tick) => {
+        p.messageLayer.addTextReturn();
+        return "continue";
+      }
+    ),
+    new TagAction(
+      "clear",
+      "テキストをクリアする",
+      [],
+      (values, tick) => {
+        p.messageLayer.clearText();
+        return "continue";
       }
     ),
     new TagAction(

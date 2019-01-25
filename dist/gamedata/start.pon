@@ -3,11 +3,15 @@
 
 ;image "lay": 0, "page": "fore", "file": "okayu.jpg", "visible": true, "x": 0, "y": 0
 
-;for "loops": 5
-
-= tv.__index__
-
+;for "loops": 5, "indexvar": "i"
+  ;for "loops": 5, "indexvar": "l"
+    = `(${tv.i},${tv.l})`
+  ;endfor
+  = "\n"
 ;endfor
+
+;pb
+;clear
 
 TODO breakfor tag. end
 ;s
