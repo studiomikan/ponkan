@@ -171,7 +171,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   private initTagAction() {
     generateTagActions(this).forEach((tagAction) => {
       Logger.debug(tagAction);
-      this.tagActions[tagAction.name] = tagAction;
+      tagAction.names.forEach((name) => {
+        this.tagActions[name] = tagAction;
+      });
     });
     Logger.debug("TagActionMap: ", this.tagActions);
   }
