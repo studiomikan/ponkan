@@ -3,6 +3,7 @@ import { Resource } from "./resource";
 import { AsyncCallbacks } from "./async-callbacks";
 import { ScriptParser } from "./script-parser";
 import { Tag } from "./tag";
+import { applyJsEntity, castTagValues } from "../tag-action";
 
 export interface IForLoopInfo {
   startTagPoint: number;
@@ -73,6 +74,47 @@ export class Script {
     if (tags.length <= this.tagPoint) { return null; }
 
     return tags[this.tagPoint++];
+  }
+
+  public ifJump(cond: string): void {
+    if (!this.resource.evalJs(cond)) {
+      this.goToElse();
+    }
+  }
+
+  public goToElse(): void {
+    let depth: number = 1;
+    while (true) {
+      let tag: Tag | null = this.getNextTag();
+      if (tag === null) {
+        throw new Error("動作エラー。if/else/elsif/endifの対応が取れていません");
+        break;
+      }
+      if (tag.name === "if") {
+        depth++;
+      } else if (tag.name === "else") {
+        depth--;
+        if (depth === 0) {
+          break;
+        }
+      } else if (tag.name === "elsif") {
+        depth--;
+        if (depth === 0) {
+          let tag2: Tag = tag.clone();
+          applyJsEntity(this.resource, tag2.values);
+          castTagValues(tag2, 
+          break;
+        }
+      } else if (tag.name === "endif") {
+        depth--;
+        if (depth === 0) {
+          break;
+        }
+      }
+      if (depth < 0) {
+        throw new Error("breakforの動作エラー。forとendforの対応が取れていません");
+      }
+    }
   }
 
   /**

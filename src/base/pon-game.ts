@@ -104,7 +104,8 @@ export class PonGame {
     return layer;
   }
 
-  public addEventHandler(eventName: string, handler: PonEventHandler): void {
+  public addEventHandler(handler: PonEventHandler): void {
+    let eventName: string = handler.eventName;
     if (this.eventHandlers[eventName] == null) {
       this.eventHandlers[eventName] = [];
     }
@@ -118,6 +119,7 @@ export class PonGame {
       Logger.debug("FIRE! ", eventName, h, receiver);
       h.fire(receiver);
     });
+    this.eventHandlers[eventName] = null;
   }
 
   public clearEventHandler(): void {

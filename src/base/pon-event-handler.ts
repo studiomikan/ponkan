@@ -1,13 +1,12 @@
 export class PonEventHandler {
-  private _callback: string;
-  private _param: string;
+  public readonly eventName: string;
+  public readonly callback: string;
+  public readonly param: string;
 
-  public get callback() { return this._callback; }
-  public get param() { return this._param; }
-
-  public constructor(callback: string, param: string = "") {
-    this._callback = callback;
-    this._param = param;
+  public constructor(eventName: string, callback: string, param: string = "") {
+    this.eventName = eventName;
+    this.callback = callback;
+    this.param = param;
   }
 
   public fire(self: any): void {

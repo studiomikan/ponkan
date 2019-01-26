@@ -195,15 +195,14 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     new TagAction(
-      ["for"],
-      "指定回数繰り返す",
+      ["if"],
+      "条件によって分岐する",
       [
-        new TagValue("loops", "number", true, null, "繰り替えし回数"),
-        new TagValue("indexvar", "string", false, "__index__", "ループ中のインデックスを格納する変数名"),
+        new TagValue("cond", "string", true, null, "条件式(JavaScript)"),
       ],
       "TODO タグの説明文",
       (values, tick) => {
-        p.conductor.script.startForLoop(values.loops, values.indexvar);
+        p.conductor.script.ifJump(values.cond);
         return "continue";
       },
     ),
@@ -285,7 +284,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "TODO タグの説明文",
       (values, tick) => {
         p.showLineBreakGlyph(tick);
-        p.addEventHandler("click", new PonEventHandler("waitClickCallback", "lb"));
+        p.addEventHandler(new PonEventHandler("click", "waitClickCallback", "lb"));
         return p.conductor.stop();
       },
     ),
@@ -296,7 +295,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "TODO タグの説明文",
       (values, tick) => {
         p.showPageBreakGlyph(tick);
-        p.addEventHandler("click", new PonEventHandler("waitClickCallback", "pb"));
+        p.addEventHandler(new PonEventHandler("click", "waitClickCallback", "pb"));
         return p.conductor.stop();
       },
     ),
