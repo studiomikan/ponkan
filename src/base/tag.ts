@@ -1,15 +1,14 @@
 import { Logger } from "./logger";
 
 export class Tag {
-  protected _name: string;
-  protected _values: any;
+  public readonly name: string;
+  public readonly values: any;
+  public readonly line: number;
 
-  public get name(): string { return this._name; }
-  public get values(): any { return this._values; }
-
-  public constructor(name: string, values: any) {
-    this._name = name;
-    this._values = values;
+  public constructor(name: string, values: any, line: number) {
+    this.name = name;
+    this.values = values;
+    this.line = line;
   }
 
   public debugPrint(): void {
@@ -23,6 +22,6 @@ export class Tag {
         values2[key] = this.values[key];
       }
     }
-    return new Tag(this.name, values2);
+    return new Tag(this.name, values2, this.line);
   }
 }

@@ -10,10 +10,30 @@
   = " "
 ;endfor
 
-;pb
 ;clear
 
-# if js=""
+;if "exp": "100 === 200"
+  then block.
+  ;br
+;elsif "exp": "false"
+  elsif block 1.
+  ;br
+;elsif "exp": "false"
+  elsif block 2.
+  ;br
+  ;if "exp": "false"
+    inner then.
+    ;br
+  ;else
+    inner else.
+    ;br
+  ;endif
+;else
+  else block.
+  ;br
+;else
+  ERROR!!
+;endif
 
 
 TODO breakfor tag. end

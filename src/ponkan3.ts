@@ -21,7 +21,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public canStopSkipByTag: boolean = false;
 
   // タグ関係
-  protected tagActions: any = {};
+  public readonly tagActions: any = {};
 
   // レイヤ関係
   protected _layerCount: number = 20;
@@ -121,7 +121,17 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public error(e: Error): void {
     this.conductor.stop();
-    super.error(e);
+    let message: string = e.message;
+
+    let filePath: string = this.conductor.script.filePath
+    let latestTag: Tag | null = this.conductor.script.getLatestTag();
+    if (latestTag !== null) {
+      message = `(${filePath}:${latestTag.line}) ` + message;
+    } else {
+      message = `(${filePath}:1) ` + message;
+    }
+
+    super.error(new Error(message));
   }
 
   // =========================================================
@@ -180,7 +190,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // =========================================================
   // コンダクタ
   // =========================================================
-  public onTag(tag: Tag, tick: number): "continue" | "break" {
+  public onTag(tag: Tag, line:number, tick: number): "continue" | "break" {
     Logger.debug("onTag: ", tag.name, tag.values);
     const tagAction: TagAction = this.tagActions[tag.name];
     if (tagAction === null || tagAction === undefined) {
@@ -205,28 +215,27 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       }
     });
 
-    console.log(tag.values);
     return tagAction.action(tag.values, tick);
   }
 
-  public onLabel(labelName: string, tick: number): "continue" | "break" {
+  public onLabel(labelName: string, line: number, tick: number): "continue" | "break" {
     Logger.debug("onLabel: ", labelName);
     // TODO
     return "continue";
   }
 
-  public onSaveMark(saveComment: string, tick: number): "continue" | "break" {
+  public onSaveMark(saveComment: string, line: number, tick: number): "continue" | "break" {
     Logger.debug("onSaveMark: ", saveComment);
     // TODO
     return "continue";
   }
 
-  public onJs(js: string, printFlag: boolean, tick: number): "continue" | "break" {
+  public onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break" {
     Logger.debug("onJs: ", js);
     const text = this.resource.evalJs(js);
     if (printFlag) {
-      const tag = new Tag("ch", { text: "" + text });
-      return this.onTag(tag, tick);
+      const tag = new Tag("ch", { text: "" + text }, line);
+      return this.onTag(tag, line, tick);
     } else {
       return "continue";
     }

@@ -144,7 +144,7 @@ export class ScriptParser {
   }
 
   private addTag(name: string, values: object) {
-    this._tags.push(new Tag(name, values));
+    this._tags.push(new Tag(name, values, this.currentLineNum - 1));
     // Logger.debug("ADD TAG: ", name, values)
   }
 }

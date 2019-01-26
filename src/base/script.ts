@@ -18,8 +18,10 @@ export class Script {
 
   protected parser: ScriptParser;
   protected tagPoint: number = 0;
+  protected latestTagBuffer: Tag | null = null;
 
   protected forLoopStack: IForLoopInfo[] = [];
+  protected ifDepth: number = 0;
 
   public constructor(resource: Resource, filePath: string, scriptText: string) {
     this.resource = resource;
@@ -73,46 +75,95 @@ export class Script {
     const tags = this.parser.tags;
     if (tags.length <= this.tagPoint) { return null; }
 
-    return tags[this.tagPoint++];
+    return this.latestTagBuffer = tags[this.tagPoint++];
   }
 
-  public ifJump(cond: string): void {
-    if (!this.resource.evalJs(cond)) {
-      this.goToElse();
+  public getLatestTag(): Tag | null {
+    return this.latestTagBuffer;
+  }
+
+  public ifJump(exp: string, tagActions: any): void {
+    this.ifDepth++;
+    if (!this.resource.evalJs(exp)) {
+      this.goToElseFromIf(tagActions);
     }
   }
 
-  public goToElse(): void {
-    let depth: number = 1;
+  protected goToElseFromIf(tagActions: any): void {
+    let depth: number = 0;
     while (true) {
       let tag: Tag | null = this.getNextTag();
       if (tag === null) {
-        throw new Error("動作エラー。if/else/elsif/endifの対応が取れていません");
+        throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
         break;
       }
       if (tag.name === "if") {
         depth++;
       } else if (tag.name === "else") {
-        depth--;
         if (depth === 0) {
-          break;
-        }
-      } else if (tag.name === "elsif") {
-        depth--;
-        if (depth === 0) {
-          let tag2: Tag = tag.clone();
-          applyJsEntity(this.resource, tag2.values);
-          castTagValues(tag2, 
           break;
         }
       } else if (tag.name === "endif") {
-        depth--;
         if (depth === 0) {
+          this.ifDepth--;
+          if (this.ifDepth < 0) {
+            throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
+          }
           break;
+        } else {
+          depth--;
+        }
+      } else if (tag.name === "elsif") {
+        if (depth === 0) {
+          let tag2: Tag = tag.clone();
+          applyJsEntity(this.resource, tag2.values);
+          castTagValues(tag2, tagActions["elsif"]);
+          if (this.resource.evalJs(tag2.values.exp)) {
+            break;
+          }
         }
       }
       if (depth < 0) {
-        throw new Error("breakforの動作エラー。forとendforの対応が取れていません");
+        throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
+      }
+    }
+  }
+
+  public elsifJump() {
+    // タグ動作としてelsifにきたときは、単に前のif/elsifブロックの終わりを示すため、
+    // endifへジャンプしたのでよい。
+    this.goToEndifFromElse();
+  }
+
+  public elseJump() {
+    // タグ動作としてelseにきたときは、単に前のif/elsifブロックの終わりを示すため、
+    // endifへジャンプしたのでよい。
+    this.goToEndifFromElse();
+  }
+
+  protected goToEndifFromElse() {
+    let depth: number = 0;
+    while (true) {
+      let tag: Tag | null = this.getNextTag();
+      if (tag === null) {
+        throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
+        break;
+      }
+      if (tag.name === "if") {
+        depth++;
+      } else if (tag.name === "endif") {
+        if (depth === 0) {
+          this.ifDepth--;
+          if (this.ifDepth < 0) {
+            throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
+          }
+          break;
+        } else {
+          depth--;
+        }
+      }
+      if (depth < 0) {
+        throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
       }
     }
   }

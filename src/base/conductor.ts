@@ -5,10 +5,10 @@ import { Script } from "./script";
 import { Tag } from "./tag";
 
 export interface IConductorEvent {
-  onLabel(labelName: string, tick: number): "continue" | "break";
-  onSaveMark(saveComment: string, tick: number): "continue" | "break";
-  onJs(js: string, printFlag: boolean, tick: number): "continue" | "break";
-  onTag(tag: Tag, tick: number): "continue" | "break";
+  onLabel(labelName: string, line: number, tick: number): "continue" | "break";
+  onSaveMark(saveComment: string, line: number, tick: number): "continue" | "break";
+  onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break";
+  onTag(tag: Tag, line: number, tick: number): "continue" | "break";
 }
 
 export interface ICallStackNode {
@@ -126,16 +126,16 @@ export class Conductor {
       let tagReturnValue: "continue" | "break";
       switch (tag.name) {
         case "__label__":
-          tagReturnValue = this.eventCallbacks.onLabel(tag.values.__body__, tick);
+          tagReturnValue = this.eventCallbacks.onLabel(tag.values.__body__, tag.line, tick);
           break;
         case "__save_mark__":
-          tagReturnValue = this.eventCallbacks.onSaveMark(tag.values.__body__, tick);
+          tagReturnValue = this.eventCallbacks.onSaveMark(tag.values.__body__, tag.line, tick);
           break;
         case "__js__":
-          tagReturnValue = this.eventCallbacks.onJs(tag.values.__body__, tag.values.print, tick);
+          tagReturnValue = this.eventCallbacks.onJs(tag.values.__body__, tag.values.print, tag.line, tick);
           break;
         default:
-          tagReturnValue = this.eventCallbacks.onTag(tag, tick);
+          tagReturnValue = this.eventCallbacks.onTag(tag, tag.line, tick);
           break;
       }
 

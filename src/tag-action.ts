@@ -198,11 +198,53 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ["if"],
       "条件によって分岐する",
       [
-        new TagValue("cond", "string", true, null, "条件式(JavaScript)"),
+        new TagValue("exp", "string", true, null, "条件式(JavaScript)"),
       ],
       "TODO タグの説明文",
       (values, tick) => {
-        p.conductor.script.ifJump(values.cond);
+        p.conductor.script.ifJump(values.exp, p.tagActions);
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["elseif", "elsif"],
+      "条件によって分岐する",
+      [],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.conductor.script.elsifJump();
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["else"],
+      "条件によって分岐する",
+      [],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.conductor.script.elseJump();
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["endif"],
+      "条件分岐の終了",
+      [],
+      "TODO タグの説明文",
+      (values, tick) => {
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["for"],
+      "指定回数繰り返す",
+      [
+        new TagValue("loops", "number", true, null, "繰り替えし回数"),
+        new TagValue("indexvar", "string", false, "__index__", "ループ中のインデックスを格納する変数名"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.conductor.script.startForLoop(values.loops, values.indexvar);
         return "continue";
       },
     ),
