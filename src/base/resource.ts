@@ -2,36 +2,6 @@ import { AsyncCallbacks } from "./async-callbacks";
 import { Logger } from "./logger";
 import { Macro } from "./macro";
 import { Script } from "./script";
-//
-// export class LoadTextCallbacks {
-//   public doneFunc: null | ((data: string) => void) = null;
-//   public failFunc: null | (() => void) = null;
-//   public alwaysFunc: null | (() => void) = null;
-//
-//   public done(func: (data: string) => void): LoadTextCallbacks { this.doneFunc = func; return this; }
-//   public fail(func: () => void): LoadTextCallbacks { this.failFunc = func; return this; }
-//   public always(func: () => void): LoadTextCallbacks { this.alwaysFunc = func; return this; }
-// }
-//
-// export class LoadScriptCallbacks {
-//   public doneFunc: null | ((data: Script) => void) = null;
-//   public failFunc: null | (() => void) = null;
-//   public alwaysFunc: null | (() => void) = null;
-//
-//   public done(func: (data: Script) => void): LoadScriptCallbacks { this.doneFunc = func; return this; }
-//   public fail(func: () => void): LoadScriptCallbacks { this.failFunc = func; return this; }
-//   public always(func: () => void): LoadScriptCallbacks { this.alwaysFunc = func; return this; }
-// }
-//
-// export class LoadImageCallbacks {
-//   public doneFunc: null | ((data: HTMLImageElement) => void) = null;
-//   public failFunc: null | (() => void) = null;
-//   public alwaysFunc: null | (() => void) = null;
-//
-//   public done(func: (data: HTMLImageElement) => void): LoadImageCallbacks { this.doneFunc = func; return this; }
-//   public fail(func: () => void): LoadImageCallbacks { this.failFunc = func; return this; }
-//   public always(func: () => void): LoadImageCallbacks { this.alwaysFunc = func; return this; }
-// }
 
 export class Resource {
   private basePath: string;

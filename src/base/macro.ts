@@ -3,7 +3,6 @@ import { Resource } from "./resource";
 import { Tag } from "./tag";
 
 export class Macro {
-
   public readonly name: string;
   public readonly tags: Tag[];
   protected tagPoint: number = 0;

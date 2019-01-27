@@ -24,6 +24,8 @@ export class Script {
   protected forLoopStack: IForLoopInfo[] = [];
   protected ifDepth: number = 0;
 
+  protected macroStack: Macro[] = [];
+
   public constructor(resource: Resource, filePath: string, scriptText: string) {
     this.resource = resource;
     this._filePath = filePath;
@@ -66,17 +68,48 @@ export class Script {
       }
     }
   }
-
+  
   /**
    * 次のタグを取得する。
    * スクリプトファイル終端の場合はnullが返る
    * @return 次のタグ。終端の場合はnull
    */
   public getNextTag(): Tag | null {
-    const tags = this.parser.tags;
-    if (tags.length <= this.tagPoint) { return null; }
+    if (this.macroStack.length === 0) {
+      const tags = this.parser.tags;
+      if (tags.length <= this.tagPoint) {
+        return null;
+      } else {
+        let tag: Tag = this.latestTagBuffer = tags[this.tagPoint++];
+        if (this.resource.hasMacro(tag.name)) {
+          this.callMacro(tag);
+          return this.getNextTag();
+        } else {
+          return tag;
+        }
+      }
+    } else {
+      let macro: Macro = this.macroStack[this.macroStack.length - 1];
+      let tag: Tag | null = macro.getNextTag();
+      if (tag != null) {
+        if (this.resource.hasMacro(tag.name)) {
+          this.callMacro(tag);
+          return this.getNextTag();
+        } else {
+          return tag;
+        }
+      } else {
+        this.macroStack.pop();
+        return this.getNextTag();
+      }
+    }
+  }
 
-    return this.latestTagBuffer = tags[this.tagPoint++];
+  protected callMacro(tag: Tag): void {
+    let macro: Macro = this.resource.getMacro(tag.name).clone();
+    macro.resetTagPoint();
+    this.resource.setMacroParams(tag.values);
+    this.macroStack.push(macro);
   }
 
   /**
@@ -86,7 +119,10 @@ export class Script {
     return this.latestTagBuffer;
   }
 
-  public startDefineMacro(name: string): Macro {
+  /**
+   * マクロ定義を開始する
+   */
+  public defineMacro(name: string): Macro {
     let tags: Tag[] = [];
     while (true) {
       let tag: Tag | null = this.getNextTag();

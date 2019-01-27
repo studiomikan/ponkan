@@ -279,10 +279,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       "TODO タグの説明文",
       (values, tick) => {
-        if (p.resource.macroInfo[values.name] != null) {
+        if (p.resource.hasMacro(values.name)) {
           throw new Error(`${values.name}マクロはすでに登録されています`);
         }
-        let m = p.conductor.script.startDefineMacro(values.name);
+        let m = p.conductor.script.defineMacro(values.name);
         p.resource.macroInfo[values.name] = m;
         return "continue";
       },

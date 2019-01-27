@@ -16,11 +16,6 @@ export interface ICallStackNode {
   script: Script;
 }
 
-export interface IMacroStackNode {
-  macro: Macro;
-  args: any;
-}
-
 export enum ConductorState {
   Stop = 0,
   Run,
@@ -39,7 +34,6 @@ export class Conductor {
   protected sleepTime: number = -1;
 
   protected callStack: ICallStackNode[] = [];
-  protected macroStack: IMacroStackNode[] = [];
 
   public constructor(resource: Resource, eventCallbacks: IConductorEvent) {
     this.resource = resource;
@@ -121,7 +115,7 @@ export class Conductor {
     }
 
     while (true) {
-      let tag: Tag | null = this.getNextTag();
+      let tag: Tag | null = this.script.getNextTag();
       if (tag == null) {
         this.stop();
         return;
@@ -141,19 +135,7 @@ export class Conductor {
           tagReturnValue = this.eventCallbacks.onJs(tag.values.__body__, tag.values.print, tag.line, tick);
           break;
         default:
-          if (this.resource.hasMacro(tag.name)) {
-            // マクロ呼び出し
-            tagReturnValue = "continue";
-            let macro: Macro = this.resource.getMacro(tag.name).clone();
-            macro.resetTagPoint();
-            this.resource.setMacroParams(tag.values);
-            this.macroStack.push({
-              macro: macro,
-              args: tag.values
-            });
-          } else {
-            tagReturnValue = this.eventCallbacks.onTag(tag, tag.line, tick);
-          }
+          tagReturnValue = this.eventCallbacks.onTag(tag, tag.line, tick);
           break;
       }
 
@@ -169,22 +151,6 @@ export class Conductor {
           const js: string = value.substring(1);
           values[key] = this.resource.evalJs(js);
         }
-      }
-    }
-  }
-
-  public getNextTag(): Tag | null {
-    if (this.macroStack.length == 0) {
-      this.resource.resetMacroParams();
-      return this.script.getNextTag();
-    } else {
-      let info: IMacroStackNode = this.macroStack[this.macroStack.length - 1];
-      let tag: Tag | null = info.macro.getNextTag();
-      if (tag != null) {
-        return tag;
-      } else {
-        this.macroStack.pop();
-        return this.getNextTag();
       }
     }
   }

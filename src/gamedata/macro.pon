@@ -1,9 +1,19 @@
 - console.log("macro.pon");
 
 ;macro "name": "print"
-プリント
-;pbc 
+;print2
 かんりょう。
+;endmacro
+
+;macro "name": "print2"
+１２
+;print3
+５
+;pbc 
+;endmacro
+
+;macro "name": "print3"
+３４
 ;endmacro
 
 ;macro "name": "pbc2"
