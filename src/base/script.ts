@@ -3,6 +3,7 @@ import { Resource } from "./resource";
 import { AsyncCallbacks } from "./async-callbacks";
 import { ScriptParser } from "./script-parser";
 import { Tag } from "./tag";
+import { Macro } from "./macro";
 import { applyJsEntity, castTagValues } from "../tag-action";
 
 export interface IForLoopInfo {
@@ -78,10 +79,35 @@ export class Script {
     return this.latestTagBuffer = tags[this.tagPoint++];
   }
 
+  /**
+   * 最後に取得されたタグを返す。
+   */
   public getLatestTag(): Tag | null {
     return this.latestTagBuffer;
   }
 
+  public startDefineMacro(name: string): Macro {
+    let tags: Tag[] = [];
+    while (true) {
+      let tag: Tag | null = this.getNextTag();
+      if (tag === null) {
+        throw new Error("マクロ定義エラー。macroとendmacroの対応が取れていません");
+      } else if (tag.name === "endmacro") {
+        break;
+      } else {
+        tags.push(tag.clone());
+      }
+    }
+    if (tags.length === 0) {
+      throw new Error(`マクロ定義の中身が空です`);
+    }
+    return new Macro(name, tags);
+  }
+
+  /**
+   * 条件分岐を開始
+   * @param tagAction タグ動作定義マップ
+   */
   public ifJump(exp: string, tagActions: any): void {
     this.ifDepth++;
     if (!this.resource.evalJs(exp)) {
@@ -89,13 +115,17 @@ export class Script {
     }
   }
 
+  /**
+   * elseかelsifかendifまでジャンプする。
+   * elsifの場合は条件式の評価も行って判定する。
+   * @param tagAction タグ動作定義マップ
+   */
   protected goToElseFromIf(tagActions: any): void {
     let depth: number = 0;
     while (true) {
       let tag: Tag | null = this.getNextTag();
       if (tag === null) {
         throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
-        break;
       }
       if (tag.name === "if") {
         depth++;
@@ -129,18 +159,27 @@ export class Script {
     }
   }
 
+  /**
+   * elsifタグの動作
+   */
   public elsifJump() {
     // タグ動作としてelsifにきたときは、単に前のif/elsifブロックの終わりを示すため、
     // endifへジャンプしたのでよい。
     this.goToEndifFromElse();
   }
 
+  /**
+   * elseタグの動作
+   */
   public elseJump() {
     // タグ動作としてelseにきたときは、単に前のif/elsifブロックの終わりを示すため、
     // endifへジャンプしたのでよい。
     this.goToEndifFromElse();
   }
 
+  /**
+   * endifまでジャンプする。
+   */
   protected goToEndifFromElse() {
     let depth: number = 0;
     while (true) {
@@ -205,7 +244,7 @@ export class Script {
    * forLoopから抜け出す
    */
   public breakForLoop(): void {
-    let depth: number = 1;
+    let depth: number = 0;
     while (true) {
       let tag: Tag | null = this.getNextTag();
       if (tag === null) {
@@ -215,12 +254,14 @@ export class Script {
       if (tag.name === "for") {
         depth++;
       } else if (tag.name === "endfor") {
-        depth--;
         if (depth === 0) {
           break;
-        } else if (depth < 0) {
-          throw new Error("breakforの動作エラー。forとendforの対応が取れていません");
+        } else  {
+          depth--;
         }
+      }
+      if (depth < 0) {
+        throw new Error("breakforの動作エラー。forとendforの対応が取れていません");
       }
     }
   }

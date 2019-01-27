@@ -269,6 +269,35 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     // ======================================================================
+    // マクロ
+    // ======================================================================
+    new TagAction(
+      ["macro"],
+      "マクロを定義する",
+      [
+        new TagValue("name", "string", true, null, "マクロの名前"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        if (p.resource.macroInfo[values.name] != null) {
+          throw new Error(`${values.name}マクロはすでに登録されています`);
+        }
+        let m = p.conductor.script.startDefineMacro(values.name);
+        p.resource.macroInfo[values.name] = m;
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["endmacro"],
+      "マクロ定義の終わり",
+      [],
+      "TODO タグの説明文",
+      (values, tick) => {
+        throw new Error("マクロ定義エラー。macroとendmacroの対応が取れていません");
+        return "continue";
+      },
+    ),
+    // ======================================================================
     // メッセージ関係
     // ======================================================================
     new TagAction(

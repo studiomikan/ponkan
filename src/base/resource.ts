@@ -1,5 +1,6 @@
 import { AsyncCallbacks } from "./async-callbacks";
 import { Logger } from "./logger";
+import { Macro } from "./macro";
 import { Script } from "./script";
 //
 // export class LoadTextCallbacks {
@@ -34,9 +35,12 @@ import { Script } from "./script";
 
 export class Resource {
   private basePath: string;
-  public tmpVar: object = {};
-  public gameVar: object = {};
-  public systemVar: object = {};
+  public readonly tmpVar: object = {};
+  public readonly gameVar: object = {};
+  public readonly systemVar: object = {};
+  
+  public readonly macroInfo: any = {};
+  public macroParams: object | null = null;
 
   public constructor(basePath: string = "") {
     this.basePath = this.fixPath(basePath);
@@ -47,11 +51,20 @@ export class Resource {
     let tv = this.tmpVar;
     let gv = this.gameVar;
     let sv = this.systemVar;
+    let mp = this.macroParams;
     return (function() {
       return eval(js);
     })();
   }
   // tslint:enable
+
+  public setMacroParams(params: any): void {
+    this.macroParams = params;
+  }
+
+  public resetMacroParams(): void {
+    this.macroParams = null;
+  }
 
   /**
    * パスの末尾からスラッシュを取り除いて返す
@@ -66,6 +79,14 @@ export class Resource {
    */
   public getPath(filePath: string) {
     return `${this.basePath}/${filePath}`;
+  }
+
+  public hasMacro(name: string): boolean {
+    return this.macroInfo[name] != null;
+  }
+
+  public getMacro(name: string): Macro {
+    return this.macroInfo[name];
   }
 
   /**

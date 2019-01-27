@@ -10,7 +10,9 @@
   = " "
 ;endfor
 
-;clear
+;print
+# ;br
+# ;clear
 
 ;if "exp": "100 === 200"
   then block.
@@ -35,8 +37,6 @@
   ERROR!!
 ;endif
 
-
-TODO breakfor tag. end
 ;s
 
 *jump-target-label

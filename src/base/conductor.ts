@@ -3,6 +3,7 @@ import { Logger } from "./logger";
 import { Resource } from "./resource";
 import { Script } from "./script";
 import { Tag } from "./tag";
+import { Macro } from "./macro";
 
 export interface IConductorEvent {
   onLabel(labelName: string, line: number, tick: number): "continue" | "break";
@@ -13,6 +14,11 @@ export interface IConductorEvent {
 
 export interface ICallStackNode {
   script: Script;
+}
+
+export interface IMacroStackNode {
+  macro: Macro;
+  args: any;
 }
 
 export enum ConductorState {
@@ -26,14 +32,14 @@ export class Conductor {
   protected eventCallbacks: IConductorEvent;
   protected _script: Script;
   public get script(): Script { return this._script; }
-  protected _status: "stop" | "run" | "sleep" = "stop";
-  public get status(): "stop" | "run" | "sleep" { return this._status; }
+  protected _status: ConductorState = ConductorState.Stop;
+  public get status(): ConductorState { return this._status; }
 
   protected sleepStartTick: number = -1;
   protected sleepTime: number = -1;
 
   protected callStack: ICallStackNode[] = [];
-  protected forLoopDepth: number = 0;
+  protected macroStack: IMacroStackNode[] = [];
 
   public constructor(resource: Resource, eventCallbacks: IConductorEvent) {
     this.resource = resource;
@@ -101,11 +107,11 @@ export class Conductor {
   }
 
   public conduct(tick: number): void {
-    if (this._status === "stop") { return; }
+    if (this.status === ConductorState.Stop) { return; }
 
     // スリープ処理
     // スリープ中ならretur、終了していたときは後続処理へ進む
-    if (this._status === "sleep") {
+    if (this.status === ConductorState.Sleep) {
       const elapsed: number = tick - this.sleepStartTick;
       if (elapsed < this.sleepTime) {
         return;
@@ -115,7 +121,7 @@ export class Conductor {
     }
 
     while (true) {
-      let tag: Tag | null = this.script.getNextTag();
+      let tag: Tag | null = this.getNextTag();
       if (tag == null) {
         this.stop();
         return;
@@ -135,7 +141,19 @@ export class Conductor {
           tagReturnValue = this.eventCallbacks.onJs(tag.values.__body__, tag.values.print, tag.line, tick);
           break;
         default:
-          tagReturnValue = this.eventCallbacks.onTag(tag, tag.line, tick);
+          if (this.resource.hasMacro(tag.name)) {
+            // マクロ呼び出し
+            tagReturnValue = "continue";
+            let macro: Macro = this.resource.getMacro(tag.name).clone();
+            macro.resetTagPoint();
+            this.resource.setMacroParams(tag.values);
+            this.macroStack.push({
+              macro: macro,
+              args: tag.values
+            });
+          } else {
+            tagReturnValue = this.eventCallbacks.onTag(tag, tag.line, tick);
+          }
           break;
       }
 
@@ -155,8 +173,24 @@ export class Conductor {
     }
   }
 
+  public getNextTag(): Tag | null {
+    if (this.macroStack.length == 0) {
+      this.resource.resetMacroParams();
+      return this.script.getNextTag();
+    } else {
+      let info: IMacroStackNode = this.macroStack[this.macroStack.length - 1];
+      let tag: Tag | null = info.macro.getNextTag();
+      if (tag != null) {
+        return tag;
+      } else {
+        this.macroStack.pop();
+        return this.getNextTag();
+      }
+    }
+  }
+
   public start(): "continue" | "break" {
-    this._status = "run";
+    this._status = ConductorState.Run;
     this.sleepTime = -1;
     this.sleepStartTick = -1;
     Logger.debug("Conductor start.");
@@ -164,13 +198,13 @@ export class Conductor {
   }
 
   public stop(): "continue" | "break" {
-    this._status = "stop";
+    this._status = ConductorState.Stop;
     Logger.debug("Conductor stop.");
     return "break"
   }
 
   public sleep(tick: number, sleepTime: number): "continue" | "break"  {
-    this._status = "sleep";
+    this._status = ConductorState.Sleep;
     this.sleepStartTick = tick;
     this.sleepTime = sleepTime;
     Logger.debug("Conductor sleep.", sleepTime);

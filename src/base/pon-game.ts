@@ -7,7 +7,7 @@ import { PonEventHandler } from "./pon-event-handler";
 import { Resource } from "./resource";
 
 export class PonGame {
-  protected resource: Resource;
+  public readonly resource: Resource;
   private loopFlag: boolean = false;
   private loopCount: number = 0;
   private fpsPreTick: number = 0;

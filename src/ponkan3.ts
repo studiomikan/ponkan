@@ -1,5 +1,5 @@
 import { BaseLayer } from "./base/base-layer";
-import { Conductor, IConductorEvent } from "./base/conductor";
+import { Conductor, IConductorEvent, ConductorState } from "./base/conductor";
 import { Logger } from "./base/logger";
 import { PonGame } from "./base/pon-game";
 import { PonMouseEvent } from "./base/pon-mouse-event";
@@ -159,7 +159,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     // コンダクターのスリープを解除する。
     // テキスト出力のウェイト、waitタグでのスリープ等を解除する。
     // TODO canskipタグの判定必要か検討する
-    if (this.conductor.status === "sleep") {
+    if (this.conductor.status === ConductorState.Sleep) {
       this.conductor.start();
       this.skipMode = "nextclick";
     }

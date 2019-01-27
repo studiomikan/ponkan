@@ -38,6 +38,7 @@ for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
 
 *jump_target
 
+# マクロ定義
+;call "file": "macro.pon"
 
 ;return
-
