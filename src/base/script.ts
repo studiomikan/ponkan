@@ -128,6 +128,10 @@ export class Script {
       let tag: Tag | null = this.getNextTag();
       if (tag === null) {
         throw new Error("マクロ定義エラー。macroとendmacroの対応が取れていません");
+      } else if (tag.name === "__label__") {
+        throw new Error("マクロ定義エラー。マクロの中でラベルは使用できません");
+      } else if (tag.name === "__save_mark__") {
+        throw new Error("マクロ定義エラー。マクロの中でセーブマークは使用できません");
       } else if (tag.name === "endmacro") {
         break;
       } else {
