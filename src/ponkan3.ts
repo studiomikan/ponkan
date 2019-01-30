@@ -3,6 +3,7 @@ import { Conductor, IConductorEvent, ConductorState } from "./base/conductor";
 import { Logger } from "./base/logger";
 import { PonGame } from "./base/pon-game";
 import { PonMouseEvent } from "./base/pon-mouse-event";
+import { AsyncCallbacks } from "./base/async-callbacks";
 import { Tag } from "./base/tag";
 import { Sound } from "./base/sound";
 import { PonLayer } from "./layer/pon-layer";
@@ -248,8 +249,26 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // =========================================================
   // サウンド
   // =========================================================
-
-
+  public loadSound(filePath: string, buf: number): AsyncCallbacks {
+    // return this.resource.loadSound(values.filePath);
+    let cb: AsyncCallbacks = new AsyncCallbacks();
+    this.resource.loadSound(filePath).done((sound) => {
+      this.sounds[buf] = sound;
+      cb.callDone(sound);
+    }).fail(() => {
+      cb.callFail();
+    });
+    return cb;
+  }
+  
+  public getSound(buf: number): Sound {
+    let sound: Sound = this.sounds[buf];
+    if (sound == null) {
+      throw new Error(`音声バッファ${buf}は音声がロードされていません`);
+    } else {
+      return sound;
+    }
+  }
 
   // =========================================================
   // レイヤ

@@ -545,5 +545,51 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
+    // ======================================================================
+    // サウンド関係
+    // ======================================================================
+    new TagAction(
+      ["loadsound", "sound"],
+      "音声をロードする",
+      [
+        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+        new TagValue("file", "string", true, null, "読み込む音声ファイルパス"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.loadSound(values.file, values.buf).done((sound) => {
+          p.conductor.start();
+        }).fail(() => {
+          throw new Error(`音声のロードに失敗しました(${values.file})`);
+        });
+        return p.conductor.stop();
+      },
+    ),
+    new TagAction(
+      ["playsound"],
+      "音声を再生する",
+      [
+        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+        // TODO loop、volume等
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.getSound(values.buf).play();
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["stopsound"],
+      "音声を停止する",
+      [
+        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+        // TODO loop、volume等
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.getSound(values.buf).stop();
+        return "continue";
+      },
+    ),
   ];
 }

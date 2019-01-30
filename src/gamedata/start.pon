@@ -37,6 +37,17 @@
   ERROR!!
 ;endif
 
+
+;pb
+;loadsound "buf": 0, "file": "ohka_japan.mp3"
+ロード
+;lb
+再生
+;playsound "buf": 0
+;lb
+停止
+;stopsound "buf": 0
+
 ;s
 
 *jump-target-label
