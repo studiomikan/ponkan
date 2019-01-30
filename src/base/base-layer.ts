@@ -12,7 +12,7 @@ import { Resource } from "./resource";
 /**
  * 基本レイヤ。PIXI.Containerをラップしたもの
  */
-export class BaseLayer implements IPonSpriteCallbacks {
+export class BaseLayer {
   /** リソース */
   private r: Resource;
   /** レイヤ名 */
@@ -27,6 +27,15 @@ export class BaseLayer implements IPonSpriteCallbacks {
   protected backgroundSprite: PonSprite;
   protected _backgroundColor: number = 0x000000;
   protected _backgroundAlpha: number = 1.0;
+
+  protected textContainer: PIXI.Container;
+  protected textSpriteCallbacks: IPonSpriteCallbacks;
+
+  protected childContainer: PIXI.Container;
+  protected childSpriteCallbacks: IPonSpriteCallbacks;
+
+  protected imageContainer: PIXI.Container;
+  protected imageSpriteCallbacks: IPonSpriteCallbacks;
 
   /** 読み込んでいる画像 */
   protected image: HTMLImageElement | null = null;
@@ -89,8 +98,8 @@ export class BaseLayer implements IPonSpriteCallbacks {
     this.name = name;
 
     this._container = new PIXI.Container();
-    this._container.width = 32;
-    this._container.height = 32;
+    // this._container.width = 32;
+    // this._container.height = 32;
 
     this.maskSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
     this.maskSprite.width = 32;
@@ -98,7 +107,40 @@ export class BaseLayer implements IPonSpriteCallbacks {
     this.container.addChild(this.maskSprite);
     this.container.mask = this.maskSprite;
 
-    this.backgroundSprite = new PonSprite(this, 0);
+    this.imageContainer = new PIXI.Container();
+    this.container.addChild(this.imageContainer);
+    this.imageSpriteCallbacks = {
+      pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
+        this.imageContainer.addChild(child);
+      }, 
+      pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
+        this.imageContainer.removeChild(child);
+      }
+    };
+
+    this.backgroundSprite = new PonSprite(this.imageSpriteCallbacks);
+
+    this.textContainer = new PIXI.Container();
+    this.container.addChild(this.textContainer);
+    this.textSpriteCallbacks = {
+      pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
+        this.textContainer.addChild(child);
+      }, 
+      pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
+        this.textContainer.removeChild(child);
+      }
+    };
+
+    this.childContainer = new PIXI.Container();
+    this.container.addChild(this.childContainer);
+    this.childSpriteCallbacks = {
+      pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
+        this.childContainer.addChild(child);
+      }, 
+      pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
+        this.childContainer.removeChild(child);
+      }
+    };
 
     Logger.debug("new layer =>", this);
   }
@@ -115,18 +157,6 @@ export class BaseLayer implements IPonSpriteCallbacks {
       child.destroy();
     });
     this._children = [];
-  }
-
-  public pixiContainerAddChild(sprite: PIXI.DisplayObject, zIndex: number) {
-    if (this._container.children.length <= zIndex) {
-      this._container.addChild(sprite);
-    } else {
-      this._container.addChildAt(sprite, zIndex);
-    }
-  }
-
-  public pixiContainerRemoveChild(sprite: PIXI.DisplayObject) {
-    this._container.removeChild(sprite);
   }
 
   public addChild(childLayer: BaseLayer): BaseLayer {
@@ -263,7 +293,7 @@ export class BaseLayer implements IPonSpriteCallbacks {
       this.addTextReturn();
       return;
     }
-    const sp: PonSprite = new PonSprite(this, this.textSprites.length + 2);
+    const sp: PonSprite = new PonSprite(this.textSpriteCallbacks);
     const fontSize: number = +this.textStyle.fontSize;
     this.textSprites.push(sp);
     sp.createText(ch, this.textStyle);
@@ -345,7 +375,7 @@ export class BaseLayer implements IPonSpriteCallbacks {
     this.r.loadImage(filePath).done((image) => {
       Logger.debug("BaseLayer.loadImage success: ", image);
       this.image = <HTMLImageElement> image;
-      this.imageSprite = new PonSprite(this, 1);
+      this.imageSprite = new PonSprite(this.imageSpriteCallbacks);
       this.imageSprite.setImage(image);
       this.width = image.width;
       this.height = image.height;

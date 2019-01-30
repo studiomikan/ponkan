@@ -4,6 +4,7 @@ import { Logger } from "./base/logger";
 import { PonGame } from "./base/pon-game";
 import { PonMouseEvent } from "./base/pon-mouse-event";
 import { Tag } from "./base/tag";
+import { Sound } from "./base/sound";
 import { PonLayer } from "./layer/pon-layer";
 import { applyJsEntity, castTagValues, generateTagActions, TagAction, TagValue } from "./tag-action";
 
@@ -33,6 +34,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public currentPage: "fore" | "back" = "fore";
 
   // メッセージ関係
+  public textSpeed: number = 100;
   protected _messageLayerNum: number = 20;
   public get messageLayerNum(): number { return this._messageLayerNum; }
   public set messageLayerNum(num: number) { this._messageLayerNum = num; }
@@ -51,7 +53,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public pageBreakGlyphX: number = 0;
   public pageBreakGlyphY: number = 0;
 
-  public textSpeed: number = 100;
+  // サウンド関係
+  // protected _soundCount: number = 5;
+  public readonly sounds: Sound[] = [];
 
   public get tmpVar(): object { return this.resource.tmpVar; }
   public get gameVar(): object { return this.resource.gameVar; }
@@ -240,6 +244,12 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       return "continue";
     }
   }
+
+  // =========================================================
+  // サウンド
+  // =========================================================
+
+
 
   // =========================================================
   // レイヤ

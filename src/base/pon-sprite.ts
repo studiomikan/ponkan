@@ -13,7 +13,7 @@ export interface IPonSpriteCallbacks {
    * コンテナにスプライトを追加する
    * @param child 追加するスプライト
    */
-  pixiContainerAddChild(child: PIXI.DisplayObject, zIndex: number): void;
+  pixiContainerAddChild(child: PIXI.DisplayObject): void;
   /**
    * コンテナからスプライトを削除する
    * @param child 削除するスプライト
@@ -29,7 +29,6 @@ export class PonSprite {
   private callbacks: IPonSpriteCallbacks;
   private _x: number = 0;
   private _y: number = 0;
-  private _zIndex: number = 0;
   private _width: number = DEFAULT_WIDTH;
   private _height: number = DEFAULT_HEIGHT;
   private _visible: boolean = true;
@@ -71,17 +70,12 @@ export class PonSprite {
     this._visible = visible;
     if (this.pixiSprite != null) { this.pixiSprite.visible = visible; }
   }
-  /** 表示順 */
-  public get zIndex(): number { return this._zIndex; }
-  /** 表示順 */
-  public set zIndex(zIndex: number) { this._zIndex = zIndex; }
 
   /**
    * @param callbacks コールバック
    */
-  public constructor(callbacks: IPonSpriteCallbacks, zIndex: number) {
+  public constructor(callbacks: IPonSpriteCallbacks) {
     this.callbacks = callbacks;
-    this.zIndex = zIndex;
   }
 
   /**
@@ -124,7 +118,7 @@ export class PonSprite {
     this._height = this.pixiSprite.height;
 
     this.pixiSprite.anchor.set(0);
-    this.callbacks.pixiContainerAddChild(this.pixiSprite, this.zIndex);
+    this.callbacks.pixiContainerAddChild(this.pixiSprite);
   }
 
   /**
@@ -144,7 +138,7 @@ export class PonSprite {
     this.pixiSprite.lineStyle(0);
     this.pixiSprite.beginFill(color, alpha);
     this.pixiSprite.drawRect(0, 0, this.width, this.height);
-    this.callbacks.pixiContainerAddChild(this.pixiSprite, this.zIndex);
+    this.callbacks.pixiContainerAddChild(this.pixiSprite);
   }
 
   /**
@@ -160,7 +154,7 @@ export class PonSprite {
     this.pixiSprite.height = image.height;
 
     this.pixiSprite.anchor.set(0);
-    this.callbacks.pixiContainerAddChild(this.pixiSprite, this.zIndex);
+    this.callbacks.pixiContainerAddChild(this.pixiSprite);
   }
 
   public onUpdate(tick: number): void {

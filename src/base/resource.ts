@@ -1,7 +1,9 @@
+import { Howl, Howler } from 'howler';
 import { AsyncCallbacks } from "./async-callbacks";
 import { Logger } from "./logger";
 import { Macro } from "./macro";
 import { Script } from "./script";
+import { Sound } from "./sound";
 
 export class Resource {
   private basePath: string;
@@ -14,6 +16,8 @@ export class Resource {
 
   public constructor(basePath: string = "") {
     this.basePath = this.fixPath(basePath);
+
+    Howler.usingWebAudio = true;
   }
 
   // tslint:disable
@@ -128,6 +132,25 @@ export class Resource {
       }
     };
     image.src = path;
+
+    return cb;
+  }
+
+  public loadSound(filePath: string): AsyncCallbacks {
+    const cb = new AsyncCallbacks();
+
+    let h: Howl = new Howl({
+      src: [this.getPath(filePath)],
+      loop: true,
+      volume: 1,
+      autoplay: false,
+      onload: () => {
+        cb.callDone(new Sound(filePath, h));
+      },
+      onloaderror: () => {
+        cb.callFail(filePath);
+      }
+    });
 
     return cb;
   }
