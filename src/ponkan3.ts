@@ -1,3 +1,4 @@
+import * as Util from "./base/util.ts";
 import { BaseLayer } from "./base/base-layer";
 import { Conductor, IConductorEvent, ConductorState } from "./base/conductor";
 import { Logger } from "./base/logger";
@@ -61,6 +62,8 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public get tmpVar(): object { return this.resource.tmpVar; }
   public get gameVar(): object { return this.resource.gameVar; }
   public get systemVar(): object { return this.resource.systemVar; }
+
+  protected latestSaveData: any = {};
 
   public constructor(parentId: string, config: any = {}) {
     super(parentId, config);
@@ -231,7 +234,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public onSaveMark(saveComment: string, line: number, tick: number): "continue" | "break" {
     Logger.debug("onSaveMark: ", saveComment);
-    // TODO
+    this.updateSaveData(tick);
     return "continue";
   }
 
@@ -454,6 +457,61 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
         break;
     }
   }
+
+  // =========================================================
+  // セーブ・ロード
+  // =========================================================
+
+  // TODO システムセーブ
+
+  public save(tick: number): void {
+    // TODO 実装
+    console.log("==SAVE=============================================");
+    console.log(this.latestSaveData);
+    console.log("===================================================");
+
+    try {
+      let saveStr: string = JSON.stringify(this.latestSaveData);
+    } catch (e) {
+      Logger.error(e);
+      throw new Error("セーブデータの保存に失敗しました。JSON文字列に変換できません");
+    }
+  }
+
+  protected updateSaveData(tick: number): void {
+    let data: any = this.latestSaveData = {};
+    let me: any = <any> this;
+    data.date = tick;
+
+    [
+      "skipMode",
+      "canStopSkipByTag",
+      "layerCount",
+      "currentPage",
+      "textSpeed",
+      "messageLayerNum",
+      "lineBreakGlyphLayerNum",
+      "lineBreakGlyphPos",
+      "lineBreakGlyphX",
+      "lineBreakGlyphY",
+      "pageBreakGlyphLayerNum",
+      "pageBreakGlyphPos",
+      "pageBreakGlyphX",
+      "pageBreakGlyphY",
+    ].forEach((param: string) => {
+      data[param] = me[param];
+    });
+
+    data.gameVar = Util.objClone(this.gameVar);
+    data.forePrimaryLayer = this.forePrimaryLayer.store(tick);
+    data.backPrimaryLayer = this.backPrimaryLayer.store(tick);
+    data.sounds = [];
+    this.sounds.forEach((sound) => {
+      data.sounds.push(sound.store(tick));
+    });
+  }
+
+
 
 }
 

@@ -133,5 +133,27 @@ export class Sound {
 
   public set loop(loop: boolean) { this.howl.loop(this._loop = loop); }
   public get loop(): boolean { return this._loop; }
+
+  public store(tick: number): any {
+    let data: any = {};
+    let me: any = <any> this;
+
+    [
+      "filePath",
+      "bufferNum",
+      "state",
+      "seek",
+      "loop",
+      "volume",
+      "volume2",
+      "fadeStartVolume",
+      "fadeTargetVolume",
+      "stopAfterFade",
+    ].forEach((param: string) => {
+      data[param] = me[param];
+    });
+
+    return data;
+  }
 }
 

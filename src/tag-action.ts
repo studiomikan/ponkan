@@ -653,5 +653,20 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
+    // ======================================================================
+    // セーブ＆ロード関係
+    // ======================================================================
+    new TagAction(
+      ["save"],
+      "最新状態をセーブする",
+      [
+        new TagValue("num", "number", true, null, "セーブ番号")
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.save(tick);
+        return "continue";
+      },
+    ),
   ];
 }

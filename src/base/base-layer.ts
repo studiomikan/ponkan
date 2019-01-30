@@ -39,6 +39,7 @@ export class BaseLayer {
 
   /** 読み込んでいる画像 */
   protected image: HTMLImageElement | null = null;
+  protected imageFilePath: string | null = null;
   /** 画像用スプライト */
   protected imageSprite: PonSprite | null = null;
 
@@ -48,11 +49,31 @@ export class BaseLayer {
   // 文字関係
   protected textSprites: PonSprite[] = [];
   public textStyle: PIXI.TextStyle = new PIXI.TextStyle({
-    // fontFamily: 'monospace',
+    fontFamily: ['monospace'],
     fontSize: 24,
     fontWeight: "normal",
     fill: 0xffffff,
   });
+  public set textFontFamily(fontFamily: string[]) { this.textStyle.fontFamily = fontFamily; }
+  public get textFontFamily(): string[] { 
+    if (typeof this.textStyle.fontFamily === "string") {
+      return [this.textStyle.fontFamily];
+    } else {
+      return this.textStyle.fontFamily;
+    }
+  }
+  public set textFontSize(fontSize: number | string) { this.textStyle.fontSize = fontSize; }
+  public get textFontSize(): number | string { return this.textStyle.fontSize; }
+  public set textFontWeight(fontWeight: string) { this.textStyle.fontWeight = fontWeight; }
+  public get textFontWeight(): string { return this.textStyle.fontWeight; }
+  public set textColor(color: number | string) { this.textStyle.fill = color; }
+  public get textColor(): number | string {
+    if (typeof this.textStyle.fill === "number") {
+      return this.textStyle.fill;
+    } else {
+      return <string> this.textStyle.fill;
+    }
+  }
   public textMarginTop: number = 10;
   public textMarginRight: number  = 10;
   public textMarginBottom: number  = 10;
@@ -85,8 +106,8 @@ export class BaseLayer {
   public get alpha(): number { return this.container.alpha; }
   public set alpha(alpha: number) { this.container.alpha = alpha; }
   
-  public get backgroundColor(): number { return this.backgroundColor; }
-  public get backgroundAlpha(): number { return this.backgroundAlpha; }
+  public get backgroundColor(): number { return this._backgroundColor; }
+  public get backgroundAlpha(): number { return this._backgroundAlpha; }
 
   public get imageX(): number { return this.imageSprite === null ? 0 : this.imageSprite.x; }
   public set imageX(imageX: number) { if (this.imageSprite !== null) { this.imageSprite.x = imageX; } }
@@ -375,6 +396,7 @@ export class BaseLayer {
     this.r.loadImage(filePath).done((image) => {
       Logger.debug("BaseLayer.loadImage success: ", image);
       this.image = <HTMLImageElement> image;
+      this.imageFilePath = filePath;
       this.imageSprite = new PonSprite(this.imageSpriteCallbacks);
       this.imageSprite.setImage(image);
       this.width = image.width;
@@ -399,6 +421,50 @@ export class BaseLayer {
     }
     this.imageSprite = null;
     this.image = null;
+  }
+
+  public store(tick: number): any {
+    let data: any = {};
+    let me: any = <any> this;
+
+    [
+      "name",
+      "imageFilePath",
+      "textMarginTop",
+      "textMarginRight",
+      "textMarginBottom",
+      "textMarginLeft",
+      "textX",
+      "textY",
+      "textLineHeight",
+      "textLinePitch",
+      "textAutoReturn",
+      "textIndentPoint",
+      "x",
+      "y",
+      "width",
+      "height",
+      "visible",
+      "alpha",
+      "backgroundColor",
+      "backgroundAlpha",
+      "imageX",
+      "imageY",
+      "textFontFamily",
+      "textFontSize",
+      "textFontWeight",
+      "textColor",
+    ].forEach((param: string) => {
+      data[param] = me[param];
+    });
+  
+    // 子レイヤ
+    data.children = [];
+    this.children.forEach((child) => {
+      data.children.push(child.store(tick));
+    });
+
+    return data;
   }
 
 }
