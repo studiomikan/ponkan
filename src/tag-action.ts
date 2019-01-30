@@ -4,6 +4,7 @@ import { Logger } from "./base/logger";
 import { PonEventHandler} from "./base/pon-event-handler";
 import { Resource } from "./base/resource";
 import { Tag } from "./base/tag";
+import { Sound } from "./base/sound";
 import { PonLayer } from "./layer/pon-layer";
 import { Ponkan3 } from "./ponkan3";
 
@@ -563,6 +564,24 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           throw new Error(`音声のロードに失敗しました(${values.file})`);
         });
         return p.conductor.stop();
+      },
+    ),
+    new TagAction(
+      ["soundopt"],
+      "音声の設定",
+      [
+        new TagValue("buf", "number", true, null, "バッファ番号"),
+        new TagValue("volume", "number", false, null, "音量(0.0〜1.0)"),
+        new TagValue("seek", "number", false, null, "シーク位置(ms)"),
+        new TagValue("loop", "boolean", false, null, "ループ再生するかどうか"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        let s: Sound = p.getSound(values.buf);
+        if (values.volume != null) { s.volume = values.volume; }
+        if (values.seek != null) { s.seek = values.seek; }
+        if (values.loop != null) { s.loop = values.loop; }
+        return "continue";
       },
     ),
     new TagAction(

@@ -45,6 +45,9 @@
 再生
 ;playsound "buf": 0
 ;lb
+音量を20%に
+;soundopt "buf": 0, "volume": 0.2
+;lb
 停止
 ;stopsound "buf": 0
 

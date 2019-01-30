@@ -253,6 +253,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     // return this.resource.loadSound(values.filePath);
     let cb: AsyncCallbacks = new AsyncCallbacks();
     this.resource.loadSound(filePath).done((sound) => {
+      if (this.sounds[buf] != null) { this.sounds[buf].destroy(); }
       this.sounds[buf] = sound;
       cb.callDone(sound);
     }).fail(() => {
