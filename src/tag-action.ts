@@ -572,6 +572,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [
         new TagValue("buf", "number", true, null, "バッファ番号"),
         new TagValue("volume", "number", false, null, "音量(0.0〜1.0)"),
+        new TagValue("volume2", "number", false, null, "音量2(0.0〜1.0)"),
         new TagValue("seek", "number", false, null, "シーク位置(ms)"),
         new TagValue("loop", "boolean", false, null, "ループ再生するかどうか"),
       ],
@@ -579,6 +580,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       (values, tick) => {
         let s: Sound = p.getSound(values.buf);
         if (values.volume != null) { s.volume = values.volume; }
+        if (values.volume2 != null) { s.volume2 = values.volume2; }
         if (values.seek != null) { s.seek = values.seek; }
         if (values.loop != null) { s.loop = values.loop; }
         return "continue";
@@ -589,7 +591,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "音声を再生する",
       [
         new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
-        // TODO loop、volume等
       ],
       "TODO タグの説明文",
       (values, tick) => {
@@ -602,11 +603,53 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "音声を停止する",
       [
         new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
-        // TODO loop、volume等
       ],
       "TODO タグの説明文",
       (values, tick) => {
         p.getSound(values.buf).stop();
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["fadesound"],
+      "音声をフェードする",
+      [
+        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+        new TagValue("volume", "number", true, null, "フェード後の音量(0.0〜1.0)"),
+        new TagValue("time", "number", true, null, "フェード時間(ms)"),
+        new TagValue("autostop", "boolean", false, false, "フェード終了後に再生停止するか"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.getSound(values.buf).fade(values.volume, values.time, values.autostop);
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["fadeoutsound", "fadeout"],
+      "音声をフェードアウトして再生停止する",
+      [
+        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+        new TagValue("time", "number", true, null, "フェード時間(ms)"),
+        new TagValue("autostop", "boolean", false, false, "フェード終了後に再生停止するか"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.getSound(values.buf).fadeout(values.time, values.autostop);
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["fadeinsound", "fadein"],
+      "音声をフェードインで再生開始する",
+      [
+        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+        new TagValue("time", "number", true, null, "フェード時間(ms)"),
+        new TagValue("autostop", "boolean", false, false, "フェード終了後に再生停止するか"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.getSound(values.buf).fadein(values.time);
         return "continue";
       },
     ),

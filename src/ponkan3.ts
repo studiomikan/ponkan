@@ -5,7 +5,7 @@ import { PonGame } from "./base/pon-game";
 import { PonMouseEvent } from "./base/pon-mouse-event";
 import { AsyncCallbacks } from "./base/async-callbacks";
 import { Tag } from "./base/tag";
-import { Sound } from "./base/sound";
+import { Sound, ISoundCallbacks } from "./base/sound";
 import { PonLayer } from "./layer/pon-layer";
 import { applyJsEntity, castTagValues, generateTagActions, TagAction, TagValue } from "./tag-action";
 
@@ -252,7 +252,12 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public loadSound(filePath: string, buf: number): AsyncCallbacks {
     // return this.resource.loadSound(values.filePath);
     let cb: AsyncCallbacks = new AsyncCallbacks();
-    this.resource.loadSound(filePath).done((sound) => {
+    let callbacks: ISoundCallbacks = {
+      onFadeComplete: (bufferNum: number) => {
+        this.onSoundFadeComplete(bufferNum);
+      }
+    };
+    this.resource.loadSound(filePath, buf, callbacks).done((sound) => {
       if (this.sounds[buf] != null) { this.sounds[buf].destroy(); }
       this.sounds[buf] = sound;
       cb.callDone(sound);
@@ -269,6 +274,10 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     } else {
       return sound;
     }
+  }
+
+  public onSoundFadeComplete(bufferNum: number) {
+    // TODO waitfadeなどの対応
   }
 
   // =========================================================

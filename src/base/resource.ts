@@ -3,7 +3,7 @@ import { AsyncCallbacks } from "./async-callbacks";
 import { Logger } from "./logger";
 import { Macro } from "./macro";
 import { Script } from "./script";
-import { Sound } from "./sound";
+import { Sound, ISoundCallbacks } from "./sound";
 
 export class Resource {
   private basePath: string;
@@ -136,7 +136,11 @@ export class Resource {
     return cb;
   }
 
-  public loadSound(filePath: string): AsyncCallbacks {
+  public loadSound(
+    filePath: string,
+    bufferNum: number,
+    callbacks: ISoundCallbacks
+  ): AsyncCallbacks {
     const cb = new AsyncCallbacks();
 
     let h: Howl = new Howl({
@@ -145,7 +149,7 @@ export class Resource {
       volume: 1,
       autoplay: false,
       onload: () => {
-        cb.callDone(new Sound(filePath, h));
+        cb.callDone(new Sound(filePath, h, bufferNum, callbacks));
       },
       onloaderror: () => {
         cb.callFail(filePath);

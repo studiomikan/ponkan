@@ -42,14 +42,24 @@
 ;loadsound "buf": 0, "file": "ohka_japan.mp3"
 ロード
 ;lb
-再生
-;playsound "buf": 0
+# 再生
+# ;playsound "buf": 0
+# ;lb
+# 停止
+# ;stopsound "buf": 0
+# ;lb
+フェードイン
+;fadein "buf": 0, "time": 10000
 ;lb
 音量を20%に
 ;soundopt "buf": 0, "volume": 0.2
 ;lb
-停止
-;stopsound "buf": 0
+フェードで80%に
+;fadesound "buf": 0, "volume": 0.8, "time": 2000, "autostop": false
+;lb
+フェードアウト
+;fadeout "buf": 0, "time": 1000, "autostop": true
+;lb
 
 ;s
 
