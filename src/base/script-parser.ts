@@ -119,7 +119,18 @@ export class ScriptParser {
   }
 
   private parseSaveMark(body: string): void {
-    this.addTag("__save_mark__", { __body__: body });
+    let p: number = body.indexOf(":");
+    if (p !== -1) {
+      let name: string = body.substring(0, p);
+      let comment: string = body.substring(p);
+      this.addTag("__save_mark__", { __body__: body, name: name, comment: comment });
+    } else if (body.length > 0) {
+      let name: string = `__save_mark_${this.currentLineNum}__`;
+      this.addTag("__save_mark__", { __body__: body, name: name, comment: body });
+    } else {
+      let name: string = `__save_mark_${this.currentLineNum}__`;
+      this.addTag("__save_mark__", { __body__: body, name: name, comment: "" });
+    }
   }
 
   private parseJs(body: string): void {

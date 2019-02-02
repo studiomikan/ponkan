@@ -7,7 +7,7 @@ import { Macro } from "./macro";
 
 export interface IConductorEvent {
   onLabel(labelName: string, line: number, tick: number): "continue" | "break";
-  onSaveMark(saveComment: string, line: number, tick: number): "continue" | "break";
+  onSaveMark(name:string, comment: string, line: number, tick: number): "continue" | "break";
   onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break";
   onTag(tag: Tag, line: number, tick: number): "continue" | "break";
 }
@@ -129,7 +129,8 @@ export class Conductor {
           tagReturnValue = this.eventCallbacks.onLabel(tag.values.__body__, tag.line, tick);
           break;
         case "__save_mark__":
-          tagReturnValue = this.eventCallbacks.onSaveMark(tag.values.__body__, tag.line, tick);
+          tagReturnValue = this.eventCallbacks.onSaveMark(
+            tag.values.name, tag.values.comment, tag.line, tick);
           break;
         case "__js__":
           tagReturnValue = this.eventCallbacks.onJs(tag.values.__body__, tag.values.print, tag.line, tick);
@@ -175,6 +176,30 @@ export class Conductor {
     this.sleepTime = sleepTime;
     Logger.debug("Conductor sleep.", sleepTime);
     return "break"
+  }
+
+  public store(tick: number): any {
+    let data: any = {};
+    let me: any = <any> this;
+
+    [
+      "status",
+      "sleepStartTick",
+      "sleepTime",
+    ].forEach((param: string) => {
+      data[param] = me[param];
+    });
+
+    data.script = this.script.store(tick);
+
+    data.callStack = [];
+    this.callStack.forEach((callStackNode) => {
+      data.callStack.push({
+        script: callStackNode.script.store(tick)
+      });
+    });
+
+    return data;
   }
 
 }

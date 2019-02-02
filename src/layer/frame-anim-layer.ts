@@ -86,5 +86,26 @@ export class FrameAnimLayer extends BaseLayer {
     if (frame.alpha != null) { this.alpha = +frame.alpha; }
   }
 
+  public store(tick: number): any {
+    let data: any = super.store(tick);
+    let me: any = <any> this;
+
+    [
+      "frameAnimLoop",
+      "frameAnimTime",
+      "frameAnimWidth",
+      "frameAnimHeight",
+      "frameAnimFrames",
+      "frameAnimStartTick",
+      "frameAnimState",
+    ].forEach((param: string) => {
+      data[param] = me[param];
+    });
+
+    return data;
+  }
+
+
+
 }
 

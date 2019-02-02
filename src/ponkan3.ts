@@ -232,8 +232,8 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     return "continue";
   }
 
-  public onSaveMark(saveComment: string, line: number, tick: number): "continue" | "break" {
-    Logger.debug("onSaveMark: ", saveComment);
+  public onSaveMark(name: string, comment: string, line: number, tick: number): "continue" | "break" {
+    Logger.debug("onSaveMark: ", name, comment);
     this.updateSaveData(tick);
     return "continue";
   }
@@ -503,6 +503,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     });
 
     data.gameVar = Util.objClone(this.gameVar);
+    data.conductor = this.conductor.store(tick);
     data.forePrimaryLayer = this.forePrimaryLayer.store(tick);
     data.backPrimaryLayer = this.backPrimaryLayer.store(tick);
     data.sounds = [];

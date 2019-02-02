@@ -1,7 +1,9 @@
 # ゲームの開始スクリプト
 ;call "file": "init_system.pon"
 - gv.memo = "テストスクリプトです";
-|セーブコメント！
+|save-mark-0001:セーブコメント01
+|セーブコメント02
+|
 ;image "lay": 0, "page": "fore", "file": "okayu.jpg", "visible": true, "x": 0, "y": 0
 
 ;save "num": 0

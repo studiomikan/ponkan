@@ -306,4 +306,20 @@ export class Script {
     }
   }
 
+  public store(tick: number): any {
+    let data: any = {};
+    let me: any = <any> this;
+
+    [
+      "filePath",
+      "tagPoint",
+    ].forEach((param: string) => {
+      data[param] = me[param];
+    });
+
+    return data;
+  }
+
+
+
 }
