@@ -1,4 +1,5 @@
 import { AsyncCallbacks } from "./base/async-callbacks";
+import { AsyncTask } from "./base/async-task";
 import { BaseLayer } from "./base/base-layer";
 import { Conductor, ConductorState, IConductorEvent } from "./base/conductor";
 import { Logger } from "./base/logger";
@@ -493,6 +494,35 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       comment: this.latestSaveData.comment,
     };
     this.resource.saveSystemData(this.saveDataPrefix);
+  }
+
+  public load(num: number, tick: number): AsyncCallbacks {
+    let asyncTask = new AsyncTask();
+    const me: any = this as any;
+    const data: any = this.resource.restoreFromLocalStorage(`${this.saveDataPrefix}_${num}`);
+
+    [
+      "skipMode",
+      "canStopSkipByTag",
+      "layerCount",
+      "currentPage",
+      "textSpeed",
+      "messageLayerNum",
+      "lineBreakGlyphLayerNum",
+      "lineBreakGlyphPos",
+      "lineBreakGlyphX",
+      "lineBreakGlyphY",
+      "pageBreakGlyphLayerNum",
+      "pageBreakGlyphPos",
+      "pageBreakGlyphX",
+      "pageBreakGlyphY",
+    ].forEach((param: string) => {
+      me[param] = data[param];
+    });
+
+    // TODO 実装
+
+    return asyncTask.run();
   }
 
   public getNowDateStr(): string {

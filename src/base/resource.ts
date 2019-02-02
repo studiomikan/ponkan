@@ -193,7 +193,7 @@ export class Resource {
     return cb;
   }
 
-  public isEnabledLocalStorage() {
+  public isEnabledLocalStorage(): boolean {
     return window.localStorage != null;
   }
 

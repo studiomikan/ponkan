@@ -1,6 +1,7 @@
 import * as PIXI from "pixi.js";
 import { PonMouseEvent } from "./pon-mouse-event";
 import { AsyncCallbacks } from "./async-callbacks";
+import { AsyncTask } from "./async-task";
 import { Logger } from "./logger";
 import { IPonSpriteCallbacks, PonSprite } from "./pon-sprite";
 import { Resource } from "./resource";
@@ -49,7 +50,8 @@ export class BaseLayer {
   // 文字関係
   protected textSprites: PonSprite[] = [];
   public textStyle: PIXI.TextStyle = new PIXI.TextStyle({
-    fontFamily: ['monospace'],
+    // fontFamily: ['monospace'],
+    fontFamily: ['sans-serif'],
     fontSize: 24,
     fontWeight: "normal",
     fill: 0xffffff,
@@ -423,38 +425,40 @@ export class BaseLayer {
     this.image = null;
   }
 
+  protected static baseLayerStoreParams: string[] = [
+    "name",
+    "imageFilePath",
+    "textMarginTop",
+    "textMarginRight",
+    "textMarginBottom",
+    "textMarginLeft",
+    "textX",
+    "textY",
+    "textLineHeight",
+    "textLinePitch",
+    "textAutoReturn",
+    "textIndentPoint",
+    "x",
+    "y",
+    "width",
+    "height",
+    "visible",
+    "alpha",
+    "backgroundColor",
+    "backgroundAlpha",
+    "imageX",
+    "imageY",
+    "textFontFamily",
+    "textFontSize",
+    "textFontWeight",
+    "textColor",
+  ];
+
   public store(tick: number): any {
     let data: any = {};
     let me: any = <any> this;
 
-    [
-      "name",
-      "imageFilePath",
-      "textMarginTop",
-      "textMarginRight",
-      "textMarginBottom",
-      "textMarginLeft",
-      "textX",
-      "textY",
-      "textLineHeight",
-      "textLinePitch",
-      "textAutoReturn",
-      "textIndentPoint",
-      "x",
-      "y",
-      "width",
-      "height",
-      "visible",
-      "alpha",
-      "backgroundColor",
-      "backgroundAlpha",
-      "imageX",
-      "imageY",
-      "textFontFamily",
-      "textFontSize",
-      "textFontWeight",
-      "textColor",
-    ].forEach((param: string) => {
+    BaseLayer.baseLayerStoreParams.forEach((param: string) => {
       data[param] = me[param];
     });
   
@@ -465,6 +469,15 @@ export class BaseLayer {
     });
 
     return data;
+  }
+
+  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
+    // TODO 実装
+    let me: any = <any> this;
+
+    BaseLayer.baseLayerStoreParams.forEach((param: string) => {
+      me[param] = data[param];
+    });
   }
 
 }

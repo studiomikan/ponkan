@@ -8,6 +8,11 @@
 
 ;save "num": 1
 
+セーブしました。
+;pb
+ロードします。
+;pb
+;load "num": 1
 ;s
 
 ;for "loops": 2, "indexvar": "i"

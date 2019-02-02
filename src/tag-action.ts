@@ -668,5 +668,21 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
+    new TagAction(
+      ["load"],
+      "セーブデータから復元する",
+      [
+        new TagValue("num", "number", true, null, "セーブ番号"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.load(values.num, tick).done(() => {
+          p.conductor.start();
+        }).fail(() => {
+          p.error(new Error(`セーブデータのロードに失敗しました(${values.num})`));
+        });
+        return p.conductor.stop();
+      },
+    ),
   ];
 }
