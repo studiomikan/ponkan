@@ -3,8 +3,8 @@ import { AsyncTask } from "./base/async-task";
 import { Logger } from "./base/logger";
 import { PonEventHandler} from "./base/pon-event-handler";
 import { Resource } from "./base/resource";
-import { Tag } from "./base/tag";
 import { Sound } from "./base/sound";
+import { Tag } from "./base/tag";
 import { PonLayer } from "./layer/pon-layer";
 import { Ponkan3 } from "./ponkan3";
 
@@ -283,7 +283,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         if (p.resource.hasMacro(values.name)) {
           throw new Error(`${values.name}マクロはすでに登録されています`);
         }
-        let m = p.conductor.script.defineMacro(values.name);
+        const m = p.conductor.script.defineMacro(values.name);
         p.resource.macroInfo[values.name] = m;
         return "continue";
       },
@@ -578,7 +578,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       "TODO タグの説明文",
       (values, tick) => {
-        let s: Sound = p.getSound(values.buf);
+        const s: Sound = p.getSound(values.buf);
         if (values.volume != null) { s.volume = values.volume; }
         if (values.volume2 != null) { s.volume2 = values.volume2; }
         if (values.seek != null) { s.seek = values.seek; }
@@ -660,7 +660,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ["save"],
       "最新状態をセーブする",
       [
-        new TagValue("num", "number", true, null, "セーブ番号")
+        new TagValue("num", "number", true, null, "セーブ番号"),
       ],
       "TODO タグの説明文",
       (values, tick) => {

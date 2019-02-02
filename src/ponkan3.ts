@@ -1,12 +1,12 @@
-import * as Util from "./base/util.ts";
+import { AsyncCallbacks } from "./base/async-callbacks";
 import { BaseLayer } from "./base/base-layer";
-import { Conductor, IConductorEvent, ConductorState } from "./base/conductor";
+import { Conductor, ConductorState, IConductorEvent } from "./base/conductor";
 import { Logger } from "./base/logger";
 import { PonGame } from "./base/pon-game";
 import { PonMouseEvent } from "./base/pon-mouse-event";
-import { AsyncCallbacks } from "./base/async-callbacks";
+import { ISoundCallbacks, Sound } from "./base/sound";
 import { Tag } from "./base/tag";
-import { Sound, ISoundCallbacks } from "./base/sound";
+import * as Util from "./base/util.ts";
 import { PonLayer } from "./layer/pon-layer";
 import { applyJsEntity, castTagValues, generateTagActions, TagAction, TagValue } from "./tag-action";
 
@@ -131,8 +131,8 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.conductor.stop();
     let message: string = e.message;
 
-    let filePath: string = this.conductor.script.filePath
-    let latestTag: Tag | null = this.conductor.script.getLatestTag();
+    const filePath: string = this.conductor.script.filePath;
+    const latestTag: Tag | null = this.conductor.script.getLatestTag();
     if (latestTag !== null) {
       message = `(${filePath}:${latestTag.line}) ` + message;
     } else {
@@ -198,7 +198,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // =========================================================
   // コンダクタ
   // =========================================================
-  public onTag(tag: Tag, line:number, tick: number): "continue" | "break" {
+  public onTag(tag: Tag, line: number, tick: number): "continue" | "break" {
     Logger.debug("onTag: ", tag.name, tag.values);
     const tagAction: TagAction = this.tagActions[tag.name];
     if (tagAction === null || tagAction === undefined) {
@@ -234,7 +234,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public onSaveMark(name: string, comment: string, line: number, tick: number): "continue" | "break" {
     Logger.debug("onSaveMark: ", name, comment);
-    this.updateSaveData(tick);
+    this.updateSaveData(name, comment, tick);
     return "continue";
   }
 
@@ -254,11 +254,11 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // =========================================================
   public loadSound(filePath: string, buf: number): AsyncCallbacks {
     // return this.resource.loadSound(values.filePath);
-    let cb: AsyncCallbacks = new AsyncCallbacks();
-    let callbacks: ISoundCallbacks = {
+    const cb: AsyncCallbacks = new AsyncCallbacks();
+    const callbacks: ISoundCallbacks = {
       onFadeComplete: (bufferNum: number) => {
         this.onSoundFadeComplete(bufferNum);
-      }
+      },
     };
     this.resource.loadSound(filePath, buf, callbacks).done((sound) => {
       if (this.sounds[buf] != null) { this.sounds[buf].destroy(); }
@@ -269,9 +269,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     });
     return cb;
   }
-  
+
   public getSound(buf: number): Sound {
-    let sound: Sound = this.sounds[buf];
+    const sound: Sound = this.sounds[buf];
     if (sound == null) {
       throw new Error(`音声バッファ${buf}は音声がロードされていません`);
     } else {
@@ -471,17 +471,20 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     console.log("===================================================");
 
     try {
-      let saveStr: string = JSON.stringify(this.latestSaveData);
+      const saveStr: string = JSON.stringify(this.latestSaveData);
     } catch (e) {
       Logger.error(e);
       throw new Error("セーブデータの保存に失敗しました。JSON文字列に変換できません");
     }
   }
 
-  protected updateSaveData(tick: number): void {
-    let data: any = this.latestSaveData = {};
-    let me: any = <any> this;
+  protected updateSaveData(name: string, comment: string, tick: number): void {
+    const data: any = this.latestSaveData = {};
+    const me: any = this as any;
+
     data.date = tick;
+    data.name = name;
+    data.comment = comment;
 
     [
       "skipMode",
@@ -511,8 +514,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       data.sounds.push(sound.store(tick));
     });
   }
-
-
 
 }
 
