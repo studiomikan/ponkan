@@ -1,4 +1,5 @@
 import { Howl, Howler } from 'howler';
+import * as Util from "./util.ts";
 import { AsyncCallbacks } from "./async-callbacks";
 import { Logger } from "./logger";
 import { Macro } from "./macro";
@@ -7,9 +8,9 @@ import { Sound, ISoundCallbacks } from "./sound";
 
 export class Resource {
   private basePath: string;
-  public readonly tmpVar: object = {};
-  public readonly gameVar: object = {};
-  public readonly systemVar: object = {};
+  public readonly tmpVar: any = {};
+  public readonly gameVar: any = {};
+  public readonly systemVar: any = {};
   
   public readonly macroInfo: any = {};
   public macroParams: object | null = null;
@@ -18,6 +19,39 @@ export class Resource {
     this.basePath = this.fixPath(basePath);
 
     Howler.usingWebAudio = true;
+  }
+
+  public saveSystemData(saveDataPrefix: string): void {
+    try {
+      Logger.debug("==SYSTEM SAVE======================================");
+      Logger.debug(this.systemVar);
+      Logger.debug("===================================================");
+      this.storeToLocalStorage(`${saveDataPrefix}_sys`, JSON.stringify(this.systemVar));
+    } catch (e) {
+      Logger.error(e);
+      throw new Error("セーブデータの保存に失敗しました。JSON文字列に変換できません");
+    }
+  }
+
+  public loadSystemData(saveDataPrefix: string): void {
+    try {
+      let str: string = this.restoreFromLocalStorage(`${saveDataPrefix}_sys`);
+      if (str != null) {
+        Util.objExtend(this.systemVar, JSON.parse(str));
+      }
+      Logger.debug("==SYSTEM LOAD======================================");
+      Logger.debug(this.systemVar);
+      Logger.debug("===================================================");
+    } catch (e) {
+      Logger.error(e);
+      throw new Error("システムデータのロードに失敗しました");
+    }
+  }
+
+  public debugClearSystemData(): void {
+    Object.keys(this.systemVar).forEach((key) => {
+      delete this.systemVar[key];
+    });
   }
 
   // tslint:disable
@@ -158,5 +192,60 @@ export class Resource {
 
     return cb;
   }
+
+  public isEnabledLocalStorage() {
+    return window.localStorage != null;
+  }
+
+  public storeToLocalStorage(name: string, data: string): void {
+    try {
+      window.localStorage.setItem(name, data);
+    } catch (e) {
+      // ストレージが満杯だったときに発生
+      throw new Error("ストレージが満杯のため保存できませんでした");
+    }
+  }
+
+  public restoreFromLocalStorage(name: string): string {
+    let data: string | null = window.localStorage.getItem(name);
+    if (data != null) {
+      return data;
+    } else {
+      throw new Error(`ストレージ${name}にはデータがありません`);
+    }
+  }
+
+  // /**
+  //  * ローカルストレージが使用できるかどうかを返す
+  //  * @return {boolean} 使用できるかどうか
+  //  */
+  // static isEnabledLocalStorage () {
+  //   return window.localStorage != null
+  // }
+  //
+  // /**
+  //  * オブジェクトを保存する
+  //  * @param {string} name データ名
+  //  * @param {string} data 保存するオブジェクト
+  //  */
+  // static store (name, data) {
+  //   let dataStr = data
+  //   if (data != null) {
+  //     dataStr = JSON.stringify(data)
+  //   }
+  //   window.localStorage.setItem(name, dataStr)
+  // }
+  //
+  // /**
+  //  * オブジェクトを復元する
+  //  * @param {string} name データ名
+  //  * @return {object} 復元したオブジェクト
+  //  */
+  // static restore (name) {
+  //   let dataStr = window.localStorage.getItem(name)
+  //   return JSON.parse(dataStr)
+  // }
+  //
+
 
 }

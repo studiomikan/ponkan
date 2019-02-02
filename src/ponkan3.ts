@@ -56,17 +56,19 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public pageBreakGlyphY: number = 0;
 
   // サウンド関係
-  // protected _soundCount: number = 5;
   public readonly sounds: Sound[] = [];
 
-  public get tmpVar(): object { return this.resource.tmpVar; }
-  public get gameVar(): object { return this.resource.gameVar; }
-  public get systemVar(): object { return this.resource.systemVar; }
+  public get tmpVar(): any { return this.resource.tmpVar; }
+  public get gameVar(): any { return this.resource.gameVar; }
+  public get systemVar(): any { return this.resource.systemVar; }
 
+  protected saveDataPrefix: string = "ponkan-game";
   protected latestSaveData: any = {};
 
   public constructor(parentId: string, config: any = {}) {
     super(parentId, config);
+    if (config.saveDataPrefix != null) { this.saveDataPrefix = config.saveDataPrefix; }
+
     this._conductor = new Conductor(this.resource, this);
 
     this.initTagAction();
@@ -109,6 +111,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public start(): void {
     super.start();
+    this.resource.loadSystemData(this.saveDataPrefix);
     this.conductor.loadScript("start.pon").done(() => {
       Logger.debug("onLoadScript success");
       this.conductor.start();
@@ -119,6 +122,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public stop(): void {
     super.stop();
+    this.resource.saveSystemData(this.saveDataPrefix);
   }
 
   protected update(tick: number): void {
@@ -160,7 +164,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
   public onMouseUp(e: PonMouseEvent): boolean  {
     if (!this.forePrimaryLayer.onMouseUp(e)) {
-      alert("fore is false");
       return false;
     }
 
@@ -462,27 +465,53 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // セーブ・ロード
   // =========================================================
 
-  // TODO システムセーブ
+  public onWindowClose(): boolean {
+    this.resource.saveSystemData(this.saveDataPrefix);
+    return true;
+  }
 
-  public save(tick: number): void {
+  public save(num: number, tick: number): void {
     // TODO 実装
-    console.log("==SAVE=============================================");
-    console.log(this.latestSaveData);
-    console.log("===================================================");
+    Logger.debug("==SAVE=============================================");
+    Logger.debug(num, this.latestSaveData);
+    Logger.debug("===================================================");
 
+    let saveStr: string;
     try {
-      const saveStr: string = JSON.stringify(this.latestSaveData);
+      saveStr = JSON.stringify(this.latestSaveData);
     } catch (e) {
       Logger.error(e);
       throw new Error("セーブデータの保存に失敗しました。JSON文字列に変換できません");
     }
+    this.resource.storeToLocalStorage(`${this.saveDataPrefix}_${num}`, saveStr);
+
+    let comment: string = this.latestSaveData.comment;
+    if (this.systemVar.saveComments == null) { this.systemVar.saveComments = []; }
+    this.systemVar.saveComments[num] = {
+      date: this.getNowDateStr(),
+      name: this.latestSaveData.name,
+      comment: this.latestSaveData.comment,
+    };
+    this.resource.saveSystemData(this.saveDataPrefix);
+  }
+
+  public getNowDateStr(): string {
+    let d: Date = new Date();
+    let year = d.getFullYear();
+    let month = d.getMonth() + 1;
+    let day = d.getDate();
+    let hours = d.getHours();
+    let minutes = d.getMinutes();
+    let seconds = d.getSeconds();
+    let millisecond = d.getMilliseconds();
+    return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}.${millisecond}`;
   }
 
   protected updateSaveData(name: string, comment: string, tick: number): void {
     const data: any = this.latestSaveData = {};
     const me: any = this as any;
 
-    data.date = tick;
+    data.tick = tick;
     data.name = name;
     data.comment = comment;
 

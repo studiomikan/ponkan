@@ -34,6 +34,7 @@ export class PonGame {
     }
     this.renderer = new PonRenderer(elm, config.width, config.height);
 
+    this.initWindowEvent();
     this.initMouseEventOnCanvas();
   }
 
@@ -125,6 +126,14 @@ export class PonGame {
   public clearEventHandler(): void {
     this.eventHandlers = {};
   }
+
+  private initWindowEvent(): void {
+    window.addEventListener('unload', () => {
+      this.onWindowClose()
+    })
+  }
+
+  public onWindowClose(): boolean { return true; };
 
   private initMouseEventOnCanvas(): void {
     const canvas = this.renderer.canvasElm;

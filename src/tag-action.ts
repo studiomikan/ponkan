@@ -664,7 +664,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       "TODO タグの説明文",
       (values, tick) => {
-        p.save(tick);
+        p.save(values.num, tick);
         return "continue";
       },
     ),
