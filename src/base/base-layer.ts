@@ -26,6 +26,7 @@ export class BaseLayer {
 
   /** 背景色用スプライト */
   protected backgroundSprite: PonSprite;
+  protected hasBackgroundColor: boolean = false;
   protected _backgroundColor: number = 0x000000;
   protected _backgroundAlpha: number = 1.0;
 
@@ -50,11 +51,11 @@ export class BaseLayer {
   // 文字関係
   protected textSprites: PonSprite[] = [];
   public textStyle: PIXI.TextStyle = new PIXI.TextStyle({
-    // fontFamily: ['monospace'],
-    fontFamily: ['sans-serif'],
+    fontFamily: ['monospace'],
     fontSize: 24,
     fontWeight: "normal",
     fill: 0xffffff,
+    textBaseline: "alphabetic",
   });
   public set textFontFamily(fontFamily: string[]) { this.textStyle.fontFamily = fontFamily; }
   public get textFontFamily(): string[] { 
@@ -176,6 +177,7 @@ export class BaseLayer {
     this.backgroundSprite.destroy();
     if (this.imageSprite != null) { this.imageSprite.destroy(); }
     this.clearText();
+    this.freeImage();
     this.children.forEach((child) => {
       child.destroy();
     });
@@ -200,6 +202,14 @@ export class BaseLayer {
       }
     });
     this._children = tmp;
+  }
+
+  /**
+   * 子レイヤーをすべて削除する。
+   * 管理から削除されるだけで、レイヤー自体は初期化されたりしない。
+   */
+    public deleteAllChildren(): void {
+      this._children = [];
   }
 
   public child(index: number): BaseLayer {
@@ -287,10 +297,19 @@ export class BaseLayer {
    * @param color 色 0xRRGGBB
    * @param alpha アルファ値 0.0〜1.0
    */
-  public setBackgoundColor(color: number, alpha: number = 1.0): void {
+  public setBackgroundColor(color: number, alpha: number = 1.0): void {
     this.backgroundSprite.fillColor(color, alpha);
     this._backgroundColor = color;
     this._backgroundAlpha = alpha;
+    this.hasBackgroundColor = true;
+  }
+
+  /**
+   * 背景色をクリアする
+   */
+  public clearBackgroundColor(): void {
+    this.backgroundSprite.clearColor();
+    this.hasBackgroundColor = false;
   }
 
   /**
@@ -423,11 +442,23 @@ export class BaseLayer {
     }
     this.imageSprite = null;
     this.image = null;
+    this.imageFilePath = null;
   }
 
   protected static baseLayerStoreParams: string[] = [
     "name",
+    "x",
+    "y",
+    "width",
+    "height",
+    "visible",
+    "alpha",
+    "backgroundColor",
+    "backgroundAlpha",
+    "hasBackgroundColor",
     "imageFilePath",
+    "imageX",
+    "imageY",
     "textMarginTop",
     "textMarginRight",
     "textMarginBottom",
@@ -438,46 +469,71 @@ export class BaseLayer {
     "textLinePitch",
     "textAutoReturn",
     "textIndentPoint",
-    "x",
-    "y",
-    "width",
-    "height",
-    "visible",
-    "alpha",
-    "backgroundColor",
-    "backgroundAlpha",
-    "imageX",
-    "imageY",
     "textFontFamily",
     "textFontSize",
     "textFontWeight",
     "textColor",
   ];
 
+  /**
+   * 保存する。
+   * 子レイヤーの状態は保存されないことに注意が必要。
+   */
   public store(tick: number): any {
     let data: any = {};
-    let me: any = <any> this;
+    let me: any = this as any;
 
     BaseLayer.baseLayerStoreParams.forEach((param: string) => {
       data[param] = me[param];
-    });
-  
-    // 子レイヤ
-    data.children = [];
-    this.children.forEach((child) => {
-      data.children.push(child.store(tick));
     });
 
     return data;
   }
 
+  /**
+   * 復元する。
+   * 子レイヤーの状態は変化しないことに注意。
+   * 継承先で子レイヤーを使用している場合は、継承先で独自に復元処理を実装する
+   */
   public restore(asyncTask: AsyncTask, data: any, tick: number): void {
-    // TODO 実装
-    let me: any = <any> this;
+    let storeParams = () => {
+      let me: any = this as any;
+      let ignore: string[] = [
+        "backgroundColor",
+        "backgroundAlpha",
+        "hasBackgroundColor",
+      ];
+      let restoreParams = BaseLayer.baseLayerStoreParams.filter(param => ignore.indexOf(param) == -1);
+      restoreParams.forEach((param: string) => {
+        me[param] = data[param];
+      });
+    };
 
-    BaseLayer.baseLayerStoreParams.forEach((param: string) => {
-      me[param] = data[param];
-    });
+    // 背景色
+    this.clearBackgroundColor();
+    if (data.hasBackgroundColor) {
+      this.setBackgroundColor(data.backgroundColor, data.backgroundAlpha);
+    }
+
+    // 画像がある場合は非同期で読み込んでその後にサイズ等を復元する
+    this.freeImage();
+    if (data.imageFilePath != null && data.imageFilePath !== "") {
+      asyncTask.add((params: any, index: number): AsyncCallbacks => {
+        let cb = this.loadImage(data.imageFilePath);
+        cb.done(() => {
+          storeParams();
+          this.restoreAfterLoadImage(data, tick);
+        });
+        return cb;
+      });
+    } else {
+      storeParams();
+      this.restoreAfterLoadImage(data, tick);
+    }
+  }
+
+  protected restoreAfterLoadImage(data: any, tick: number): void {
+    // 継承先でオーバーライドして使うこと
   }
 
 }

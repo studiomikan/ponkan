@@ -1,4 +1,5 @@
 import { Logger } from "../base/logger";
+import { AsyncTask } from "../base/async-task";
 import { Resource } from "../base/resource";
 import { BaseLayer } from "../base/base-layer";
 
@@ -24,7 +25,7 @@ export class FrameAnimLayer extends BaseLayer {
     this.frameAnimLoop = loop;
     this.frameAnimTime = time;
     this.frameAnimWidth = this.width = width;
-    // this.frameAnimHeight = this.height = height;
+    this.frameAnimHeight = this.height = height;
     this.frameAnimFrames = frames;
   }
 
@@ -86,26 +87,51 @@ export class FrameAnimLayer extends BaseLayer {
     if (frame.alpha != null) { this.alpha = +frame.alpha; }
   }
 
+  public freeImage() {
+    this.deleteFrameAnim();
+    super.freeImage();
+  }
+
+  protected static frameAnimLayerStoreParams: string[] = [
+    "frameAnimLoop",
+    "frameAnimTime",
+    "frameAnimWidth",
+    "frameAnimHeight",
+    "frameAnimFrames",
+    "frameAnimStartTick",
+    "frameAnimState",
+  ];
+
   public store(tick: number): any {
     let data: any = super.store(tick);
     let me: any = <any> this;
 
-    [
-      "frameAnimLoop",
-      "frameAnimTime",
-      "frameAnimWidth",
-      "frameAnimHeight",
-      "frameAnimFrames",
-      "frameAnimStartTick",
-      "frameAnimState",
-    ].forEach((param: string) => {
+    FrameAnimLayer.frameAnimLayerStoreParams.forEach((param: string) => {
       data[param] = me[param];
     });
 
     return data;
   }
 
+  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
+    this.stopFrameAnim();
+    super.restore(asyncTask, data, tick);
+  }
 
+  protected restoreAfterLoadImage(data: any, tick: number): void {
+    let me: any = this as any;
+    let ignore: string[] = [];
+    FrameAnimLayer.frameAnimLayerStoreParams.forEach((param: string) => {
+      me[param] = data[param];
+    });
+    
+    if (data.frameAnimFrames.length !== 0) {
+      if (data.frameAnimState === "run") {
+        this.startFrameAnim(tick);
+        console.log("data.frameAnimState", data.frameAnimState, this.frameAnimState, this.frameAnimFrames)
+      }
+    }
+  }
 
 }
 

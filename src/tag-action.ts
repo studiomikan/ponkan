@@ -447,7 +447,22 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "TODO タグの説明文",
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
-          layer.setBackgoundColor(values.color, values.alpha);
+          layer.setBackgroundColor(values.color, values.alpha);
+        });
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["clearcolor"],
+      "レイヤー塗りつぶしをクリアする",
+      [
+        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("page", "string", false, "fore", "対象ページ"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          layer.clearBackgroundColor();
         });
         return "continue";
       },
@@ -479,7 +494,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     new TagAction(
-      ["image"],
+      ["loadimage", "image"],
       "レイヤーに画像を読み込む",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
@@ -506,6 +521,21 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           p.error(new Error("画像読み込みに失敗しました。"));
         });
         return p.conductor.stop();
+      },
+    ),
+    new TagAction(
+      ["freeimage", "free"],
+      "レイヤーの画像を開放する",
+      [
+        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("page", "string", false, "fore", "対象ページ"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          layer.freeImage();
+        });
+        return "continue";
       },
     ),
     // ======================================================================
@@ -542,6 +572,21 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.startFrameAnim(tick);
+        });
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["stopframeanim", "stopfanim"],
+      "フレームアニメーションを停止する",
+      [
+        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("page", "string", false, "fore", "対象ページ"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          layer.deleteFrameAnim();
         });
         return "continue";
       },

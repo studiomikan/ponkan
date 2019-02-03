@@ -77,6 +77,7 @@ export class PonGame {
       this.fpsCount++;
       window.requestAnimationFrame(() => this.loop());
     } catch (e) {
+      console.error(e);
       this.error(e);
     }
   }

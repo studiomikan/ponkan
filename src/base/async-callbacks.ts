@@ -1,27 +1,35 @@
 export class AsyncCallbacks {
-  private doneFunc: null | ((data: any) => void) = null;
-  private failFunc: null | ((data: any) => void) = null;
-  private alwaysFunc: null | ((data: any) => void) = null;
+  private doneFuncs: ((data: any) => void)[] = [];
+  private failFuncs: ((data: any) => void)[] = [];
+  private alwaysFuncs: ((data: any) => void)[] = [];
 
   public done(func: (data: any) => void): AsyncCallbacks {
-    this.doneFunc = func;
+    this.doneFuncs.push(func);
     return this;
   }
   public fail(func: (data: any) => void): AsyncCallbacks {
-    this.failFunc = func;
+    this.failFuncs.push(func);
     return this;
   }
   public always(func: (data: any) => void): AsyncCallbacks {
-    this.alwaysFunc = func;
+    this.alwaysFuncs.push(func);
     return this;
   }
 
   public callDone(data: any = null) {
-    if (this.doneFunc != null) { this.doneFunc(data); }
-    if (this.alwaysFunc != null) { this.alwaysFunc(data); }
+    this.doneFuncs.forEach((doneFunc) => {
+      if (doneFunc != null) { doneFunc(data); }
+    });
+    this.alwaysFuncs.forEach((alwaysFunc) => {
+      if (alwaysFunc != null) { alwaysFunc(data); }
+    });
   }
   public callFail(data: any = null) {
-    if (this.failFunc != null) { this.failFunc(data); }
-    if (this.alwaysFunc != null) { this.alwaysFunc(data); }
+    this.failFuncs.forEach((failFunc) => {
+      if (failFunc != null) { failFunc(data); }
+    });
+    this.alwaysFuncs.forEach((alwaysFunc) => {
+      if (alwaysFunc != null) { alwaysFunc(data); }
+    });
   }
 }

@@ -496,35 +496,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.resource.saveSystemData(this.saveDataPrefix);
   }
 
-  public load(num: number, tick: number): AsyncCallbacks {
-    let asyncTask = new AsyncTask();
-    const me: any = this as any;
-    const data: any = this.resource.restoreFromLocalStorage(`${this.saveDataPrefix}_${num}`);
-
-    [
-      "skipMode",
-      "canStopSkipByTag",
-      "layerCount",
-      "currentPage",
-      "textSpeed",
-      "messageLayerNum",
-      "lineBreakGlyphLayerNum",
-      "lineBreakGlyphPos",
-      "lineBreakGlyphX",
-      "lineBreakGlyphY",
-      "pageBreakGlyphLayerNum",
-      "pageBreakGlyphPos",
-      "pageBreakGlyphX",
-      "pageBreakGlyphY",
-    ].forEach((param: string) => {
-      me[param] = data[param];
-    });
-
-    // TODO 実装
-
-    return asyncTask.run();
-  }
-
   public getNowDateStr(): string {
     let d: Date = new Date();
     let year = d.getFullYear();
@@ -537,6 +508,23 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}.${millisecond}`;
   }
 
+  protected static ponkanStoreParams: string[] = [
+    "skipMode",
+    "canStopSkipByTag",
+    "layerCount",
+    "currentPage",
+    "textSpeed",
+    "messageLayerNum",
+    "lineBreakGlyphLayerNum",
+    "lineBreakGlyphPos",
+    "lineBreakGlyphX",
+    "lineBreakGlyphY",
+    "pageBreakGlyphLayerNum",
+    "pageBreakGlyphPos",
+    "pageBreakGlyphX",
+    "pageBreakGlyphY",
+  ];
+
   protected updateSaveData(name: string, comment: string, tick: number): void {
     const data: any = this.latestSaveData = {};
     const me: any = this as any;
@@ -545,33 +533,52 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     data.name = name;
     data.comment = comment;
 
-    [
-      "skipMode",
-      "canStopSkipByTag",
-      "layerCount",
-      "currentPage",
-      "textSpeed",
-      "messageLayerNum",
-      "lineBreakGlyphLayerNum",
-      "lineBreakGlyphPos",
-      "lineBreakGlyphX",
-      "lineBreakGlyphY",
-      "pageBreakGlyphLayerNum",
-      "pageBreakGlyphPos",
-      "pageBreakGlyphX",
-      "pageBreakGlyphY",
-    ].forEach((param: string) => {
+    Ponkan3.ponkanStoreParams.forEach((param: string) => {
       data[param] = me[param];
     });
 
     data.gameVar = Util.objClone(this.gameVar);
     data.conductor = this.conductor.store(tick);
+
     data.forePrimaryLayer = this.forePrimaryLayer.store(tick);
+    data.foreLayers = [];
+    this.foreLayers.forEach((layer) => {
+      data.foreLayers.push(layer.store(tick));
+    });
     data.backPrimaryLayer = this.backPrimaryLayer.store(tick);
+    data.backLayers = [];
+    this.backLayers.forEach((layer) => {
+      data.backLayers.push(layer.store(tick));
+    });
+
     data.sounds = [];
     this.sounds.forEach((sound) => {
       data.sounds.push(sound.store(tick));
     });
+  }
+
+  public load(num: number, tick: number): AsyncCallbacks {
+    let asyncTask = new AsyncTask();
+    const me: any = this as any;
+    const dataStr: string = this.resource.restoreFromLocalStorage(`${this.saveDataPrefix}_${num}`);
+    const data: any = JSON.parse(dataStr);
+
+    console.log(data);
+
+    Ponkan3.ponkanStoreParams.forEach((param: string) => {
+      me[param] = data[param];
+    });
+
+    // TODO 実装
+    this.forePrimaryLayer.restore(asyncTask, data.forePrimaryLayer, tick);
+    this.backPrimaryLayer.restore(asyncTask, data.backPrimaryLayer, tick);
+
+    for (let i = 0; i < data.foreLayers.length; i++) {
+      this.foreLayers[i].restore(asyncTask, data.foreLayers[i], tick);
+      this.backLayers[i].restore(asyncTask, data.backLayers[i], tick);
+    }
+
+    return asyncTask.run();
   }
 
 }

@@ -92,15 +92,16 @@ export class PonSprite {
    * そのままの状態を保つ。
    */
   public clear(): void {
+    try {
     if (this.pixiSprite != null) {
       this.callbacks.pixiContainerRemoveChild(this.pixiSprite);
-      this.pixiSprite.destroy({
-        children: true,
-        texture: true,
-        baseTexture: true,
-      });
+      this.pixiSprite.destroy();
     }
     this.pixiSprite = null;
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
   }
 
   /**
@@ -139,6 +140,15 @@ export class PonSprite {
     this.pixiSprite.beginFill(color, alpha);
     this.pixiSprite.drawRect(0, 0, this.width, this.height);
     this.callbacks.pixiContainerAddChild(this.pixiSprite);
+  }
+
+  /**
+   * スプライトの塗りつぶしをクリアする
+   */
+  public clearColor(): void {
+    if (this.pixiSprite != null && this.pixiSprite instanceof PIXI.Graphics) {
+      this.pixiSprite.clear();
+    }
   }
 
   /**
