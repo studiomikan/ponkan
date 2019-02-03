@@ -1,5 +1,8 @@
 import { Howl, Howler } from 'howler';
 import { Logger } from './logger';
+import { Resource } from './resource';
+import { AsyncCallbacks } from './async-callbacks';
+import { AsyncTask } from "./async-task";
 
 export interface ISoundCallbacks {
   onFadeComplete(bufferNum: number): void;
@@ -134,26 +137,105 @@ export class Sound {
   public set loop(loop: boolean) { this.howl.loop(this._loop = loop); }
   public get loop(): boolean { return this._loop; }
 
+  protected static soundStoreParams: string[] = [
+    "filePath",
+    "bufferNum",
+    "state",
+    "seek",
+    "loop",
+    "volume",
+    "volume2",
+    "fadeStartVolume",
+    "fadeTargetVolume",
+    "stopAfterFade",
+  ];
+
   public store(tick: number): any {
     let data: any = {};
     let me: any = <any> this;
 
-    [
-      "filePath",
-      "bufferNum",
-      "state",
-      "seek",
-      "loop",
-      "volume",
-      "volume2",
-      "fadeStartVolume",
-      "fadeTargetVolume",
-      "stopAfterFade",
-    ].forEach((param: string) => {
+    Sound.soundStoreParams.forEach((param: string) => {
       data[param] = me[param];
     });
 
     return data;
   }
+
+  public restore(data: any, tick: number): void {
+    let me: any = this as any;
+    let ignore: string[] = [
+      "state",
+    ];
+    let restoreParams = Sound.soundStoreParams.filter(param => ignore.indexOf(param) == -1);
+    restoreParams.forEach((param: string) => {
+      me[param] = data[param];
+    });
+
+    this.stop();
+    if (data.state === SoundState.Play && data.loop) {
+      this.play();
+    }
+  }
+
+}
+
+export class SoundBuffer {
+  public readonly bufferNum: number;
+  protected resource: Resource;
+  protected callbacks: ISoundCallbacks;
+  protected _sound: Sound | null = null;
+  public get sound(): Sound | null { return this._sound; }
+
+  public constructor(resource: Resource, bufferNum: number, callbacks: ISoundCallbacks) {
+    this.resource = resource;
+    this.bufferNum = bufferNum;
+    this.callbacks = callbacks;
+  }
+
+  public loadSound(filePath: string): AsyncCallbacks {
+    Logger.debug("SoundBuffer.loadSound call: ", filePath);
+    const cb: AsyncCallbacks = new AsyncCallbacks();
+    this.resource.loadSound(filePath, this.bufferNum, this.callbacks).done((sound) => {
+      Logger.debug("SoundBuffer.loadSound success: ", sound);
+      this._sound = sound;
+      cb.callDone(sound);
+    }).fail(() => {
+      Logger.debug("SoundBuffer.loadSound fail: ", filePath);
+      cb.callFail();
+    });
+    return cb;
+  }
+
+  public unloadSound() {
+    if (this._sound != null) {
+      this._sound.destroy();
+    }
+    this._sound = null;
+  }
+
+  public store(tick: number): any {
+    if (this.sound == null) {
+      return { hasSound: false };
+    } else {
+      let data = this.sound.store(tick);
+      data.hasSound = true;
+      return data;
+    }
+  }
+
+  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
+    this.unloadSound();
+
+    if (data.hasSound) {
+      asyncTask.add((params: any, index: number): AsyncCallbacks => {
+        let cb = this.loadSound(data.filePath);
+        cb.done((sound) => {
+          sound.restore(data, tick);
+        });
+        return cb;
+      });
+    }
+  }
+
 }
 

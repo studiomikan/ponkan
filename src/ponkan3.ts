@@ -5,7 +5,7 @@ import { Conductor, ConductorState, IConductorEvent } from "./base/conductor";
 import { Logger } from "./base/logger";
 import { PonGame } from "./base/pon-game";
 import { PonMouseEvent } from "./base/pon-mouse-event";
-import { ISoundCallbacks, Sound } from "./base/sound";
+import { ISoundCallbacks, Sound, SoundBuffer } from "./base/sound";
 import { Tag } from "./base/tag";
 import * as Util from "./base/util.ts";
 import { PonLayer } from "./layer/pon-layer";
@@ -57,7 +57,8 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public pageBreakGlyphY: number = 0;
 
   // サウンド関係
-  public readonly sounds: Sound[] = [];
+  public soundBufferCount: number = 5;
+  public readonly soundBuffers: SoundBuffer[] = [];
 
   public get tmpVar(): any { return this.resource.tmpVar; }
   public get gameVar(): any { return this.resource.gameVar; }
@@ -80,6 +81,8 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       this.addLayer(new PonLayer("Back primary layer", this.resource)) as PonLayer;
     this.backPrimaryLayer.visible = false;
     this.initLayers();
+
+    this.initSounds(config);
 
     // テスト
     // const layer = this.forePrimaryLayer;
@@ -256,28 +259,52 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // =========================================================
   // サウンド
   // =========================================================
-  public loadSound(filePath: string, buf: number): AsyncCallbacks {
-    // return this.resource.loadSound(values.filePath);
-    const cb: AsyncCallbacks = new AsyncCallbacks();
+  // public loadSound(filePath: string, buf: number): AsyncCallbacks {
+  //   // return this.resource.loadSound(values.filePath);
+  //   const cb: AsyncCallbacks = new AsyncCallbacks();
+  //   const callbacks: ISoundCallbacks = {
+  //     onFadeComplete: (bufferNum: number) => {
+  //       this.onSoundFadeComplete(bufferNum);
+  //     },
+  //   };
+  //   this.resource.loadSound(filePath, buf, callbacks).done((sound) => {
+  //     if (this.soundBuffers[buf] != null) { this.soundBuffers[buf].destroy(); }
+  //     this.soundBuffers[buf] = sound;
+  //     cb.callDone(sound);
+  //   }).fail(() => {
+  //     cb.callFail();
+  //   });
+  //   return cb;
+  // }
+
+  private initSounds(config: any) {
+    if (config.soundBufferCount != null) {
+      this.soundBufferCount = +config.soundBufferCount;
+    }
+
     const callbacks: ISoundCallbacks = {
       onFadeComplete: (bufferNum: number) => {
         this.onSoundFadeComplete(bufferNum);
       },
     };
-    this.resource.loadSound(filePath, buf, callbacks).done((sound) => {
-      if (this.sounds[buf] != null) { this.sounds[buf].destroy(); }
-      this.sounds[buf] = sound;
-      cb.callDone(sound);
-    }).fail(() => {
-      cb.callFail();
-    });
-    return cb;
+    for (let i = 0; i < this.soundBufferCount; i++) {
+      this.soundBuffers.push(new SoundBuffer(this.resource, i, callbacks));
+    }
   }
 
-  public getSound(buf: number): Sound {
-    const sound: Sound = this.sounds[buf];
+  public getSoundBuffer(num: number): SoundBuffer {
+    const soundBuffer: SoundBuffer | null = this.soundBuffers[num]
+    if (soundBuffer == null) {
+      throw new Error(`音声バッファ${num}番は範囲外です`);
+    } else {
+      return soundBuffer;
+    }
+  }
+
+  public getSound(num: number): Sound {
+    const sound: Sound | null = this.soundBuffers[num].sound;
     if (sound == null) {
-      throw new Error(`音声バッファ${buf}は音声がロードされていません`);
+      throw new Error(`音声バッファ${num}は音声がロードされていません`);
     } else {
       return sound;
     }
@@ -551,9 +578,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       data.backLayers.push(layer.store(tick));
     });
 
-    data.sounds = [];
-    this.sounds.forEach((sound) => {
-      data.sounds.push(sound.store(tick));
+    data.soundBuffers = [];
+    this.soundBuffers.forEach((sound) => {
+      data.soundBuffers.push(sound.store(tick));
     });
   }
 
@@ -576,6 +603,16 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     for (let i = 0; i < data.foreLayers.length; i++) {
       this.foreLayers[i].restore(asyncTask, data.foreLayers[i], tick);
       this.backLayers[i].restore(asyncTask, data.backLayers[i], tick);
+    }
+
+    // sound
+    this.soundBuffers.forEach((sb) => {
+      if (sb.sound != null) { sb.sound.stop(); }
+    });
+    for (let i = 0; i < data.soundBuffers.length; i++) {
+      if (this.soundBuffers[i] != null) {
+        this.soundBuffers[i].restore(asyncTask, data.soundBuffers[i], tick);
+      }
     }
 
     return asyncTask.run();

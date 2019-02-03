@@ -9,54 +9,57 @@
 ;image "lay": 1, "file": "pagebreak.png", "visible": true, "x": 0, "y": 0
 ;frameanim "lay": 1, "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.pageBreakFrames"
 ;startframeanim "lay": 1
+;loadsound "buf": 0, "file": "ohka_japan.mp3"
 
+OK.
 ;pb
 |
 ;save "num": 1
 
-セーブしました。
+SAVE.
 ;clearcolor "lay": "message"
 ;freeimage "lay": 0
 ;freeimage "lay": 1
 ;pb
-ロードします。
+
+LOAD.
 ;pb
 ;load "num": 1
 ;s
 
-;for "loops": 2, "indexvar": "i"
-  ;for "loops": 2, "indexvar": "l"
-    = `(${tv.i},${tv.l})`
-  ;endfor
-  = " "
-;endfor
+# ;for "loops": 2, "indexvar": "i"
+#   ;for "loops": 2, "indexvar": "l"
+#     = `(${tv.i},${tv.l})`
+#   ;endfor
+#   = " "
+# ;endfor
 
-;print
+# ;print
 # ;br
 # ;clear
 
-;if "exp": "100 === 200"
-  then block.
-  ;br
-;elsif "exp": "false"
-  elsif block 1.
-  ;br
-;elsif "exp": "false"
-  elsif block 2.
-  ;br
-  ;if "exp": "false"
-    inner then.
-    ;br
-  ;else
-    inner else.
-    ;br
-  ;endif
-;else
-  else block.
-  ;br
-;else
-  ERROR!!
-;endif
+# ;if "exp": "100 === 200"
+#   then block.
+#   ;br
+# ;elsif "exp": "false"
+#   elsif block 1.
+#   ;br
+# ;elsif "exp": "false"
+#   elsif block 2.
+#   ;br
+#   ;if "exp": "false"
+#     inner then.
+#     ;br
+#   ;else
+#     inner else.
+#     ;br
+#   ;endif
+# ;else
+#   else block.
+#   ;br
+# ;else
+#   ERROR!!
+# ;endif
 
 
 ;pb

@@ -603,12 +603,24 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       "TODO タグの説明文",
       (values, tick) => {
-        p.loadSound(values.file, values.buf).done((sound) => {
+        p.getSoundBuffer(values.buf).loadSound(values.file).done((sound) => {
           p.conductor.start();
         }).fail(() => {
           throw new Error(`音声のロードに失敗しました(${values.file})`);
         });
         return p.conductor.stop();
+      },
+    ),
+    new TagAction(
+      ["freesound", "unloadsound"],
+      "音声を開放する",
+      [
+        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.getSoundBuffer(values.buf).unloadSound();
+        return "continue";
       },
     ),
     new TagAction(
