@@ -12,7 +12,12 @@
 # メッセージレイヤーの設定
 #=============================================
 ;messagelay "lay": 20
-;layopt "lay": "message", "x": 20, "y": "&576-20-200", "width": "&1024-20-20", "height": 200, "visible": true
+;layopt "lay": "message", \
+        "x": 20, \
+        "y": "&576-20-200", \
+        "width": "&1024-20-20", \
+        "height": 200, \
+        "visible": true
 ;fillcolor "lay": "mes", "color": "0x4286f4", "alpha": 0.7 
 ;textspeed "time": 50
 
@@ -23,8 +28,17 @@ for (var i = 0; i < 16; i++) { frames.push({"x": 24 * i, "y": 0}); }
 for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
 ---
 ;lbglyph "lay": 21, "pos": "eol"
-;image "lay": "linebreak", "file": "linebreak.png", "visible": false, "x": 0, "y": 0
-;frameanim "lay": "linebreak", "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.lineBreakFrames"
+;image "lay": "linebreak", \
+       "file": "linebreak.png", \
+       "visible": false, \
+       "x": 0, \
+       "y": 0
+;frameanim "lay": "linebreak", \
+           "loop": true, \
+           "time": 50, \
+           "width": 24, \
+           "height": 24, \
+           "frames": "&tv.lineBreakFrames"
 
 # ページ末グリフの設定
 ---
@@ -33,10 +47,17 @@ for (var i = 0; i < 16; i++) { frames.push({"x": 24 * i, "y": 0}); }
 for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
 ---
 ;pbglyph "lay": 22, "pos": "eol"
-;image "lay": "pagebreak", "file": "pagebreak.png", "visible": false, "x": 0, "y": 0
-;frameanim "lay": "pagebreak", "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.pageBreakFrames"
-
-*jump_target
+;image "lay": "pagebreak", \
+       "file": "pagebreak.png", \
+       "visible": false, \
+       "x": 0, \
+       "y": 0
+;frameanim "lay": "pagebreak", \
+           "loop": true, \
+           "time": 50, \
+           "width": 24, \
+           "height": 24, \
+           "frames": "&tv.pageBreakFrames"
 
 # マクロ定義
 ;call "file": "macro.pon"

@@ -4,7 +4,6 @@
 |save-mark-0001:セーブコメント01
 |セーブコメント02
 
-
 ;image "lay": 0, "page": "fore", "file": "okayu.jpg", "visible": true, "x": 0, "y": 0
 ;image "lay": 1, "file": "pagebreak.png", "visible": true, "x": 0, "y": 0
 ;frameanim "lay": 1, "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.pageBreakFrames"

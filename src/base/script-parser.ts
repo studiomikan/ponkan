@@ -23,11 +23,28 @@ export class ScriptParser {
   }
 
   private getLine(): string | null {
-    if (this.currentLineNum < this.lines.length) {
-      return this.lines[this.currentLineNum++].trim();
-    } else {
+    if (this.currentLineNum >= this.lines.length) {
       return null;
     }
+
+    let line: string = "";
+    let first: boolean = true;
+    while (true) {
+      if (this.currentLineNum >= this.lines.length) {
+        break;
+      }
+
+      let l = this.lines[this.currentLineNum++].trim(); 
+      if (l !== "" && l[l.length - 1] === "\\") {
+        if (!first) { line += "\n"; }
+        first = false;
+        line += l.substring(0, l.length - 1);
+      } else {
+        line += l;
+        break;
+      }
+    }
+    return line;
   }
 
   private getLineWithoutTrim(): string | null {
