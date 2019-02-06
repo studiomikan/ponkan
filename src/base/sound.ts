@@ -29,6 +29,7 @@ export class Sound {
   protected _volume2: number = 1.0;
   protected fadeStartVolume: number = 0;
   protected fadeTargetVolume: number = 0;
+  protected fadeTime : number = 0;
   protected stopAfterFade: boolean = false;
 
   public constructor(filePath: string, howl: Howl, bufferNum: number, callbacks: ISoundCallbacks) {
@@ -77,16 +78,18 @@ export class Sound {
   public fade(volume: number, time: number, autoStop: boolean) {
     this.fadeStartVolume = this.volume;
     this.fadeTargetVolume = volume;
+    this.fadeTime = time;
     this.stopAfterFade = autoStop;
     this.howl.fade(this.fadeStartVolume * this.volume2,
                    this.fadeTargetVolume * this.volume2, time);
     this._state = SoundState.Fade;
   }
 
-  public fadein(time: number) {
+  public fadein(volume: number, time: number) {
     this.stop();
     this.fadeStartVolume = 0;
-    this.fadeTargetVolume = 1.0;
+    this.fadeTargetVolume = volume;
+    this.fadeTime = time;
     this.stopAfterFade = false;
 
     this.howl.once("play", () => {
@@ -101,6 +104,7 @@ export class Sound {
   public fadeout(time: number, autoStop: boolean) {
     this.fadeStartVolume = this.volume;
     this.fadeTargetVolume = 0;
+    this.fadeTime = time;
     this.stopAfterFade = autoStop;
     this.howl.fade(this.fadeStartVolume * this.volume2,
                    this.fadeTargetVolume * this.volume2, time);
@@ -147,6 +151,7 @@ export class Sound {
     "volume2",
     "fadeStartVolume",
     "fadeTargetVolume",
+    "fadeTime",
     "stopAfterFade",
   ];
 
@@ -174,6 +179,13 @@ export class Sound {
     this.stop();
     if (data.state === SoundState.Play && data.loop) {
       this.play();
+    }
+    if (data.state === SoundState.Fade && !data.stopAfterFade && data.loop) {
+      this.volume = data.fadeTargetVolume;
+      this.play();
+    }
+    if (data.state === SoundState.Fadein && data.loop) {
+      this.fadein(data.fadeTargetVolume, data.fadeTime);
     }
   }
 

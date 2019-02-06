@@ -10,6 +10,8 @@
 ;frameanim "lay": 1, "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.pageBreakFrames"
 ;startframeanim "lay": 1
 ;loadsound "buf": 0, "file": "ohka_japan.mp3"
+# ;soundopt "buf": 0, "volume": 0.2
+# ;playsound "buf": 0
 
 OK.
 ;pb
@@ -20,6 +22,7 @@ SAVE.
 ;clearcolor "lay": "message"
 ;freeimage "lay": 0
 ;freeimage "lay": 1
+;stopsound "buf": 0
 ;pb
 
 LOAD.

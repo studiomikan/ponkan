@@ -701,12 +701,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "音声をフェードインで再生開始する",
       [
         new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+        new TagValue("volume", "number", true, null, "フェード後の音量(0.0〜1.0)"),
         new TagValue("time", "number", true, null, "フェード時間(ms)"),
-        new TagValue("autostop", "boolean", false, false, "フェード終了後に再生停止するか"),
       ],
       "TODO タグの説明文",
       (values, tick) => {
-        p.getSound(values.buf).fadein(values.time);
+        p.getSound(values.buf).fadein(values.volume, values.time);
         return "continue";
       },
     ),
