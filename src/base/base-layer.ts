@@ -15,7 +15,7 @@ import { Resource } from "./resource";
  */
 export class BaseLayer {
   /** リソース */
-  private r: Resource;
+  protected resource: Resource;
   /** レイヤ名 */
   public name: string;
 
@@ -117,8 +117,8 @@ export class BaseLayer {
   public get imageY(): number { return this.imageSprite === null ? 0 : this.imageSprite.y; }
   public set imageY(imageY: number) { if (this.imageSprite !== null) { this.imageSprite.y = imageY; } }
 
-  public constructor(name: string, r: Resource) {
-    this.r = r;
+  public constructor(name: string, resource: Resource) {
+    this.resource = resource;
     this.name = name;
 
     this._container = new PIXI.Container();
@@ -414,7 +414,7 @@ export class BaseLayer {
     this.freeImage();
     const width = this.width;
     const height = this.height;
-    this.r.loadImage(filePath).done((image) => {
+    this.resource.loadImage(filePath).done((image) => {
       Logger.debug("BaseLayer.loadImage success: ", image);
       this.image = <HTMLImageElement> image;
       this.imageFilePath = filePath;

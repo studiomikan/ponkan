@@ -8,9 +8,19 @@
 ;image "lay": 1, "file": "pagebreak.png", "visible": true, "x": 0, "y": 0
 ;frameanim "lay": 1, "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.pageBreakFrames"
 ;startframeanim "lay": 1
-;loadsound "buf": 0, "file": "ohka_japan.mp3"
+# ;loadsound "buf": 0, "file": "ohka_japan.mp3"
 # ;soundopt "buf": 0, "volume": 0.2
 # ;playsound "buf": 0
+
+;layopt "lay": 2, "x": 300, "y": 100, "visible": true
+;fillcolor "lay": 2, "color": "0xFF0000", "alpha": 1
+;textbutton "lay":    2, \
+            "text":   "ボタン", \
+            "width":  200, \
+            "height": 32, \
+            "normal": "0xFF0000", \
+            "over":   "0x00FF00", \
+            "on":     "0x0000FF"
 
 OK.
 ;pb

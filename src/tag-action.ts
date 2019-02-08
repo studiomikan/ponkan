@@ -387,7 +387,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           throw new Error("メッセージレイヤーの指定が範囲外です");
         }
         p.messageLayerNum = lay;
-        // TODO メッセージレイヤの初期化
+        // TODO メッセージレイヤーの初期化
         return "continue";
       },
     ),
@@ -399,7 +399,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("pos", "string", false, null,
           `グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。` +
           `"eol"を指定すると文章の末尾に表示。` +
-          `"relative"を指定するとメッセージレイヤとの相対位置で固定表示。` +
+          `"relative"を指定するとメッセージレイヤーとの相対位置で固定表示。` +
           `"absolute"を指定すると画面上の絶対位置で固定表示。`),
         new TagValue("x", "number", false, null, "グリフの表示位置（メッセージレイヤーからの相対位置）"),
         new TagValue("y", "number", false, null, "グリフの表示位置（メッセージレイヤーからの相対位置）"),
@@ -421,7 +421,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("pos", "string", false, null,
           `グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。` +
           `"eol"を指定すると文章の末尾に表示。` +
-          `"relative"を指定するとメッセージレイヤとの相対位置で固定表示。` +
+          `"relative"を指定するとメッセージレイヤーとの相対位置で固定表示。` +
           `"absolute"を指定すると画面上の絶対位置で固定表示。`),
         new TagValue("x", "number", false, null, "グリフの表示位置（メッセージレイヤーからの相対位置）"),
         new TagValue("y", "number", false, null, "グリフの表示位置（メッセージレイヤーからの相対位置）"),
@@ -478,7 +478,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("y", "number", false, null, "y座標(px)"),
         new TagValue("width", "number", false, null, "幅(px)"),
         new TagValue("height", "number", false, null, "高さ(px)"),
-        new TagValue("alpha", "number", false, 1.0, "レイヤのAlpha(0.0〜1.0)"),
+        new TagValue("alpha", "number", false, 1.0, "レイヤーのAlpha(0.0〜1.0)"),
       ],
       "TODO タグの説明文",
       (values, tick) => {
@@ -538,6 +538,45 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
+    // ======================================================================
+    // ボタン関係
+    // ======================================================================
+    new TagAction(
+      ["textbutton", "txtbtn"],
+      "レイヤーをテキストボタンにする",
+      [
+        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("page", "string", false, "fore", "対象ページ"),
+        new TagValue("text", "string", true, null, "x座標(px)"),
+        new TagValue("width", "number", true, null, "幅(px)"),
+        new TagValue("height", "number", true, null, "高さ(px)"),
+        new TagValue("normal", "number", true, null, "通常時の背景色"),
+        new TagValue("over", "number", false, null, "マウスオーバー時の背景色"),
+        new TagValue("on", "number", false, null, "マウス押下時の背景色"),
+        new TagValue("normalalpha", "number", false, 1.0, "通常時の背景色のAlpha(0.0〜1.0)"),
+        new TagValue("overalpha", "number", false, 1.0, "マウスオーバー時の背景色のAlpha(0.0〜1.0)"),
+        new TagValue("onalpha", "number", false, 1.0, "マウス押下時の背景色のAlpha(0.0〜1.0)"),
+        new TagValue("color", "number", false, null, "文字色(0xRRGGBB)"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          layer.initTextButton(
+            values.text,
+            values.width,
+            values.height,
+            values.normal,
+            values.over,
+            values.on,
+            values.normalalpha,
+            values.overalpha,
+            values.onalpha
+          );
+        });
+        return "continue";
+      },
+    ),
+    
     // ======================================================================
     // アニメーション関係
     // ======================================================================
