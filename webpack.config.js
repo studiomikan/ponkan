@@ -30,6 +30,10 @@ module.exports = {
       { context: 'src/gamedata' }
     ),
     new CopyWebpackPlugin(
+      [ { from: '', to: 'fonts/', }, ],
+      { context: 'src/fonts' }
+    ),
+    new CopyWebpackPlugin(
       [ { from: '', to: '', }, ],
       { context: 'src/index.html' }
     ),

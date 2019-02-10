@@ -5,6 +5,9 @@ import { PonRenderer } from "./pon-renderer";
 const DEFAULT_WIDTH: number = 32;
 const DEFAULT_HEIGHT: number = 32;
 
+// 日本語フォントの上部が見切れてしまう問題の対処
+PIXI.TextMetrics.BASELINE_SYMBOL += "あ";
+
 /**
  * PonSpriteのコールバック
  */

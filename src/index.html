@@ -1,20 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Pixi.js TEST</title>
-</head>
-<body>
-<div id="game"></div>
-<script src="./ponkan3.js"></script>
-<script>
-var ponkan = new Ponkan3("game", {
-  "saveDataPrefix": "ponkan-sample",
-  "width": 1024,
-  "height": 576,
-});
-ponkan.start();
-</script>
-</body>
+  <head>
+    <meta charset="UTF-8">
+    <title>Pixi.js TEST</title>
+    <style>
+      @font-face {
+        font-family: 'mplus-1p-regular';
+        src: url('./fonts/mplus-1m-regular.woff') format('woff')
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game"></div>
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+    <script src="./ponkan3.js"></script>
+    <script>
+      var ponkan = new Ponkan3("game", {
+        "saveDataPrefix": "ponkan-sample",
+        "width": 1024,
+        "height": 576,
+      });
+      WebFont.load({
+        classes: false,
+        custom: { families: ["mplus-1p-regular"] },
+        active: function() {
+          console.log("WebFont: ", "active.");
+          ponkan.start();
+        },
+        inactive: function() {
+          console.log("WebFont: ", "inactive.");
+          alert("フォントの読み込みに失敗");
+          // ponkan.start();
+        },
+      });
+    </script>
+  </body>
 </html>
 
