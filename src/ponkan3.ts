@@ -256,6 +256,11 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     }
   }
 
+  public onChangeStable(isStable: boolean): void {
+    this.forePrimaryLayer.onChangeStable(isStable);
+    this.backPrimaryLayer.onChangeStable(isStable);
+  }
+
   // =========================================================
   // サウンド
   // =========================================================

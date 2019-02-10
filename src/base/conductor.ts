@@ -10,6 +10,7 @@ export interface IConductorEvent {
   onSaveMark(name:string, comment: string, line: number, tick: number): "continue" | "break";
   onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break";
   onTag(tag: Tag, line: number, tick: number): "continue" | "break";
+  onChangeStable(isStable: boolean): void;
 }
 
 export interface ICallStackNode {
@@ -37,6 +38,8 @@ export class Conductor {
   protected sleepTime: number = -1;
 
   protected callStack: ICallStackNode[] = [];
+
+  protected stableBuffer: boolean = false;
 
   public constructor(resource: Resource, eventCallbacks: IConductorEvent) {
     this.resource = resource;
@@ -161,6 +164,11 @@ export class Conductor {
       }
 
       if (tagReturnValue === "break") { break; }
+      if (this.status !== ConductorState.Run) { break; }
+    }
+    if (this.stableBuffer !== this.isStable) {
+      this.eventCallbacks.onChangeStable(this.isStable);
+      this.stableBuffer = this.isStable;
     }
   }
 

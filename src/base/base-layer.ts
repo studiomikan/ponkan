@@ -296,6 +296,12 @@ export class BaseLayer {
     return true;
   }
 
+  public onChangeStable(isStable: boolean): void {
+    for (let i = this.children.length - 1; i >= 0; i--) {
+      this.children[i].onChangeStable(isStable);
+    }
+  }
+
   /**
    * 背景色を設定する
    * @param color 色 0xRRGGBB
