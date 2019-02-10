@@ -191,8 +191,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       "TODO タグの説明文",
       (values, tick) => {
-        p.conductor.returnSubroutine();
-        return "continue";
+        return p.conductor.returnSubroutine()
       },
     ),
     new TagAction(
@@ -557,6 +556,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("overalpha", "number", false, 1.0, "マウスオーバー時の背景色のAlpha(0.0〜1.0)"),
         new TagValue("onalpha", "number", false, 1.0, "マウス押下時の背景色のAlpha(0.0〜1.0)"),
         new TagValue("color", "number", false, null, "文字色(0xRRGGBB)"),
+        new TagValue("jumpfile", "string", false, null, "ボタン押下時にjumpするスクリプトファイル名"),
+        new TagValue("callfile", "string", false, null, "ボタン押下時にcallするスクリプトファイル名"),
+        new TagValue("jumplabel", "string", false, null, "jump先のラベル名"),
+        new TagValue("calllabel", "string", false, null, "call先のラベル名"),
+        new TagValue("exp", "string", false, null, "ボタン押下時に実行するJavaScript"),
       ],
       "TODO タグの説明文",
       (values, tick) => {
@@ -570,7 +574,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
             values.on,
             values.normalalpha,
             values.overalpha,
-            values.onalpha
+            values.onalpha,
+            values.jump,
+            values.call,
+            values.jumplabel,
+            values.calllabel,
+            values.exp,
           );
         });
         return "continue";

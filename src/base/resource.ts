@@ -2,11 +2,13 @@ import { Howl, Howler } from 'howler';
 import * as Util from "./util.ts";
 import { AsyncCallbacks } from "./async-callbacks";
 import { Logger } from "./logger";
+import { PonGame } from "./pon-game";
 import { Macro } from "./macro";
 import { Script } from "./script";
 import { Sound, ISoundCallbacks } from "./sound";
 
 export class Resource {
+  private ponGame: PonGame;
   private basePath: string;
   public readonly tmpVar: any = {};
   public readonly gameVar: any = {};
@@ -15,10 +17,15 @@ export class Resource {
   public readonly macroInfo: any = {};
   public macroParams: object | null = null;
 
-  public constructor(basePath: string = "") {
+  public constructor(ponGame: PonGame, basePath: string = "") {
+    this.ponGame = ponGame;
     this.basePath = this.fixPath(basePath);
 
     Howler.usingWebAudio = true;
+  }
+
+  public getCanvasElm(): HTMLCanvasElement {
+    return this.ponGame.renderer.canvasElm;
   }
 
   public saveSystemData(saveDataPrefix: string): void {

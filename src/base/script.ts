@@ -49,6 +49,10 @@ export class Script {
     this.tagPoint = point;
   }
 
+  public getPoint(): number {
+    return this.tagPoint;
+  }
+
   /**
    * 指定のラベルの位置へ移動する。
    * ラベルの検索はファイルの先頭から実施するため、
@@ -66,6 +70,20 @@ export class Script {
       if (tag.name === "__label__" && tag.values.__body__ === label) {
         break;
       }
+    }
+  }
+
+  public getCurrentTag(): Tag | null {
+    if (this.macroStack.length === 0) {
+      const tags = this.parser.tags;
+      if (tags.length <= this.tagPoint) {
+        return null;
+      } else {
+        return tags[this.tagPoint];
+      }
+    } else {
+      let macro: Macro = this.macroStack[this.macroStack.length - 1];
+      return macro.getCurrentTag();
     }
   }
   

@@ -13,7 +13,7 @@ export class PonGame {
   private fpsPreTick: number = 0;
   private fpsCount: number = 0;
   private fps: number = 0;
-  protected renderer: PonRenderer;
+  public readonly renderer: PonRenderer;
   private layers: BaseLayer[] = [];
 
   public get width(): number { return this.renderer.width; }
@@ -26,7 +26,7 @@ export class PonGame {
     if (elm == null) {
       throw new Error(`Not found HTMLElement: ${parentId}`);
     }
-    this.resource = new Resource("gamedata");
+    this.resource = new Resource(this, "gamedata");
 
     if (config.width == null || config.height == null) {
       config.width = 800;

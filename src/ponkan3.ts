@@ -76,9 +76,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.initTagAction();
 
     this.forePrimaryLayer =
-      this.addLayer(new PonLayer("Fore primary layer", this.resource)) as PonLayer;
+      this.addLayer(new PonLayer("Fore primary layer", this.resource, this)) as PonLayer;
     this.backPrimaryLayer =
-      this.addLayer(new PonLayer("Back primary layer", this.resource)) as PonLayer;
+      this.addLayer(new PonLayer("Back primary layer", this.resource, this)) as PonLayer;
     this.backPrimaryLayer.visible = false;
     this.initLayers();
 
@@ -206,7 +206,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // コンダクタ
   // =========================================================
   public onTag(tag: Tag, line: number, tick: number): "continue" | "break" {
-    Logger.debug("onTag: ", tag.name, tag.values);
+    Logger.debug("onTag: ", tag.name, tag.values, tag);
     const tagAction: TagAction = this.tagActions[tag.name];
     if (tagAction === null || tagAction === undefined) {
       Logger.debug("Unknown Tag: ", tag.name, tag);
@@ -360,7 +360,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
    * 他のレイヤの子レイヤにする必要がある。
    */
   public createLayer(name: string) {
-    const layer = new PonLayer(name, this.resource);
+    const layer = new PonLayer(name, this.resource, this);
     this.addLayer(layer as BaseLayer);
     return layer;
   }

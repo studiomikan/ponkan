@@ -14,6 +14,9 @@ export interface IConductorEvent {
 
 export interface ICallStackNode {
   script: Script;
+  point: number;
+  continueConduct: boolean
+  returnOffset: number 
 }
 
 export enum ConductorState {
@@ -61,7 +64,7 @@ export class Conductor {
    */
   public jump(filePath: string | null, label: string | null = null): AsyncCallbacks {
     const cb = new AsyncCallbacks();
-    if (filePath != null) {
+    if (filePath != null && filePath != "") {
       this.loadScript(filePath).done(() => {
         if (label != null) {
           this.script.goToLabel(label);
@@ -83,21 +86,38 @@ export class Conductor {
    * サブルーチンを呼び出す
    * @param file 移動先ファイル
    * @param label 移動先ラベル
+   * @param statusAtReturn return時に状態を復元する場合は値を設定。未設定時はRunのまま
    */
-  public callSubroutine(filePath: string | null, label: string | null = null): AsyncCallbacks {
-    this.callStack.push({ script: this.script });
+  public callSubroutine(
+    filePath: string | null,
+    label: string | null = null,
+    continueConduct: boolean = true,
+    returnOffset: number = 0
+  ): AsyncCallbacks {
+    this.callStack.push({
+      script: this.script,
+      point: this.script.getPoint(),
+      continueConduct: continueConduct,
+      returnOffset: returnOffset
+    });
     return this.jump(filePath, label);
   }
 
   /**
    * サブルーチンから戻る
    */
-  public returnSubroutine() {
+  public returnSubroutine(): "continue" | "break" {
     let stackData = this.callStack.pop();
     if (stackData === undefined) {
       throw new Error("returnで戻れませんでした。callとreturnの対応が取れていません");
     }
     this._script = stackData.script;
+    this._script.goTo(stackData.point + stackData.returnOffset);
+    if (stackData.continueConduct) {
+      return "continue";
+    } else {
+      return this.stop();
+    }
   }
 
   public conduct(tick: number): void {
@@ -176,6 +196,10 @@ export class Conductor {
     this.sleepTime = sleepTime;
     Logger.debug("Conductor sleep.", sleepTime);
     return "break"
+  }
+
+  public get isStable(): boolean {
+    return this._status === ConductorState.Stop;
   }
 
   public store(tick: number): any {

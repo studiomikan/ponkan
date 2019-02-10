@@ -20,6 +20,14 @@ export class Macro {
     return new Macro(this.name, newTags);
   }
 
+  public getCurrentTag(): Tag | null {
+    if (this.tags.length <= this.tagPoint) {
+      return null;
+    } else {
+      return this.tags[this.tagPoint];
+    }
+  }
+
   /**
    * 次のタグを取得する。
    * スクリプトファイル終端の場合はnullが返る

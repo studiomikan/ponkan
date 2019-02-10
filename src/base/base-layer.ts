@@ -1,4 +1,5 @@
 import * as PIXI from "pixi.js";
+import { PonGame } from "./pon-game";
 import { PonMouseEvent } from "./pon-mouse-event";
 import { AsyncCallbacks } from "./async-callbacks";
 import { AsyncTask } from "./async-task";
@@ -14,10 +15,12 @@ import { Resource } from "./resource";
  * 基本レイヤ。PIXI.Containerをラップしたもの
  */
 export class BaseLayer {
-  /** リソース */
-  protected resource: Resource;
   /** レイヤ名 */
   public name: string;
+  /** リソース */
+  protected resource: Resource;
+  /** 持ち主 */
+  protected owner: PonGame;
 
   /** スプライト表示用コンテナ */
   protected _container: PIXI.Container;
@@ -117,9 +120,10 @@ export class BaseLayer {
   public get imageY(): number { return this.imageSprite === null ? 0 : this.imageSprite.y; }
   public set imageY(imageY: number) { if (this.imageSprite !== null) { this.imageSprite.y = imageY; } }
 
-  public constructor(name: string, resource: Resource) {
-    this.resource = resource;
+  public constructor(name: string, resource: Resource, owner: PonGame) {
     this.name = name;
+    this.resource = resource;
+    this.owner = owner;
 
     this._container = new PIXI.Container();
     // this._container.width = 32;

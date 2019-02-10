@@ -20,9 +20,12 @@
             "height": 32, \
             "normal": "0xFF0000", \
             "over":   "0x00FF00", \
-            "on":     "0x0000FF"
+            "on":     "0x0000FF", \
+            "exp":    "alert('onClickTextButton')", \
+            "calllabel":  "text-button-call-target"
 
 OK.
+;s
 ;pb
 |
 ;save "num": 1
@@ -31,13 +34,28 @@ SAVE.
 ;clearcolor "lay": "message"
 ;freeimage "lay": 0
 ;freeimage "lay": 1
-;stopsound "buf": 0
+# ;stopsound "buf": 0
 ;pb
 
 LOAD.
 ;pb
 ;load "num": 1
 ;s
+
+
+
+
+*text-button-jump-target
+移動後
+;s
+
+*text-button-call-target
+call
+;return
+call
+;s
+
+
 
 # ;for "loops": 2, "indexvar": "i"
 #   ;for "loops": 2, "indexvar": "l"
