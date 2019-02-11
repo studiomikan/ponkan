@@ -15,11 +15,11 @@
 ;layopt "lay": "message", \
         "x": 20, \
         "y": "&576-20-200", \
-        "width": "&1024-20-20", \
+        "width": "&1024-20-20-500", \
         "height": 200, \
         "visible": true
 ;fillcolor "lay": "mes", "color": "0x4286f4", "alpha": 0.7 
-;textspeed "time": 50
+;textspeed "time": 100
 
 # 行末グリフの設定
 ---

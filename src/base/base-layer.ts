@@ -52,7 +52,7 @@ export class BaseLayer {
   private _children: BaseLayer[] = [];
 
   // 文字関係
-  protected textSprites: PonSprite[] = [];
+  protected textLines: PonSprite[][] = [[]];
   public textStyle: PIXI.TextStyle = new PIXI.TextStyle({
     fontFamily: ["mplus-1p-regular", "monospace"],
     fontSize: 24,
@@ -92,6 +92,7 @@ export class BaseLayer {
   public textLinePitch: number  = 5;
   public textAutoReturn: boolean = true;
   public textIndentPoint: number = 0;
+  public textAlign: "left" | "center" | "right" = "center";
 
   public get children(): BaseLayer[] { return this._children; }
   public get container(): PIXI.Container { return this._container; }
@@ -322,6 +323,10 @@ export class BaseLayer {
     this.hasBackgroundColor = false;
   }
 
+  public get currentTextLine(): PonSprite[] {
+    return this.textLines[this.textLines.length - 1];
+  }
+
   /**
    * レイヤにテキストを追加する
    */
@@ -347,16 +352,72 @@ export class BaseLayer {
     }
     const sp: PonSprite = new PonSprite(this.textSpriteCallbacks);
     const fontSize: number = +this.textStyle.fontSize;
-    this.textSprites.push(sp);
     sp.createText(ch, this.textStyle);
 
-    let pos = this.getNextTextPos(sp.width);
-    this.textX = pos.x;
-    this.textY = pos.y;
-    
-    sp.x = this.textX;
-    sp.y = this.textY + this.textLineHeight - fontSize;
-    this.textX += sp.width;
+    // 自動改行の判定
+    let lineWidth = this.getTextLineWidth(this.currentTextLine);
+    if (this.textAutoReturn && (lineWidth + sp.width + this.textMarginRight) > this.width) {
+      this.textX = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft;
+      this.textY += this.textLineHeight + this.textLinePitch;
+      this.textLines.push([]);
+    }
+
+    this.currentTextLine.push(sp);
+
+    // 文字揃えなどの適用
+    this.adjustTextPos();
+
+    // 次の文字の位置を計算しておく
+    // let pos = this.getNextTextPos(sp.width);
+    // this.textX = pos.x;
+    // this.textY = pos.y;
+    //
+    // sp.x = this.textX;
+    // sp.y = this.textY + this.textLineHeight - fontSize;
+    // this.textX += sp.width;
+  }
+
+  public getTextLineWidth(line: PonSprite[]) {
+    if (line.length === 0) {
+      return 0;
+    }
+    let width: number = 0;
+    line.forEach((sp) => {
+      width += sp.width;
+    });
+    return width;
+  }
+
+  /**
+   * 文字寄せを適用してテキスト位置を調整する
+   */
+  public adjustTextPos(): void {
+    let line = this.currentTextLine;
+    let lineWidth = this.getTextLineWidth(line);
+    let startX: number = 0;
+    let leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft;
+    switch (this.textAlign) {
+      case "left":
+        startX = leftMargin;
+        break;
+      case "center":
+        let center = ((this.width - this.textMarginRight) - leftMargin) / 2;
+        startX = center - (lineWidth / 2);
+        break;
+      case "right":
+        let right = this.width - this.textMarginRight;
+        startX = right - lineWidth;
+        break;
+    }
+    let x = startX;
+    let list: number[] = [];
+    line.forEach((sp) => {
+      list.push(x);
+      sp.x = x;
+      sp.y = this.textY;
+      x += sp.width;
+    });
+    this.textX = x;
   }
 
   /**
@@ -374,6 +435,7 @@ export class BaseLayer {
         x = this.textMarginLeft;
       }
       y += this.textLineHeight + this.textLinePitch;
+      this.textLines.push([]);
     }
     return {x: x, y: y};
   }
@@ -404,10 +466,12 @@ export class BaseLayer {
    * インデント位置は初期化される。
    */
   public clearText(): void {
-    this.textSprites.forEach((sp) => {
-      sp.destroy();
+    this.textLines.forEach((textLine: PonSprite[]) => {
+      textLine.forEach((sp) => {
+        sp.destroy();
+      });
     });
-    this.textSprites = [];
+    this.textLines = [[]];
     this.textX = this.textMarginLeft;
     this.textY = this.textMarginTop;
   }

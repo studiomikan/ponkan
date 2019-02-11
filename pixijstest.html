@@ -11,39 +11,30 @@
 <script>
 
 // https://github.com/pixijs/pixi.js/issues/4228
-PIXI.TextMetrics.METRICS_STRING += "あいうえお";
-PIXI.TextMetrics.BASELINE_SYMBOL += "あいうえお";
-console.log(PIXI.TextMetrics.METRICS_STRING);
-console.log(PIXI.TextMetrics.BASELINE_SYMBOL);
+// PIXI.TextMetrics.METRICS_STRING += "あいうえお";
+PIXI.TextMetrics.BASELINE_SYMBOL += "あ｜";
 
-var width = 500;
-var height = 500; 
-var renderer = PIXI.autoDetectRenderer(width, height, {
+const width = 500;
+const height = 200; 
+const renderer = PIXI.autoDetectRenderer(width, height, {
   backgroundColor: 0x000000
 });
-$("body").append(renderer.view);
-
-var container = new PIXI.Container();   // ステージを生成
+document.querySelector("body").appendChild(renderer.view);
+var container = new PIXI.Container();
 
 var textStyle = new PIXI.TextStyle({
-    // fontFamily: ["Noto Sans CJK JP"],
-    // fontFamily: ["Noto Sans Mono CJK JP"],
-    // fontFamily: ["Cica"],
     fontFamily: ["M+ 1m"],
     fontSize: 24, 
     fontWeight: "normal",
     fill: 0xffffff,
-    // textBaseline: "baseline"
 });
-var sprite = new PIXI.Text("HOGEあいうえお", textStyle);
+var sprite = new PIXI.Text("Hogeあいうえお", textStyle);
 sprite.anchor.set(0.5);
 sprite.x = width / 2;
 sprite.y = height / 2;
 
 container.addChild(sprite);
-
 renderer.render(container);
-
 </script>
 
 </body>
