@@ -92,7 +92,7 @@ export class BaseLayer {
   public textLinePitch: number  = 5;
   public textAutoReturn: boolean = true;
   public textIndentPoint: number = 0;
-  public textAlign: "left" | "center" | "right" = "center";
+  public textAlign: "left" | "center" | "right" = "left";
 
   public get children(): BaseLayer[] { return this._children; }
   public get container(): PIXI.Container { return this._container; }
@@ -354,30 +354,14 @@ export class BaseLayer {
     const fontSize: number = +this.textStyle.fontSize;
     sp.createText(ch, this.textStyle);
 
-    // 自動改行の判定
-    let lineWidth = this.getTextLineWidth(this.currentTextLine);
-    if (this.textAutoReturn && (lineWidth + sp.width + this.textMarginRight) > this.width) {
-      this.textX = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft;
-      this.textY += this.textLineHeight + this.textLinePitch;
-      this.textLines.push([]);
-    }
-
+    let pos = this.getNextTextPos(sp.width);
+    sp.x = this.textX = pos.x;
+    sp.y = this.textY = pos.y;
     this.currentTextLine.push(sp);
-
-    // 文字揃えなどの適用
-    this.adjustTextPos();
-
-    // 次の文字の位置を計算しておく
-    // let pos = this.getNextTextPos(sp.width);
-    // this.textX = pos.x;
-    // this.textY = pos.y;
-    //
-    // sp.x = this.textX;
-    // sp.y = this.textY + this.textLineHeight - fontSize;
-    // this.textX += sp.width;
   }
 
-  public getTextLineWidth(line: PonSprite[]) {
+  public getCurrentLineWidth() {
+    let line = this.currentTextLine;
     if (line.length === 0) {
       return 0;
     }
@@ -389,11 +373,19 @@ export class BaseLayer {
   }
 
   /**
-   * 文字寄せを適用してテキスト位置を調整する
+   * 次の文字の表示位置を取得する
+   * @param chWidth 追加しようとしている文字の横幅
+   * @return 表示位置
    */
-  public adjustTextPos(): void {
-    let line = this.currentTextLine;
-    let lineWidth = this.getTextLineWidth(line);
+  public getNextTextPos(chWidth: number): {x: number, y: number} {
+    // 自動改行の判定
+    let lineWidth = this.getCurrentLineWidth();
+    if (this.textAutoReturn && (lineWidth + chWidth + this.textMarginRight) > this.width) {
+      this.addTextReturn();
+    }
+
+    // 追加する1文字に合わせて、既存の文字の位置を調整
+    let newLineWidth = this.getCurrentLineWidth() + chWidth;
     let startX: number = 0;
     let leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft;
     switch (this.textAlign) {
@@ -401,42 +393,24 @@ export class BaseLayer {
         startX = leftMargin;
         break;
       case "center":
-        let center = ((this.width - this.textMarginRight) - leftMargin) / 2;
-        startX = center - (lineWidth / 2);
+        let center = leftMargin + (this.width - leftMargin - this.textMarginRight) / 2;
+        startX = center - (newLineWidth / 2);
         break;
       case "right":
         let right = this.width - this.textMarginRight;
-        startX = right - lineWidth;
+        startX = right - newLineWidth;
         break;
     }
     let x = startX;
+    let y = this.textY;
     let list: number[] = [];
-    line.forEach((sp) => {
+    this.currentTextLine.forEach((sp) => {
       list.push(x);
       sp.x = x;
       sp.y = this.textY;
       x += sp.width;
     });
-    this.textX = x;
-  }
 
-  /**
-   * 次の文字の表示位置を取得する
-   * @param chWidth 追加しようとしている文字の横幅
-   * @return 表示位置
-   */
-  public getNextTextPos(chWidth: number): {x: number, y: number} {
-    let x = this.textX;
-    let y = this.textY;
-    if (this.textAutoReturn && (x + chWidth + this.textMarginRight) > this.width) {
-      if (this.textIndentPoint !== 0) {
-        x = this.textIndentPoint;
-      } else {
-        x = this.textMarginLeft;
-      }
-      y += this.textLineHeight + this.textLinePitch;
-      this.textLines.push([]);
-    }
     return {x: x, y: y};
   }
 
@@ -444,12 +418,8 @@ export class BaseLayer {
    * テキストを改行する
    */
   public addTextReturn(): void {
-    if (this.textIndentPoint !== 0) {
-      this.textX = this.textIndentPoint;
-    } else {
-      this.textX = this.textMarginLeft;
-    }
     this.textY += this.textLineHeight + this.textLinePitch;
+    this.textLines.push([]);
   }
 
   /**

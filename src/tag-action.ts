@@ -301,6 +301,42 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // メッセージ関係
     // ======================================================================
     new TagAction(
+      ["messageopt", "mesopt"],
+      "テキストの設定",
+      [
+        new TagValue("lay", "string", false, "message", "対象レイヤー"),
+        new TagValue("page", "string", false, "fore", "対象ページ"),
+        new TagValue("fontfamily", "array", false, null, "フォント名の配列"),
+        new TagValue("sise", "number", false, null, "フォントサイズ(px)"),
+        new TagValue("weight", "string", false, null, `フォントウェイト。"normal" / "bold"`),
+        new TagValue("color", "number", false, null, "文字色(0xRRGGBB)"),
+        new TagValue("margint", "number", false, null, "テキスト描画のマージン　上"),
+        new TagValue("marginr", "number", false, null, "テキスト描画のマージン　右"),
+        new TagValue("marginb", "number", false, null, "テキスト描画のマージン　下"),
+        new TagValue("marginl", "number", false, null, "テキスト描画のマージン　左"),
+        new TagValue("lineheight", "number", false, null, "テキストの行の高さ(px)"),
+        new TagValue("linepitch", "number", false, null, "テキストの行間(px)"),
+        new TagValue("align", "string", false, null, `テキスト寄せの方向。"left" / "center" / "right"`),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          if (values.fontfamily != null) { layer.textFontFamily = values.fontfamily; }
+          if (values.sise != null) { layer.textFontSize = values.size; }
+          if (values.weight != null) { layer.textFontWeight = values.weight; }
+          if (values.color != null) { layer.textColor = values.color; }
+          if (values.margint != null) { layer.textMarginTop = values.margint; }
+          if (values.marginr != null) { layer.textMarginRight = values.marginr; }
+          if (values.marginb != null) { layer.textMarginBottom = values.marginb; }
+          if (values.marginl != null) { layer.textMarginLeft = values.marginl; }
+          if (values.lineheight != null) { layer.textLineHeight = values.lineheight; }
+          if (values.linepitch != null) { layer.textLinePitch = values.linepitch; }
+          if (values.align != null) { layer.textAlign = values.align; }
+        });
+        return "continue";
+      },
+    ),
+    new TagAction(
       ["ch"],
       "文字を出力する",
       [
@@ -549,13 +585,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("text", "string", true, null, "x座標(px)"),
         new TagValue("width", "number", true, null, "幅(px)"),
         new TagValue("height", "number", true, null, "高さ(px)"),
-        new TagValue("normal", "number", true, null, "通常時の背景色"),
-        new TagValue("over", "number", false, null, "マウスオーバー時の背景色"),
-        new TagValue("on", "number", false, null, "マウス押下時の背景色"),
+        new TagValue("normal", "number", true, null, "通常時の背景色(0xRRGGBB)"),
+        new TagValue("over", "number", false, null, "マウスオーバー時の背景色(0xRRGGBB)"),
+        new TagValue("on", "number", false, null, "マウス押下時の背景色(0xRRGGBB)"),
         new TagValue("normalalpha", "number", false, 1.0, "通常時の背景色のAlpha(0.0〜1.0)"),
         new TagValue("overalpha", "number", false, 1.0, "マウスオーバー時の背景色のAlpha(0.0〜1.0)"),
         new TagValue("onalpha", "number", false, 1.0, "マウス押下時の背景色のAlpha(0.0〜1.0)"),
-        new TagValue("color", "number", false, null, "文字色(0xRRGGBB)"),
         new TagValue("jumpfile", "string", false, null, "ボタン押下時にjumpするスクリプトファイル名"),
         new TagValue("callfile", "string", false, null, "ボタン押下時にcallするスクリプトファイル名"),
         new TagValue("jumplabel", "string", false, null, "jump先のラベル名"),

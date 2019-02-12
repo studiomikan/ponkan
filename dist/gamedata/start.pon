@@ -14,6 +14,7 @@
 
 ;layopt "lay": 2, "x": 300, "y": 100, "visible": true
 ;fillcolor "lay": 2, "color": "0xFF0000", "alpha": 1
+;messageopt "lay": 2, "align": "center", "margint": 0, "lineheight": 32
 ;textbutton "lay":    2, \
             "text":   "ボタン", \
             "width":  200, \
@@ -24,10 +25,15 @@
             "exp":    "alert('onClickTextButton')", \
             "calllabel":  "text-button-call-target"
 
-あいうえおかきくけこさしすせそたちつてとなにぬねの
-はひふへほまみむめもやいゆえよらりるれろ
+;messageopt "align": "center"
+あいうえお
+;br
+かきくけこさしすせそたちつてとなにぬねの
+はひふへほまみむめもやいゆ
+;pb
+えよらりるれろ
 OK.
-;s
+# ;s
 ;pb
 |
 ;save "num": 1
