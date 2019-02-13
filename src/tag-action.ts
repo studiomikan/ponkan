@@ -385,6 +385,16 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     new TagAction(
+      ["indent"],
+      "インデント位置を設定する",
+      [],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.messageLayer.setIndentPoint();
+        return "continue";
+      },
+    ),
+    new TagAction(
       ["linebreak", "lb", "l"],
       "行末クリック待ちで停止する",
       [],

@@ -355,9 +355,11 @@ export class BaseLayer {
     sp.createText(ch, this.textStyle);
 
     let pos = this.getNextTextPos(sp.width);
-    sp.x = this.textX = pos.x;
-    sp.y = this.textY = pos.y;
+    sp.x = pos.x;
+    sp.y = pos.y;
     this.currentTextLine.push(sp);
+    this.textX = pos.x + sp.width;
+    this.textY = pos.y;
   }
 
   public getCurrentLineWidth() {
@@ -380,11 +382,22 @@ export class BaseLayer {
   public getNextTextPos(chWidth: number): {x: number, y: number} {
     // 自動改行の判定
     let lineWidth = this.getCurrentLineWidth();
-    if (this.textAutoReturn && (lineWidth + chWidth + this.textMarginRight) > this.width) {
+    let totalMargin = this.textMarginLeft + this.textMarginRight;
+    if (this.textIndentPoint !== 0) {
+      switch (this.textAlign) {
+        case "left": case "center":
+          totalMargin = this.textIndentPoint + this.textMarginRight;
+          break;
+        case "right":
+          totalMargin = (this.width - this.textIndentPoint) + this.textMarginLeft;
+          break;
+      }
+    }
+    if (this.textAutoReturn && (lineWidth + chWidth + totalMargin) > this.width) {
       this.addTextReturn();
     }
 
-    // 追加する1文字に合わせて、既存の文字の位置を調整
+    // 追加する1文字に合わせて、既存の文字の位置を調整＆次の文字位置の算出
     let newLineWidth = this.getCurrentLineWidth() + chWidth;
     let startX: number = 0;
     let leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft;
@@ -397,7 +410,7 @@ export class BaseLayer {
         startX = center - (newLineWidth / 2);
         break;
       case "right":
-        let right = this.width - this.textMarginRight;
+        let right = this.textIndentPoint !== 0 ? this.textIndentPoint : this.width - this.textMarginRight;
         startX = right - newLineWidth;
         break;
     }
@@ -426,7 +439,19 @@ export class BaseLayer {
    * 現在のテキスト描画位置でインデントするように設定する
    */
   public setIndentPoint(): void {
-    this.textIndentPoint = this.textX;
+    switch (this.textAlign) {
+      case "left":
+        let leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft;
+        this.textIndentPoint = leftMargin + this.getCurrentLineWidth();
+        break;
+      case "center":
+        this.textIndentPoint = this.textX;
+        break;
+      case "right":
+        let rightMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginRight;
+        this.textIndentPoint = this.width - rightMargin - this.getCurrentLineWidth();
+        break;
+    }
   }
 
   /**
