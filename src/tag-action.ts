@@ -191,7 +191,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       "TODO タグの説明文",
       (values, tick) => {
-        return p.conductor.returnSubroutine()
+        return p.conductor.returnSubroutine();
       },
     ),
     new TagAction(
@@ -630,7 +630,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    
+
     // ======================================================================
     // アニメーション関係
     // ======================================================================

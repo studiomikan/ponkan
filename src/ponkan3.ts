@@ -298,7 +298,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   public getSoundBuffer(num: number): SoundBuffer {
-    const soundBuffer: SoundBuffer | null = this.soundBuffers[num]
+    const soundBuffer: SoundBuffer | null = this.soundBuffers[num];
     if (soundBuffer == null) {
       throw new Error(`音声バッファ${num}番は範囲外です`);
     } else {
@@ -518,7 +518,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     }
     this.resource.storeToLocalStorage(`${this.saveDataPrefix}_${num}`, saveStr);
 
-    let comment: string = this.latestSaveData.comment;
+    const comment: string = this.latestSaveData.comment;
     if (this.systemVar.saveComments == null) { this.systemVar.saveComments = []; }
     this.systemVar.saveComments[num] = {
       date: this.getNowDateStr(),
@@ -529,14 +529,14 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   public getNowDateStr(): string {
-    let d: Date = new Date();
-    let year = d.getFullYear();
-    let month = d.getMonth() + 1;
-    let day = d.getDate();
-    let hours = d.getHours();
-    let minutes = d.getMinutes();
-    let seconds = d.getSeconds();
-    let millisecond = d.getMilliseconds();
+    const d: Date = new Date();
+    const year = d.getFullYear();
+    const month = d.getMonth() + 1;
+    const day = d.getDate();
+    const hours = d.getHours();
+    const minutes = d.getMinutes();
+    const seconds = d.getSeconds();
+    const millisecond = d.getMilliseconds();
     return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}.${millisecond}`;
   }
 
@@ -590,7 +590,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   public load(num: number, tick: number): AsyncCallbacks {
-    let asyncTask = new AsyncTask();
+    const asyncTask = new AsyncTask();
     const me: any = this as any;
     const dataStr: string = this.resource.restoreFromLocalStorage(`${this.saveDataPrefix}_${num}`);
     const data: any = JSON.parse(dataStr);
