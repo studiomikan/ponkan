@@ -7,9 +7,6 @@ import { FrameAnimLayer } from "./frame-anim-layer";
 import { Ponkan3 } from "../ponkan3";
 import { ConductorState } from "../base/conductor";
 
-class TextButton extends BaseLayer {
-}
-
 export class TextButtonLayer extends FrameAnimLayer {
 
   protected isTextButton: boolean = false;
@@ -46,6 +43,7 @@ export class TextButtonLayer extends FrameAnimLayer {
     callLabel: string | null = null,
     exp: string | null = null,
   ): void {
+    this.freeImage();
     this.resetTextButton();
     this.isTextButton = true;
     this.txtBtnInsideFlg = false;
@@ -74,7 +72,29 @@ export class TextButtonLayer extends FrameAnimLayer {
   }
 
   public resetTextButton(): void {
+    if (this.isTextButton) {
+      this.setTxtBtnStatus("disabled");
+    }
     this.isTextButton = false;
+    this.txtBtnInsideFlg = false;
+    this.txtBtnStatus = "disabled";
+    this.isTextButton= false;
+    this.txtBtnInsideFlg = false;
+    this.txtBtnStatus = "disabled";
+    this.txtBtnText = "";
+    this.txtBtnWidth = 32;
+    this.txtBtnHeight = 32;
+    this.txtBtnNormalBackgroundColor = 0x000000;
+    this.txtBtnOverBackgroundColor = 0x000000;
+    this.txtBtnOnBackgroundColor = 0x000000;
+    this.txtBtnNormalBackgroundAlpha = 1.0;
+    this.txtBtnOverBackgroundAlpha = 1.0;
+    this.txtBtnOnBackgroundAlpha = 1.0;
+    this.txtBtnJumpFilePath = null;
+    this.txtBtnCallFilePath = null;
+    this.txtBtnJumpLabel = null;
+    this.txtBtnCallLabel = null;
+    this.txtBtnExp = null;
   }
 
   public setTxtBtnStatus(status: "normal" | "over" | "on" | "disabled"): void {
@@ -189,6 +209,51 @@ export class TextButtonLayer extends FrameAnimLayer {
     }
   }
 
+  protected static textButtonLayerStoreParams: string[] = [
+    "isTextButton",
+    "txtBtnInsideFlg",
+    "txtBtnStatus",
+    "txtBtnText",
+    "txtBtnWidth",
+    "txtBtnHeight",
+    "txtBtnNormalBackgroundColor",
+    "txtBtnOverBackgroundColor",
+    "txtBtnOnBackgroundColor",
+    "txtBtnNormalBackgroundAlpha",
+    "txtBtnOverBackgroundAlpha",
+    "txtBtnOnBackgroundAlpha",
+    "txtBtnJumpFilePath",
+    "txtBtnCallFilePath",
+    "txtBtnJumpLabel",
+    "txtBtnCallLabel",
+    "txtBtnExp",
+  ];
+
+  public store(tick: number): any {
+    let data: any = super.store(tick);
+    let me: any = this as any;
+    TextButtonLayer.textButtonLayerStoreParams.forEach((param: string) => {
+      data[param] = me[param];
+    });
+    return data;
+  }
+
+  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
+    this.resetTextButton();
+    super.restore(asyncTask, data, tick);
+  }
+
+  protected restoreAfterLoadImage(data: any, tick: number): void {
+    super.restoreAfterLoadImage(data, tick);
+    let me: any = this as any;
+    TextButtonLayer.textButtonLayerStoreParams.forEach((param: string) => {
+      me[param] = data[param];
+    });
+    if (data.isTextButton) {
+      this.setTxtBtnStatus("normal");
+      this.txtBtnInsideFlg = false;
+    }
+  }
 
 }
 

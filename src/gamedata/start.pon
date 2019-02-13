@@ -28,13 +28,10 @@
 ;messageopt "align": "left"
 あいうえお
 ;indent
-;br
 かきくけこさしすせそたちつてとなにぬねの
 はひふへほまみむめもやいゆ
-;pb
 えよらりるれろ
 OK.
-# ;s
 ;pb
 |
 ;save "num": 1
@@ -43,6 +40,8 @@ SAVE.
 ;clearcolor "lay": "message"
 ;freeimage "lay": 0
 ;freeimage "lay": 1
+;freeimage "lay": 1
+;cleartextbutton "lay": 2
 # ;stopsound "buf": 0
 ;pb
 

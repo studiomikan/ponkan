@@ -365,10 +365,15 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["clear", "c"],
       "テキストをクリアする",
-      [],
+      [
+        new TagValue("lay", "string", false, "message", "対象レイヤー"),
+        new TagValue("page", "string", false, "fore", "対象ページ"),
+      ],
       "TODO タグの説明文",
       (values, tick) => {
-        p.messageLayer.clearText();
+        p.getLayers(values).forEach((layer) => {
+          layer.clearText();
+        })
         return "continue";
       },
     ),
@@ -626,6 +631,21 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
             values.calllabel,
             values.exp,
           );
+        });
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["cleartextbutton", "cleartxtbtn"],
+      "テキストボタンを解除する",
+      [
+        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("page", "string", false, "fore", "対象ページ"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          layer.resetTextButton();
         });
         return "continue";
       },

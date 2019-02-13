@@ -7,10 +7,6 @@ import { Logger } from "./logger";
 import { IPonSpriteCallbacks, PonSprite } from "./pon-sprite";
 import { Resource } from "./resource";
 
-// export interface IBaseLayerCallback {
-//   onLoadImage(layer: BaseLayer, image: HTMLImageElement): void;
-// }
-
 /**
  * 基本レイヤ。PIXI.Containerをラップしたもの
  */
@@ -92,6 +88,7 @@ export class BaseLayer {
   public textLinePitch: number  = 5;
   public textAutoReturn: boolean = true;
   public textIndentPoint: number = 0;
+  public reservedTextIndentPoint: number = 0;
   public textAlign: "left" | "center" | "right" = "left";
 
   public get children(): BaseLayer[] { return this._children; }
@@ -433,6 +430,9 @@ export class BaseLayer {
   public addTextReturn(): void {
     this.textY += this.textLineHeight + this.textLinePitch;
     this.textLines.push([]);
+    if (this.reservedTextIndentPoint !== 0) {
+      this.textIndentPoint = this.reservedTextIndentPoint;
+    }
   }
 
   /**
@@ -442,14 +442,14 @@ export class BaseLayer {
     switch (this.textAlign) {
       case "left":
         let leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft;
-        this.textIndentPoint = leftMargin + this.getCurrentLineWidth();
+        this.reservedTextIndentPoint = leftMargin + this.getCurrentLineWidth();
         break;
       case "center":
-        this.textIndentPoint = this.textX;
+        this.reservedTextIndentPoint = this.textX;
         break;
       case "right":
         let rightMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginRight;
-        this.textIndentPoint = this.width - rightMargin - this.getCurrentLineWidth();
+        this.reservedTextIndentPoint = this.width - rightMargin - this.getCurrentLineWidth();
         break;
     }
   }
@@ -469,6 +469,8 @@ export class BaseLayer {
     this.textLines = [[]];
     this.textX = this.textMarginLeft;
     this.textY = this.textMarginTop;
+    this.textIndentPoint = 0;
+    this.reservedTextIndentPoint = 0;
   }
 
   /**
@@ -538,6 +540,7 @@ export class BaseLayer {
     "textLinePitch",
     "textAutoReturn",
     "textIndentPoint",
+    "reservedTextIndentPoint",
     "textFontFamily",
     "textFontSize",
     "textFontWeight",
@@ -577,6 +580,9 @@ export class BaseLayer {
         me[param] = data[param];
       });
     };
+
+    // テキストはクリアする
+    this.clearText();
 
     // 背景色
     this.clearBackgroundColor();
