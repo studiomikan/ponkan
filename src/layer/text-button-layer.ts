@@ -253,6 +253,9 @@ export class TextButtonLayer extends FrameAnimLayer {
       this.setTxtBtnStatus("normal");
       this.txtBtnInsideFlg = false;
     }
+
+    this.clearText();
+    this.addText(data.txtBtnText);
   }
 
 }
