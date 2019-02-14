@@ -597,7 +597,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
         new TagValue("page", "string", false, "fore", "対象ページ"),
-        new TagValue("text", "string", true, null, "x座標(px)"),
+        new TagValue("text", "string", true, null, "テキスト"),
         new TagValue("width", "number", true, null, "幅(px)"),
         new TagValue("height", "number", true, null, "高さ(px)"),
         new TagValue("normal", "number", true, null, "通常時の背景色(0xRRGGBB)"),
@@ -625,8 +625,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
             values.normalalpha,
             values.overalpha,
             values.onalpha,
-            values.jump,
-            values.call,
+            values.jumpfile,
+            values.callfile,
             values.jumplabel,
             values.calllabel,
             values.exp,
@@ -648,6 +648,38 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           layer.resetTextButton();
         });
         return "continue";
+      },
+    ),
+    new TagAction(
+      ["imagebutton", "imgbtn"],
+      "レイヤーを画像ボタンにする",
+      [
+        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("page", "string", false, "fore", "対象ページ"),
+        new TagValue("file", "string", true, null, "ボタンにする画像ファイル"),
+        new TagValue("direction", "string", false, "horizontal", `ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"`),
+        new TagValue("jumpfile", "string", false, null, "ボタン押下時にjumpするスクリプトファイル名"),
+        new TagValue("callfile", "string", false, null, "ボタン押下時にcallするスクリプトファイル名"),
+        new TagValue("jumplabel", "string", false, null, "jump先のラベル名"),
+        new TagValue("calllabel", "string", false, null, "call先のラベル名"),
+        new TagValue("exp", "string", false, null, "ボタン押下時に実行するJavaScript"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          layer.initImageButton(
+            values.file,
+            values.direction,
+            values.jumpfile,
+            values.callfile,
+            values.jumplabel,
+            values.calllabel,
+            values.exp,
+          ).done(() => {
+            p.conductor.start();
+          });
+        });
+        return p.conductor.stop();
       },
     ),
 

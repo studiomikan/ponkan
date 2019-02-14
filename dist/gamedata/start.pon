@@ -13,7 +13,7 @@
 # ;playsound "buf": 0
 
 ;layopt "lay": 2, "x": 300, "y": 100, "visible": true
-;fillcolor "lay": 2, "color": "0xFF0000", "alpha": 1
+;fillcolor "lay": 2, "color": "0xFF00FF", "alpha": 1
 ;messageopt "lay": 2, "align": "center", "margint": 0, "lineheight": 32
 ;textbutton "lay":    2, \
             "text":   "ボタン", \
@@ -24,6 +24,11 @@
             "on":     "0x0000FF", \
             "exp":    "alert('onClickTextButton')", \
             "calllabel":  "text-button-call-target"
+;layopt "lay": 3, "x": 300, "y": 200, "visible": true
+;imagebutton "lay": 3, \
+             "file": "sample-button-save.png", \
+             "direction": "vertical", \
+             "exp": "alert('onClickImageButton');"
 
 ;messageopt "align": "left"
 あいうえお

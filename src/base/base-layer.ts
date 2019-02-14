@@ -43,6 +43,8 @@ export class BaseLayer {
   protected imageFilePath: string | null = null;
   /** 画像用スプライト */
   protected imageSprite: PonSprite | null = null;
+  protected get imageWidth(): number { return this.image !== null ? this.image.width : 0; }
+  protected get imageHeight(): number { return this.image !== null ? this.image.height : 0; }
 
   // 子レイヤ
   private _children: BaseLayer[] = [];
