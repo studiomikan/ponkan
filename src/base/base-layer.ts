@@ -20,6 +20,7 @@ export class BaseLayer {
 
   /** スプライト表示用コンテナ */
   protected _container: PIXI.Container;
+  public get container(): PIXI.Container { return this._container; }
   /** レイヤサイズでクリッピングするためのマスク */
   protected maskSprite: PIXI.Sprite;
 
@@ -94,7 +95,6 @@ export class BaseLayer {
   public textAlign: "left" | "center" | "right" = "left";
 
   public get children(): BaseLayer[] { return this._children; }
-  public get container(): PIXI.Container { return this._container; }
   public get x(): number { return this.container.x; }
   public set x(x) { this.container.x = x; }
   public get y(): number { return this.container.y; }
@@ -177,11 +177,17 @@ export class BaseLayer {
    * 破棄
    */
   public destroy(): void {
+    this.clearText();
+    this.freeImage();
     this.maskSprite.destroy();
     this.backgroundSprite.destroy();
     if (this.imageSprite != null) { this.imageSprite.destroy(); }
-    this.clearText();
-    this.freeImage();
+
+    this.textContainer.destroy();
+    this.imageContainer.destroy();
+    this.childContainer.destroy();
+    this.container.destroy();
+
     this.children.forEach((child) => {
       child.destroy();
     });
@@ -212,8 +218,8 @@ export class BaseLayer {
    * 子レイヤーをすべて削除する。
    * 管理から削除されるだけで、レイヤー自体は初期化されたりしない。
    */
-    public deleteAllChildren(): void {
-      this._children = [];
+  public deleteAllChildren(): void {
+    this._children = [];
   }
 
   public child(index: number): BaseLayer {

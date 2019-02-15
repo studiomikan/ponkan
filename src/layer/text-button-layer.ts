@@ -7,14 +7,11 @@ import { FrameAnimLayer } from "./frame-anim-layer";
 import { Ponkan3 } from "../ponkan3";
 import { ConductorState } from "../base/conductor";
 
-export class TextButtonLayer extends FrameAnimLayer {
+export class TextButton extends BaseLayer {
 
-  protected isTextButton: boolean = false;
   protected txtBtnInsideFlg : boolean = false;
   protected txtBtnStatus: "normal" | "over" | "on" | "disabled" = "disabled";
   protected txtBtnText: string = "";
-  protected txtBtnWidth: number = 32;
-  protected txtBtnHeight: number = 32;
   protected txtBtnNormalBackgroundColor: number = 0x000000;
   protected txtBtnOverBackgroundColor: number = 0x000000;
   protected txtBtnOnBackgroundColor: number = 0x000000;
@@ -29,8 +26,6 @@ export class TextButtonLayer extends FrameAnimLayer {
 
   public initTextButton(
     text: string,
-    width: number,
-    height: number,
     normalBackgroundColor: number,
     overBackgroundColor: number,
     onBackgroundColor: number,
@@ -45,12 +40,9 @@ export class TextButtonLayer extends FrameAnimLayer {
   ): void {
     this.freeImage();
     this.resetTextButton();
-    this.isTextButton = true;
     this.txtBtnInsideFlg = false;
 
     this.txtBtnText = text;
-    this.txtBtnWidth = width;
-    this.txtBtnHeight = height;
     this.txtBtnNormalBackgroundColor = normalBackgroundColor;
     this.txtBtnOverBackgroundColor = overBackgroundColor;
     this.txtBtnOnBackgroundColor = onBackgroundColor;
@@ -63,8 +55,6 @@ export class TextButtonLayer extends FrameAnimLayer {
     this.txtBtnCallLabel = callLabel;
     this.txtBtnExp = exp;
 
-    this.width = width;
-    this.height = height;
     this.setBackgroundColor(normalBackgroundColor, normalBackgroundAlpha);
 
     this.clearText();
@@ -72,18 +62,11 @@ export class TextButtonLayer extends FrameAnimLayer {
   }
 
   public resetTextButton(): void {
-    if (this.isTextButton) {
-      this.setTxtBtnStatus("disabled");
-    }
-    this.isTextButton = false;
-    this.txtBtnInsideFlg = false;
-    this.txtBtnStatus = "disabled";
-    this.isTextButton= false;
+    this.setTxtBtnStatus("disabled");
+    
     this.txtBtnInsideFlg = false;
     this.txtBtnStatus = "disabled";
     this.txtBtnText = "";
-    this.txtBtnWidth = 32;
-    this.txtBtnHeight = 32;
     this.txtBtnNormalBackgroundColor = 0x000000;
     this.txtBtnOverBackgroundColor = 0x000000;
     this.txtBtnOnBackgroundColor = 0x000000;
@@ -131,7 +114,6 @@ export class TextButtonLayer extends FrameAnimLayer {
   public onChangeStable(isStable: boolean): void {
     super.onChangeStable(isStable);
 
-    if (this.isTextButton) {
       if (isStable) {
         if (this.txtBtnInsideFlg) {
           this.setTxtBtnStatus("over");
@@ -141,48 +123,41 @@ export class TextButtonLayer extends FrameAnimLayer {
       } else {
         this.setTxtBtnStatus("disabled");
       }
-    }
   }
 
   public onMouseEnter(e: PonMouseEvent): boolean {
     if (!super.onMouseEnter(e)) { return false; }
 
-    if (this.isTextButton) {
       if (this.txtBtnStatus !== "disabled") {
         this.setTxtBtnStatus("over");
       }
       this.txtBtnInsideFlg = true;
-    }
     return true;
   }
 
   public onMouseLeave(e: PonMouseEvent): boolean {
     if (!super.onMouseLeave(e)) { return false; }
 
-    if (this.isTextButton) {
       if (this.txtBtnStatus !== "disabled") {
         this.setTxtBtnStatus("normal");
       }
       this.txtBtnInsideFlg = false;
-    }
     return true;
   }
 
   public onMouseDown(e: PonMouseEvent): boolean {
     if (!super.onMouseDown(e)) { return false; }
 
-    if (this.isTextButton) {
       if (this.txtBtnStatus !== "disabled") {
         this.setTxtBtnStatus("on");
       }
-    }
     return true;
   }
 
   public onMouseUp(e: PonMouseEvent): boolean {
     if (!super.onMouseUp(e)) { return false; }
 
-    if (this.isTextButton && this.txtBtnStatus !== "disabled") {
+    if (this.txtBtnStatus !== "disabled") {
       let p: Ponkan3 = this.owner as Ponkan3;
       if (this.txtBtnExp != null && this.txtBtnExp != "") {
         this.resource.evalJs(this.txtBtnExp);
@@ -209,13 +184,10 @@ export class TextButtonLayer extends FrameAnimLayer {
     }
   }
 
-  protected static textButtonLayerStoreParams: string[] = [
-    "isTextButton",
+  protected static textButtonStoreParams: string[] = [
     "txtBtnInsideFlg",
     "txtBtnStatus",
     "txtBtnText",
-    "txtBtnWidth",
-    "txtBtnHeight",
     "txtBtnNormalBackgroundColor",
     "txtBtnOverBackgroundColor",
     "txtBtnOnBackgroundColor",
@@ -232,7 +204,7 @@ export class TextButtonLayer extends FrameAnimLayer {
   public store(tick: number): any {
     let data: any = super.store(tick);
     let me: any = this as any;
-    TextButtonLayer.textButtonLayerStoreParams.forEach((param: string) => {
+    TextButton.textButtonStoreParams.forEach((param: string) => {
       data[param] = me[param];
     });
     return data;
@@ -243,19 +215,138 @@ export class TextButtonLayer extends FrameAnimLayer {
     super.restore(asyncTask, data, tick);
   }
 
-  protected restoreAfterLoadImage(data: any, tick: number): void {
+  public restoreAfterLoadImage(data: any, tick: number): void {
     super.restoreAfterLoadImage(data, tick);
     let me: any = this as any;
-    TextButtonLayer.textButtonLayerStoreParams.forEach((param: string) => {
+    TextButton.textButtonStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
-    if (data.isTextButton) {
-      this.setTxtBtnStatus("normal");
-      this.txtBtnInsideFlg = false;
-    }
+    
+    this.setTxtBtnStatus("normal");
+    this.txtBtnInsideFlg = false;
 
     this.clearText();
     this.addText(data.txtBtnText);
+  }
+
+}
+
+export class TextButtonLayer extends FrameAnimLayer {
+
+  protected textButtons: TextButton[] = [];
+
+  public addTextButton(
+    text: string,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    backgroundColors: number[],
+    backgroundAlphas: number[],
+    jumpFile: string | null = null,
+    callFile: string | null = null,
+    jumpLabel: string | null = null,
+    callLabel: string | null = null,
+    exp: string | null = null,
+  ): void {
+
+    let name = `TextButton ${this.textButtons.length}`;
+    let btn = new TextButton(name, this.resource, this.owner);
+    this.addChild(btn);
+    this.textButtons.push(btn);
+
+    btn.x = x;
+    btn.y = y;
+    btn.width = width;
+    btn.height = height;
+
+    let normal: number = +backgroundColors[0];
+    let over: number = backgroundColors[1] != null ? +backgroundColors[1] : normal;
+    let on: number = backgroundColors[2] != null ? +backgroundColors[2] : normal;
+    let normalAlpha: number = +backgroundAlphas[0];
+    let overAlpha: number = backgroundAlphas[1] != null ? +backgroundAlphas[1] : normalAlpha;
+    let onAlpha: number = backgroundAlphas[2] != null ? +backgroundAlphas[2] : normalAlpha;
+
+    this.copyTextParams(btn);
+    btn.x = x;
+    btn.y = y;
+    btn.width = width;
+    btn.height = height;
+    btn.initTextButton(
+      text,
+      normal,
+      over,
+      on,
+      normalAlpha,
+      overAlpha,
+      onAlpha,
+      jumpFile,
+      callFile,
+      exp
+    );
+  }
+
+  public copyTextParams(destLayer: BaseLayer): void {
+    let dest: any = destLayer as any;
+    let me: any = this as any;
+    [
+      "textMarginTop",
+      "textMarginRight",
+      "textMarginBottom",
+      "textMarginLeft",
+      "textX",
+      "textY",
+      "textLineHeight",
+      "textLinePitch",
+      "textAutoReturn",
+      "textIndentPoint",
+      "textFontFamily",
+      "textFontSize",
+      "textFontWeight",
+      "textColor",
+    ].forEach((param) => {
+      dest[param] = me[param];
+    });
+  }
+
+  public clearTextButtons(): void {
+    this.textButtons.forEach((textButton) => {
+      textButton.resetTextButton();
+      textButton.destroy();
+    });
+    this.textButtons = [];
+  }
+
+  public store(tick: number): any {
+    let data: any = super.store(tick);
+    let me: any = this as any;
+
+    data.textButtons = this.textButtons.map(textButton => textButton.store(tick));
+
+    return data;
+  }
+
+  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
+    this.clearTextButtons();
+    if (data.textButtons != null && data.textButtons.length > 0) {
+      data.textButtons.forEach((textButtonData: any) => {
+        let btn = new TextButton(name, this.resource, this.owner);
+        this.addChild(btn);
+        this.textButtons.push(btn);
+        btn.restore(asyncTask, textButtonData, tick);
+      });
+    }
+    super.restore(asyncTask, data, tick);
+  }
+
+  protected restoreAfterLoadImage(data: any, tick: number): void {
+    super.restoreAfterLoadImage(data, tick);
+
+    if (data.textButtons != null && data.textButtons.length > 0) {
+      for (let i = 0; i < data.textButtons.length; i++) {
+        this.textButtons[i].restoreAfterLoadImage(data.textButtons[i], tick);
+      }
+    }
   }
 
 }
