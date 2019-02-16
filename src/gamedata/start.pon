@@ -22,8 +22,7 @@
             "width":  200, \
             "height": 32, \
             "bgcolors": ["0xFF0000", "0x00FF00", "0x0000FF"], \
-            "exp":    "alert('onClickTextButton')", \
-            "calllabel":  "text-button-call-target"
+            "exp":    "alert('onClickTextButton')"
 ;layopt "lay": 3, "x": 10, "y": 100, "visible": true
 ;imagebutton "lay": 3, \
              "file": "sample-button-save.png", \

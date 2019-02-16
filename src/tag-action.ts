@@ -597,6 +597,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
         new TagValue("page", "string", false, "fore", "対象ページ"),
+        new TagValue("jumpfile", "string", false, null, "ボタン押下時にjumpするスクリプトファイル名"),
+        new TagValue("callfile", "string", false, null, "ボタン押下時にcallするスクリプトファイル名"),
+        new TagValue("jumplabel", "string", false, null, "jump先のラベル名"),
+        new TagValue("calllabel", "string", false, null, "call先のラベル名"),
+        new TagValue("exp", "string", false, null, "ボタン押下時に実行するJavaScript"),
         new TagValue("text", "string", true, null, "テキスト"),
         new TagValue("x", "number", false, 0, "x座標(px)"),
         new TagValue("y", "number", false, 0, "y座標(px)"),
@@ -604,16 +609,16 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("height", "number", true, null, "高さ(px)"),
         new TagValue("bgcolors", "array", true, null, "背景色の配列(0xRRGGBB)。通常時、マウスオーバー時、マウス押下時の順"),
         new TagValue("bgalphas", "array", false, [1, 1, 1], "背景色のAlphaの配列(0.0〜1.0)。通常時、マウスオーバー時、マウス押下時の順"),
-        new TagValue("jumpfile", "string", false, null, "ボタン押下時にjumpするスクリプトファイル名"),
-        new TagValue("callfile", "string", false, null, "ボタン押下時にcallするスクリプトファイル名"),
-        new TagValue("jumplabel", "string", false, null, "jump先のラベル名"),
-        new TagValue("calllabel", "string", false, null, "call先のラベル名"),
-        new TagValue("exp", "string", false, null, "ボタン押下時に実行するJavaScript"),
       ],
       "TODO タグの説明文",
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.addTextButton(
+            values.jumpfile,
+            values.callfile,
+            values.jumplabel,
+            values.calllabel,
+            values.exp,
             values.text,
             values.x,
             values.y,
@@ -621,11 +626,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
             values.height,
             values.bgcolors,
             values.bgalphas,
-            values.jumpfile,
-            values.callfile,
-            values.jumplabel,
-            values.calllabel,
-            values.exp,
           );
         });
         return "continue";
