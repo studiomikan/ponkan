@@ -2,99 +2,66 @@ import { Logger } from "../base/logger";
 import { AsyncTask } from "../base/async-task";
 import { AsyncCallbacks } from "../base/async-callbacks";
 import { Resource } from "../base/resource";
-import { BaseLayer } from "../base/base-layer";
 import { PonMouseEvent } from "../base/pon-mouse-event";
+import { Button } from "./button";
 import { TextButtonLayer } from "./text-button-layer";
 import { Ponkan3 } from "../ponkan3";
-import { ConductorState } from "../base/conductor";
 
-export class ImageButtonLayer extends TextButtonLayer {
-
-  protected isImageButton: boolean = false;
-  protected imgBtnInsideFlg: boolean = false;
-  protected imgBtnStatus: "normal" | "over" | "on" | "disabled" = "disabled";
-
-  protected imgBtnDirection: "horizontal" | "vertical" = "horizontal";
-  protected imgBtnJumpFilePath: string | null = null;
-  protected imgBtnCallFilePath: string | null = null;
-  protected imgBtnJumpLabel: string | null = null;
-  protected imgBtnCallLabel: string | null = null;
-  protected imgBtnExp: string | null = null;
-
+export class ImageButton extends Button {
+  protected direction: "horizontal" | "vertical" = "horizontal";
 
   public initImageButton(
+    jumpFile: string | null = null,
+    callFile: string | null = null,
+    jumpLabel: string | null = null,
+    callLabel: string | null = null,
+    exp: string | null = null,
     file: string,
     direction: "horizontal" | "vertical",
-    jumpfile: string,
-    callfile: string,
-    jumplabel: string,
-    calllabel: string,
-    exp: string,
   ): AsyncCallbacks {
     let cb = new AsyncCallbacks();
 
+    this.resetButton();
     this.freeImage();
-    this.resetImageButton();
 
-    this.isImageButton = true;
-    this.imgBtnDirection = direction;
-    this.imgBtnJumpFilePath = jumpfile;
-    this.imgBtnCallFilePath = callfile;
-    this.imgBtnJumpLabel = jumplabel;
-    this.imgBtnCallLabel = calllabel;
-    this.imgBtnExp = exp;
+    this.initButton(jumpFile, callFile, jumpLabel, callLabel, exp);
+    this.direction = direction;
 
     this.loadImage(file).done(() => {
-      if (this.imgBtnDirection === "vertical") {
+      if (this.direction === "vertical") {
         this.height = Math.floor(this.imageHeight / 3);
       } else {
         this.width = Math.floor(this.imageWidth / 3);
       }
-      this.setImageButtonStatus("normal");
+      this.setButtonStatus("normal");
       cb.callDone();
     }).fail(() => {
       cb.callFail();
       throw new Error("画像の読み込みに失敗しました。");
     });
 
-
     return cb;
   }
 
-  public resetImageButton() {
-    if (this.isImageButton) {
-      this.setImageButtonStatus("disabled");
-    }
-    this.isImageButton = false;
-    this.imgBtnInsideFlg = false;
-    this.imgBtnStatus = "disabled";
-    this.imgBtnDirection = "horizontal";
-    this.imgBtnJumpFilePath = null;
-    this.imgBtnCallFilePath = null;
-    this.imgBtnJumpLabel = null;
-    this.imgBtnCallLabel = null;
-    this.imgBtnExp = null;
+  public resetButton(): void {
+    super.resetButton();
+    this.direction = "horizontal";
   }
 
-  public setImageButtonStatus(status: "normal" | "over" | "on" | "disabled") {
-    if (this.imgBtnStatus === status) { return; }
+  public setButtonStatus(status: "normal" | "over" | "on" | "disabled") {
+    super.setButtonStatus(status);
 
-    this.imgBtnStatus = status;
-    let cursor: string = "auto";
-    if (this.imgBtnDirection === "vertical") {
+    if (this.direction === "vertical") {
       switch (status) {
         case "normal":
         case "disabled":
           this.imageY = 0;
-          cursor = "auto";
           break;
         case "over":
           this.imageY = -Math.floor(this.imageHeight / 3);
-          cursor = "pointer";
           break;
         case "on":
           this.imageY = -Math.floor(this.imageHeight / 3 * 2);
-          cursor = "pointer";
           break;
       }
     } else {
@@ -102,103 +69,115 @@ export class ImageButtonLayer extends TextButtonLayer {
         case "normal":
         case "disabled":
           this.imageX = 0;
-          cursor = "auto";
           break;
         case "over":
           this.imageX = -Math.floor(this.imageWidth / 3);
-          cursor = "pointer";
           break;
         case "on":
           this.imageX = -Math.floor(this.imageWidth / 3 * 2);
-          cursor = "pointer";
           break;
       }
     }
-    this.resource.getCanvasElm().style.cursor = cursor;
   }
 
-  public onChangeStable(isStable: boolean): void {
-    super.onChangeStable(isStable);
+  protected static imageButtonStoreParams: string[] = [
+    "direction",
+  ];
 
-    if (this.isImageButton) {
-      if (isStable) {
-        if (this.imgBtnInsideFlg) {
-          this.setImageButtonStatus("over");
-        } else {
-          this.setImageButtonStatus("normal");
-        }
-      } else {
-        this.setImageButtonStatus("disabled");
+  public store(tick: number): any {
+    let data: any = super.store(tick);
+    let me: any = this as any;
+    ImageButton.imageButtonStoreParams.forEach((param: string) => {
+      data[param] = me[param];
+    });
+    return data;
+  }
+
+  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
+    super.restore(asyncTask, data, tick);
+  }
+
+  public restoreAfterLoadImage(data: any, tick: number): void {
+    let me: any = this as any;
+    ImageButton.imageButtonStoreParams.forEach((param: string) => {
+      me[param] = data[param];
+    });
+    super.restoreAfterLoadImage(data, tick);
+  }
+}
+
+export class ImageButtonLayer extends TextButtonLayer {
+
+  private imageButtons: ImageButton[] = [];
+
+  public addImageButton(
+    jumpFile: string | null = null,
+    callFile: string | null = null,
+    jumpLabel: string | null = null,
+    callLabel: string | null = null,
+    exp: string | null = null,
+    file: string,
+    x: number,
+    y: number,
+    direction: "horizontal" | "vertical",
+  ): AsyncCallbacks {
+    let name = `ImageButton ${this.imageButtons.length}`;
+    let btn = new ImageButton(name, this.resource, this.owner);
+    this.addChild(btn);
+    this.imageButtons.push(btn);
+
+    btn.x = x;
+    btn.y = y;
+    return btn.initImageButton(
+      jumpFile,
+      callFile,
+      jumpLabel,
+      callFile,
+      exp,
+      file,
+      direction,
+    );
+  }
+
+  public clearImageButtons(): void {
+    this.imageButtons.forEach((imageButton) => {
+      imageButton.resetButton();
+      imageButton.destroy();
+      this.deleteChildLayer(imageButton);
+    });
+    this.imageButtons = [];
+  }
+
+  public store(tick: number): any {
+    let data: any = super.store(tick);
+    let me: any = this as any;
+  
+    data.imageButtons = this.imageButtons.map(imageButton => imageButton.store(tick));
+  
+    return data;
+  }
+  
+  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
+    this.clearImageButtons();
+    if (data.imageButtons != null && data.imageButtons.length > 0) {
+      data.imageButtons.forEach((imageButtonData: any) => {
+        let btn = new ImageButton(name, this.resource, this.owner);
+        this.addChild(btn);
+        this.imageButtons.push(btn);
+        btn.restore(asyncTask, imageButtonData, tick);
+      });
+    }
+    super.restore(asyncTask, data, tick);
+  }
+  
+  protected restoreAfterLoadImage(data: any, tick: number): void {
+    super.restoreAfterLoadImage(data, tick);
+    if (data.imageButtons != null && data.imageButtons.length > 0) {
+      for (let i = 0; i < data.imageButtons.length; i++) {
+        this.imageButtons[i].restoreAfterLoadImage(data.imageButtons[i], tick);
       }
     }
   }
-
-  public onMouseEnter(e: PonMouseEvent): boolean {
-    if (!super.onMouseEnter(e)) { return false; }
-
-    if (this.isImageButton) {
-      if (this.imgBtnStatus !== "disabled") {
-        this.setImageButtonStatus("over");
-      }
-      this.imgBtnInsideFlg = true;
-    }
-    return true;
-  }
-
-  public onMouseLeave(e: PonMouseEvent): boolean {
-    if (!super.onMouseLeave(e)) { return false; }
-
-    if (this.isImageButton) {
-      if (this.imgBtnStatus !== "disabled") {
-        this.setImageButtonStatus("normal");
-      }
-      this.imgBtnInsideFlg = false;
-    }
-    return true;
-  }
-
-  public onMouseDown(e: PonMouseEvent): boolean {
-    if (!super.onMouseDown(e)) { return false; }
-
-    if (this.isImageButton) {
-      if (this.imgBtnStatus !== "disabled") {
-        this.setImageButtonStatus("on");
-      }
-    }
-    return true;
-  }
-
-  public onMouseUp(e: PonMouseEvent): boolean {
-    if (!super.onMouseUp(e)) { return false; }
-
-    if (this.isImageButton && this.imgBtnStatus !== "disabled") {
-      let p: Ponkan3 = this.owner as Ponkan3;
-      if (this.imgBtnExp != null && this.imgBtnExp != "") {
-        this.resource.evalJs(this.imgBtnExp);
-      }
-      if (this.imgBtnJumpFilePath != null || this.imgBtnJumpLabel != null) {
-        p.conductor.stop();
-        p.conductor.jump(this.imgBtnJumpFilePath, this.imgBtnJumpLabel).done(() => {
-          p.conductor.start();
-        });
-      } else if (this.imgBtnCallFilePath != null || this.imgBtnCallLabel) {
-        p.conductor.stop();
-        p.conductor.callSubroutine(
-          this.imgBtnCallFilePath,
-          this.imgBtnCallLabel,
-          false,
-          -1
-        ).done(() => {
-          p.conductor.start();
-        });
-      }
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-
 
 }
 

@@ -652,30 +652,49 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
         new TagValue("page", "string", false, "fore", "対象ページ"),
-        new TagValue("file", "string", true, null, "ボタンにする画像ファイル"),
-        new TagValue("direction", "string", false, "horizontal", `ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"`),
         new TagValue("jumpfile", "string", false, null, "ボタン押下時にjumpするスクリプトファイル名"),
         new TagValue("callfile", "string", false, null, "ボタン押下時にcallするスクリプトファイル名"),
         new TagValue("jumplabel", "string", false, null, "jump先のラベル名"),
         new TagValue("calllabel", "string", false, null, "call先のラベル名"),
         new TagValue("exp", "string", false, null, "ボタン押下時に実行するJavaScript"),
+        new TagValue("file", "string", true, null, "ボタンにする画像ファイル"),
+        new TagValue("x", "number", false, 0, "x座標(px)"),
+        new TagValue("y", "number", false, 0, "y座標(px)"),
+        new TagValue("direction", "string", false, "horizontal", `ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"`),
       ],
       "TODO タグの説明文",
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
-          layer.initImageButton(
-            values.file,
-            values.direction,
+          layer.addImageButton(
             values.jumpfile,
             values.callfile,
             values.jumplabel,
             values.calllabel,
             values.exp,
+            values.file,
+            values.x,
+            values.y,
+            values.direction,
           ).done(() => {
             p.conductor.start();
           });
         });
         return p.conductor.stop();
+      },
+    ),
+    new TagAction(
+      ["clearimagebutton", "clearimgbtn"],
+      "画像ボタンをクリアする",
+      [
+        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("page", "string", false, "fore", "対象ページ"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          layer.clearImageButtons();
+        });
+        return "continue";
       },
     ),
 

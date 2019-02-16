@@ -23,10 +23,11 @@
             "height": 32, \
             "bgcolors": ["0xFF0000", "0x00FF00", "0x0000FF"], \
             "exp":    "alert('onClickTextButton')"
-;layopt "lay": 3, "x": 10, "y": 100, "visible": true
-;imagebutton "lay": 3, \
+;imagebutton "lay": 2, \
              "file": "sample-button-save.png", \
              "direction": "vertical", \
+             "x": 40, \
+             "y": 100, \
              "exp": "alert('onClickImageButton');"
 
 ;messageopt "align": "left"
@@ -46,6 +47,7 @@ SAVE.
 ;freeimage "lay": 1
 ;freeimage "lay": 1
 ;cleartextbutton "lay": 2
+;clearimagebutton "lay": 2
 
 # ;stopsound "buf": 0
 ;pb

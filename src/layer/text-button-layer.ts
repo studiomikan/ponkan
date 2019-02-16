@@ -11,14 +11,13 @@ import { Ponkan3 } from "../ponkan3";
  * テキストと背景色を指定できるボタン
  */
 export class TextButton extends Button {
-
-  protected txtBtnText: string = "";
-  protected txtBtnNormalBackgroundColor: number = 0x000000;
-  protected txtBtnOverBackgroundColor: number = 0x000000;
-  protected txtBtnOnBackgroundColor: number = 0x000000;
-  protected txtBtnNormalBackgroundAlpha: number = 1.0;
-  protected txtBtnOverBackgroundAlpha: number = 1.0;
-  protected txtBtnOnBackgroundAlpha: number = 1.0;
+  private txtBtnText: string = "";
+  private txtBtnNormalBackgroundColor: number = 0x000000;
+  private txtBtnOverBackgroundColor: number = 0x000000;
+  private txtBtnOnBackgroundColor: number = 0x000000;
+  private txtBtnNormalBackgroundAlpha: number = 1.0;
+  private txtBtnOverBackgroundAlpha: number = 1.0;
+  private txtBtnOnBackgroundAlpha: number = 1.0;
 
   public initTextButton(
     jumpFile: string | null = null,
