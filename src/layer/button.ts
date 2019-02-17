@@ -102,7 +102,7 @@ export class Button extends BaseLayer {
     if (!super.onMouseUp(e)) { return false; }
     if (this.buttonStatus !== "disabled") {
       let p: Ponkan3 = this.owner as Ponkan3;
-      if (this.exp != null && this.exp != "") {
+      if (this.exp !== null && this.exp !== "") {
         this.resource.evalJs(this.exp);
       }
       if (this.jumpFilePath != null || this.jumpLabel != null) {
@@ -116,6 +116,7 @@ export class Button extends BaseLayer {
           p.conductor.start();
         });
       }
+      this.setButtonStatus("disabled");
       return false;
     } else {
       return true;

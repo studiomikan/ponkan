@@ -161,7 +161,7 @@ export class ImageButtonLayer extends TextButtonLayer {
     this.clearImageButtons();
     if (data.imageButtons != null && data.imageButtons.length > 0) {
       data.imageButtons.forEach((imageButtonData: any) => {
-        let btn = new ImageButton(name, this.resource, this.owner);
+        let btn = new ImageButton(imageButtonData.name, this.resource, this.owner);
         this.addChild(btn);
         this.imageButtons.push(btn);
         btn.restore(asyncTask, imageButtonData, tick);

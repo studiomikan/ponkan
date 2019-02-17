@@ -593,7 +593,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // ======================================================================
     new TagAction(
       ["textbutton", "txtbtn"],
-      "レイヤーをテキストボタンにする",
+      "レイヤーにテキストボタンを配置する",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
         new TagValue("page", "string", false, "fore", "対象ページ"),
@@ -648,7 +648,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ),
     new TagAction(
       ["imagebutton", "imgbtn"],
-      "レイヤーを画像ボタンにする",
+      "レイヤーに画像ボタンを配置する",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
         new TagValue("page", "string", false, "fore", "対象ページ"),
@@ -693,6 +693,51 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.clearImageButtons();
+        });
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["togglebutton", "tglbtn"],
+      "レイヤーにトグルボタンを配置する",
+      [
+        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("page", "string", false, "fore", "対象ページ"),
+        new TagValue("exp", "string", false, null, "ボタン押下時に実行するJavaScript"),
+        new TagValue("file", "string", true, null, "ボタンにする画像ファイル"),
+        new TagValue("x", "number", false, 0, "x座標(px)"),
+        new TagValue("y", "number", false, 0, "y座標(px)"),
+        new TagValue("statevar", "string", true, null, "選択状態を格納する一時変数の名前"),
+        new TagValue("direction", "string", false, "horizontal", `ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"`),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          layer.addToggleButton(
+            values.file,
+            values.x,
+            values.y,
+            values.statevar,
+            values.exp,
+            values.direction,
+          ).done(() => {
+            p.conductor.start();
+          });
+        });
+        return p.conductor.stop();
+      },
+    ),
+    new TagAction(
+      ["cleartogglebutton", "cleartglbtn"],
+      "トグルボタンをクリアする",
+      [
+        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("page", "string", false, "fore", "対象ページ"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          layer.clearToggleButtons();
         });
         return "continue";
       },

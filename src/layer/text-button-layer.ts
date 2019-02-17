@@ -229,7 +229,7 @@ export class TextButtonLayer extends FrameAnimLayer {
     this.clearTextButtons();
     if (data.textButtons != null && data.textButtons.length > 0) {
       data.textButtons.forEach((textButtonData: any) => {
-        let btn = new TextButton(name, this.resource, this.owner);
+        let btn = new TextButton(textButtonData.name, this.resource, this.owner);
         this.addChild(btn);
         this.textButtons.push(btn);
         btn.restore(asyncTask, textButtonData, tick);

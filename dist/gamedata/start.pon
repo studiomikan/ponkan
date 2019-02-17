@@ -26,9 +26,16 @@
 ;imagebutton "lay": 2, \
              "file": "sample-button-save.png", \
              "direction": "vertical", \
-             "x": 40, \
-             "y": 100, \
+             "x": 20, \
+             "y": 70, \
              "exp": "alert('onClickImageButton');"
+;togglebutton "lay": 2, \
+              "file": "sample-toggle-button.png", \
+              "direction": "vertical", \
+              "x": 20, \
+              "y": 140, \
+              "exp": "alert(tv['sample-toggle-button'])", \
+              "statevar": "sample-toggle-button"
 
 ;messageopt "align": "left"
 あいうえお
@@ -48,6 +55,7 @@ SAVE.
 ;freeimage "lay": 1
 ;cleartextbutton "lay": 2
 ;clearimagebutton "lay": 2
+;cleartogglebutton "lay": 2
 
 # ;stopsound "buf": 0
 ;pb
