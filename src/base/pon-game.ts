@@ -5,6 +5,7 @@ import { PonMouseEvent } from "./pon-mouse-event";
 import { PonRenderer } from "./pon-renderer";
 import { PonEventHandler } from "./pon-event-handler";
 import { Resource } from "./resource";
+import { TransManager } from "./trans-manager";
 
 export class PonGame {
   public readonly resource: Resource;
@@ -20,6 +21,8 @@ export class PonGame {
   private backPrimaryLayers: BaseLayer[] = [];
   private drawBackFlg: boolean = true;
 
+  public readonly transManager: TransManager;
+
   public get width(): number { return this.foreRenderer.width; }
   public get height(): number { return this.foreRenderer.height; }
 
@@ -30,8 +33,6 @@ export class PonGame {
     if (elm == null) {
       throw new Error(`Not found HTMLElement: ${parentId}`);
     }
-    this.resource = new Resource(this, "gamedata");
-
     if (config.width == null || config.height == null) {
       config.width = 800;
       config.height = 450;
@@ -39,6 +40,11 @@ export class PonGame {
     this.foreRenderer = new PonRenderer(elm, config.width, config.height);
     this.backRenderer = new PonRenderer(elm, config.width, config.height);
     // this.backRenderer.canvasElm.style.display = "none";
+    
+    this.resource = new Resource(this, "gamedata");
+
+    this.transManager = new TransManager(this, this.resource);
+    this.resource.loadTransRule("rule_around.png");
 
     this.initWindowEvent();
     this.initMouseEventOnCanvas();
@@ -79,13 +85,16 @@ export class PonGame {
 
       this.update(tick);
 
-      if (this.drawBackFlg) {
+      if (this.transManager.isRunning) {
         this.backRenderer.draw(tick);
         this.foreRenderer.draw(tick);
-        // TODO subRendrerの結果をrendererに上書き
+        this.transManager.draw(tick);
       } else {
+        // TODO 本来はここのback不要
+        this.backRenderer.draw(tick);
         this.foreRenderer.draw(tick);
       }
+
 
       this.loopCount++;
       this.fpsCount++;

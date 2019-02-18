@@ -935,6 +935,33 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     // ======================================================================
+    // トランジション
+    // ======================================================================
+    new TagAction(
+      ["trans"],
+      "トランジションを実行する",
+      [
+        new TagValue("time", "number", true, null, "トランジションの時間(ms)"),
+        new TagValue("method", "string", false, "crossfade", "トランジションの種類"),
+        new TagValue("rule", "string", false, "", "ユニバーサルトランジションのルールファイル名"),
+        new TagValue("vague", "number", false, 64, "あいまい値"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        if (values.method === "univ") {
+          p.transManager.initUnivTrans(values.time, values.rule, values.vague).done(() => {
+            p.transManager.start();
+            p.conductor.start();
+          });
+          return p.conductor.stop();
+        } else {
+          p.transManager.initTrans(values.time, values.method);
+          p.transManager.start();
+          return "continue";
+        }
+      },
+    ),
+    // ======================================================================
     // セーブ＆ロード関係
     // ======================================================================
     new TagAction(

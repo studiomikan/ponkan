@@ -17,11 +17,24 @@ export class Resource {
   public readonly macroInfo: any = {};
   public macroParams: object | null = null;
 
+  private bufferCanvas: HTMLCanvasElement;
+  private bufferCanvasContext: CanvasRenderingContext2D;
+
   public constructor(ponGame: PonGame, basePath: string = "") {
     this.ponGame = ponGame;
     this.basePath = this.fixPath(basePath);
 
     Howler.usingWebAudio = true;
+
+    this.bufferCanvas = <HTMLCanvasElement> document.createElement('canvas');
+    this.bufferCanvas.width = ponGame.width;
+    this.bufferCanvas.height = ponGame.height;
+
+    let context: CanvasRenderingContext2D | null = this.bufferCanvas.getContext("2d");
+    if (context === null) {
+      throw new Error("Canvasの初期化に失敗しました。");
+    }
+    this.bufferCanvasContext = context;
   }
 
   public getForeCanvasElm(): HTMLCanvasElement {
@@ -178,6 +191,21 @@ export class Resource {
     };
     image.src = path;
 
+    return cb;
+  }
+
+  public loadTransRule(filePath: string): AsyncCallbacks {
+    const cb = new AsyncCallbacks();
+    this.loadImage(filePath).done((image) => {
+      let canvas: HTMLCanvasElement = this.bufferCanvas;
+      let context: CanvasRenderingContext2D = this.bufferCanvasContext;
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      // (document.querySelector("body") as HTMLElement).appendChild(canvas);
+      let ruleData: ImageData = context.getImageData(0, 0, canvas.width, canvas.height)
+      cb.callDone(ruleData);
+    }).fail(() => {
+      cb.callFail();
+    });
     return cb;
   }
 

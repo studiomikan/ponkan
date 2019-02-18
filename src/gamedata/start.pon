@@ -46,11 +46,19 @@
 OK.
 ;pb
 
+# トランジションのテスト
 # ;backlay "lay": "0"
 ;backlay
 backlay.
+;layopt "lay": 0, "page": "back", "visible": false
 ;pb
 
+;trans "time": 3000, "method": "crossfade"
+
+;s
+
+
+# セーブ関係のテスト
 ;clear
 |
 ;save "num": 1

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.8.4/pixi.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+
+<script>
+
+// https://github.com/pixijs/pixi.js/issues/4228
+// PIXI.TextMetrics.METRICS_STRING += "あいうえお";
+PIXI.TextMetrics.BASELINE_SYMBOL += "あ｜";
+
+const width = 500;
+const height = 200; 
+const renderer = PIXI.autoDetectRenderer(width, height, {
+  backgroundColor: 0x000000
+});
+document.querySelector("body").appendChild(renderer.view);
+var container = new PIXI.Container();
+
+var textStyle = new PIXI.TextStyle({
+    fontFamily: ["M+ 1m"],
+    fontSize: 24, 
+    fontWeight: "normal",
+    fill: 0xffffff,
+});
+var sprite = new PIXI.Text("Hogeあいうえお", textStyle);
+sprite.anchor.set(0.5);
+sprite.x = width / 2;
+sprite.y = height / 2;
+
+container.addChild(sprite);
+
+let canvas = document.createElement('canvas')  
+let ctx = canvas.getContext('2d');
+canvas.width = 100;
+canvas.height = 100;
+
+const drawGradient = (colorFrom, colorTo) => {
+  const gradient = ctx.createLinearGradient(0, 0, 100, 0)
+
+  gradient.addColorStop(0, colorFrom)
+  gradient.addColorStop(1, colorTo)
+
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height)
+}
+
+let texture = PIXI.Texture.from(canvas);
+let canvasSprite = PIXI.Sprite.from(texture);
+container.addChild(canvasSprite);
+
+drawGradient("#0000FF", "#888888");
+renderer.render(container);
+
+setTimeout(() => {
+  console.log("update");
+  drawGradient("#FF0000", "#888888");
+  texture.update();
+  renderer.render(container);
+}, 2000);
+
+</script>
+
+</body>
+</html>

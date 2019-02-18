@@ -53,7 +53,7 @@ backlay.
 ;layopt "lay": 0, "page": "back", "visible": false
 ;pb
 
-;trans "time": 3000, "method": "crossfade"
+# ;trans "time": 3000, "method": "crossfade"
 
 ;s
 
