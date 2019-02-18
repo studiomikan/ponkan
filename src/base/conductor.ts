@@ -1,3 +1,4 @@
+import { AsyncTask } from "./async-task";
 import { AsyncCallbacks } from "./async-callbacks";
 import { Logger } from "./logger";
 import { Resource } from "./resource";
@@ -7,7 +8,7 @@ import { Macro } from "./macro";
 
 export interface IConductorEvent {
   onLabel(labelName: string, line: number, tick: number): "continue" | "break";
-  onSaveMark(name:string, comment: string, line: number, tick: number): "continue" | "break";
+  onSaveMark(saveMarkName:string, comment: string, line: number, tick: number): "continue" | "break";
   onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break";
   onTag(tag: Tag, line: number, tick: number): "continue" | "break";
   onChangeStable(isStable: boolean): void;
@@ -210,28 +211,56 @@ export class Conductor {
     return this._status === ConductorState.Stop;
   }
 
-  public store(tick: number): any {
+  protected static conductorStoreParams = [
+    "_status",
+    "sleepStartTick",
+    "sleepTime",
+  ];
+
+  public store(saveMarkName: string, tick: number): any {
     let data: any = {};
     let me: any = <any> this;
 
-    [
-      "status",
-      "sleepStartTick",
-      "sleepTime",
-    ].forEach((param: string) => {
+    Conductor.conductorStoreParams.forEach((param: string) => {
       data[param] = me[param];
     });
 
-    data.script = this.script.store(tick);
+    data.scriptFilePath = this.script.filePath;
+    data.saveMarkName = saveMarkName;
 
-    data.callStack = [];
-    this.callStack.forEach((callStackNode) => {
-      data.callStack.push({
-        script: callStackNode.script.store(tick)
-      });
-    });
+    if (this.callStack.length !== 0) {
+      throw new Error("サブルーチンの呼び出し中にセーブすることはできません");
+    }
+    if (this.script.isInsideOfMacro()) {
+      throw new Error("マクロの中でセーブすることはできません");
+    }
+    if (this.script.isInsideOfForLoop()) {
+      throw new Error("for〜endforの中でセーブすることはできません");
+    }
+    if (this.script.isInsideOfIf()) {
+      throw new Error("if〜endifの中でセーブすることはできません");
+    }
 
     return data;
+  }
+
+  /**
+   * 復元。ステータスの値は復元されるが、再スタートなどはしないので注意。
+   */
+  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
+    let me: any = this as any;
+    Conductor.conductorStoreParams.forEach((param: string) => {
+      me[param] = data[param];
+    });
+
+    // script
+    asyncTask.add((params: any, index: number): AsyncCallbacks => {
+      let cb = this.loadScript(data.scriptFilePath);
+      cb.done(() => {
+        this.script.goToSaveMark(data.saveMarkName);
+      });
+      return cb;
+    });
   }
 
 }

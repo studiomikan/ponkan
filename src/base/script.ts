@@ -65,9 +65,29 @@ export class Script {
     while (true) {
       let tag: Tag | null = this.getNextTag()
       if (tag == null) {
-        throw new Error(`${this.filePath}内に、${label}が見つかりませんでした`);
+        throw new Error(`${this.filePath}内に、ラベル ${label} が見つかりませんでした`);
       }
       if (tag.name === "__label__" && tag.values.__body__ === label) {
+        break;
+      }
+    }
+  }
+
+  /**
+   * 指定のセーブマーク位置まで移動する
+   * 検索はファイルの先頭から実施するため、
+   * ファイル内に同じセーブマークが2つ以上あった場合は、1番目の位置へ移動する。
+   * ラベルが見つからなかった場合はエラーになる。
+   * @param saveMarkName セーブマーク名
+   */
+  public goToSaveMark(saveMarkName: string): void {
+    this.goToStart();
+    while (true) {
+      let tag: Tag | null = this.getNextTag()
+      if (tag == null) {
+        throw new Error(`${this.filePath}内に、セーブマーク ${saveMarkName} が見つかりませんでした`);
+      }
+      if (tag.name === "__save_mark__" && tag.values.name === saveMarkName) {
         break;
       }
     }
@@ -128,6 +148,10 @@ export class Script {
     macro.resetTagPoint();
     this.resource.setMacroParams(tag.values);
     this.macroStack.push(macro);
+  }
+
+  public isInsideOfMacro(): boolean {
+    return this.macroStack.length !== 0;
   }
 
   /**
@@ -265,6 +289,10 @@ export class Script {
     }
   }
 
+  public isInsideOfIf(): boolean {
+    return this.ifDepth !== 0;
+  }
+
   /**
    * forループを開始
    * @param loops 繰り返し回数
@@ -324,20 +352,29 @@ export class Script {
     }
   }
 
-  public store(tick: number): any {
-    let data: any = {};
-    let me: any = <any> this;
-
-    [
-      "filePath",
-      "tagPoint",
-    ].forEach((param: string) => {
-      data[param] = me[param];
-    });
-
-    return data;
+  public isInsideOfForLoop(): boolean {
+    return this.forLoopStack.length !== 0;
   }
 
-
-
+  // public store(tick: number): any {
+  //   let data: any = {};
+  //   let me: any = <any> this;
+  //
+  //   [
+  //     "filePath",
+  //     "tagPoint",
+  //   ].forEach((param: string) => {
+  //     data[param] = me[param];
+  //   });
+  //
+  //   return data;
+  // }
+  //
+  // public static createFromStoredData(resource: Resource, data: any): AsyncCallbacks {
+  //   let cb = resource.loadScript(data.filePath);
+  //   cb.done((script: Script) => {
+  //     script.goTo(data.tagPoint);
+  //   });
+  //   return cb;
+  // }
 }

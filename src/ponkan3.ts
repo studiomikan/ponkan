@@ -239,9 +239,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     return "continue";
   }
 
-  public onSaveMark(name: string, comment: string, line: number, tick: number): "continue" | "break" {
-    Logger.debug("onSaveMark: ", name, comment);
-    this.updateSaveData(name, comment, tick);
+  public onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): "continue" | "break" {
+    Logger.debug("onSaveMark: ", saveMarkName, comment);
+    this.updateSaveData(saveMarkName, comment, tick);
     return "continue";
   }
 
@@ -540,12 +540,12 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     "pageBreakGlyphY",
   ];
 
-  protected updateSaveData(name: string, comment: string, tick: number): void {
+  protected updateSaveData(saveMarkName: string, comment: string, tick: number): void {
     const data: any = this.latestSaveData = {};
     const me: any = this as any;
 
     data.tick = tick;
-    data.name = name;
+    data.saveMarkName = saveMarkName;
     data.comment = comment;
 
     Ponkan3.ponkanStoreParams.forEach((param: string) => {
@@ -553,7 +553,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     });
 
     data.gameVar = Util.objClone(this.gameVar);
-    data.conductor = this.conductor.store(tick);
+    data.conductor = this.conductor.store(saveMarkName, tick);
 
     data.forePrimaryLayer = this.forePrimaryLayer.store(tick);
     data.foreLayers = [];
@@ -584,7 +584,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       me[param] = data[param];
     });
 
-    // TODO 実装
+    // layer
     this.forePrimaryLayer.restore(asyncTask, data.forePrimaryLayer, tick);
     this.backPrimaryLayer.restore(asyncTask, data.backPrimaryLayer, tick);
 
@@ -602,6 +602,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
         this.soundBuffers[i].restore(asyncTask, data.soundBuffers[i], tick);
       }
     }
+
+    // conductor
+    this.conductor.restore(asyncTask, data.conductor, tick);
 
     return asyncTask.run();
   }
