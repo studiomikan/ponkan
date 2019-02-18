@@ -332,6 +332,10 @@ export class BaseLayer {
     return this.textLines[this.textLines.length - 1];
   }
 
+  public get currentTextStylesBuf(): PonSprite[] {
+    return this.textLines[this.textLines.length - 1];
+  }
+
   /**
    * レイヤにテキストを追加する
    */
@@ -555,6 +559,12 @@ export class BaseLayer {
     "textColor",
   ];
 
+  protected static baseLayerIgnoreParams: string[] = [
+    "backgroundColor",
+    "backgroundAlpha",
+    "hasBackgroundColor",
+  ];
+
   /**
    * 保存する。
    * 子レイヤーの状態は保存されないことに注意が必要。
@@ -579,11 +589,9 @@ export class BaseLayer {
     let storeParams = () => {
       let me: any = this as any;
       let ignore: string[] = [
-        "backgroundColor",
-        "backgroundAlpha",
-        "hasBackgroundColor",
       ];
-      let restoreParams = BaseLayer.baseLayerStoreParams.filter(param => ignore.indexOf(param) == -1);
+      let restoreParams = BaseLayer.baseLayerStoreParams.filter(
+        param => BaseLayer.baseLayerIgnoreParams.indexOf(param) == -1);
       restoreParams.forEach((param: string) => {
         me[param] = data[param];
       });
@@ -617,6 +625,49 @@ export class BaseLayer {
 
   protected restoreAfterLoadImage(data: any, tick: number): void {
     // 継承先でオーバーライドして使うこと
+  }
+
+  public copyTo(dest: BaseLayer): void {
+    // テキストのコピー
+    dest.clearText();
+    this.textLines.forEach((textLine: PonSprite[], index: number) => {
+      let destTextLine: PonSprite[] = dest.textLines[dest.textLines.length - 1];
+      textLine.forEach((srcSp: PonSprite, index: number) => {
+        let ch: string | null = srcSp.text;
+        let style: PIXI.TextStyle | null = srcSp.textStyle;
+        if (ch === null || style === null) {
+          return;
+        }
+        let destSp: PonSprite = new PonSprite(dest.textSpriteCallbacks);
+        destSp.createText(ch, style);
+        destSp.x = srcSp.x;
+        destSp.y = srcSp.y;
+        destTextLine.push(destSp);
+      });
+      dest.textLines.push([]);
+    });
+
+    // 背景色のコピー
+    dest.clearBackgroundColor();
+    if (this.hasBackgroundColor) {
+      dest.setBackgroundColor(this.backgroundColor, this.backgroundAlpha);
+    }
+
+    // 画像のコピー
+    dest.freeImage();
+    if (this.image !== null) {
+      dest.imageSprite = new PonSprite(dest.imageSpriteCallbacks);
+      dest.imageSprite.setImage(this.image);
+    }
+
+    // その他のパラメータのコピー
+    let me: any = this as any;
+    let you: any = dest as any;
+    let params = BaseLayer.baseLayerStoreParams.filter(
+      param => BaseLayer.baseLayerIgnoreParams.indexOf(param) == -1);
+    params.forEach((param: string) => {
+      you[param] = me[param];
+    });
   }
 
 }

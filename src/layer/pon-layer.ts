@@ -6,4 +6,9 @@ import { ToggleButtonLayer } from "./toggle-button-layer";
 
 // export class PonLayer extends FrameAnimLayer {
 export class PonLayer extends ToggleButtonLayer {
+
+  public copyTo(dest: PonLayer): void {
+    super.copyTo(dest);
+  }
+
 }

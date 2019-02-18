@@ -127,7 +127,7 @@ export class ScriptParser {
       values.__body__ = body;
       this.addTag(tagName, values);
     } catch (e) {
-      throw e;
+      throw new Error(`コマンド行の文法エラーです(行:${this.currentLineNum})`);
     }
   }
 

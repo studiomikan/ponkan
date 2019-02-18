@@ -5,6 +5,7 @@ import { PonEventHandler} from "./base/pon-event-handler";
 import { Resource } from "./base/resource";
 import { Sound } from "./base/sound";
 import { Tag } from "./base/tag";
+import { BaseLayer } from "./base/base-layer";
 import { PonLayer } from "./layer/pon-layer";
 import { Ponkan3 } from "./ponkan3";
 
@@ -585,6 +586,24 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         p.getLayers(values).forEach((layer) => {
           layer.freeImage();
         });
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["backlay"],
+      "表レイヤを裏レイヤにコピーする",
+      [
+        new TagValue("lay", "number", false, "all", "対象レイヤー"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        values.page = "fore";
+        let fore: PonLayer[] = p.getLayers(values);
+        values.page = "back";
+        let back: PonLayer[] = p.getLayers(values);
+        for (let i = 0; i < fore.length; i++) {
+          fore[i].copyTo(back[i]);
+        }
         return "continue";
       },
     ),

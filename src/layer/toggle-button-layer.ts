@@ -157,5 +157,17 @@ export class ToggleButtonLayer extends ImageButtonLayer {
     }
   }
 
+  public copyTo(dest: ToggleButtonLayer): void {
+    super.copyTo(dest);
+
+    dest.clearToggleButtons();
+    this.imageToggleButtons.forEach((srcBtn) => {
+      let destBtn = new ImageToggleButton(name, dest.resource, dest.owner);
+      dest.addChild(destBtn);
+      dest.imageToggleButtons.push(destBtn);
+      srcBtn.copyTo(destBtn);
+    });
+  }
+
 }
 

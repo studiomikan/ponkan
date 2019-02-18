@@ -133,5 +133,16 @@ export class FrameAnimLayer extends BaseLayer {
     }
   }
 
+  public copyTo(dest: FrameAnimLayer): void {
+    super.copyTo(dest);
+
+    // その他のパラメータのコピー
+    let me: any = this as any;
+    let you: any = dest as any;
+    FrameAnimLayer.frameAnimLayerStoreParams.forEach((param: string) => {
+      you[param] = me[param];
+    });
+  }
+
 }
 

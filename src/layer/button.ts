@@ -56,7 +56,7 @@ export class Button extends BaseLayer {
         cursor = "pointer";
         break;
     }
-    this.resource.getCanvasElm().style.cursor = cursor;
+    this.resource.getForeCanvasElm().style.cursor = cursor;
   }
 
   public onChangeStable(isStable: boolean): void {
@@ -158,4 +158,3 @@ export class Button extends BaseLayer {
     this.setButtonStatus("normal");
   }
 }
-

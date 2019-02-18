@@ -76,10 +76,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.initTagAction();
 
     this.forePrimaryLayer =
-      this.addLayer(new PonLayer("Fore primary layer", this.resource, this)) as PonLayer;
+      this.addForePrimaryLayer(new PonLayer("Fore primary layer", this.resource, this)) as PonLayer;
     this.backPrimaryLayer =
-      this.addLayer(new PonLayer("Back primary layer", this.resource, this)) as PonLayer;
-    this.backPrimaryLayer.visible = false;
+      this.addBackPrimaryLayer(new PonLayer("Back primary layer", this.resource, this)) as PonLayer;
     this.initLayers();
 
     this.initSounds(config);
@@ -101,7 +100,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     //   layer2.width = 100;
     //   layer2.height = 100;
     //   layer2.setBackgoundColor(0xff0000, 1.0);
-    //   // this.addLayer(layer2);
+    //   // this.addForePrimaryLayer(layer2);
     //   layer.addChild(layer2);
     // });
   }
@@ -343,13 +342,11 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   /**
-   * プライマリレイヤを作成する。
-   * rendererへの追加は行わないので、別途addLayerを呼ぶか、
-   * 他のレイヤの子レイヤにする必要がある。
+   * レイヤを作成する。
+   * rendererへの追加は行わないので、他のレイヤの子レイヤにする必要がある。
    */
   public createLayer(name: string) {
     const layer = new PonLayer(name, this.resource, this);
-    this.addLayer(layer as BaseLayer);
     return layer;
   }
 

@@ -179,5 +179,17 @@ export class ImageButtonLayer extends TextButtonLayer {
     }
   }
 
+  public copyTo(dest: ImageButtonLayer): void {
+    super.copyTo(dest);
+
+    dest.clearImageButtons();
+    this.imageButtons.forEach((srcBtn) => {
+      let destBtn = new ImageButton(name, dest.resource, dest.owner);
+      dest.addChild(destBtn);
+      dest.imageButtons.push(destBtn);
+      srcBtn.copyTo(destBtn);
+    });
+  }
+
 }
 

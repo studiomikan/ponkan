@@ -45,6 +45,12 @@
 えよらりるれろ
 OK.
 ;pb
+
+# ;backlay "lay": "0"
+;backlay
+backlay.
+;pb
+
 ;clear
 |
 ;save "num": 1

@@ -35,8 +35,12 @@ export class PonSprite {
   private _width: number = DEFAULT_WIDTH;
   private _height: number = DEFAULT_HEIGHT;
   private _visible: boolean = true;
+  private _textStyle: PIXI.TextStyle | null = null;
   /** PIXIのスプライト */
   private pixiSprite: PIXI.Text | PIXI.Sprite | PIXI.Graphics | null = null;
+
+  // private fillColorVal: number = 0;
+  // private fillAlphaVal: number = 0;
 
   /** x座標 */
   public get x(): number { return this._x; }
@@ -74,6 +78,17 @@ export class PonSprite {
     if (this.pixiSprite != null) { this.pixiSprite.visible = visible; }
   }
 
+  /** テキスト */
+  public get text(): string | null { 
+    if (this.pixiSprite !== null && this.textStyle !== null) {
+      return (this.pixiSprite as PIXI.Text).text;
+    } else {
+      return null;
+    }
+  }
+  /** テキストスタイル */
+  public get textStyle(): PIXI.TextStyle | null { return this._textStyle; }
+
   /**
    * @param callbacks コールバック
    */
@@ -87,6 +102,33 @@ export class PonSprite {
   public destroy(): void {
     this.clear();
   }
+
+  // public clone(callbacks: IPonSpriteCallbacks): PonSprite {
+  //   let p = new PonSprite(callbacks);
+  //
+  //   p._x = this._x;
+  //   p._y = this._y;
+  //   p._width = this._width;
+  //   p._height = this._height;
+  //   p._visible = this._visible;
+  //
+  //
+  //   if (this.pixiSprite !== null) {
+  //     if (this.pixiSprite instanceof PIXI.Text) {
+  //       if (this.textStyleVal !== null) {
+  //         p.textStyleVal = this.textStyleVal.clone();
+  //       }
+  //     } else if (this.pixiSprite instanceof PIXI.Sprite) {
+  //       p.pixiSprite = this.pixiSprite.clone();
+  //     } else {
+  //       p.pixiSprite = this.pixiSprite.clone();
+  //     }
+  //   } else {
+  //     this.pixiSprite = null;
+  //   }
+  //
+  //   return p;
+  // }
 
   /**
    * スプライトをクリアする。
@@ -120,6 +162,7 @@ export class PonSprite {
     this.pixiSprite.y = this.y;
     this._width = this.pixiSprite.width;
     this._height = this.pixiSprite.height;
+    this._textStyle = style.clone();
 
     this.pixiSprite.anchor.set(0);
     this.callbacks.pixiContainerAddChild(this.pixiSprite);

@@ -24,8 +24,12 @@ export class Resource {
     Howler.usingWebAudio = true;
   }
 
-  public getCanvasElm(): HTMLCanvasElement {
-    return this.ponGame.renderer.canvasElm;
+  public getForeCanvasElm(): HTMLCanvasElement {
+    return this.ponGame.foreRenderer.canvasElm;
+  }
+
+  public getBackCanvasElm(): HTMLCanvasElement {
+    return this.ponGame.backRenderer.canvasElm;
   }
 
   public saveSystemData(saveDataPrefix: string): void {

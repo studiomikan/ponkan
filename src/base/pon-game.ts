@@ -13,11 +13,15 @@ export class PonGame {
   private fpsPreTick: number = 0;
   private fpsCount: number = 0;
   private fps: number = 0;
-  public readonly renderer: PonRenderer;
-  private layers: BaseLayer[] = [];
+  public readonly foreRenderer: PonRenderer;
+  public readonly backRenderer: PonRenderer;
 
-  public get width(): number { return this.renderer.width; }
-  public get height(): number { return this.renderer.height; }
+  private forePrimaryLayers: BaseLayer[] = [];
+  private backPrimaryLayers: BaseLayer[] = [];
+  private drawBackFlg: boolean = true;
+
+  public get width(): number { return this.foreRenderer.width; }
+  public get height(): number { return this.foreRenderer.height; }
 
   protected eventHandlers: any = {};
 
@@ -32,7 +36,9 @@ export class PonGame {
       config.width = 800;
       config.height = 450;
     }
-    this.renderer = new PonRenderer(elm, config.width, config.height);
+    this.foreRenderer = new PonRenderer(elm, config.width, config.height);
+    this.backRenderer = new PonRenderer(elm, config.width, config.height);
+    // this.backRenderer.canvasElm.style.display = "none";
 
     this.initWindowEvent();
     this.initMouseEventOnCanvas();
@@ -40,7 +46,8 @@ export class PonGame {
 
   public destroy(): void {
     this.stop();
-    this.renderer.destroy();
+    this.foreRenderer.destroy();
+    this.backRenderer.destroy();
   }
 
   public start(): void {
@@ -71,7 +78,14 @@ export class PonGame {
       }
 
       this.update(tick);
-      this.renderer.draw(tick);
+
+      if (this.drawBackFlg) {
+        this.backRenderer.draw(tick);
+        this.foreRenderer.draw(tick);
+        // TODO subRendrerの結果をrendererに上書き
+      } else {
+        this.foreRenderer.draw(tick);
+      }
 
       this.loopCount++;
       this.fpsCount++;
@@ -92,17 +106,27 @@ export class PonGame {
   }
 
   public clearLayer(): void {
-    this.layers.forEach((layer) => {
+    this.forePrimaryLayers.forEach((layer) => {
       layer.destroy();
-      this.renderer.removeContainer(layer.container);
+      this.foreRenderer.removeContainer(layer.container);
     });
-    this.layers = [];
+    this.forePrimaryLayers = [];
+    this.backPrimaryLayers.forEach((layer) => {
+      layer.destroy();
+      this.backRenderer.removeContainer(layer.container);
+    });
+    this.backPrimaryLayers = [];
   }
 
-  public addLayer(layer: BaseLayer): BaseLayer {
-    // console.log(layer);
-    this.layers.push(layer);
-    this.renderer.addContainer(layer.container);
+  public addForePrimaryLayer(layer: BaseLayer): BaseLayer {
+    this.forePrimaryLayers.push(layer);
+    this.foreRenderer.addContainer(layer.container);
+    return layer;
+  }
+
+  public addBackPrimaryLayer(layer: BaseLayer): BaseLayer {
+    this.backPrimaryLayers.push(layer);
+    this.backRenderer.addContainer(layer.container);
     return layer;
   }
 
@@ -137,7 +161,7 @@ export class PonGame {
   public onWindowClose(): boolean { return true; };
 
   private initMouseEventOnCanvas(): void {
-    const canvas = this.renderer.canvasElm;
+    const canvas = this.foreRenderer.canvasElm;
     canvas.addEventListener("mouseenter", (e) => {
       try { this.onMouseEnter(new PonMouseEvent(e)); }
       catch (ex) { this.error(ex); }

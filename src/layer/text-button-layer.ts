@@ -247,5 +247,17 @@ export class TextButtonLayer extends FrameAnimLayer {
     }
   }
 
+  public copyTo(dest: TextButtonLayer): void {
+    super.copyTo(dest);
+
+    dest.clearTextButtons();
+    this.textButtons.forEach((srcBtn) => {
+      let destBtn = new TextButton(name, dest.resource, dest.owner);
+      dest.addChild(destBtn);
+      dest.textButtons.push(destBtn);
+      srcBtn.copyTo(destBtn);
+    });
+  }
+
 }
 
