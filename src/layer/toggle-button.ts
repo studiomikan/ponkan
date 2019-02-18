@@ -124,6 +124,7 @@ export class ToggleButton extends BaseLayer {
     });
     this.insideFlg = false;
     this.setButtonStatus(data["buttonStatus"]);
+    this.setValue(this.getValue());
   }
 }
 

@@ -45,10 +45,13 @@
 えよらりるれろ
 OK.
 ;pb
+;clear
 |
 ;save "num": 1
 
 SAVE.
+;pb
+del
 ;clearcolor "lay": "message"
 ;freeimage "lay": 0
 ;freeimage "lay": 1
