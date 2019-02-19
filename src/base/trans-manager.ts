@@ -4,13 +4,10 @@ import { AsyncCallbacks } from "./async-callbacks";
 import { Resource } from "./resource";
 import { PonGame } from "./pon-game";
 
-// export interface ITransEvent {
-// }
-
 class CrossFadeFilter extends PIXI.Filter<any> {
   public constructor() {
     var fragmentShader = `
-      precision mediump float;
+      // precision mediump float;
       varying vec2 vTextureCoord;
       uniform sampler2D uSampler;
       uniform sampler2D backSampler;
@@ -20,26 +17,67 @@ class CrossFadeFilter extends PIXI.Filter<any> {
       void main(void) {
         vec4 fcolor = texture2D(uSampler, vTextureCoord);
         vec4 bcolor = texture2D(backSampler, vTextureCoord);
-
-        // fcolor.r = fcolor.r * foreAlpha + bcolor.r * backAlpha;
-        // fcolor.g = fcolor.g * foreAlpha + bcolor.g * backAlpha;
-        // fcolor.b = fcolor.b * foreAlpha + bcolor.b * backAlpha;
         fcolor = fcolor * foreAlpha + bcolor * backAlpha;
         gl_FragColor = fcolor;
+        // gl_FragColor = vec4(vec2(vTextureCoord.xy), 1.0, 1.0);
       }
     `;
     super(
-      undefined, // vartex shader
+      undefined, // vertex shader
       fragmentShader, // fragment shader
       {
         // uniforms
         backSampler: { type: "sampler2D", value: 1 },
-        foreAlpha: { type: "1f", value: 1.0 },
-        backAlpha: { type: "1f", value: 1.0 },
+        foreAlpha: { type: "float", value: 1.0 },
+        backAlpha: { type: "float", value: 1.0 },
       }
     );
   }
 }
+
+// class ScrollLeftToRightFilter extends PIXI.Filter<any> {
+//   public constructor() {
+//     var vertexShader = `
+//       attribute vec2 aVertexPosition;
+//       attribute vec2 aTextureCoord;
+//       uniform mat3 projectionMatrix;
+//       uniform mat3 filterMatrix;
+//       varying vec2 vTextureCoord;
+//       varying vec2 vFilterCoord;
+//       void main(void){
+//          gl_Position = vec4((projectionMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);
+//          vFilterCoord = ( filterMatrix * vec3( aTextureCoord, 1.0)  ).xy;
+//          vTextureCoord = aTextureCoord ;
+//       }
+//     `;
+//     var fragmentShader = `
+//       // precision mediump float;
+//       varying vec2 vTextureCoord;
+//       uniform sampler2D uSampler;
+//       uniform sampler2D backSampler;
+//       uniform int distance;
+//       uniform int width;
+//       uniform int height;
+//
+//       void main(void) {
+//         vec4 fcolor = texture2D(uSampler, vTextureCoord);
+//         vec4 bcolor = texture2D(backSampler, vTextureCoord);
+//         gl_FragColor = bcolor;
+//       }
+//     `;
+//     super(
+//       vertexShader, // vertex shader
+//       fragmentShader, // fragment shader
+//       {
+//         // uniforms
+//         backSampler: { type: "sampler2D", value: 1 },
+//         distance: { type: "int", value: 1.0 },
+//         width: { type: "int", value: 1.0 },
+//         height: { type: "int", value: 1.0 },
+//       }
+//     );
+//   }
+// }
 
 export class TransManager {
 
@@ -49,8 +87,11 @@ export class TransManager {
   private startTick: number = -1;
   private time: number = 1000;
   private method: "univ" | 
-                  "crossfade"  |
-                  "scroll-left-to-right"
+                  "scroll-to-right" |
+                  "scroll-to-left" |
+                  "scroll-to-top" |
+                  "scroll-to-bottom" |
+                  "crossfade"
                   = "crossfade";
   private ruleFilePath: string | null = null;
   private ruleData: ImageData | null = null;
@@ -65,6 +106,11 @@ export class TransManager {
     this.resource = resource;
 
     this.filters = {
+      "univ": null,
+      "scroll-to-right": null,
+      "scroll-to-left": null,
+      "scroll-to-top": null,
+      "scroll-to-bottom": null,
       "crossfade": new CrossFadeFilter()
     };
     this.filter = this.filters["crossfade"];
@@ -73,13 +119,20 @@ export class TransManager {
   public initTrans (
     time: number,
     method: "univ" | 
-            "crossfade" | 
-            "scroll-left-to-right"
+            "scroll-to-right" |
+            "scroll-to-left" |
+            "scroll-to-top" |
+            "scroll-to-bottom" |
+            "crossfade"
   ) {
     this.startTick = -1;
     this.time = time;
     this.method = method;
     this.ruleFilePath = null;
+
+    if (this.filters[this.method] === undefined) {
+      throw new Error(`存在しないmethodです(${this.method})`);
+    }
   }
 
   public initUnivTrans (
@@ -107,6 +160,9 @@ export class TransManager {
   public stop(): void {
     this.status = "stop";
     this.ruleFilePath = null;
+    // 表レイヤと一緒に描画するのをやめる
+    this.game.foreRenderer.delOtherRenderer();
+    this.game.backRenderer.delOtherRenderer();
     // フィルタをクリア
     this.game.foreRenderer.container.filters = null; 
     this.game.backRenderer.container.filters = null; 
@@ -121,7 +177,14 @@ export class TransManager {
   public draw(tick: number): void {
     if (this.startTick === -1) {
       this.startTick = tick;
-      this.game.foreRenderer.container.filters = [this.filters[this.method]];
+      this.filter = this.filters[this.method];
+      if (this.filter === null) {
+        // フィルターが無い場合は普通に描画する
+        this.game.foreRenderer.setOtherRenderer(this.game.backRenderer);
+      } else {
+        // フィルターを利用して合成する
+        this.game.foreRenderer.container.filters = [this.filter];
+      }
     }
 
     // 終了判定
@@ -132,23 +195,39 @@ export class TransManager {
       return;
     }
 
-    // 合成する裏レイヤを描画
+    // フィルターの更新（パラメータ設定）
     this.game.backRenderer.draw(tick);
     this.game.backRenderer.texture.update();
-
-    // フィルターの更新（パラメータ設定）
     switch (this.method) {
-      case "crossfade":
-      default:
-        this.updateCrossFade(elapsedTime);
-        break;
+      case "scroll-to-right":  this.drawScrollHorizontal(tick, elapsedTime, "right"); break;
+      case "scroll-to-left":   this.drawScrollHorizontal(tick, elapsedTime, "left"); break;
+      case "scroll-to-top":    this.drawScrollVertical(tick, elapsedTime, "top"); break;
+      case "scroll-to-bottom": this.drawScrollVertical(tick, elapsedTime, "bottom"); break;
+      case "crossfade":        this.drawCrossFade(tick, elapsedTime); break;
+      default:                 this.drawCrossFade(tick, elapsedTime); break;
     }
-
-    // 裏レイヤと合成した表レイヤを描画
     this.game.foreRenderer.draw(tick);
   }
 
-  public updateCrossFade(elapsedTime: number): void {
+  public drawScrollHorizontal(tick: number, elapsedTime: number, to: "left" | "right"): void {
+    let width: number = this.game.width;
+    let d: number = width * (elapsedTime / this.time);
+    if (d < 0) { d = 0; }
+    if (d > width) { d = width; }
+
+    this.game.backRenderer.sprite.x = (to === "right") ? (d - width) : (width - d)
+  }
+
+  public drawScrollVertical(tick: number, elapsedTime: number, to: "top" | "bottom"): void {
+    let height: number = this.game.height;
+    let d: number = height * (elapsedTime / this.time);
+    if (d < 0) { d = 0; }
+    if (d > height) { d = height; }
+
+    this.game.backRenderer.sprite.y = (to === "bottom") ? (d - height) : (height - d)
+  }
+
+  public drawCrossFade(tick: number, elapsedTime: number): void {
     let alpha: number = 1.0 * (elapsedTime / this.time);
     if (alpha < 0) { alpha = 0; }
     if (alpha > 1.0) { alpha = 1.0; }

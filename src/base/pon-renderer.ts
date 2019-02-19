@@ -71,4 +71,16 @@ export class PonRenderer {
     this._container.removeChild(child);
   }
 
+  public setOtherRenderer(renderer: PonRenderer) {
+    this.delOtherRenderer();
+
+    this.otherRenderer = renderer;
+    this._container.addChild(renderer.sprite);
+  }
+
+  public delOtherRenderer() {
+    if (this.otherRenderer !== null) {
+      this._container.removeChild(this.otherRenderer.sprite);
+    }
+  }
 }

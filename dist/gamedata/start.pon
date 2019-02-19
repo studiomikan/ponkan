@@ -53,7 +53,11 @@ backlay.
 ;layopt "lay": 0, "page": "back", "visible": false
 ;pb
 
-;trans "time": 3000, "method": "crossfade"
+# ;trans "time": 3000, "method": "crossfade"
+# ;trans "time": 3000, "method": "scroll-to-left"
+# ;trans "time": 3000, "method": "scroll-to-right"
+# ;trans "time": 3000, "method": "scroll-to-top"
+;trans "time": 3000, "method": "scroll-to-bottom"
 
 ;s
 
