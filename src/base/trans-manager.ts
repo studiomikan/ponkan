@@ -34,53 +34,6 @@ class CrossFadeFilter extends PIXI.Filter<any> {
   }
 }
 
-  // univ (ponCanvas, tick, elapsedTime, fore, back, hidingMessageFlag, qx, qy) {
-  //   ponCanvas.changeBuffer(1)
-  //
-  //   this.calcUnivAlphaTable(elapsedTime)
-  //
-  //   let ruleData = this.ruleImageData.data
-  //   let table = this.table
-  //
-  //   back.update(tick, ponCanvas)
-  //   back.draw(ponCanvas, 0, 0, 1.0, hidingMessageFlag, qx, qy)
-  //   let imageData = ponCanvas.getBufImageData()
-  //   let data = imageData.data
-  //   let length = data.length
-  //
-  //   let i = 0
-  //   while (i < length) {
-  //     data[i + 3] = table[ruleData[i]]
-  //     i += 4
-  //   }
-  //
-  //   ponCanvas.changeBuffer(0)
-  //   ponCanvas.putImageDataToBuf(imageData)
-  // }
-
-  // public calcUnivAlphaTable(elapsedTime: number): void {
-  //   let vague = this.vague;
-  //   let table = this.table;
-  //
-  //   let phaseMax = 255 + vague
-  //   let phase = Math.floor(elapsedTime * phaseMax / this.time) - vague
-  //
-  //   let i = 0
-  //   while (i < 256) {
-  //     if (i < phase) {
-  //       table[i] = 255
-  //     } else if (i >= phaseMax) {
-  //       table[i] = 0
-  //     } else {
-  //       let tmp = 255 - ((i - phase) * 255 / vague)
-  //       if (tmp < 0) tmp = 0
-  //       if (tmp > 255) tmp = 255
-  //       table[i] = tmp
-  //     }
-  //     i++
-  //   }
-  // }
-
 class UnivTransFilter extends PIXI.Filter<any> {
   public constructor() {
     var fragmentShader = `
@@ -99,25 +52,29 @@ class UnivTransFilter extends PIXI.Filter<any> {
         vec4 bcolor = texture2D(backSampler, vTextureCoord);
         vec4 rcolor = texture2D(ruleSampler, vTextureCoord);
 
-        // float phaseMax = 255.0 + vague;
-        // float phase = floor(elapsedTime * phaseMax / time) - vague;
-
-        float a = 255.0 * (rcolor.r + rcolor.g + rcolor.b) / 3.0;
+        float a = (rcolor.r + rcolor.g + rcolor.b) / 3.0;
         if (a < phase) {
           gl_FragColor = bcolor;
         } else if (a >= phaseMax) {
           gl_FragColor = fcolor;
         } else {
-          float tmp = 255.0 - ((a - phase) * 255.0 / vague);
+          float tmp = 1.0 - ((a - phase) * 1.0 / vague);
           if (tmp < 0.0) { tmp = 0.0; }
-          if (tmp > 255.0) { tmp = 255.0; }
-          float alpha = tmp / 255.0;
-          gl_FragColor = bcolor * alpha + fcolor * (1.0 - alpha);
+          if (tmp > 1.0) { tmp = 1.0; }
+          gl_FragColor = bcolor * tmp + fcolor * (1.0 - tmp);
         }
-
-        // gl_FragColor = fcolor;
-        // gl_FragColor = rcolor;
-        // gl_FragColor = vec4(vec2(vTextureCoord.xy), 1.0, 1.0);
+        // float a = 255.0 * (rcolor.r + rcolor.g + rcolor.b) / 3.0;
+        // if (a < phase) {
+        //   gl_FragColor = bcolor;
+        // } else if (a >= phaseMax) {
+        //   gl_FragColor = fcolor;
+        // } else {
+        //   float tmp = 255.0 - ((a - phase) * 255.0 / vague);
+        //   if (tmp < 0.0) { tmp = 0.0; }
+        //   if (tmp > 255.0) { tmp = 255.0; }
+        //   float alpha = tmp / 255.0;
+        //   gl_FragColor = bcolor * alpha + fcolor * (1.0 - alpha);
+        // }
       }
 
     `;
@@ -155,7 +112,7 @@ export class TransManager {
   private ruleFilePath: string | null = null;
   private ruleImage: HTMLImageElement | null = null;
   private ruleSprite: PIXI.Sprite | null = null;
-  private vague: number = 64;
+  private vague: number = 0.25;
   private table: number[] = [];
   private status: "stop" | "run" = "stop"
 
@@ -199,11 +156,14 @@ export class TransManager {
   public initUnivTrans (
     time: number,
     ruleFilePath: string,
-    vague: number = 64,
+    vague: number = 0.25,
   ) {
 
     this.initTrans(time, "univ");
     this.ruleFilePath = ruleFilePath;
+
+    if (vague < 0) { vague = 0; }
+    if (vague > 1.0) { vague = 1.0; }
     this.vague = vague;
 
     let width = this.game.width;
@@ -314,8 +274,6 @@ export class TransManager {
   }
 
   public drawUniv(tick: number, elapsedTime: number): void {
-    this.calcUnivAlphaTable(elapsedTime);
-
     let uniforms = (this.filter.uniforms as any);
     uniforms.backSampler = this.game.backRenderer.texture;
     uniforms.ruleSampler = (this.ruleSprite as PIXI.Sprite).texture;
@@ -324,65 +282,11 @@ export class TransManager {
     uniforms.elapsedTime = elapsedTime;
     uniforms.vague = this.vague;
 
-    let phaseMax = 255 + this.vague;
-    let phase = Math.floor(elapsedTime * phaseMax / this.time) - this.vague;
-    // let phase = elapsedTime * phaseMax / this.time - this.vague;
-    uniforms.phaseMax = phaseMax;
-    uniforms.phase = phase;
-    console.log(phase, phaseMax);
+    // uniforms.phaseMax = 255 + this.vague;
+    // uniforms.phase = Math.floor(elapsedTime * uniforms.phaseMax / this.time) - this.vague;
+    uniforms.phaseMax = 1.0 + this.vague;
+    uniforms.phase = (elapsedTime * uniforms.phaseMax / this.time) - this.vague;
   }
-
-  // univ (ponCanvas, tick, elapsedTime, fore, back, hidingMessageFlag, qx, qy) {
-  //   ponCanvas.changeBuffer(1)
-  //
-  //   this.calcUnivAlphaTable(elapsedTime)
-  //
-  //   let ruleData = this.ruleImageData.data
-  //   let table = this.table
-  //
-  //   back.update(tick, ponCanvas)
-  //   back.draw(ponCanvas, 0, 0, 1.0, hidingMessageFlag, qx, qy)
-  //   let imageData = ponCanvas.getBufImageData()
-  //   let data = imageData.data
-  //   let length = data.length
-  //
-  //   let i = 0
-  //   while (i < length) {
-  //     data[i + 3] = table[ruleData[i]]
-  //     i += 4
-  //   }
-  //
-  //   ponCanvas.changeBuffer(0)
-  //   ponCanvas.putImageDataToBuf(imageData)
-  // }
-
-  /**
-   * ユニバーサルトランジション用のアルファ値テーブルを算出し、
-   * 結果を this.table に格納する。
-   */
-  public calcUnivAlphaTable(elapsedTime: number): void {
-    let vague = this.vague;
-    let table = this.table;
-
-    let phaseMax = 255 + vague
-    let phase = Math.floor(elapsedTime * phaseMax / this.time) - vague
-
-    let i = 0
-    while (i < 256) {
-      if (i < phase) {
-        table[i] = 255
-      } else if (i >= phaseMax) {
-        table[i] = 0
-      } else {
-        let tmp = 255 - ((i - phase) * 255 / vague)
-        if (tmp < 0) tmp = 0
-        if (tmp > 255) tmp = 255
-        table[i] = tmp
-      }
-      i++
-    }
-  }
-
 
   // 以下、Ponkan2のソース
   // /**

@@ -944,7 +944,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("time", "number", true, null, "トランジションの時間(ms)"),
         new TagValue("method", "string", false, "crossfade", "トランジションの種類"),
         new TagValue("rule", "string", false, "", "ユニバーサルトランジションのルールファイル名"),
-        new TagValue("vague", "number", false, 64, "あいまい値"),
+        new TagValue("vague", "number", false, 0.25, "あいまい値"),
       ],
       "TODO タグの説明文",
       (values, tick) => {

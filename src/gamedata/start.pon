@@ -59,7 +59,7 @@ backlay.
 # ;trans "time": 3000, "method": "scroll-to-right"
 # ;trans "time": 3000, "method": "scroll-to-top"
 # ;trans "time": 3000, "method": "scroll-to-bottom"
-;trans "time": 20000, "method": "univ", "rule": "rule_around.png"
+;trans "time": 3000, "method": "univ", "rule": "rule_around.png"
 
 ;s
 
