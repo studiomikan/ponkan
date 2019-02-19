@@ -4,7 +4,7 @@
 |save-mark-0001:セーブコメント01
 |セーブコメント02
 
-;image "lay": 0, "page": "fore", "file": "okayu.jpg", "visible": true, "x": 0, "y": 0
+;image "lay": 0, "page": "fore", "file": "bg0.png", "visible": true, "x": 0, "y": 0
 ;image "lay": 1, "file": "pagebreak.png", "visible": true, "x": 0, "y": 0
 ;frameanim "lay": 1, "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.pageBreakFrames"
 ;startframeanim "lay": 1
@@ -12,10 +12,11 @@
 # ;soundopt "buf": 0, "volume": 0.2
 # ;playsound "buf": 0
 
-;layopt "lay": 2, "x": 300, "y": 100, "visible": true, "width": 300, "height": 300
-;fillcolor "lay": 2, "color": "0xFF00FF", "alpha": 1
-;messageopt "lay": 2, "align": "center", "margint": 0, "lineheight": 32
-;textbutton "lay":    2, \
+;image "lay": 2, "page": "fore", "file": "okayu.jpg", "visible": true, "x": 0, "y": 0
+;layopt "lay": 3, "x": 300, "y": 100, "visible": true, "width": 300, "height": 300
+;fillcolor "lay": 3, "color": "0xFF00FF", "alpha": 1
+;messageopt "lay": 3, "align": "center", "margint": 0, "lineheight": 32
+;textbutton "lay":    3, \
             "text":   "ボタン", \
             "x":  20, \
             "y":  20, \
@@ -23,13 +24,13 @@
             "height": 32, \
             "bgcolors": ["0xFF0000", "0x00FF00", "0x0000FF"], \
             "exp":    "alert('onClickTextButton')"
-;imagebutton "lay": 2, \
+;imagebutton "lay": 3, \
              "file": "sample-button-save.png", \
              "direction": "vertical", \
              "x": 20, \
              "y": 70, \
              "exp": "alert('onClickImageButton');"
-;togglebutton "lay": 2, \
+;togglebutton "lay": 3, \
               "file": "sample-toggle-button.png", \
               "direction": "vertical", \
               "x": 20, \
@@ -49,15 +50,16 @@ OK.
 # ;backlay "lay": "0"
 ;backlay
 ;layopt "lay": 1, "page": "fore", "visible": false
+;image "lay": 0, "page": "back", "file": "bg1.png", "visible": true, "x": 0, "y": 0
 backlay.
-;layopt "lay": 0, "page": "back", "visible": false
 ;pb
 
 # ;trans "time": 3000, "method": "crossfade"
 # ;trans "time": 3000, "method": "scroll-to-left"
 # ;trans "time": 3000, "method": "scroll-to-right"
 # ;trans "time": 3000, "method": "scroll-to-top"
-;trans "time": 3000, "method": "scroll-to-bottom"
+# ;trans "time": 3000, "method": "scroll-to-bottom"
+;trans "time": 20000, "method": "univ", "rule": "rule_around.png"
 
 ;s
 
@@ -74,9 +76,9 @@ del
 ;freeimage "lay": 0
 ;freeimage "lay": 1
 ;freeimage "lay": 1
-;cleartextbutton "lay": 2
-;clearimagebutton "lay": 2
-;cleartogglebutton "lay": 2
+;cleartextbutton "lay": 3
+;clearimagebutton "lay": 3
+;cleartogglebutton "lay": 3
 
 # ;stopsound "buf": 0
 ;pb

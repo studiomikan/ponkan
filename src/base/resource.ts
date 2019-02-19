@@ -194,20 +194,20 @@ export class Resource {
     return cb;
   }
 
-  public loadTransRule(filePath: string): AsyncCallbacks {
-    const cb = new AsyncCallbacks();
-    this.loadImage(filePath).done((image) => {
-      let canvas: HTMLCanvasElement = this.bufferCanvas;
-      let context: CanvasRenderingContext2D = this.bufferCanvasContext;
-      context.drawImage(image, 0, 0, canvas.width, canvas.height);
-      // (document.querySelector("body") as HTMLElement).appendChild(canvas);
-      let ruleData: ImageData = context.getImageData(0, 0, canvas.width, canvas.height)
-      cb.callDone(ruleData);
-    }).fail(() => {
-      cb.callFail();
-    });
-    return cb;
-  }
+  // public loadTransRule(filePath: string): AsyncCallbacks {
+  //   const cb = new AsyncCallbacks();
+  //   this.loadImage(filePath).done((image) => {
+  //     let canvas: HTMLCanvasElement = this.bufferCanvas;
+  //     let context: CanvasRenderingContext2D = this.bufferCanvasContext;
+  //     context.drawImage(image, 0, 0, canvas.width, canvas.height);
+  //     // (document.querySelector("body") as HTMLElement).appendChild(canvas);
+  //     let ruleData: ImageData = context.getImageData(0, 0, canvas.width, canvas.height)
+  //     cb.callDone(ruleData);
+  //   }).fail(() => {
+  //     cb.callFail();
+  //   });
+  //   return cb;
+  // }
 
   public loadSound(
     filePath: string,

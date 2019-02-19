@@ -7,7 +7,6 @@ import { PonGame } from "./pon-game";
 class CrossFadeFilter extends PIXI.Filter<any> {
   public constructor() {
     var fragmentShader = `
-      // precision mediump float;
       varying vec2 vTextureCoord;
       uniform sampler2D uSampler;
       uniform sampler2D backSampler;
@@ -35,49 +34,109 @@ class CrossFadeFilter extends PIXI.Filter<any> {
   }
 }
 
-// class ScrollLeftToRightFilter extends PIXI.Filter<any> {
-//   public constructor() {
-//     var vertexShader = `
-//       attribute vec2 aVertexPosition;
-//       attribute vec2 aTextureCoord;
-//       uniform mat3 projectionMatrix;
-//       uniform mat3 filterMatrix;
-//       varying vec2 vTextureCoord;
-//       varying vec2 vFilterCoord;
-//       void main(void){
-//          gl_Position = vec4((projectionMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);
-//          vFilterCoord = ( filterMatrix * vec3( aTextureCoord, 1.0)  ).xy;
-//          vTextureCoord = aTextureCoord ;
-//       }
-//     `;
-//     var fragmentShader = `
-//       // precision mediump float;
-//       varying vec2 vTextureCoord;
-//       uniform sampler2D uSampler;
-//       uniform sampler2D backSampler;
-//       uniform int distance;
-//       uniform int width;
-//       uniform int height;
-//
-//       void main(void) {
-//         vec4 fcolor = texture2D(uSampler, vTextureCoord);
-//         vec4 bcolor = texture2D(backSampler, vTextureCoord);
-//         gl_FragColor = bcolor;
-//       }
-//     `;
-//     super(
-//       vertexShader, // vertex shader
-//       fragmentShader, // fragment shader
-//       {
-//         // uniforms
-//         backSampler: { type: "sampler2D", value: 1 },
-//         distance: { type: "int", value: 1.0 },
-//         width: { type: "int", value: 1.0 },
-//         height: { type: "int", value: 1.0 },
-//       }
-//     );
-//   }
-// }
+  // univ (ponCanvas, tick, elapsedTime, fore, back, hidingMessageFlag, qx, qy) {
+  //   ponCanvas.changeBuffer(1)
+  //
+  //   this.calcUnivAlphaTable(elapsedTime)
+  //
+  //   let ruleData = this.ruleImageData.data
+  //   let table = this.table
+  //
+  //   back.update(tick, ponCanvas)
+  //   back.draw(ponCanvas, 0, 0, 1.0, hidingMessageFlag, qx, qy)
+  //   let imageData = ponCanvas.getBufImageData()
+  //   let data = imageData.data
+  //   let length = data.length
+  //
+  //   let i = 0
+  //   while (i < length) {
+  //     data[i + 3] = table[ruleData[i]]
+  //     i += 4
+  //   }
+  //
+  //   ponCanvas.changeBuffer(0)
+  //   ponCanvas.putImageDataToBuf(imageData)
+  // }
+
+  // public calcUnivAlphaTable(elapsedTime: number): void {
+  //   let vague = this.vague;
+  //   let table = this.table;
+  //
+  //   let phaseMax = 255 + vague
+  //   let phase = Math.floor(elapsedTime * phaseMax / this.time) - vague
+  //
+  //   let i = 0
+  //   while (i < 256) {
+  //     if (i < phase) {
+  //       table[i] = 255
+  //     } else if (i >= phaseMax) {
+  //       table[i] = 0
+  //     } else {
+  //       let tmp = 255 - ((i - phase) * 255 / vague)
+  //       if (tmp < 0) tmp = 0
+  //       if (tmp > 255) tmp = 255
+  //       table[i] = tmp
+  //     }
+  //     i++
+  //   }
+  // }
+
+class UnivTransFilter extends PIXI.Filter<any> {
+  public constructor() {
+    var fragmentShader = `
+      varying vec2 vTextureCoord;
+      uniform sampler2D uSampler;
+      uniform sampler2D backSampler;
+      uniform sampler2D ruleSampler;
+      uniform float time;
+      uniform float elapsedTime;
+      uniform float vague;
+      uniform float phaseMax;
+      uniform float phase;
+
+      void main(void) {
+        vec4 fcolor = texture2D(uSampler, vTextureCoord);
+        vec4 bcolor = texture2D(backSampler, vTextureCoord);
+        vec4 rcolor = texture2D(ruleSampler, vTextureCoord);
+
+        // float phaseMax = 255.0 + vague;
+        // float phase = floor(elapsedTime * phaseMax / time) - vague;
+
+        float a = 255.0 * (rcolor.r + rcolor.g + rcolor.b) / 3.0;
+        if (a < phase) {
+          gl_FragColor = bcolor;
+        } else if (a >= phaseMax) {
+          gl_FragColor = fcolor;
+        } else {
+          float tmp = 255.0 - ((a - phase) * 255.0 / vague);
+          if (tmp < 0.0) { tmp = 0.0; }
+          if (tmp > 255.0) { tmp = 255.0; }
+          float alpha = tmp / 255.0;
+          gl_FragColor = bcolor * alpha + fcolor * (1.0 - alpha);
+        }
+
+        // gl_FragColor = fcolor;
+        // gl_FragColor = rcolor;
+        // gl_FragColor = vec4(vec2(vTextureCoord.xy), 1.0, 1.0);
+      }
+
+    `;
+    super(
+      undefined, // vertex shader
+      fragmentShader, // fragment shader
+      {
+        // uniforms
+        backSampler: { type: "sampler2D", value: 1 },
+        ruleSampler: { type: "sampler2D", value: 1 },
+        time: { type: "float", value: 1 },
+        elapsedTime: { type: "float", value: 1 },
+        vague: { type: "float", value: 1 },
+        phase: { type: "float", value: 1 },
+        phaseMax: { type: "float", value: 1 },
+      }
+    );
+  }
+}
 
 export class TransManager {
 
@@ -94,8 +153,10 @@ export class TransManager {
                   "crossfade"
                   = "crossfade";
   private ruleFilePath: string | null = null;
-  private ruleData: ImageData | null = null;
+  private ruleImage: HTMLImageElement | null = null;
+  private ruleSprite: PIXI.Sprite | null = null;
   private vague: number = 64;
+  private table: number[] = [];
   private status: "stop" | "run" = "stop"
 
   private filters: any;
@@ -106,11 +167,11 @@ export class TransManager {
     this.resource = resource;
 
     this.filters = {
-      "univ": null,
       "scroll-to-right": null,
       "scroll-to-left": null,
       "scroll-to-top": null,
       "scroll-to-bottom": null,
+      "univ": new UnivTransFilter(),
       "crossfade": new CrossFadeFilter()
     };
     this.filter = this.filters["crossfade"];
@@ -118,11 +179,11 @@ export class TransManager {
 
   public initTrans (
     time: number,
-    method: "univ" | 
-            "scroll-to-right" |
+    method: "scroll-to-right" |
             "scroll-to-left" |
             "scroll-to-top" |
             "scroll-to-bottom" |
+            "univ" |
             "crossfade"
   ) {
     this.startTick = -1;
@@ -145,9 +206,20 @@ export class TransManager {
     this.ruleFilePath = ruleFilePath;
     this.vague = vague;
 
-    let cb = this.resource.loadTransRule(ruleFilePath).done((ruleData: ImageData) => {
-      this.ruleData = ruleData;
-      cb.callDone();
+    let width = this.game.width;
+    let height = this.game.height;
+
+    let cb = this.resource.loadImage(ruleFilePath);
+    cb.done((ruleImage: HTMLImageElement) => {
+      this.ruleImage = ruleImage;
+      this.ruleSprite = PIXI.Sprite.from(ruleImage);
+      this.ruleSprite.width = width;
+      this.ruleSprite.height = height;
+    
+      let maskSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
+      maskSprite.width = width;
+      maskSprite.height = height;
+      this.ruleSprite.mask = maskSprite;
     });
 
     return cb;
@@ -168,6 +240,8 @@ export class TransManager {
     this.game.backRenderer.container.filters = null; 
     // 表レイヤと裏レイヤを入れ替え
     this.game.flipPrimaryLayers();
+
+    console.log("endtrans");
   }
 
   public start(): void {
@@ -203,6 +277,7 @@ export class TransManager {
       case "scroll-to-left":   this.drawScrollHorizontal(tick, elapsedTime, "left"); break;
       case "scroll-to-top":    this.drawScrollVertical(tick, elapsedTime, "top"); break;
       case "scroll-to-bottom": this.drawScrollVertical(tick, elapsedTime, "bottom"); break;
+      case "univ":             this.drawUniv(tick, elapsedTime); break;
       case "crossfade":        this.drawCrossFade(tick, elapsedTime); break;
       default:                 this.drawCrossFade(tick, elapsedTime); break;
     }
@@ -238,6 +313,75 @@ export class TransManager {
     uniforms.backSampler = this.game.backRenderer.texture;
   }
 
+  public drawUniv(tick: number, elapsedTime: number): void {
+    this.calcUnivAlphaTable(elapsedTime);
+
+    let uniforms = (this.filter.uniforms as any);
+    uniforms.backSampler = this.game.backRenderer.texture;
+    uniforms.ruleSampler = (this.ruleSprite as PIXI.Sprite).texture;
+    uniforms.table = this.table;
+    uniforms.time = this.time;
+    uniforms.elapsedTime = elapsedTime;
+    uniforms.vague = this.vague;
+
+    let phaseMax = 255 + this.vague;
+    let phase = Math.floor(elapsedTime * phaseMax / this.time) - this.vague;
+    // let phase = elapsedTime * phaseMax / this.time - this.vague;
+    uniforms.phaseMax = phaseMax;
+    uniforms.phase = phase;
+    console.log(phase, phaseMax);
+  }
+
+  // univ (ponCanvas, tick, elapsedTime, fore, back, hidingMessageFlag, qx, qy) {
+  //   ponCanvas.changeBuffer(1)
+  //
+  //   this.calcUnivAlphaTable(elapsedTime)
+  //
+  //   let ruleData = this.ruleImageData.data
+  //   let table = this.table
+  //
+  //   back.update(tick, ponCanvas)
+  //   back.draw(ponCanvas, 0, 0, 1.0, hidingMessageFlag, qx, qy)
+  //   let imageData = ponCanvas.getBufImageData()
+  //   let data = imageData.data
+  //   let length = data.length
+  //
+  //   let i = 0
+  //   while (i < length) {
+  //     data[i + 3] = table[ruleData[i]]
+  //     i += 4
+  //   }
+  //
+  //   ponCanvas.changeBuffer(0)
+  //   ponCanvas.putImageDataToBuf(imageData)
+  // }
+
+  /**
+   * ユニバーサルトランジション用のアルファ値テーブルを算出し、
+   * 結果を this.table に格納する。
+   */
+  public calcUnivAlphaTable(elapsedTime: number): void {
+    let vague = this.vague;
+    let table = this.table;
+
+    let phaseMax = 255 + vague
+    let phase = Math.floor(elapsedTime * phaseMax / this.time) - vague
+
+    let i = 0
+    while (i < 256) {
+      if (i < phase) {
+        table[i] = 255
+      } else if (i >= phaseMax) {
+        table[i] = 0
+      } else {
+        let tmp = 255 - ((i - phase) * 255 / vague)
+        if (tmp < 0) tmp = 0
+        if (tmp > 255) tmp = 255
+        table[i] = tmp
+      }
+      i++
+    }
+  }
 
 
   // 以下、Ponkan2のソース

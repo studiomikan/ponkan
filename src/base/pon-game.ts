@@ -44,7 +44,6 @@ export class PonGame {
     this.resource = new Resource(this, "gamedata");
 
     this.transManager = new TransManager(this, this.resource);
-    this.resource.loadTransRule("rule_around.png");
 
     this.initWindowEvent();
     this.initMouseEventOnCanvas();
