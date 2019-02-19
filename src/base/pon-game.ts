@@ -88,11 +88,9 @@ export class PonGame {
       if (this.transManager.isRunning) {
         this.transManager.draw(tick);
       } else {
-        // TODO 本来はここのback不要
-        this.backRenderer.draw(tick);
+        this.backRenderer.draw(tick); // TODO 本来はここのback不要
         this.foreRenderer.draw(tick);
       }
-
 
       this.loopCount++;
       this.fpsCount++;
@@ -148,10 +146,10 @@ export class PonGame {
 
     // 新しくレンダラーに紐付ける
     this.forePrimaryLayers.forEach((fore) => {
-      this.backRenderer.removeContainer(fore.container);
+      this.backRenderer.addContainer(fore.container);
     });
     this.backPrimaryLayers.forEach((back) => {
-      this.foreRenderer.removeContainer(back.container);
+      this.foreRenderer.addContainer(back.container);
     });
 
     // 入れ替え

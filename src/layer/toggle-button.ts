@@ -126,4 +126,14 @@ export class ToggleButton extends BaseLayer {
     this.setButtonStatus(data["buttonStatus"]);
     this.setValue(this.getValue());
   }
+
+  public copyTo(dest: ToggleButton): void {
+    super.copyTo(dest);
+
+    let me: any = this as any;
+    let you: any = dest as any;
+    ToggleButton.toggleButtonStoreParams.forEach((param: string) => {
+      you[param] = me[param];
+    });
+  }
 }

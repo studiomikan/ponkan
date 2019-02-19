@@ -87,6 +87,16 @@ export class ImageToggleButton extends ToggleButton {
     });
     super.restoreAfterLoadImage(data, tick);
   }
+
+  public copyTo(dest: ImageToggleButton): void {
+    super.copyTo(dest);
+
+    let me: any = this as any;
+    let you: any = dest as any;
+    ImageToggleButton.imageToggleButtonStoreParams.forEach((param: string) => {
+      you[param] = me[param];
+    });
+  }
 }
 
 export class ToggleButtonLayer extends ImageButtonLayer {

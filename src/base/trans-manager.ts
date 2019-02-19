@@ -107,10 +107,9 @@ export class TransManager {
   public stop(): void {
     this.status = "stop";
     this.ruleFilePath = null;
-    // TODO 最終位置への移動など
-    
     // フィルタをクリア
-    this.game.backRenderer.container.filters = [];
+    this.game.foreRenderer.container.filters = null; 
+    this.game.backRenderer.container.filters = null; 
     // 表レイヤと裏レイヤを入れ替え
     this.game.flipPrimaryLayers();
   }
@@ -129,6 +128,7 @@ export class TransManager {
     let elapsedTime = tick - this.startTick;
     if (elapsedTime > this.time) {
       this.stop();
+      // this.game.foreRenderer.draw(tick);
       return;
     }
 
@@ -160,7 +160,7 @@ export class TransManager {
   }
 
 
-  
+
   // 以下、Ponkan2のソース
   // /**
   //  * TODO 動作確認

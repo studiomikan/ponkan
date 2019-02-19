@@ -157,4 +157,15 @@ export class Button extends BaseLayer {
     this.insideFlg = false;
     this.setButtonStatus("normal");
   }
+
+  public copyTo(dest: Button): void {
+    super.copyTo(dest);
+
+    let me: any = this as any;
+    let you: any = dest as any;
+    Button.buttonStoreParams.forEach((param: string) => {
+      you[param] = me[param];
+    });
+  }
 }
+

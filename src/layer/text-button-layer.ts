@@ -121,6 +121,16 @@ export class TextButton extends Button {
     this.clearText();
     this.addText(data.txtBtnText);
   }
+
+  public copyTo(dest: TextButton): void {
+    super.copyTo(dest);
+
+    let me: any = this as any;
+    let you: any = dest as any;
+    TextButton.textButtonStoreParams.forEach((param: string) => {
+      you[param] = me[param];
+    });
+  }
 }
 
 
@@ -150,11 +160,6 @@ export class TextButtonLayer extends FrameAnimLayer {
     let btn = new TextButton(name, this.resource, this.owner);
     this.addChild(btn);
     this.textButtons.push(btn);
-
-    btn.x = x;
-    btn.y = y;
-    btn.width = width;
-    btn.height = height;
 
     let normal: number = +backgroundColors[0];
     let over: number = backgroundColors[1] != null ? +backgroundColors[1] : normal;

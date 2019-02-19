@@ -529,7 +529,7 @@ export class BaseLayer {
   }
 
   protected static baseLayerStoreParams: string[] = [
-    "name",
+    // "name",
     "x",
     "y",
     "width",
@@ -658,6 +658,7 @@ export class BaseLayer {
     if (this.image !== null) {
       dest.imageSprite = new PonSprite(dest.imageSpriteCallbacks);
       dest.imageSprite.setImage(this.image);
+      dest.image = this.image;
     }
 
     // その他のパラメータのコピー

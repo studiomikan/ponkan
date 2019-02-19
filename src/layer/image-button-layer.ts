@@ -104,6 +104,16 @@ export class ImageButton extends Button {
     });
     super.restoreAfterLoadImage(data, tick);
   }
+
+  public copyTo(dest: ImageButton): void {
+    super.copyTo(dest);
+
+    let me: any = this as any;
+    let you: any = dest as any;
+    ImageButton.imageButtonStoreParams.forEach((param: string) => {
+      you[param] = me[param];
+    });
+  }
 }
 
 export class ImageButtonLayer extends TextButtonLayer {

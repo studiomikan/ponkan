@@ -304,6 +304,15 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // =========================================================
   // レイヤ
   // =========================================================
+
+  // [override]
+  public flipPrimaryLayers(): void {
+    let tmp = this.forePrimaryLayer;
+    this.forePrimaryLayer = this.backPrimaryLayer;
+    this.backPrimaryLayer = tmp;
+    super.flipPrimaryLayers();
+  }
+
   private initLayers() {
     [this.forePrimaryLayer, this.backPrimaryLayer].forEach((primaryLayer: PonLayer) => {
       primaryLayer.x = 0;

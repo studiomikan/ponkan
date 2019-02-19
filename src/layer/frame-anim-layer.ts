@@ -77,6 +77,7 @@ export class FrameAnimLayer extends BaseLayer {
         let s = Math.floor((tick - start) / time) % frames.length;
         let frame = frames[s];
         this.applyFrameAnim(frame);
+        // console.log(this.name, frame);
       }
     }
   }

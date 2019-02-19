@@ -34,7 +34,6 @@
               "direction": "vertical", \
               "x": 20, \
               "y": 140, \
-              "exp": "alert(tv['sample-toggle-button'])", \
               "statevar": "sample-toggle-button"
 
 ;messageopt "align": "left"
@@ -49,6 +48,7 @@ OK.
 # トランジションのテスト
 # ;backlay "lay": "0"
 ;backlay
+;layopt "lay": 1, "page": "fore", "visible": false
 backlay.
 ;layopt "lay": 0, "page": "back", "visible": false
 ;pb
