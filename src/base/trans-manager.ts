@@ -4,7 +4,41 @@ import { AsyncCallbacks } from "./async-callbacks";
 import { Resource } from "./resource";
 import { PonGame } from "./pon-game";
 
-export interface ITransEvent {
+// export interface ITransEvent {
+// }
+
+class CrossFadeFilter extends PIXI.Filter<any> {
+  public constructor() {
+    var fragmentShader = `
+      precision mediump float;
+      varying vec2 vTextureCoord;
+      uniform sampler2D uSampler;
+      uniform sampler2D backSampler;
+      uniform float foreAlpha;
+      uniform float backAlpha;
+
+      void main(void) {
+        vec4 fcolor = texture2D(uSampler, vTextureCoord);
+        vec4 bcolor = texture2D(backSampler, vTextureCoord);
+
+        // fcolor.r = fcolor.r * foreAlpha + bcolor.r * backAlpha;
+        // fcolor.g = fcolor.g * foreAlpha + bcolor.g * backAlpha;
+        // fcolor.b = fcolor.b * foreAlpha + bcolor.b * backAlpha;
+        fcolor = fcolor * foreAlpha + bcolor * backAlpha;
+        gl_FragColor = fcolor;
+      }
+    `;
+    super(
+      undefined, // vartex shader
+      fragmentShader, // fragment shader
+      {
+        // uniforms
+        backSampler: { type: "sampler2D", value: 1 },
+        foreAlpha: { type: "1f", value: 1.0 },
+        backAlpha: { type: "1f", value: 1.0 },
+      }
+    );
+  }
 }
 
 export class TransManager {
@@ -23,9 +57,17 @@ export class TransManager {
   private vague: number = 64;
   private status: "stop" | "run" = "stop"
 
+  private filters: any;
+  private filter: PIXI.Filter<any>;
+
   public constructor(game: PonGame, resource: Resource) {
     this.game = game;
     this.resource = resource;
+
+    this.filters = {
+      "crossfade": new CrossFadeFilter()
+    };
+    this.filter = this.filters["crossfade"];
   }
 
   public initTrans (
@@ -66,6 +108,11 @@ export class TransManager {
     this.status = "stop";
     this.ruleFilePath = null;
     // TODO 最終位置への移動など
+    
+    // フィルタをクリア
+    this.game.backRenderer.container.filters = [];
+    // 表レイヤと裏レイヤを入れ替え
+    this.game.flipPrimaryLayers();
   }
 
   public start(): void {
@@ -73,21 +120,43 @@ export class TransManager {
   }
 
   public draw(tick: number): void {
-    let foreRenderer = this.game.foreRenderer;
-    let backRenderer = this.game.backRenderer;
-
-    let texture = backRenderer.texture;
-    let sprite = backRenderer.sprite;
-
     if (this.startTick === -1) {
       this.startTick = tick;
-      foreRenderer.setOtherRenderer(backRenderer);
+      this.game.foreRenderer.container.filters = [this.filters[this.method]];
     }
 
-    console.log("trans draw");
+    // 終了判定
+    let elapsedTime = tick - this.startTick;
+    if (elapsedTime > this.time) {
+      this.stop();
+      return;
+    }
+
+    // 合成する裏レイヤを描画
+    this.game.backRenderer.draw(tick);
+    this.game.backRenderer.texture.update();
+
+    // フィルターの更新（パラメータ設定）
+    switch (this.method) {
+      case "crossfade":
+      default:
+        this.updateCrossFade(elapsedTime);
+        break;
+    }
+
+    // 裏レイヤと合成した表レイヤを描画
+    this.game.foreRenderer.draw(tick);
   }
 
-  public drawCrossFade(): void {
+  public updateCrossFade(elapsedTime: number): void {
+    let alpha: number = 1.0 * (elapsedTime / this.time);
+    if (alpha < 0) { alpha = 0; }
+    if (alpha > 1.0) { alpha = 1.0; }
+
+    let uniforms = (this.filter.uniforms as any);
+    uniforms.foreAlpha = 1.0 - alpha;
+    uniforms.backAlpha = alpha;
+    uniforms.backSampler = this.game.backRenderer.texture;
   }
 
 

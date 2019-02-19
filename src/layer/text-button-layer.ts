@@ -53,7 +53,7 @@ export class TextButton extends Button {
 
   public resetButton(): void {
     super.resetButton();
-    
+
     this.txtBtnText = "";
     this.txtBtnNormalBackgroundColor = 0x000000;
     this.txtBtnOverBackgroundColor = 0x000000;

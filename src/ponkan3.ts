@@ -310,6 +310,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       primaryLayer.y = 0;
       primaryLayer.width = this.width;
       primaryLayer.height = this.height;
+      primaryLayer.setBackgroundColor(0x000000, 1.0);
     });
     for (let i = 0; i < this.layerCount; i++) {
       this.forePrimaryLayer.addChild(this.createLayer(`fore layer ${i}`));

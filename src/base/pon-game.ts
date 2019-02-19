@@ -86,8 +86,6 @@ export class PonGame {
       this.update(tick);
 
       if (this.transManager.isRunning) {
-        this.backRenderer.draw(tick);
-        this.foreRenderer.draw(tick);
         this.transManager.draw(tick);
       } else {
         // TODO 本来はここのback不要
@@ -137,6 +135,29 @@ export class PonGame {
     this.backPrimaryLayers.push(layer);
     this.backRenderer.addContainer(layer.container);
     return layer;
+  }
+
+  public flipPrimaryLayers(): void {
+    // レンダラーとの紐付けを解除
+    this.forePrimaryLayers.forEach((fore) => {
+      this.foreRenderer.removeContainer(fore.container);
+    });
+    this.backPrimaryLayers.forEach((back) => {
+      this.backRenderer.removeContainer(back.container);
+    });
+
+    // 新しくレンダラーに紐付ける
+    this.forePrimaryLayers.forEach((fore) => {
+      this.backRenderer.removeContainer(fore.container);
+    });
+    this.backPrimaryLayers.forEach((back) => {
+      this.foreRenderer.removeContainer(back.container);
+    });
+
+    // 入れ替え
+    let tmp1 = this.forePrimaryLayers;
+    this.forePrimaryLayers = this.backPrimaryLayers;
+    this.backPrimaryLayers = tmp1;
   }
 
   public addEventHandler(handler: PonEventHandler): void {
