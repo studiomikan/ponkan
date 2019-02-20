@@ -96,7 +96,6 @@ class UnivTransFilter extends PIXI.Filter<any> {
 }
 
 export class TransManager {
-
   private game: PonGame;
   private resource : Resource;
 
@@ -143,6 +142,10 @@ export class TransManager {
             "univ" |
             "crossfade"
   ) {
+    if (this.isRunning) {
+      this.stop();
+    }
+
     this.startTick = -1;
     this.time = time;
     this.method = method;
@@ -189,7 +192,15 @@ export class TransManager {
     return this.status === "run";
   }
 
+  /**
+   * トランジションを停止する。
+   * PonGameのonCompleteTransも呼び出される。
+   */
   public stop(): void {
+    if (this.status !== "run") {
+      return;
+    }
+
     this.status = "stop";
     this.ruleFilePath = null;
     // 表レイヤと一緒に描画するのをやめる
@@ -201,7 +212,8 @@ export class TransManager {
     // 表レイヤと裏レイヤを入れ替え
     this.game.flipPrimaryLayers();
 
-    console.log("endtrans");
+    // 完了イベント
+    this.game.onCompleteTrans();
   }
 
   public start(): void {

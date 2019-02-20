@@ -157,6 +157,16 @@ export class PonGame {
     this.backPrimaryLayers = tmp1;
   }
 
+  /**
+   * トランジション完了時にTransManagerから呼ばれる。
+   * この時点で表レイヤ・裏レイヤの入れ替えは完了している。
+   */
+  public onCompleteTrans(): boolean {
+    // トリガーを発火
+    this.trigger("trans", this);
+    return true;
+  }
+
   public addEventHandler(handler: PonEventHandler): void {
     let eventName: string = handler.eventName;
     if (this.eventHandlers[eventName] == null) {
@@ -175,8 +185,12 @@ export class PonGame {
     this.eventHandlers[eventName] = null;
   }
 
-  public clearEventHandler(): void {
+  public clearAllEventHandler(): void {
     this.eventHandlers = {};
+  }
+
+  public clearEventHandler(eventName: string): void {
+    this.eventHandlers[eventName] = null;
   }
 
   private initWindowEvent(): void {

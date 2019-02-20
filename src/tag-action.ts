@@ -149,7 +149,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "TODO タグの説明文",
       (values, tick) => {
         p.conductor.stop();
-        p.skipMode = "invalid";
+        p.stopSkip();
         return "break";
       },
     ),
@@ -407,6 +407,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "TODO タグの説明文",
       (values, tick) => {
         p.showLineBreakGlyph(tick);
+        p.stopWaitClickSkip();
         p.addEventHandler(new PonEventHandler("click", "waitClickCallback", "lb"));
         return p.conductor.stop();
       },
@@ -418,6 +419,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "TODO タグの説明文",
       (values, tick) => {
         p.showPageBreakGlyph(tick);
+        p.stopWaitClickSkip();
         p.addEventHandler(new PonEventHandler("click", "waitClickCallback", "pb"));
         return p.conductor.stop();
       },
@@ -959,6 +961,17 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           p.transManager.start();
           return "continue";
         }
+      },
+    ),
+    new TagAction(
+      ["waittrans", "wt"],
+      "トランジションの終了を待つ",
+      [],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.addEventHandler(new PonEventHandler("click", "waitTransClickCallback"));
+        p.addEventHandler(new PonEventHandler("trans", "waitTransCompleteCallback"));
+        return p.conductor.stop();
       },
     ),
     // ======================================================================

@@ -261,6 +261,20 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   // =========================================================
+  // スキップ関係
+  // =========================================================
+
+  public stopWaitClickSkip() {
+    if (this.skipMode === "nextclick") {
+      this.skipMode = "invalid";
+    }
+  }
+
+  public stopSkip() {
+    this.skipMode = "invalid";
+  }
+
+  // =========================================================
   // サウンド
   // =========================================================
 
@@ -483,6 +497,24 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
         break;
     }
   }
+
+  // =========================================================
+  // トランジション
+  // =========================================================
+
+  public waitTransClickCallback(param: string) {
+    Logger.debug("click on trans.");
+    this.clearEventHandler("trans");
+    this.transManager.stop();
+    this.conductor.start();
+  }
+
+  public waitTransCompleteCallback(param: string) {
+    Logger.debug("complete trans.");
+    this.clearEventHandler("click");
+    this.conductor.start();
+  }
+
 
   // =========================================================
   // セーブ・ロード

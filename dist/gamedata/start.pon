@@ -37,12 +37,18 @@
               "y": 140, \
               "statevar": "sample-toggle-button"
 
+*trans_loop
+;clear
+;image "lay": 0, "page": "fore", "file": "bg0.png", "visible": true, "x": 0, "y": 0
 ;messageopt "align": "left"
 あいうえお
 ;indent
 かきくけこさしすせそたちつてとなにぬねの
+;lb
 はひふへほまみむめもやいゆ
+;lb
 えよらりるれろ
+;lb
 OK.
 ;pb
 
@@ -60,7 +66,11 @@ backlay.
 # ;trans "time": 3000, "method": "scroll-to-top"
 # ;trans "time": 3000, "method": "scroll-to-bottom"
 ;trans "time": 3000, "method": "univ", "rule": "rule_around.png"
+;waittrans
 
+end.
+;pb
+;jump "label": "trans_loop"
 ;s
 
 
