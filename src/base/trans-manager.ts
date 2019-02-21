@@ -9,16 +9,14 @@ class CrossFadeFilter extends PIXI.Filter<any> {
     var fragmentShader = `
       varying vec2 vTextureCoord;
       uniform sampler2D uSampler;
-      uniform sampler2D backSampler;
+      uniform sampler2D subSampler;
       uniform float foreAlpha;
       uniform float backAlpha;
 
       void main(void) {
-        vec4 fcolor = texture2D(uSampler, vTextureCoord);
-        vec4 bcolor = texture2D(backSampler, vTextureCoord);
-        fcolor = fcolor * foreAlpha + bcolor * backAlpha;
-        gl_FragColor = fcolor;
-        // gl_FragColor = vec4(vec2(vTextureCoord.xy), 1.0, 1.0);
+        vec4 color = texture2D(uSampler, vTextureCoord);
+        vec4 scolor = texture2D(subSampler, vTextureCoord);
+        gl_FragColor = color * backAlpha + scolor * foreAlpha;
       }
     `;
     super(
@@ -26,7 +24,7 @@ class CrossFadeFilter extends PIXI.Filter<any> {
       fragmentShader, // fragment shader
       {
         // uniforms
-        backSampler: { type: "sampler2D", value: 1 },
+        subSampler: { type: "sampler2D", value: 1 },
         foreAlpha: { type: "float", value: 1.0 },
         backAlpha: { type: "float", value: 1.0 },
       }
@@ -39,7 +37,7 @@ class UnivTransFilter extends PIXI.Filter<any> {
     var fragmentShader = `
       varying vec2 vTextureCoord;
       uniform sampler2D uSampler;
-      uniform sampler2D backSampler;
+      uniform sampler2D subSampler;
       uniform sampler2D ruleSampler;
       uniform float time;
       uniform float elapsedTime;
@@ -48,20 +46,20 @@ class UnivTransFilter extends PIXI.Filter<any> {
       uniform float phase;
 
       void main(void) {
-        vec4 fcolor = texture2D(uSampler, vTextureCoord);
-        vec4 bcolor = texture2D(backSampler, vTextureCoord);
+        vec4 color = texture2D(uSampler, vTextureCoord);
+        vec4 scolor = texture2D(subSampler, vTextureCoord);
         vec4 rcolor = texture2D(ruleSampler, vTextureCoord);
 
         float a = (rcolor.r + rcolor.g + rcolor.b) / 3.0;
         if (a < phase) {
-          gl_FragColor = bcolor;
+          gl_FragColor = scolor;
         } else if (a >= phaseMax) {
-          gl_FragColor = fcolor;
+          gl_FragColor = color;
         } else {
           float tmp = 1.0 - ((a - phase) * 1.0 / vague);
           if (tmp < 0.0) { tmp = 0.0; }
           if (tmp > 1.0) { tmp = 1.0; }
-          gl_FragColor = bcolor * tmp + fcolor * (1.0 - tmp);
+          gl_FragColor = scolor * tmp + color * (1.0 - tmp);
         }
         // float a = 255.0 * (rcolor.r + rcolor.g + rcolor.b) / 3.0;
         // if (a < phase) {
@@ -83,7 +81,7 @@ class UnivTransFilter extends PIXI.Filter<any> {
       fragmentShader, // fragment shader
       {
         // uniforms
-        backSampler: { type: "sampler2D", value: 1 },
+        subSampler: { type: "sampler2D", value: 1 },
         ruleSampler: { type: "sampler2D", value: 1 },
         time: { type: "float", value: 1 },
         elapsedTime: { type: "float", value: 1 },
@@ -206,11 +204,11 @@ export class TransManager {
     // 表レイヤと一緒に描画するのをやめる
     this.game.foreRenderer.delOtherRenderer();
     this.game.backRenderer.delOtherRenderer();
+    // レンダラーの入れ替え
+    this.game.resetPrimaryLayersRenderer();
     // フィルタをクリア
     this.game.foreRenderer.container.filters = null; 
     this.game.backRenderer.container.filters = null; 
-    // 表レイヤと裏レイヤを入れ替え
-    this.game.flipPrimaryLayers();
 
     // 完了イベント
     this.game.onCompleteTrans();
@@ -218,6 +216,8 @@ export class TransManager {
 
   public start(): void {
     this.status = "run";
+    // 開始時に、表と裏は入れ替えておく
+    this.game.flipPrimaryLayers();
   }
 
   public draw(tick: number): void {
@@ -237,7 +237,7 @@ export class TransManager {
     let elapsedTime = tick - this.startTick;
     if (elapsedTime > this.time) {
       this.stop();
-      // this.game.foreRenderer.draw(tick);
+      this.game.foreRenderer.draw(tick);
       return;
     }
 
@@ -280,14 +280,14 @@ export class TransManager {
     if (alpha > 1.0) { alpha = 1.0; }
 
     let uniforms = (this.filter.uniforms as any);
-    uniforms.foreAlpha = 1.0 - alpha;
-    uniforms.backAlpha = alpha;
-    uniforms.backSampler = this.game.backRenderer.texture;
+    uniforms.backAlpha = 1.0 - alpha;
+    uniforms.foreAlpha = alpha;
+    uniforms.subSampler = this.game.backRenderer.texture;
   }
 
   public drawUniv(tick: number, elapsedTime: number): void {
     let uniforms = (this.filter.uniforms as any);
-    uniforms.backSampler = this.game.backRenderer.texture;
+    uniforms.subSampler = this.game.backRenderer.texture;
     uniforms.ruleSampler = (this.ruleSprite as PIXI.Sprite).texture;
     uniforms.table = this.table;
     uniforms.time = this.time;
@@ -299,164 +299,5 @@ export class TransManager {
     uniforms.phaseMax = 1.0 + this.vague;
     uniforms.phase = (elapsedTime * uniforms.phaseMax / this.time) - this.vague;
   }
-
-  // 以下、Ponkan2のソース
-  // /**
-  //  * TODO 動作確認
-  //  * トランジションを描画
-  //  * @param {PonCanvas} ponCanvas キャンバス
-  //  * @param {number} tick 時刻j
-  //  * @param {PonLayer} forePrimaryLayer 表プライマリレイヤ
-  //  * @param {PonLayer} backPrimaryLayer 裏プライマリレイヤ
-  //  * @param {HistoryLayer} historyLayer 履歴レイヤ
-  //  * @param {boolean} hidingMessageFlag メッセージレイヤを隠すかどうか
-  //  * @param {number} qx 画面揺れx
-  //  * @param {number} qy 画面揺れy
-  //  */
-  // draw (ponCanvas, tick, forePrimaryLayer, backPrimaryLayer, historyLayer, hidingMessageFlag, qx = 0, qy = 0) {
-  //   if (!this.playing) {
-  //     return
-  //   }
-  //
-  //   if (this.startTick === -1) {
-  //     this.startTick = tick
-  //   }
-  //   let elapsedTime = tick - this.startTick
-  //
-  //   let fore = forePrimaryLayer
-  //   let back = backPrimaryLayer
-  //
-  //   // TODO 画面揺れをちゃんとする
-  //   // 表レイヤを描画する
-  //   fore.update(tick, ponCanvas)
-  //   fore.draw(ponCanvas, 0, 0, 1.0, hidingMessageFlag, qx, qy)
-  //
-  //   // 表レイヤの上から裏レイヤを描画する
-  //   switch (this.method) {
-  //     case 'crossfade':
-  //       this.crossfade(ponCanvas, tick, elapsedTime, fore, back, hidingMessageFlag, qx, qy)
-  //       break
-  //     case 'univ':
-  //       this.univ(ponCanvas, tick, elapsedTime, fore, back, hidingMessageFlag, qx, qy)
-  //       break
-  //   }
-  //
-  //   // TODO 履歴レイヤを描画
-  //
-  //   // 終了判定
-  //   if (elapsedTime > this.time) {
-  //     this.stop()
-  //     this.onComplete()
-  //   }
-  // }
-  //
-  // /**
-  //  * TODO 動作確認
-  //  */
-  // stop () {
-  //   this.time = -1
-  //   this.startTick = -1
-  //   this.method = ''
-  //   this.playing = false
-  //   this.ruleImageData = null
-  // }
-  //
-  // /**
-  //  * クロスフェードで描画する
-  //  * @param {PonCanvas} ponCanvas キャンバス
-  //  * @param {number} tick 時刻j
-  //  * @param {number} elapsedTime 経過時間
-  //  * @param {PonLayer} fore 表プライマリレイヤ
-  //  * @param {PonLayer} back 裏プライマリレイヤ
-  //  * @param {boolean} hidingMessageFlag メッセージレイヤを隠すかどうか
-  //  * @param {number} qx 画面揺れx
-  //  * @param {number} qy 画面揺れy
-  //  */
-  // crossfade (ponCanvas, tick, elapsedTime, fore, back, hidingMessageFlag, qx, qy) {
-  //   ponCanvas.changeBuffer(1)
-  //
-  //   let alpha = Math.floor(255 * (elapsedTime / this.time))
-  //   if (alpha < 0) alpha = 0
-  //   if (alpha > 255) alpha = 255
-  //
-  //   back.update()
-  //   back.draw(ponCanvas, 0, 0, 1.0, hidingMessageFlag, qx, qy)
-  //   let imageData = ponCanvas.getBufImageData()
-  //   let data = imageData.data
-  //   let length = data.length
-  //
-  //   let i = 3
-  //   while (i < length) {
-  //     data[i] = alpha
-  //     i += 4
-  //   }
-  //
-  //   ponCanvas.changeBuffer(0)
-  //   ponCanvas.putImageDataToBuf(imageData)
-  // }
-  //
-  // /**
-  //  * ユニバーサルトランジションで描画する
-  //  * @param {PonCanvas} ponCanvas キャンバス
-  //  * @param {number} tick 時刻j
-  //  * @param {number} elapsedTime 経過時間
-  //  * @param {PonLayer} fore 表プライマリレイヤ
-  //  * @param {PonLayer} back 裏プライマリレイヤ
-  //  * @param {boolean} hidingMessageFlag メッセージレイヤを隠すかどうか
-  //  * @param {number} qx 画面揺れx
-  //  * @param {number} qy 画面揺れy
-  //  */
-  // univ (ponCanvas, tick, elapsedTime, fore, back, hidingMessageFlag, qx, qy) {
-  //   ponCanvas.changeBuffer(1)
-  //
-  //   this.calcUnivAlphaTable(elapsedTime)
-  //
-  //   let ruleData = this.ruleImageData.data
-  //   let table = this.table
-  //
-  //   back.update(tick, ponCanvas)
-  //   back.draw(ponCanvas, 0, 0, 1.0, hidingMessageFlag, qx, qy)
-  //   let imageData = ponCanvas.getBufImageData()
-  //   let data = imageData.data
-  //   let length = data.length
-  //
-  //   let i = 0
-  //   while (i < length) {
-  //     data[i + 3] = table[ruleData[i]]
-  //     i += 4
-  //   }
-  //
-  //   ponCanvas.changeBuffer(0)
-  //   ponCanvas.putImageDataToBuf(imageData)
-  // }
-  //
-  // /**
-  //  * ユニバーサルトランジション用のアルファ値テーブルを算出し、
-  //  * 結果を this.table に格納する。
-  //  * @param {number} elapsedTime 経過時間
-  //  */
-  // calcUnivAlphaTable (elapsedTime) {
-  //   let vague = this.vague
-  //   let table = this.table
-  //
-  //   let phaseMax = 255 + vague
-  //   let phase = Math.floor(elapsedTime * phaseMax / this.time) - vague
-  //
-  //   let i = 0
-  //   while (i < 256) {
-  //     if (i < phase) {
-  //       table[i] = 255
-  //     } else if (i >= phaseMax) {
-  //       table[i] = 0
-  //     } else {
-  //       let tmp = 255 - ((i - phase) * 255 / vague)
-  //       if (tmp < 0) tmp = 0
-  //       if (tmp > 255) tmp = 255
-  //       table[i] = tmp
-  //     }
-  //     i++
-  //   }
-  // }
-  //
 }
 

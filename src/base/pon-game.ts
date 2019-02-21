@@ -134,27 +134,54 @@ export class PonGame {
     return layer;
   }
 
+  /**
+   * レイヤの表と裏を入れ替える。
+   * レンダラーの入れ替えも行うため、裏レイヤーで描画されるようになる。
+   * トランジションが終わったらresetPrimaryLayersRendererを呼ぶこと。
+   */
   public flipPrimaryLayers(): void {
+    // 入れ替え
+    let tmp1 = this.forePrimaryLayers;
+    this.forePrimaryLayers = this.backPrimaryLayers;
+    this.backPrimaryLayers = tmp1;
     // レンダラーとの紐付けを解除
     this.forePrimaryLayers.forEach((fore) => {
       this.foreRenderer.removeContainer(fore.container);
+      this.backRenderer.removeContainer(fore.container);
     });
     this.backPrimaryLayers.forEach((back) => {
       this.backRenderer.removeContainer(back.container);
+      this.foreRenderer.removeContainer(back.container);
     });
-
-    // 新しくレンダラーに紐付ける
+       // レンダラーに紐付ける
     this.forePrimaryLayers.forEach((fore) => {
       this.backRenderer.addContainer(fore.container);
     });
     this.backPrimaryLayers.forEach((back) => {
       this.foreRenderer.addContainer(back.container);
     });
+  }
 
-    // 入れ替え
-    let tmp1 = this.forePrimaryLayers;
-    this.forePrimaryLayers = this.backPrimaryLayers;
-    this.backPrimaryLayers = tmp1;
+  /**
+   * レンダラーの再設定
+   */
+  public resetPrimaryLayersRenderer() {
+    // レンダラーとの紐付けを解除
+    this.forePrimaryLayers.forEach((fore) => {
+      this.foreRenderer.removeContainer(fore.container);
+      this.backRenderer.removeContainer(fore.container);
+    });
+    this.backPrimaryLayers.forEach((back) => {
+      this.backRenderer.removeContainer(back.container);
+      this.foreRenderer.removeContainer(back.container);
+    });
+    // 新しくレンダラーに紐付ける
+    this.forePrimaryLayers.forEach((fore) => {
+      this.foreRenderer.addContainer(fore.container);
+    });
+    this.backPrimaryLayers.forEach((back) => {
+      this.backRenderer.addContainer(back.container);
+    });
   }
 
   /**
