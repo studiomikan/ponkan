@@ -298,6 +298,26 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
+    new TagAction(
+      ["startskip", "skip"],
+      "スキップを開始する",
+      [],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.startSkipByTag();
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["stopskip"],
+      "スキップを停止する",
+      [],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.stopSkip();
+        return "continue";
+      },
+    ),
     // ======================================================================
     // メッセージ関係
     // ======================================================================
@@ -346,7 +366,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "TODO タグの説明文",
       (values, tick) => {
         p.messageLayer.addChar(values.text);
-        if (p.skipMode === "invalid") {
+        if (!p.isSkipping) {
           return p.conductor.sleep(tick, p.textSpeed);
         } else {
           return "continue";
@@ -406,10 +426,16 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [],
       "TODO タグの説明文",
       (values, tick) => {
-        p.showLineBreakGlyph(tick);
-        p.stopWaitClickSkip();
-        p.addEventHandler(new PonEventHandler("click", "waitClickCallback", "lb"));
-        return p.conductor.stop();
+        p.stopUntilClickSkip(); // クリック待ちまでのスキップを停止
+        if (p.isSkipping) {
+          // UNTIL_CLICK_WAITが終わってもなおスキップ中なら、クリック待ちはしない
+          return "continue";
+        } else {
+          // クリック待ちへ移行
+          p.showLineBreakGlyph(tick);
+          p.addEventHandler(new PonEventHandler("click", "waitClickCallback", "lb"));
+          return p.conductor.stop();
+        }
       },
     ),
     new TagAction(
@@ -418,10 +444,15 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [],
       "TODO タグの説明文",
       (values, tick) => {
-        p.showPageBreakGlyph(tick);
-        p.stopWaitClickSkip();
-        p.addEventHandler(new PonEventHandler("click", "waitClickCallback", "pb"));
-        return p.conductor.stop();
+        p.stopUntilClickSkip();
+        if (p.isSkipping) {
+          // UNTIL_CLICK_WAITが終わってもなおスキップ中なら、クリック待ちはしない
+          return "continue";
+        } else {
+          p.showPageBreakGlyph(tick);
+          p.addEventHandler(new PonEventHandler("click", "waitClickCallback", "pb"));
+          return p.conductor.stop();
+        }
       },
     ),
     // ======================================================================
@@ -966,12 +997,22 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["waittrans", "wt"],
       "トランジションの終了を待つ",
-      [],
+      [
+        new TagValue("canskip", "boolean", false, true, "スキップ可能かどうか"),
+      ],
       "TODO タグの説明文",
       (values, tick) => {
-        p.addEventHandler(new PonEventHandler("click", "waitTransClickCallback"));
-        p.addEventHandler(new PonEventHandler("trans", "waitTransCompleteCallback"));
-        return p.conductor.stop();
+        if (!p.transManager.isRunning) {
+          return "continue";
+        }
+        if (p.isSkipping && values.canskip) {
+          p.waitTransClickCallback();
+          return "break";
+        } else {
+          p.addEventHandler(new PonEventHandler("click", "waitTransClickCallback"));
+          p.addEventHandler(new PonEventHandler("trans", "waitTransCompleteCallback"));
+          return p.conductor.stop();
+        }
       },
     ),
     // ======================================================================

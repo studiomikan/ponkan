@@ -11,6 +11,14 @@ import * as Util from "./base/util.ts";
 import { PonLayer } from "./layer/pon-layer";
 import { applyJsEntity, castTagValues, generateTagActions, TagAction, TagValue } from "./tag-action";
 
+export enum SkipType {
+  INVALID = 0,
+  UNTIL_CLICK_WAIT,
+  UNTIL_S,
+  WHILE_PRESSING_CTRL,
+}
+
+
 export class Ponkan3 extends PonGame implements IConductorEvent {
   // ゲーム設定
   public raiseError: any = {
@@ -20,7 +28,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // conductor
   protected _conductor: Conductor;
   public get conductor(): Conductor { return this._conductor; }
-  public skipMode: "invalid" | "nextclick" | "linebreak" | "pagebreak" | "tag" | "force" = "invalid";
+  public skipMode: SkipType = SkipType.INVALID;
   /** タグで開始したスキップモードをクリックで停止できるかどうか */
   public canStopSkipByTag: boolean = false;
 
@@ -171,16 +179,16 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     }
 
     // コンダクターのスリープを解除する。
-    // テキスト出力のウェイト、waitタグでのスリープ等を解除する。
+    // テキスト出力のウェイト、waitタグの動作を解除し、次のwait系タグまで飛ばす。
     // TODO canskipタグの判定必要か検討する
     if (this.conductor.status === ConductorState.Sleep) {
       this.conductor.start();
-      this.skipMode = "nextclick";
+      this.skipMode = SkipType.UNTIL_CLICK_WAIT;
     }
-    // skipタグで開始されたスキップモードを停止する
-    if (this.skipMode === "tag" && this.canStopSkipByTag) {
-      this.skipMode = "invalid";
-    }
+    // // skipタグで開始されたスキップモードを停止する
+    // if (this.skipMode === "tag" && this.canStopSkipByTag) {
+    //   this.skipMode = SkipType.INVALID;
+    // }
 
     // トリガーを発火
     this.trigger("click", this);
@@ -261,17 +269,25 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   // =========================================================
-  // スキップ関係
+  // スキップ／オート関係
   // =========================================================
 
-  public stopWaitClickSkip() {
-    if (this.skipMode === "nextclick") {
-      this.skipMode = "invalid";
+  public get isSkipping(): boolean  {
+    return this.skipMode !== SkipType.INVALID;
+  }
+
+  public startSkipByTag(): void {
+    this.skipMode = SkipType.UNTIL_S;
+  }
+
+  public stopUntilClickSkip(): void {
+    if (this.skipMode === SkipType.UNTIL_CLICK_WAIT) {
+      this.stopSkip();
     }
   }
 
-  public stopSkip() {
-    this.skipMode = "invalid";
+  public stopSkip(): void {
+    this.skipMode = SkipType.INVALID;
   }
 
   // =========================================================
@@ -313,6 +329,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public onSoundFadeComplete(bufferNum: number) {
     // TODO waitfadeなどの対応
+    Logger.debug("onSoundFadeComplete: ", bufferNum);
   }
 
   // =========================================================
@@ -502,15 +519,15 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // トランジション
   // =========================================================
 
-  public waitTransClickCallback(param: string) {
-    Logger.debug("click on trans.");
+  public waitTransClickCallback() {
+    Logger.debug("click on trans. called waitTransClickCallback");
     this.clearEventHandler("trans");
     this.transManager.stop();
     this.conductor.start();
   }
 
-  public waitTransCompleteCallback(param: string) {
-    Logger.debug("complete trans.");
+  public waitTransCompleteCallback() {
+    Logger.debug("complete trans. called waitTransCompleteCallback");
     this.clearEventHandler("click");
     this.conductor.start();
   }
