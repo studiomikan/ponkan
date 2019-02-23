@@ -464,7 +464,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [],
       "TODO タグの説明文",
       (values, tick) => {
-        p.stopUntilClickSkip();
+        p.stopUntilClickSkip(); // クリック待ちまでのスキップを停止
         if (p.isSkipping) {
           // UNTIL_CLICK_WAITが終わってもなおスキップ中なら、クリック待ちはしない
           return "continue";

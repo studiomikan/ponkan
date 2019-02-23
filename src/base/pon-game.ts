@@ -2,6 +2,7 @@ import * as PIXI from "pixi.js";
 import { BaseLayer } from "./base-layer";
 import { Logger } from "./logger";
 import { PonMouseEvent } from "./pon-mouse-event";
+import { PonKeyEvent } from "./pon-key-event";
 import { PonRenderer } from "./pon-renderer";
 import { PonEventHandler } from "./pon-event-handler";
 import { Resource } from "./resource";
@@ -46,6 +47,7 @@ export class PonGame {
 
     this.initWindowEvent();
     this.initMouseEventOnCanvas();
+    this.initKeyboardEvent();
   }
 
   public destroy(): void {
@@ -256,4 +258,19 @@ export class PonGame {
   public onMouseMove(e: PonMouseEvent): boolean { return true; }
   public onMouseDown(e: PonMouseEvent): boolean { return true; }
   public onMouseUp(e: PonMouseEvent): boolean { return true; }
+
+  private initKeyboardEvent(): void {
+    window.addEventListener("keydown", (e: KeyboardEvent) => {
+      try { this.onKeyDown(new PonKeyEvent(e)); }
+      catch (ex) { this.error(ex); }
+    });
+    window.addEventListener("keyup", (e: KeyboardEvent) => {
+      try { this.onKeyUp(new PonKeyEvent(e)); }
+      catch (ex) { this.error(ex); }
+    });
+  }
+
+  public onKeyDown(e: PonKeyEvent): boolean { return true; }
+  public onKeyUp(e: PonKeyEvent): boolean { return true; }
+
 }

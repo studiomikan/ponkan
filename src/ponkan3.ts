@@ -5,6 +5,7 @@ import { Conductor, ConductorState, IConductorEvent } from "./base/conductor";
 import { Logger } from "./base/logger";
 import { PonGame } from "./base/pon-game";
 import { PonMouseEvent } from "./base/pon-mouse-event";
+import { PonKeyEvent, KeyCode } from "./base/pon-key-event";
 import { ISoundCallbacks, Sound, SoundBuffer } from "./base/sound";
 import { Tag } from "./base/tag";
 import * as Util from "./base/util.ts";
@@ -178,6 +179,13 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     if (!this.forePrimaryLayer.onMouseUp(e)) {
       return false;
     }
+    return this.onPrimaryClick();
+  }
+
+  public onPrimaryClick(): boolean {
+    // skipタグで開始されたスキップモードを停止する
+    // FIXME 入力で停止できるかどうか、タグで指定できるようにするべきではないか。
+    this.skipMode = SkipType.INVALID;
 
     // コンダクターのスリープを解除する。
     // テキスト出力のウェイト、waitタグの動作を解除し、次のwait系タグまで飛ばす。
@@ -186,14 +194,31 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       this.conductor.start();
       this.skipMode = SkipType.UNTIL_CLICK_WAIT;
     }
-    // // skipタグで開始されたスキップモードを停止する
-    // if (this.skipMode === "tag" && this.canStopSkipByTag) {
-    //   this.skipMode = SkipType.INVALID;
-    // }
 
     // トリガーを発火
     this.trigger("click", this);
 
+    return true;
+  }
+
+  // =========================================================
+  // キーボード
+  // =========================================================
+
+  public onKeyDown(e: PonKeyEvent): boolean {
+    Logger.debug("onKeyDown: ", e.keyCode, e);
+    if (e.keyCode === KeyCode.Ctrl) {
+      this.onPrimaryClick();
+      this.startSkipByCtrl();
+    }
+    return true;
+  }
+
+  public onKeyUp(e: PonKeyEvent): boolean {
+    Logger.debug("onKeyUp: ", e.keyCode, e);
+    if (e.keyCode === KeyCode.Ctrl) {
+      this.stopWhilePressingCtrlSkip();
+    }
     return true;
   }
 
@@ -279,6 +304,16 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public startSkipByTag(): void {
     this.skipMode = SkipType.UNTIL_S;
+  }
+
+  public startSkipByCtrl(): void {
+    this.skipMode = SkipType.WHILE_PRESSING_CTRL;
+  }
+
+  public stopWhilePressingCtrlSkip(): void {
+    if (this.skipMode === SkipType.WHILE_PRESSING_CTRL) {
+      this.stopSkip();
+    }
   }
 
   public stopUntilClickSkip(): void {

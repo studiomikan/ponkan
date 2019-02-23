@@ -68,7 +68,7 @@ backlay.
 # ;trans "time": 3000, "method": "scroll-to-top"
 # ;trans "time": 3000, "method": "scroll-to-bottom"
 ;trans "time": 3000, "method": "univ", "rule": "rule_around.png"
-;waittrans "canskip": false
+;waittrans "canskip": true
 
 end.
 ;pb
