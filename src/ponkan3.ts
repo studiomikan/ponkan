@@ -5,7 +5,7 @@ import { Conductor, ConductorState, IConductorEvent } from "./base/conductor";
 import { Logger } from "./base/logger";
 import { PonGame } from "./base/pon-game";
 import { PonMouseEvent } from "./base/pon-mouse-event";
-import { PonKeyEvent, KeyCode } from "./base/pon-key-event";
+import { PonKeyEvent } from "./base/pon-key-event";
 import { ISoundCallbacks, Sound, SoundBuffer } from "./base/sound";
 import { Tag } from "./base/tag";
 import * as Util from "./base/util.ts";
@@ -30,8 +30,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   protected _conductor: Conductor;
   public get conductor(): Conductor { return this._conductor; }
   public skipMode: SkipType = SkipType.INVALID;
-  /** タグで開始したスキップモードをクリックで停止できるかどうか */
-  public canStopSkipByTag: boolean = false;
+  // public canStopSkipByTag: boolean = false;
 
   // タグ関係
   public readonly tagActions: any = {};
@@ -206,18 +205,25 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // =========================================================
 
   public onKeyDown(e: PonKeyEvent): boolean {
-    Logger.debug("onKeyDown: ", e.keyCode, e);
-    if (e.keyCode === KeyCode.Ctrl) {
-      this.onPrimaryClick();
-      this.startSkipByCtrl();
+    Logger.debug("onKeyDown: ", e.key);
+    switch (e.key) {
+      case "Ctrl": case "ctrl": case "Control":
+        this.onPrimaryClick();
+        this.startSkipByCtrl();
+        break;
     }
     return true;
   }
 
   public onKeyUp(e: PonKeyEvent): boolean {
-    Logger.debug("onKeyUp: ", e.keyCode, e);
-    if (e.keyCode === KeyCode.Ctrl) {
-      this.stopWhilePressingCtrlSkip();
+    Logger.debug("onKeyUp: ", e.key);
+    switch (e.key) {
+      case "Ctrl": case "ctrl": case "Control":
+        this.stopWhilePressingCtrlSkip();
+        break;
+      case "Enter": case "enter":
+        this.onPrimaryClick();
+        break;
     }
     return true;
   }
@@ -629,8 +635,8 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   protected static ponkanStoreParams: string[] = [
-    "skipMode",
-    "canStopSkipByTag",
+    // "skipMode",
+    // "canStopSkipByTag",
     "layerCount",
     "currentPage",
     "currentTextSpeed",

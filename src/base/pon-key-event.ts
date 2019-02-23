@@ -1,18 +1,14 @@
 
-export enum KeyCode {
-  Shift = 16,
-  Ctrl = 17,
-}
-
 export class PonKeyEvent {
   private e: KeyboardEvent;
 
   public constructor(e: KeyboardEvent) {
     this.e = e;
+    console.log(e, e.key);
   }
 
-  public get keyCode(): number {
-    return this.e.keyCode;
+  public get key(): string {
+    return this.e.key;
   }
 
   public get ctrl(): boolean { return this.e.ctrlKey; }
