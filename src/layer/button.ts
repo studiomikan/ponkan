@@ -9,7 +9,7 @@ import { Ponkan3 } from "../ponkan3";
  * TextButton、ImageButtonなどの基礎となるボタン機能
  */
 export class Button extends BaseLayer {
-  protected insideFlg : boolean = false;
+  protected insideFlag : boolean = false;
   protected buttonStatus: "normal" | "over" | "on" | "disabled" = "disabled";
   protected jumpFilePath: string | null = null;
   protected callFilePath: string | null = null;
@@ -24,7 +24,7 @@ export class Button extends BaseLayer {
     callLabel: string | null = null,
     exp: string | null = null,
   ): void {
-    this.insideFlg = false;
+    this.insideFlag = false;
     this.jumpFilePath = jumpFilePath;
     this.callFilePath = callFilePath;
     this.jumpLabel = jumpLabel;
@@ -34,7 +34,7 @@ export class Button extends BaseLayer {
 
   public resetButton(): void {
     this.setButtonStatus("disabled");
-    this.insideFlg = false;
+    this.insideFlag = false;
     this.jumpFilePath = null;
     this.callFilePath = null;
     this.jumpLabel = null;
@@ -62,7 +62,7 @@ export class Button extends BaseLayer {
   public onChangeStable(isStable: boolean): void {
     super.onChangeStable(isStable);
     if (isStable) {
-      if (this.insideFlg) {
+      if (this.insideFlag) {
         this.setButtonStatus("over");
       } else {
         this.setButtonStatus("normal");
@@ -77,7 +77,7 @@ export class Button extends BaseLayer {
     if (this.buttonStatus !== "disabled") {
       this.setButtonStatus("over");
     }
-    this.insideFlg = true;
+    this.insideFlag = true;
     return true;
   }
 
@@ -86,7 +86,7 @@ export class Button extends BaseLayer {
     if (this.buttonStatus !== "disabled") {
       this.setButtonStatus("normal");
     }
-    this.insideFlg = false;
+    this.insideFlag = false;
     return true;
   }
 
@@ -124,7 +124,7 @@ export class Button extends BaseLayer {
   }
 
   protected static buttonStoreParams: string[] = [
-    "insideFlg",
+    "insideFlag",
     "buttonStatus",
     "jumpFilePath",
     "callFilePath",
@@ -154,7 +154,7 @@ export class Button extends BaseLayer {
       me[param] = data[param];
     });
     
-    this.insideFlg = false;
+    this.insideFlag = false;
     this.setButtonStatus("normal");
   }
 
@@ -168,4 +168,3 @@ export class Button extends BaseLayer {
     });
   }
 }
-

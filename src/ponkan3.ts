@@ -45,7 +45,8 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public currentPage: "fore" | "back" = "fore";
 
   // メッセージ関係
-  public textSpeed: number = 100;
+  protected currentTextSpeed: number = 100;
+  public nowaitModeFlag: boolean = false;
   protected _messageLayerNum: number = 20;
   public get messageLayerNum(): number { return this._messageLayerNum; }
   public set messageLayerNum(num: number) { this._messageLayerNum = num; }
@@ -451,6 +452,19 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // =========================================================
   // メッセージ
   // =========================================================
+
+  public get textSpeed(): number {
+    if (this.nowaitModeFlag) {
+      return 0;
+    } else {
+      return this.currentTextSpeed;
+    }
+  }
+
+  public set textSpeed(textSpeed: number) {
+    this.currentTextSpeed = textSpeed;
+  }
+
   /**
    * メッセージレイヤ（表）
    */
@@ -584,7 +598,8 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     "canStopSkipByTag",
     "layerCount",
     "currentPage",
-    "textSpeed",
+    "currentTextSpeed",
+    "nowaitModeFlag",
     "messageLayerNum",
     "lineBreakGlyphLayerNum",
     "lineBreakGlyphPos",

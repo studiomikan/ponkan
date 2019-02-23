@@ -9,13 +9,13 @@ import { Ponkan3 } from "../ponkan3";
  * トグルボタン機能
  */
 export class ToggleButton extends BaseLayer {
-  protected insideFlg : boolean = false;
+  protected insideFlag : boolean = false;
   protected buttonStatus: "enabled" | "disabled" = "disabled";
   protected varName: string = "toggle-button-value";
   protected exp: string | null = null;
 
   public initToggleButton(varName: string, exp: string | null): void {
-    this.insideFlg = false;
+    this.insideFlag = false;
     this.varName = varName;
     this.exp = exp;
     this.setButtonStatus("disabled");
@@ -24,7 +24,7 @@ export class ToggleButton extends BaseLayer {
 
   public resetToggleButton(): void {
     this.setButtonStatus("disabled");
-    this.insideFlg = false;
+    this.insideFlag = false;
     this.varName = "toggle-button-value";
     this.exp = null;
   }
@@ -32,7 +32,7 @@ export class ToggleButton extends BaseLayer {
   public setButtonStatus(status: "enabled" | "disabled"): void {
     this.buttonStatus = status;
 
-    if (status === "enabled" && this.insideFlg) {
+    if (status === "enabled" && this.insideFlag) {
       this.resource.getForeCanvasElm().style.cursor = "pointer";
     } else {
       this.resource.getForeCanvasElm().style.cursor = "auto";
@@ -61,7 +61,7 @@ export class ToggleButton extends BaseLayer {
     if (this.buttonStatus !== "disabled") {
       this.resource.getForeCanvasElm().style.cursor = "pointer";
     }
-    this.insideFlg = true;
+    this.insideFlag = true;
     return true;
   }
 
@@ -70,7 +70,7 @@ export class ToggleButton extends BaseLayer {
     if (this.buttonStatus !== "disabled") {
       this.resource.getForeCanvasElm().style.cursor = "auto";
     }
-    this.insideFlg = false;
+    this.insideFlag = false;
     return true;
   }
 
@@ -96,7 +96,7 @@ export class ToggleButton extends BaseLayer {
   }
 
   protected static toggleButtonStoreParams: string[] = [
-    "insideFlg",
+    "insideFlag",
     "buttonStatus",
     "varName",
     "exp",
@@ -122,7 +122,7 @@ export class ToggleButton extends BaseLayer {
     ToggleButton.toggleButtonStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
-    this.insideFlg = false;
+    this.insideFlag = false;
     this.setButtonStatus(data["buttonStatus"]);
     this.setValue(this.getValue());
   }

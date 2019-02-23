@@ -41,6 +41,7 @@
 ;clear
 ;image "lay": 0, "page": "fore", "file": "bg0.png", "visible": true, "x": 0, "y": 0
 ;messageopt "align": "left"
+;nowait
 あいうえお
 ;pb
 ;indent

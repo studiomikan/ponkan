@@ -19,7 +19,6 @@ export class PonGame {
 
   private forePrimaryLayers: BaseLayer[] = [];
   private backPrimaryLayers: BaseLayer[] = [];
-  private drawBackFlg: boolean = true;
 
   public readonly transManager: TransManager;
 

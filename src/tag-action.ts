@@ -366,10 +366,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "TODO タグの説明文",
       (values, tick) => {
         p.messageLayer.addChar(values.text);
-        if (!p.isSkipping) {
-          return p.conductor.sleep(tick, p.textSpeed);
-        } else {
+        if (p.isSkipping || p.textSpeed === 0) {
           return "continue";
+        } else {
+            return p.conductor.sleep(tick, p.textSpeed);
         }
       },
     ),
@@ -407,6 +407,26 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "TODO タグの説明文",
       (values, tick) => {
         p.textSpeed = values.time;
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["nowait"],
+      "一時的に文字出力インターバルを0にする",
+      [],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.nowaitModeFlag = true;
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["endnowait"],
+      "nowaitを終了する",
+      [],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.nowaitModeFlag = false;
         return "continue";
       },
     ),
