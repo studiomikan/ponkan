@@ -33,7 +33,6 @@ export class ImageButton extends Button {
       } else {
         this.width = Math.floor(this.imageWidth / 3);
       }
-      this.setButtonStatus("normal");
       cb.callDone();
     }).fail(() => {
       cb.callFail();

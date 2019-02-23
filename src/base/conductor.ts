@@ -40,8 +40,6 @@ export class Conductor {
 
   protected callStack: ICallStackNode[] = [];
 
-  protected stableBuffer: boolean = false;
-
   public constructor(resource: Resource, eventCallbacks: IConductorEvent) {
     this.resource = resource;
     this.eventCallbacks = eventCallbacks;
@@ -167,10 +165,7 @@ export class Conductor {
       if (tagReturnValue === "break") { break; }
       if (this.status !== ConductorState.Run) { break; }
     }
-    if (this.stableBuffer !== this.isStable) {
-      this.eventCallbacks.onChangeStable(this.isStable);
-      this.stableBuffer = this.isStable;
-    }
+    this.eventCallbacks.onChangeStable(this.isStable);
   }
 
   private applyJsEntity(values: any): void {
