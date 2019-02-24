@@ -537,7 +537,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     pos: "eol" | "relative" | "absolute" = "eol",
     x: number,
     y: number,
-  ) {
+  ): void {
     const mesLay = this.messageLayer;
     if (pos === "eol") {
       const glyphPos = mesLay.getNextTextPos(lay.width);
@@ -555,6 +555,11 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       lay.startFrameAnim(tick);
     }
     lay.visible = true;
+  }
+
+  public hideBreakGlyph(): void {
+     this.pageBreakGlyphLayer.visible = false;
+     this.lineBreakGlyphLayer.visible = false;
   }
 
   public waitClickCallback(param: string) {

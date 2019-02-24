@@ -449,6 +449,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         p.stopUntilClickSkip(); // クリック待ちまでのスキップを停止
         if (p.isSkipping) {
           // UNTIL_CLICK_WAITが終わってもなおスキップ中なら、クリック待ちはしない
+          // ただし改行条件等を通常と揃えるために一度グリフを表示して、すぐに非表示にする
+          p.showLineBreakGlyph(tick);
+          p.hideBreakGlyph();
           return "continue";
         } else {
           // クリック待ちへ移行
@@ -467,6 +470,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         p.stopUntilClickSkip(); // クリック待ちまでのスキップを停止
         if (p.isSkipping) {
           // UNTIL_CLICK_WAITが終わってもなおスキップ中なら、クリック待ちはしない
+          // ただし改行条件等を通常と揃えるために一度グリフを表示して、すぐに非表示にする
+          p.showPageBreakGlyph(tick);
+          p.hideBreakGlyph();
           return "continue";
         } else {
           p.showPageBreakGlyph(tick);
