@@ -19,6 +19,12 @@ export enum SkipType {
   WHILE_PRESSING_CTRL,
 }
 
+const DEFAULT_LAYER_COUNT = 40;
+const DEFAULT_MESSAGE_LAYER_NUM = 20;
+const DEFAULT_LINE_BREAK_LAYER_NUM = 21;
+const DEFAULT_PAGE_BREAK_LAYER_NUM = 22;
+const DEFAULT_AUTO_MODE_LAYER_NUM = 23;
+const DEFAULT_SOUND_BUFFER_COUNT = 5;
 
 export class Ponkan3 extends PonGame implements IConductorEvent {
   // ゲーム設定
@@ -30,13 +36,17 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   protected _conductor: Conductor;
   public get conductor(): Conductor { return this._conductor; }
   public skipMode: SkipType = SkipType.INVALID;
+  public autoModeFlag: boolean = false;
+  public autoModeInterval: number = 1000;
+  public autoModeStartTick: number = -1;
+  public autoModeLayerNum: number = DEFAULT_AUTO_MODE_LAYER_NUM;
   // public canStopSkipByTag: boolean = false;
 
   // タグ関係
   public readonly tagActions: any = {};
 
   // レイヤ関係
-  protected _layerCount: number = 20;
+  protected _layerCount: number = DEFAULT_LAYER_COUNT;
   // public set layerCount(layerCount: number) { this._layerCount = layerCount; }
   public forePrimaryLayer: PonLayer;
   public backPrimaryLayer: PonLayer;
@@ -51,14 +61,14 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public get messageLayerNum(): number { return this._messageLayerNum; }
   public set messageLayerNum(num: number) { this._messageLayerNum = num; }
 
-  protected _lineBreakGlyphLayerNum: number = 21;
+  protected _lineBreakGlyphLayerNum: number = DEFAULT_LINE_BREAK_LAYER_NUM;
   public get lineBreakGlyphLayerNum(): number { return this._lineBreakGlyphLayerNum; }
   public set lineBreakGlyphLayerNum(num: number) { this._lineBreakGlyphLayerNum = num; }
   public lineBreakGlyphPos: "eol" | "relative" | "absolute" = "eol";
   public lineBreakGlyphX: number = 0;
   public lineBreakGlyphY: number = 0;
 
-  protected _pageBreakGlyphLayerNum: number = 22;
+  protected _pageBreakGlyphLayerNum: number = DEFAULT_PAGE_BREAK_LAYER_NUM;
   public get pageBreakGlyphLayerNum(): number { return this._pageBreakGlyphLayerNum; }
   public set pageBreakGlyphLayerNum(num: number) { this._pageBreakGlyphLayerNum = num; }
   public pageBreakGlyphPos: "eol" | "relative" | "absolute" = "eol";
@@ -66,7 +76,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public pageBreakGlyphY: number = 0;
 
   // サウンド関係
-  public soundBufferCount: number = 5;
+  public soundBufferCount: number = DEFAULT_SOUND_BUFFER_COUNT;
   public readonly soundBuffers: SoundBuffer[] = [];
 
   public get tmpVar(): any { return this.resource.tmpVar; }
@@ -138,6 +148,17 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   protected update(tick: number): void {
+    // オートモードによるクリックエミュレーション
+    if (this.autoModeFlag && this.autoModeStartTick >= 0) {
+      let elapsed = tick - this.autoModeStartTick;
+      if (elapsed >= this.autoModeInterval) {
+        console.log('@@@@@@@@@@@@@AUTO CLICk', elapsed);
+        this.onPrimaryClick();
+        this.autoModeStartTick = -1;
+        // onPrimaryClickで解除されてしまうのでもう一回
+        this.startAutoMode();
+      }
+    }
     this.conductor.conduct(tick);
     this.forePrimaryLayer.update(tick);
     this.backPrimaryLayer.update(tick);
@@ -185,6 +206,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     // skipタグで開始されたスキップモードを停止する
     // FIXME 入力で停止できるかどうか、タグで指定できるようにするべきではないか。
     this.skipMode = SkipType.INVALID;
+
+    // オートモードを停止する
+    this.stopAutoMode();
 
     // コンダクターのスリープを解除する。
     // テキスト出力のウェイト、waitタグの動作を解除し、次のwait系タグまで飛ばす。
@@ -332,6 +356,28 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.skipMode = SkipType.INVALID;
   }
 
+  public get autoModeLayer(): PonLayer {
+    return this.foreLayers[this.autoModeLayerNum];
+  }
+
+  public startAutoMode(): void {
+    this.autoModeFlag = true;
+    this.autoModeStartTick = -1;
+    this.autoModeLayer.visible = true;
+  }
+
+  public stopAutoMode(): void {
+    this.autoModeFlag = false;
+    this.autoModeStartTick = -1;
+    this.autoModeLayer.visible = false;
+  }
+
+  public reserveAutoClick(tick: number): void {
+    if (this.autoModeFlag) {
+      this.autoModeStartTick = tick;
+    }
+  }
+
   // =========================================================
   // サウンド
   // =========================================================
@@ -464,6 +510,8 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       targetLayers.push(pageLayers[this.lineBreakGlyphLayerNum]);
     } else if (lay === "pagebreak") {
       targetLayers.push(pageLayers[this.pageBreakGlyphLayerNum]);
+    } else if (lay === "auto" || lay === "automode") {
+      targetLayers.push(pageLayers[this.autoModeLayerNum]);
     } else {
       const layerNum: number = parseInt(lay, 10);
       if (layerNum < 0 || this.layerCount <= layerNum) {
@@ -642,6 +690,8 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   protected static ponkanStoreParams: string[] = [
     // "skipMode",
     // "canStopSkipByTag",
+    // "autoModeFlag",
+    "autoModeInterval",
     "layerCount",
     "currentPage",
     "currentTextSpeed",

@@ -59,6 +59,20 @@ for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
            "height": 24, \
            "frames": "&tv.pageBreakFrames"
 
+#=============================================
+# オートモード表示レイヤの設定
+#=============================================
+;layopt "lay": "automode", \
+        "x": 0, \
+        "y": 0, \
+        "width": 50, \
+        "height": 50, \
+        "visible": false
+;fillcolor "lay": "automode", "color": "0x00FFFF", "alpha": 1.0
+
+
+
+
 # マクロ定義
 ;call "file": "macro.pon"
 

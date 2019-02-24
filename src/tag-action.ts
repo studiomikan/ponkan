@@ -269,6 +269,60 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
+    new TagAction(
+      ["startskip", "skip"],
+      "スキップを開始する",
+      [],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.startSkipByTag();
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["stopskip"],
+      "スキップを停止する",
+      [],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.stopSkip();
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["startautomode", "startauto", "auto"],
+      "オートモードを開始する",
+      [],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.startAutoMode();
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["stopautomode", "stopauto"],
+      "オートモードを停止する",
+      [],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.stopAutoMode();
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["automodeopt", "autoopt"],
+      "オートモードの設定",
+      [
+        new TagValue("lay", "number", false, null, "オートモード状態表示に使用するレイヤー"),
+        new TagValue("time", "number", false, null, "オートモードのインターバル時間(ms)"),
+      ],
+      "TODO タグの説明文",
+      (values, tick) => {
+        if (values.lay) { p.autoModeLayerNum = values.lay; }
+        if (values.time) { p.autoModeInterval = values.time; }
+        return "continue";
+      },
+    ),
     // ======================================================================
     // マクロ
     // ======================================================================
@@ -295,26 +349,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "TODO タグの説明文",
       (values, tick) => {
         throw new Error("マクロ定義エラー。macroとendmacroの対応が取れていません");
-        return "continue";
-      },
-    ),
-    new TagAction(
-      ["startskip", "skip"],
-      "スキップを開始する",
-      [],
-      "TODO タグの説明文",
-      (values, tick) => {
-        p.startSkipByTag();
-        return "continue";
-      },
-    ),
-    new TagAction(
-      ["stopskip"],
-      "スキップを停止する",
-      [],
-      "TODO タグの説明文",
-      (values, tick) => {
-        p.stopSkip();
         return "continue";
       },
     ),
@@ -361,11 +395,14 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ["ch"],
       "文字を出力する",
       [
+        new TagValue("lay", "string", false, "message", "出力する文字"),
         new TagValue("text", "string", true, null, "出力する文字"),
       ],
       "TODO タグの説明文",
       (values, tick) => {
-        p.messageLayer.addChar(values.text);
+        p.getLayers(values).forEach((layer) => {
+          layer.addChar(values.text);
+        });
         if (p.isSkipping || p.textSpeed === 0) {
           return "continue";
         } else {
@@ -376,10 +413,14 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["br"],
       "改行する",
-      [],
+      [
+        new TagValue("lay", "string", false, "message", "出力する文字"),
+      ],
       "TODO タグの説明文",
       (values, tick) => {
-        p.messageLayer.addTextReturn();
+        p.getLayers(values).forEach((layer) => {
+          layer.addTextReturn();
+        });
         return "continue";
       },
     ),
@@ -433,10 +474,14 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["indent"],
       "インデント位置を設定する",
-      [],
+      [
+        new TagValue("lay", "string", false, "message", "出力する文字"),
+      ],
       "TODO タグの説明文",
       (values, tick) => {
-        p.messageLayer.setIndentPoint();
+        p.getLayers(values).forEach((layer) => {
+          layer.setIndentPoint();
+        });
         return "continue";
       },
     ),
@@ -457,6 +502,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           // クリック待ちへ移行
           p.showLineBreakGlyph(tick);
           p.addEventHandler(new PonEventHandler("click", "waitClickCallback", "lb"));
+          p.reserveAutoClick(tick); // オートモード時の自動クリックを予約
           return p.conductor.stop();
         }
       },
@@ -477,6 +523,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         } else {
           p.showPageBreakGlyph(tick);
           p.addEventHandler(new PonEventHandler("click", "waitClickCallback", "pb"));
+          p.reserveAutoClick(tick); // オートモード時の自動クリックを予約
           return p.conductor.stop();
         }
       },
