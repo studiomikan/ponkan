@@ -773,6 +773,16 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     // conductor
     this.conductor.restore(asyncTask, data.conductor, tick);
 
+    // スキップとオートモードは停止させる
+    asyncTask.add((params: any, index: number): AsyncCallbacks => {
+      let cb = new AsyncCallbacks();
+      window.setTimeout(() => {
+        this.stopSkip();
+        this.stopAutoMode();
+      }, 0);
+      return cb;
+    });
+
     return asyncTask.run();
   }
 
