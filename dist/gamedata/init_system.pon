@@ -18,8 +18,31 @@
         "width": "&1024-20-20-500", \
         "height": 200, \
         "visible": true
+;messageopt "lay": "message", \
+            "fontfamily": ["mplus-1p-regular", "monospace"], \
+            "fontsize": 24, \
+            "weight": "normal", \
+            "color": "0xFFFFFF", \
+            "lineheight": 24, \
+            "linepitch": 5, \
+            "align": "left", \
+            "shadow": true, \
+            "shadowalpha": 0.7, \
+            "shadowangle": 0.5, \
+            "shadowblur": 5, \
+            "shadowcolor": "0x000000", \
+            "shadowdistance": 2, \
+            "edgewidth": 0, \
+            "edgecolor": "0x000000", \
+            "autoreturn": true, \
+            "margint": 10, \
+            "marginr": 10, \
+            "marginb": 10, \
+            "marginl": 10
 ;fillcolor "lay": "mes", "color": "0x4286f4", "alpha": 0.7 
 ;textspeed "time": 100
+
+
 
 # 行末グリフの設定
 ---

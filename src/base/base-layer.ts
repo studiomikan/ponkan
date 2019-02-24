@@ -58,6 +58,14 @@ export class BaseLayer {
     fontWeight: "normal",
     fill: 0xffffff,
     textBaseline: "alphabetic",
+    dropShadow: false,
+    dropShadowAlpha: 0.7,
+    dropShadowAngle: Math.PI / 6,
+    dropShadowBlur: 5,
+    dropShadowColor: 0x000000,
+    dropShadowDistance: 2,
+    stroke: 0x000000,
+    strokeThickness: 0,
   });
   public set textFontFamily(fontFamily: string[]) { this.textStyle.fontFamily = fontFamily; }
   public get textFontFamily(): string[] { 
@@ -79,6 +87,36 @@ export class BaseLayer {
       return <string> this.textStyle.fill;
     }
   }
+  public set textShadowVisible(visible: boolean) { this.textStyle.dropShadow = visible; }
+  public get textShadowVisible(): boolean { return this.textStyle.dropShadow; }
+  public set textShadowAlpha(alpha: number) { this.textStyle.dropShadowAlpha = alpha; }
+  public get textShadowAlpha(): number { return this.textStyle.dropShadowAlpha; }
+  public set textShadowAngle(angle: number) { this.textStyle.dropShadowAngle = angle; }
+  public get textShadowAngle(): number { return this.textStyle.dropShadowAngle; }
+  public set textShadowBlur(blur: number) { this.textStyle.dropShadowBlur = blur; }
+  public get textShadowBlur(): number { return this.textStyle.dropShadowBlur; }
+  public set textShadowColor(color: number | string) { this.textStyle.dropShadowColor = color; }
+  public get textShadowColor(): number | string {
+    if (typeof this.textStyle.dropShadowColor === "number") {
+      return this.textStyle.dropShadowColor;
+    } else {
+      return <string> this.textStyle.dropShadowColor;
+    }
+  }
+  public set textShadowDistance(distance: number) { this.textStyle.dropShadowDistance = distance; }
+  public get textShadowDistance(): number { return this.textStyle.dropShadowDistance; }
+
+  public set textEdgeColor(color: number | string) { this.textStyle.stroke = color; }
+  public get textEdgeColor(): number | string {
+    if (typeof this.textStyle.stroke === "number") {
+      return this.textStyle.stroke;
+    } else {
+      return <string> this.textStyle.stroke;
+    }
+  }
+  public set textEdgeWidth(width: number) { this.textStyle.strokeThickness = width; }
+  public get textEdgeWidth(): number { return this.textStyle.strokeThickness; }
+
   public textMarginTop: number = 10;
   public textMarginRight: number  = 10;
   public textMarginBottom: number  = 10;
@@ -542,21 +580,29 @@ export class BaseLayer {
     "imageFilePath",
     "imageX",
     "imageY",
+    "textFontFamily",
+    "textFontSize",
+    "textFontWeight",
+    "textColor",
+    "textLineHeight",
+    "textLinePitch",
+    "textShadowVisible",
+    "textShadowAlpha",
+    "textShadowAngle",
+    "textShadowBlur",
+    "textShadowColor",
+    "textShadowDistance",
+    "textEdgeColor",
+    "textEdgeWidth",
+    "textAutoReturn",
     "textMarginTop",
     "textMarginRight",
     "textMarginBottom",
     "textMarginLeft",
     "textX",
     "textY",
-    "textLineHeight",
-    "textLinePitch",
-    "textAutoReturn",
     "textIndentPoint",
     "reservedTextIndentPoint",
-    "textFontFamily",
-    "textFontSize",
-    "textFontWeight",
-    "textColor",
   ];
 
   protected static baseLayerIgnoreParams: string[] = [

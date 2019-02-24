@@ -372,10 +372,18 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("lineheight", "number", false, null, "テキストの行の高さ(px)"),
         new TagValue("linepitch", "number", false, null, "テキストの行間(px)"),
         new TagValue("align", "string", false, null, `テキスト寄せの方向。"left" / "center" / "right"`),
+        new TagValue("shadow", "boolean", false, null, "影の表示非表示"),
+        new TagValue("shadowalpha", "number", false, null, "影のAlpha(0.0〜1.0)"),
+        new TagValue("shadowangle", "number", false, null, "影の角度(ラジアン)"),
+        new TagValue("shadowblur", "number", false, null, "影のBlur"),
+        new TagValue("shadowcolor ", "number", false, null, "影の色(0xRRGGBB)"),
+        new TagValue("shadowdistance", "number", false, null, "影の距離(px)"),
+        new TagValue("edgewidth", "number", false, null, "縁取りの太さ(px)。0で非表示になる"),
+        new TagValue("edgecolor", "number", false, null, "縁取りの色(0xRRGGBB)"),
       ],
       "TODO タグの説明文",
       (values, tick) => {
-        p.getLayers(values).forEach((layer) => {
+        p.getLayers(values).forEach((layer: PonLayer) => {
           if (values.fontfamily != null) { layer.textFontFamily = values.fontfamily; }
           if (values.sise != null) { layer.textFontSize = values.size; }
           if (values.weight != null) { layer.textFontWeight = values.weight; }
@@ -387,6 +395,14 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           if (values.lineheight != null) { layer.textLineHeight = values.lineheight; }
           if (values.linepitch != null) { layer.textLinePitch = values.linepitch; }
           if (values.align != null) { layer.textAlign = values.align; }
+          if (values.shadow != null) { layer.textShadowVisible = values.shadow; }
+          if (values.shadowalpha != null) { layer.textShadowAlpha = values.shadowalpha; }
+          if (values.shadowangle != null) { layer.textShadowAngle = values.shadowangle; }
+          if (values.shadowblur != null) { layer.textShadowBlur = values.shadowblur; }
+          if (values.shadowcolor != null) { layer.textShadowColor = values.shadowcolor; }
+          if (values.shadowdistance != null) { layer.textShadowDistance = values.shadowdistance ; }
+          if (values.edgewidth != null) { layer.textEdgeWidth = values.edgewidth; }
+          if (values.edgecolor != null) { layer.textEdgeColor = values.edgecolor; }
         });
         return "continue";
       },
