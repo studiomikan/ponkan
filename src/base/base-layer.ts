@@ -677,6 +677,9 @@ export class BaseLayer {
     // テキストのコピー
     dest.clearText();
     this.textLines.forEach((textLine: PonSprite[], index: number) => {
+      if (dest.textLines.length !== 0) {
+        dest.textLines.push([]);
+      }
       let destTextLine: PonSprite[] = dest.textLines[dest.textLines.length - 1];
       textLine.forEach((srcSp: PonSprite, index: number) => {
         let ch: string | null = srcSp.text;
@@ -690,7 +693,6 @@ export class BaseLayer {
         destSp.y = srcSp.y;
         destTextLine.push(destSp);
       });
-      dest.textLines.push([]);
     });
 
     // 背景色のコピー
