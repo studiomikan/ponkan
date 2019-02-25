@@ -2,8 +2,10 @@ import { assert } from "chai";
 import { Ponkan3 } from "../src/ponkan3";
 import { PonLayer } from "../src/layer/pon-layer";
 import { ScriptParserTest } from "./base/script-parser.test";
+import { ScriptParser2Test } from "./base/script-parser2.test";
 
 ScriptParserTest();
+ScriptParser2Test();
 
 describe("Ponkan3のテスト", function() {
   let ponkan: Ponkan3;
@@ -95,7 +97,7 @@ describe("Ponkan3のテスト", function() {
       assert.equal(layers[2].name, "fore layer 2");
       assert.equal(layers[3].name, "fore layer 4");
       assert.equal(layers[4].name, "fore layer 5");
-      assert.equal(layers[5].name, "fore layer 10");
+      assert.equal(layers[5].name, "fore layer " + ponkan.messageLayerNum);
     });
   });
 });

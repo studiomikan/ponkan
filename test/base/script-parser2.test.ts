@@ -1,10 +1,13 @@
 import { assert } from "chai";
-import { ScriptParser } from "../../src/base/script-parser";
+import { ScriptParser2 } from "../../src/base/script-parser2";
 
 let testScript_01 = `#コメント行
-;layopt { "width":100, "height":200, "visible":true }
-;     layopt    {      "width"   :   100     , "height"   :   200 ,    "visible"   :   true    }     
-;meslay{"width":100,"height":200,"visible":true,"file":"hogehoge.png"}
+[layopt "width"="100" 'height'='200' visible=true]
+  [     layopt         width   =   100      
+                      "height"   =   "200"
+                      "visible"   =   true    
+                      ]     
+[meslay"width"=100"height"=200"visible"=true"file"=hogehoge.png]
 ## 22文字 
 吾輩は猫である。名前はまだない。
 二行目だよ。
@@ -34,21 +37,21 @@ let testScript_jspart = `
   console.log(hoge);
 ---`;
 
-export function ScriptParserTest() {
-  describe('ScriptParserのテスト', () => {
+export function ScriptParser2Test() {
+  describe('ScriptParser2のテスト', () => {
     it('一通りパースできるかどうか', () => {
-      let sp = new ScriptParser(testScript_01);
+      let sp = new ScriptParser2(testScript_01);
       assert.isNotNull(sp);
-      // sp.debugPrint();
+      sp.debugPrint();
     });
     it('タグ数', () => {
-      let sp = new ScriptParser(testScript_01);
+      let sp = new ScriptParser2(testScript_01);
       assert.isNotNull(sp.tags);
       assert.isNotEmpty(sp.tags);
       assert.equal(sp.tags.length, 3 + 22 + 4 + 4 + 1);
     });
     it('タグ数の内容（簡易）', () => {
-      let sp = new ScriptParser(testScript_01);
+      let sp = new ScriptParser2(testScript_01);
       let p = 0;
       assert.equal(sp.tags[p++].name, 'layopt');
       assert.equal(sp.tags[p++].name, 'layopt');
@@ -68,41 +71,44 @@ export function ScriptParserTest() {
       assert.equal(sp.tags[p++].name, 's');
     });
     it('末尾にsタグ自動挿入', () => {
-      let sp = new ScriptParser(testScript_01);
+      let sp = new ScriptParser2(testScript_01);
       assert.equal(sp.tags[sp.tags.length-1].name, 's');
     });
     it('タグ', () => {
-      let testScript_tag = `;meslay{"width":100,"height":200,"visible":true,"file":"hogehoge.png"}`;
-      let sp = new ScriptParser(testScript_tag);
+      let testScript_tag = `[meslay "width"=100 height=200 visible=true "file"="hogehoge.png"]`;
+      let sp = new ScriptParser2(testScript_tag);
       assert.equal(sp.tags[0].name, 'meslay');
-      assert.deepEqual(sp.tags[0].values, {
-        "width":100,
-        "height":200,
-        "visible":true,
-        "file":"hogehoge.png",
-        "__body__":`meslay{"width":100,"height":200,"visible":true,"file":"hogehoge.png"}`
-      });
+      let testValues = {
+        "width": "100",
+        "height": "200",
+        "visible": "true",
+        "file": "hogehoge.png",
+        "__body__": `[meslay "width"="100" "height"="200" "visible"="true" "file"="hogehoge.png"]`
+      };
+      console.log("@@@@@", sp.tags[0].values);
+      console.log("@@@@@", testValues);
+      assert.deepEqual(sp.tags[0].values, testValues);
     });
     it('ラベル', () => {
       let testScript_label = `*label-name`;
-      let sp = new ScriptParser(testScript_label);
+      let sp = new ScriptParser2(testScript_label);
       assert.equal(sp.tags[0].name, '__label__');
       assert.deepEqual(sp.tags[0].values, { "__body__":`label-name` });
     });
     it('JavaScript', () => {
       let testScript_js = `-console.log("TEST");`;
-      let sp = new ScriptParser(testScript_js);
+      let sp = new ScriptParser2(testScript_js);
       assert.equal(sp.tags[0].name, '__js__');
       assert.deepEqual(sp.tags[0].values, { "__body__":`console.log("TEST");`, print: false });
     });
     it('JavaScript出力', () => {
       let testScript_jsp = `=100+200;`;
-      let sp = new ScriptParser(testScript_jsp);
+      let sp = new ScriptParser2(testScript_jsp);
       assert.equal(sp.tags[0].name, '__js__');
       assert.deepEqual(sp.tags[0].values, { "__body__":`100+200;`, print: true });
     });
     it('JavaScript部', () => {
-      let sp = new ScriptParser(testScript_jspart);
+      let sp = new ScriptParser2(testScript_jspart);
       assert.equal(sp.tags[0].name, '__js__');
       assert.deepEqual(sp.tags[0].values, { "__body__":"  var hoge = 100;\n  console.log(hoge);\n", print: false });
     });
