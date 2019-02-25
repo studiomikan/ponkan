@@ -162,10 +162,14 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       "TODO タグの説明文",
       (values, tick) => {
-        p.conductor.jump(values.file, values.label).done(() => {
-          p.conductor.start();
-        });
-        return p.conductor.stop();
+        if (values.file == null && values.label == null) {
+          return "continue";
+        } else {
+          p.conductor.jump(values.file, values.label).done(() => {
+            p.conductor.start();
+          });
+          return p.conductor.stop();
+        }
       },
     ),
     new TagAction(
@@ -177,10 +181,14 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       "TODO タグの説明文",
       (values, tick) => {
-        p.conductor.callSubroutine(values.file, values.label).done(() => {
-          p.conductor.start();
-        });
-        return p.conductor.stop();
+        if (values.file == null && values.label == null) {
+          return "continue";
+        } else {
+          p.conductor.callSubroutine(values.file, values.label).done(() => {
+            p.conductor.start();
+          });
+          return p.conductor.stop();
+        }
       },
     ),
     new TagAction(

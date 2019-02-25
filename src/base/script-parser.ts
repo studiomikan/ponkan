@@ -23,28 +23,11 @@ export class ScriptParser {
   }
 
   private getLine(): string | null {
-    if (this.currentLineNum >= this.lines.length) {
+    if (this.currentLineNum < this.lines.length) {
+      return this.lines[this.currentLineNum++].trim();
+    } else {
       return null;
     }
-
-    let line: string = "";
-    let first: boolean = true;
-    while (true) {
-      if (this.currentLineNum >= this.lines.length) {
-        break;
-      }
-
-      let l = this.lines[this.currentLineNum++].trim(); 
-      if (l !== "" && l[l.length - 1] === "\\") {
-        if (!first) { line += "\n"; }
-        first = false;
-        line += l.substring(0, l.length - 1);
-      } else {
-        line += l;
-        break;
-      }
-    }
-    return line;
   }
 
   private getLineWithoutTrim(): string | null {
@@ -121,12 +104,25 @@ export class ScriptParser {
       } else {
         tagName = body.substring(0, reg.index).trim();
         valuesStr = body.substring(reg.index).trim();
-        if (valuesStr.indexOf("{") !== 0) { valuesStr = `{${valuesStr}}` }
-        values = JSON.parse(valuesStr);
+        if (valuesStr.indexOf("{") !== 0) {
+          // { を省略しているとき
+          valuesStr = `{${valuesStr}}`
+        } else {
+          // { を省略していないとき
+          while (valuesStr.charAt(valuesStr.length - 1) !== "}") {
+            let line: string | null = this.getLine();
+            if (line === null) { break; }
+            valuesStr += " " + line.trim();
+          }
+        }
+        console.log(valuesStr);
+        // values = JSON.parse(valuesStr);
+        values = eval(`(${valuesStr})`);
       }
       values.__body__ = body;
       this.addTag(tagName, values);
     } catch (e) {
+      Logger.error(e);
       throw new Error(`コマンド行の文法エラーです(行:${this.currentLineNum})`);
     }
   }
