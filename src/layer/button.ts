@@ -3,6 +3,7 @@ import { AsyncTask } from "../base/async-task";
 import { Resource } from "../base/resource";
 import { BaseLayer } from "../base/base-layer";
 import { PonMouseEvent } from "../base/pon-mouse-event";
+import { PonEventHandler } from "../base/pon-event-handler";
 import { Ponkan3 } from "../ponkan3";
 
 /**
@@ -110,9 +111,18 @@ export class Button extends BaseLayer {
         p.conductor.jump(this.jumpFilePath, this.jumpLabel).done(() => {
           p.conductor.start();
         });
-      } else if (this.callFilePath != null || this.callLabel) {
+      } else if (this.callFilePath != null || this.callLabel != null) {
+        // ボタンによるcall時はイベントハンドラもスタックしておく
+        p.pushEventHandlers();
+        p.addEventHandler(
+          new PonEventHandler("return_subroutin", () => {
+            // TODO スキップ中だったらコンダクタ再開
+            // TODO lb, wb, waitclick, hidemessagesのクリックまちをクリア
+            alert("TODO スキップ中だったらコンダクタ再開");
+          }));
+        // callする
         p.conductor.stop();
-        p.conductor.callSubroutine(this.callFilePath, this.callLabel, false, -1).done(() => {
+        p.conductor.callSubroutine(this.callFilePath, this.callLabel, false, 0).done(() => {
           p.conductor.start();
         });
       }

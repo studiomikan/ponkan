@@ -53,7 +53,7 @@ export class ScriptParser {
         let js: string = "";
         while (true) {
           const tmp: string | null = this.getLineWithoutTrim();
-          if (tmp === null || tmp === "" || tmp.trim() === "---") { break; }
+          if (tmp === null || tmp.trim() === "---") { break; }
           js += tmp + "\n";
         }
         this.addTag("__js__", { __body__: js, print: false });

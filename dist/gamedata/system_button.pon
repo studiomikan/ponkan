@@ -1,12 +1,156 @@
 # システムボタンの初期化
 
+---
+tv.systembutton = {
+  color:        0xFFFFFF,
+  bgcolors:     [0x4286f4, 0x4286f4, 0x4286f4],
+  bgalphas:     [0.7, 1.0, 0.95],
+  x:            20,
+  y:            300,
+  width:        100,
+  height:       24,
+  marginr:      10,
 
+  buttons: [
+    {
+      text:  "Save",
+      file:  "system_button.pon",
+      label: "act_save",
+      exp:   ""
+    },
+    {
+      text:  "Load",
+      file:  "system_button.pon",
+      label: "act_load",
+      exp:   ""
+    },
+    {
+      text:  "Skip",
+      file:  "system_button.pon",
+      label: "act_skip",
+      exp:   ""
+    },
+    {
+      text:  "Auto",
+      file:  "system_button.pon",
+      label: "act_auto",
+      exp:   ""
+    },
+    {
+      text:  "Log",
+      file:  "system_button.pon",
+      label: "act_log",
+      exp:   ""
+    },
+    {
+      text:  "Config",
+      file:  "system_button.pon",
+      label: "act_config",
+      exp:   ""
+    },
+    {
+      text:  "x",
+      file:  "system_button.pon",
+      label: "act_close",
+      exp:   "",
+      width:  24,
+      height: 24,
+    },
+  ]
+}
+---
 
+# 親レイヤ指定
+;layopt {
+  lay:          "&tv.layer.systembutton",
+  x:            "&tv.systembutton.x",
+  y:            "&tv.systembutton.y",
+  width:        "&(tv.systembutton.width + tv.systembutton.marginr) * tv.systembutton.buttons.length",
+  height:       "&tv.systembutton.height",
+  visible:      true,
+  hidemessages: true,
+}
+# ;fillcolor {
+#   lay:          "&tv.layer.systembutton",
+#   color:        0x000000,
+#   alpha:        0.5
+# }
+;messageopt  {
+  lay:          "&tv.layer.systembutton",
+  align:        "center",
+  margint:      0, 
+  lineheight:   16,
+  fontsize:     16,
+  fontweight:   "normal",
+  color:        "&tv.systembutton.color",
+  margint:      2,
+  marginr:      2,
+  marginb:      2,
+  marginl:      2,
+}
 
+---
+---
 
+- tv.x = 0
+;for loops: "&tv.systembutton.buttons.length", indexvar: "i"
+  ---
+  tv.x = (tv.systembutton.width + tv.systembutton.marginr) * tv.i;
+  tv.button = tv.systembutton.buttons[tv.i];
+  tv.width = tv.button.width ? tv.button.width : tv.systembutton.width;
+  tv.height = tv.button.height ? tv.button.height : tv.systembutton.height;
+  ---
+  ;textbutton {
+    lay:          "&tv.layer.systembutton",
+    text:         "&tv.button.text",
+    x:            "&tv.x",
+    y:            0,
+    width:        "&tv.width",
+    height:       "&tv.height",
+    bgcolors:     "&tv.systembutton.bgcolors",
+    bgalphas:     "&tv.systembutton.bgalphas",
+    exp:          "&tv.button.exp",
+    callfile:     "&tv.button.file",
+    calllabel:    "&tv.button.label"
+  }
+;endfor
 
 ;return
 ;s
 
 
+# セーブ
+*act_save
+- alert('save');
+;return
+
+# ロード
+*act_load
+- alert('load');
+;return
+
+# スキップ
+*act_skip
+;startskip
+;return
+
+# ロード
+*act_auto
+;startautomode
+;return
+
+# ログ
+*act_log
+- alert('log');
+;return
+
+# コンフィグ
+*act_log
+- alert('config');
+;return
+
+# メッセージレイヤを隠す
+*act_close
+;hidemessages
+;return
 

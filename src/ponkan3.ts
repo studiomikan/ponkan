@@ -219,7 +219,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     }
 
     // トリガーを発火
-    this.trigger("click", this);
+    this.trigger("click");
 
     return true;
   }
@@ -257,7 +257,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // =========================================================
   private initTagAction() {
     generateTagActions(this).forEach((tagAction) => {
-      Logger.debug(tagAction);
+      // Logger.debug(tagAction);
       tagAction.names.forEach((name) => {
         this.tagActions[name] = tagAction;
       });
@@ -322,6 +322,10 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public onChangeStable(isStable: boolean): void {
     this.forePrimaryLayer.onChangeStable(isStable);
     this.backPrimaryLayer.onChangeStable(isStable);
+  }
+
+  public onReturnSubroutin(): void {
+    this.trigger("return_subroutin");
   }
 
   // =========================================================
@@ -612,14 +616,14 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public hideMessages(): void {
     this.foreLayers.forEach(layer => layer.storeVisible());
-    this.messageLayer.storeVisible();
-
     this.foreLayers.forEach((layer) => {
       if (layer.hideWithMessage) {
         layer.visible = false;
       }
     });
     this.messageLayer.visible = false;
+    this.lineBreakGlyphLayer.visible = false;
+    this.pageBreakGlyphLayer.visible = false;
   }
 
   public showMessages(): void {
@@ -629,13 +633,14 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   public waitClickCallback(param: string) {
-    Logger.debug("waitClickCallback " + param);
-    this.conductor.start();
+    Logger.debug("event", "waitClickCallback " + param);
     switch (param) {
       case "lb": case "pb":
+        this.conductor.start();
         this.hideBreakGlyph();
         break;
       case "hidemessages":
+        this.conductor.start();
         this.showMessages();
         break;
     }

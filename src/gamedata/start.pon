@@ -1,5 +1,7 @@
 # ゲームの開始スクリプト
+
 ;call "file": "init_system.pon"
+
 - gv.memo = "テストスクリプトです";
 |save-mark-0001:セーブコメント01
 |セーブコメント02
@@ -24,7 +26,8 @@
   width:  200,
   height: 32,
   bgcolors: ["0xFF0000", "0x00FF00", "0x0000FF"],
-  exp:    "alert('onClickTextButton')"
+  exp:    "alert('onClickTextButton')",
+  calllabel:  "button-action-call"
 }
 ;imagebutton {
   "lay": 3,
@@ -52,7 +55,7 @@
 ;pb
 ;indent
 かきくけこさしすせそたちつてとなにぬねの
-;hidemessages
+# ;hidemessages
 ;lb
 はひふへほまみむめもやいゆ
 ;lb
@@ -182,9 +185,12 @@ call
 
 ;s
 
+
+*button-action-call
+clicked.
+;return
+
 *jump-target-label
-
-
 あいうえお
 ;lb
 = 100 + 200

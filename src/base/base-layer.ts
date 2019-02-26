@@ -283,11 +283,13 @@ export class BaseLayer {
 
   public onMouseEnter(e: PonMouseEvent): boolean {
     // console.log("onMouseEnter", this.name, e);
+    this.onMouseMove(e);
     return true;
   }
 
   public onMouseLeave(e: PonMouseEvent): boolean {
     // console.log("onMouseLeave", this.name, e);
+    this.onMouseMove(e);
     return true;
   }
 
@@ -584,8 +586,6 @@ export class BaseLayer {
     "textFontSize",
     "textFontWeight",
     "textColor",
-    "textLineHeight",
-    "textLinePitch",
     "textShadowVisible",
     "textShadowAlpha",
     "textShadowAngle",
@@ -594,15 +594,18 @@ export class BaseLayer {
     "textShadowDistance",
     "textEdgeColor",
     "textEdgeWidth",
-    "textAutoReturn",
     "textMarginTop",
     "textMarginRight",
     "textMarginBottom",
     "textMarginLeft",
     "textX",
     "textY",
+    "textLineHeight",
+    "textLinePitch",
+    "textAutoReturn",
     "textIndentPoint",
     "reservedTextIndentPoint",
+    "textAlign",
   ];
 
   protected static baseLayerIgnoreParams: string[] = [

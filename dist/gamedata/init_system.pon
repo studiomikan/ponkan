@@ -3,15 +3,39 @@
 ;raiseerror {"unknowntag": true}
 
 #=============================================
+# 設定
+#=============================================
+---
+// 使用するレイヤーの設定
+tv.layer = {
+  // レイヤーの総数
+  count: 40,
+  // メッセージレイヤ
+  message: 20,
+  // 行末グリフ
+  line: 21,
+  // ページ末グリフ
+  page: 22,
+  // オートモード状態表示
+  auto: 23,
+  
+  // システムボタン
+  systembutton: 24,
+}
+
+---
+
+
+#=============================================
 # レイヤーの設定
 #=============================================
 # レイヤーの数
-;laycount "count": 40
+;laycount "count": "&tv.layer.count"
 
 #=============================================
 # メッセージレイヤーの設定
 #=============================================
-;messagelay "lay": 20
+;messagelay "lay": "&tv.layer.message"
 ;layopt {
   "lay": "message",
   "x": 20,
@@ -44,7 +68,7 @@
   "marginl": 10
 }
 ;fillcolor "lay": "mes", "color": "0x4286f4", "alpha": 0.7 
-;textspeed "time": 100
+;textspeed "time": 50
 
 
 
@@ -54,7 +78,7 @@ let frames = tv.lineBreakFrames = [];
 for (var i = 0; i < 16; i++) { frames.push({"x": 24 * i, "y": 0}); }
 for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
 ---
-;lbglyph "lay": 21, "pos": "eol"
+;lbglyph "lay": "&tv.layer.line", "pos": "eol"
 ;image {
   "lay": "linebreak",
   "file": "linebreak.png",
@@ -77,7 +101,7 @@ let frames = tv.pageBreakFrames = [];
 for (var i = 0; i < 16; i++) { frames.push({"x": 24 * i, "y": 0}); }
 for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
 ---
-;pbglyph "lay": 22, "pos": "eol"
+;pbglyph "lay": "&tv.layer.page", "pos": "eol"
 ;image {
   "lay": "pagebreak",
   "file": "pagebreak.png",
@@ -96,6 +120,7 @@ for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
 #=============================================
 # オートモード表示レイヤの設定
 #=============================================
+;automodeopt "lay": "&tv.layer.auto"
 ;layopt {
   "lay": "automode",
   "x": 0,
@@ -107,9 +132,15 @@ for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
 ;fillcolor "lay": "automode", "color": "0x00FFFF", "alpha": 1.0
 
 
+#=============================================
+# システムボタン
+#=============================================
+;call "file": "system_button.pon"
 
 
+#=============================================
 # マクロ定義
+#=============================================
 ;call "file": "macro.pon"
 
 ;return

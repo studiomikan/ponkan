@@ -193,6 +193,18 @@ export class TextButtonLayer extends FrameAnimLayer {
     let dest: any = destLayer as any;
     let me: any = this as any;
     [
+      "textFontFamily",
+      "textFontSize",
+      "textFontWeight",
+      "textColor",
+      "textShadowVisible",
+      "textShadowAlpha",
+      "textShadowAngle",
+      "textShadowBlur",
+      "textShadowColor",
+      "textShadowDistance",
+      "textEdgeColor",
+      "textEdgeWidth",
       "textMarginTop",
       "textMarginRight",
       "textMarginBottom",
@@ -203,10 +215,7 @@ export class TextButtonLayer extends FrameAnimLayer {
       "textLinePitch",
       "textAutoReturn",
       "textIndentPoint",
-      "textFontFamily",
-      "textFontSize",
-      "textFontWeight",
-      "textColor",
+      "textAlign",
     ].forEach((param) => {
       dest[param] = me[param];
     });

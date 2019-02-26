@@ -370,8 +370,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("lay", "string", false, "message", "対象レイヤー"),
         new TagValue("page", "string", false, "fore", "対象ページ"),
         new TagValue("fontfamily", "array", false, null, "フォント名の配列"),
-        new TagValue("sise", "number", false, null, "フォントサイズ(px)"),
-        new TagValue("weight", "string", false, null, `フォントウェイト。"normal" / "bold"`),
+        new TagValue("fontsize", "number", false, null, "フォントサイズ(px)"),
+        new TagValue("fontweight", "string", false, null, `フォントウェイト。"normal" / "bold"`),
         new TagValue("color", "number", false, null, "文字色(0xRRGGBB)"),
         new TagValue("margint", "number", false, null, "テキスト描画のマージン　上"),
         new TagValue("marginr", "number", false, null, "テキスト描画のマージン　右"),
@@ -393,8 +393,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       (values, tick) => {
         p.getLayers(values).forEach((layer: PonLayer) => {
           if (values.fontfamily != null) { layer.textFontFamily = values.fontfamily; }
-          if (values.sise != null) { layer.textFontSize = values.size; }
-          if (values.weight != null) { layer.textFontWeight = values.weight; }
+          if (values.fontsize != null) { layer.textFontSize = values.fontsize; }
+          if (values.fontweight != null) { layer.textFontWeight = values.fontweight; }
           if (values.color != null) { layer.textColor = values.color; }
           if (values.margint != null) { layer.textMarginTop = values.margint; }
           if (values.marginr != null) { layer.textMarginRight = values.marginr; }
@@ -525,7 +525,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         } else {
           // クリック待ちへ移行
           p.showLineBreakGlyph(tick);
-          p.addEventHandler(new PonEventHandler("click", "waitClickCallback", "lb"));
+          p.addEventHandler(new PonEventHandler("click", () => {
+            p.waitClickCallback("lb");
+          }));
           p.reserveAutoClick(tick); // オートモード時の自動クリックを予約
           return p.conductor.stop();
         }
@@ -546,7 +548,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           return "continue";
         } else {
           p.showPageBreakGlyph(tick);
-          p.addEventHandler(new PonEventHandler("click", "waitClickCallback", "pb"));
+          p.addEventHandler(new PonEventHandler("click", () => {
+            p.waitClickCallback("pb");
+          }));
           p.reserveAutoClick(tick); // オートモード時の自動クリックを予約
           return p.conductor.stop();
         }
@@ -559,7 +563,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "TODO タグの説明文",
       (values, tick) => {
         p.hideMessages();
-        p.addEventHandler(new PonEventHandler("click", "waitClickCallback", "hidemessages"));
+        p.addEventHandler(new PonEventHandler("click", () => {
+          p.waitClickCallback("hidemessages");
+        }));
         return p.conductor.stop();
       },
     ),
@@ -1119,8 +1125,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           p.waitTransClickCallback();
           return "break";
         } else {
-          p.addEventHandler(new PonEventHandler("click", "waitTransClickCallback"));
-          p.addEventHandler(new PonEventHandler("trans", "waitTransCompleteCallback"));
+          p.addEventHandler(new PonEventHandler("click", () => {
+            p.waitTransClickCallback();
+          }));
+          p.addEventHandler(new PonEventHandler("trans", () => {
+            p.waitTransCompleteCallback();
+          }));
           return p.conductor.stop();
         }
       },

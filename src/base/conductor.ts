@@ -12,6 +12,7 @@ export interface IConductorEvent {
   onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break";
   onTag(tag: Tag, line: number, tick: number): "continue" | "break";
   onChangeStable(isStable: boolean): void;
+  onReturnSubroutin(): void;
 }
 
 export interface ICallStackNode {
@@ -115,6 +116,7 @@ export class Conductor {
     }
     this._script = stackData.script;
     this._script.goTo(stackData.point + stackData.returnOffset);
+    this.eventCallbacks.onReturnSubroutin();
     if (stackData.continueConduct) {
       return "continue";
     } else {

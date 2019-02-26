@@ -27,6 +27,7 @@ export class PonGame {
   public get height(): number { return this.foreRenderer.height; }
 
   protected eventHandlers: any = {};
+  protected eventHandlersStack: Array<any> = [];
 
   public constructor(parentId: string, config: any = {}) {
     const elm: HTMLElement | null = document.getElementById(parentId);
@@ -191,7 +192,7 @@ export class PonGame {
    */
   public onCompleteTrans(): boolean {
     // トリガーを発火
-    this.trigger("trans", this);
+    this.trigger("trans");
     return true;
   }
 
@@ -203,14 +204,14 @@ export class PonGame {
     this.eventHandlers[eventName].push(handler);
   }
 
-  public trigger(eventName: string, receiver: any): void {
+  public trigger(eventName: string): void {
     let handlers: PonEventHandler[] = this.eventHandlers[eventName];
     if (handlers == null) { return; }
     handlers.forEach((h) => {
-      Logger.debug("FIRE! ", eventName, h, receiver);
-      h.fire(receiver);
+      Logger.debug("FIRE! ", eventName, h);
+      h.fire();
     });
-    this.eventHandlers[eventName] = null;
+    this.clearEventHandler(eventName);
   }
 
   public clearAllEventHandler(): void {
@@ -219,6 +220,20 @@ export class PonGame {
 
   public clearEventHandler(eventName: string): void {
     this.eventHandlers[eventName] = null;
+  }
+
+  public pushEventHandlers(): void {
+    this.eventHandlersStack.push(this.eventHandlers);
+    this.eventHandlers = {};
+    console.log("push eventhandlers: ", this.eventHandlers);
+  }
+
+  public popEventHandlers(): void {
+    if (this.eventHandlersStack.length === 0) {
+      throw new Error("Engine Error. eventHandlerStackの不正操作");
+    }
+    this.eventHandlers = this.eventHandlersStack.pop();
+    console.log("pop eventhandlers: ", this.eventHandlers);
   }
 
   private initWindowEvent(): void {
