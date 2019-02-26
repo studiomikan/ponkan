@@ -12,33 +12,37 @@
 # メッセージレイヤーの設定
 #=============================================
 ;messagelay "lay": 20
-;layopt "lay": "message", \
-        "x": 20, \
-        "y": "&576-20-200", \
-        "width": "&1024-20-20-500", \
-        "height": 200, \
-        "visible": true
-;messageopt "lay": "message", \
-            "fontfamily": ["mplus-1p-regular", "monospace"], \
-            "fontsize": 24, \
-            "weight": "normal", \
-            "color": "0xFFFFFF", \
-            "lineheight": 24, \
-            "linepitch": 5, \
-            "align": "left", \
-            "shadow": true, \
-            "shadowalpha": 0.7, \
-            "shadowangle": 0.5, \
-            "shadowblur": 5, \
-            "shadowcolor": "0x000000", \
-            "shadowdistance": 2, \
-            "edgewidth": 0, \
-            "edgecolor": "0x000000", \
-            "autoreturn": true, \
-            "margint": 10, \
-            "marginr": 10, \
-            "marginb": 10, \
-            "marginl": 10
+;layopt {
+  "lay": "message",
+  "x": 20,
+  "y": "&576-20-200",
+  "width": "&1024-20-20-500",
+  "height": 200,
+  "visible": true 
+}
+;messageopt {
+  "lay": "message",
+  "fontfamily": ["mplus-1p-regular", "monospace"],
+  "fontsize": 24,
+  "weight": "normal",
+  "color": "0xFFFFFF",
+  "lineheight": 24,
+  "linepitch": 5,
+  "align": "left",
+  "shadow": true,
+  "shadowalpha": 0.7,
+  "shadowangle": 0.5,
+  "shadowblur": 5,
+  "shadowcolor": "0x000000",
+  "shadowdistance": 2,
+  "edgewidth": 0,
+  "edgecolor": "0x000000",
+  "autoreturn": true,
+  "margint": 10,
+  "marginr": 10,
+  "marginb": 10,
+  "marginl": 10
+}
 ;fillcolor "lay": "mes", "color": "0x4286f4", "alpha": 0.7 
 ;textspeed "time": 100
 
@@ -51,17 +55,21 @@ for (var i = 0; i < 16; i++) { frames.push({"x": 24 * i, "y": 0}); }
 for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
 ---
 ;lbglyph "lay": 21, "pos": "eol"
-;image "lay": "linebreak", \
-       "file": "linebreak.png", \
-       "visible": false, \
-       "x": 0, \
-       "y": 0
-;frameanim "lay": "linebreak", \
-           "loop": true, \
-           "time": 50, \
-           "width": 24, \
-           "height": 24, \
-           "frames": "&tv.lineBreakFrames"
+;image {
+  "lay": "linebreak",
+  "file": "linebreak.png",
+  "visible": false,
+  "x": 0,
+  "y": 0
+}
+;frameanim {
+  "lay": "linebreak",
+  "loop": true,
+  "time": 50,
+  "width": 24,
+  "height": 24,
+  "frames": "&tv.lineBreakFrames"
+}
 
 # ページ末グリフの設定
 ---
@@ -70,27 +78,32 @@ for (var i = 0; i < 16; i++) { frames.push({"x": 24 * i, "y": 0}); }
 for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
 ---
 ;pbglyph "lay": 22, "pos": "eol"
-;image "lay": "pagebreak", \
-       "file": "pagebreak.png", \
-       "visible": false, \
-       "x": 0, \
-       "y": 0
-;frameanim "lay": "pagebreak", \
-           "loop": true, \
-           "time": 50, \
-           "width": 24, \
-           "height": 24, \
-           "frames": "&tv.pageBreakFrames"
-
+;image {
+  "lay": "pagebreak",
+  "file": "pagebreak.png",
+  "visible": false,
+  "x": 0,
+  "y": 0
+}
+;frameanim {
+  "lay": "pagebreak",
+  "loop": true,
+  "time": 50,
+  "width": 24,
+  "height": 24,
+  "frames": "&tv.pageBreakFrames"
+}
 #=============================================
 # オートモード表示レイヤの設定
 #=============================================
-;layopt "lay": "automode", \
-        "x": 0, \
-        "y": 0, \
-        "width": 50, \
-        "height": 50, \
-        "visible": false
+;layopt {
+  "lay": "automode",
+  "x": 0,
+  "y": 0,
+  "width": 50,
+  "height": 50,
+  "visible": false
+}
 ;fillcolor "lay": "automode", "color": "0x00FFFF", "alpha": 1.0
 
 

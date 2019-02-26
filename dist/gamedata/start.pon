@@ -16,26 +16,32 @@
 ;layopt "lay": 3, "x": 300, "y": 100, "visible": true, "width": 300, "height": 300
 ;fillcolor "lay": 3, "color": "0xFF00FF", "alpha": 1
 ;messageopt "lay": 3, "align": "center", "margint": 0, "lineheight": 32
-;textbutton "lay":    3, \
-            "text":   "ボタン", \
-            "x":  20, \
-            "y":  20, \
-            "width":  200, \
-            "height": 32, \
-            "bgcolors": ["0xFF0000", "0x00FF00", "0x0000FF"], \
-            "exp":    "alert('onClickTextButton')"
-;imagebutton "lay": 3, \
-             "file": "sample-button-save.png", \
-             "direction": "vertical", \
-             "x": 20, \
-             "y": 70, \
-             "exp": "alert('onClickImageButton');"
-;togglebutton "lay": 3, \
-              "file": "sample-toggle-button.png", \
-              "direction": "vertical", \
-              "x": 20, \
-              "y": 140, \
-              "statevar": "sample-toggle-button"
+;textbutton {
+  lay:    3,
+  text:   "ボタン",
+  x:  20,
+  y:  20,
+  width:  200,
+  height: 32,
+  bgcolors: ["0xFF0000", "0x00FF00", "0x0000FF"],
+  exp:    "alert('onClickTextButton')"
+}
+;imagebutton {
+  "lay": 3,
+  "file": "sample-button-save.png",
+  "direction": "vertical",
+  "x": 20,
+  "y": 70,
+  "exp": "alert('onClickImageButton');"
+}
+;togglebutton {
+  "lay": 3,
+  "file": "sample-toggle-button.png",
+  "direction": "vertical",
+  "x": 20,
+  "y": 140,
+  "statevar": "sample-toggle-button"
+}
 
 *trans_loop
 ;clear
