@@ -544,6 +544,17 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         }
       },
     ),
+    new TagAction(
+      ["hidemessages"],
+      "メッセージレイヤを一時的に隠す",
+      [],
+      "TODO タグの説明文",
+      (values, tick) => {
+        p.hideMessages();
+        p.addEventHandler(new PonEventHandler("click", "waitClickCallback", "hidemessages"));
+        return p.conductor.stop();
+      },
+    ),
     // ======================================================================
     // レイヤー関係
     // ======================================================================
@@ -652,6 +663,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("width", "number", false, null, "幅(px)"),
         new TagValue("height", "number", false, null, "高さ(px)"),
         new TagValue("alpha", "number", false, 1.0, "レイヤーのAlpha(0.0〜1.0)"),
+        new TagValue("hidemessages", "boolean", false, null, "hidemessagesで隠すかどうか"),
       ],
       "TODO タグの説明文",
       (values, tick) => {
@@ -662,6 +674,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           if (values.width != null) { layer.width = values.width; }
           if (values.height != null) { layer.height = values.height; }
           if (values.alpha != null) { layer.alpha = values.alpha; }
+          if (values.hidemessages != null) { layer.hideWithMessage = values.hidemessages; }
         });
         return "continue";
       },

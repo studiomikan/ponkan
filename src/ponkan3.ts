@@ -610,15 +610,33 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
      this.lineBreakGlyphLayer.visible = false;
   }
 
+  public hideMessages(): void {
+    this.foreLayers.forEach(layer => layer.storeVisible());
+    this.messageLayer.storeVisible();
+
+    this.foreLayers.forEach((layer) => {
+      if (layer.hideWithMessage) {
+        layer.visible = false;
+      }
+    });
+    this.messageLayer.visible = false;
+  }
+
+  public showMessages(): void {
+    this.foreLayers.forEach((layer) => {
+      layer.restoreVisible();
+    });
+  }
+
   public waitClickCallback(param: string) {
     Logger.debug("waitClickCallback " + param);
     this.conductor.start();
     switch (param) {
-      case "lb":
-        this.lineBreakGlyphLayer.visible = false;
+      case "lb": case "pb":
+        this.hideBreakGlyph();
         break;
-      case "pb":
-        this.pageBreakGlyphLayer.visible = false;
+      case "hidemessages":
+        this.showMessages();
         break;
     }
   }

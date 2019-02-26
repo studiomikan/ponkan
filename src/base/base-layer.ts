@@ -618,11 +618,7 @@ export class BaseLayer {
   public store(tick: number): any {
     let data: any = {};
     let me: any = this as any;
-
-    BaseLayer.baseLayerStoreParams.forEach((param: string) => {
-      data[param] = me[param];
-    });
-
+    BaseLayer.baseLayerStoreParams.forEach(p => data[p] = me[p]);
     return data;
   }
 
@@ -634,13 +630,9 @@ export class BaseLayer {
   public restore(asyncTask: AsyncTask, data: any, tick: number): void {
     let storeParams = () => {
       let me: any = this as any;
-      let ignore: string[] = [
-      ];
       let restoreParams = BaseLayer.baseLayerStoreParams.filter(
         param => BaseLayer.baseLayerIgnoreParams.indexOf(param) == -1);
-      restoreParams.forEach((param: string) => {
-        me[param] = data[param];
-      });
+      restoreParams.forEach(p => me[p] = data[p]);
     };
 
     // テキストはクリアする
@@ -712,9 +704,7 @@ export class BaseLayer {
     let you: any = dest as any;
     let params = BaseLayer.baseLayerStoreParams.filter(
       param => BaseLayer.baseLayerIgnoreParams.indexOf(param) == -1);
-    params.forEach((param: string) => {
-      you[param] = me[param];
-    });
+    params.forEach(p => you[p] = me[p]);
   }
 
 }
