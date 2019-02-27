@@ -103,6 +103,7 @@ export class Button extends BaseLayer {
     if (!super.onMouseUp(e)) { return false; }
     if (this.buttonStatus !== "disabled") {
       let p: Ponkan3 = this.owner as Ponkan3;
+      // TODO ボタン動作時、スキップとオートを止める
       if (this.exp !== null && this.exp !== "") {
         this.resource.evalJs(this.exp);
       }
