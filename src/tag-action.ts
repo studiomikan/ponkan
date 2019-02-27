@@ -197,10 +197,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [
         new TagValue("file", "string", false, null, "移動先のスクリプトファイル名。省略時は現在のファイル内で移動する"),
         new TagValue("label", "string", false, null, "移動先のラベル名。省略時はファイルの先頭"),
+        new TagValue("forcestart", "boolean", false, false, "戻った後、強制的にシナリオを再開する"),
       ],
       "TODO タグの説明文",
       (values, tick) => {
-        return p.conductor.returnSubroutine();
+        return p.conductor.returnSubroutine(values.forcestart);
       },
     ),
     new TagAction(
@@ -527,7 +528,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           p.showLineBreakGlyph(tick);
           p.addEventHandler(new PonEventHandler("click", () => {
             p.waitClickCallback("lb");
-          }));
+          }, "lb"));
           p.reserveAutoClick(tick); // オートモード時の自動クリックを予約
           return p.conductor.stop();
         }
@@ -550,7 +551,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           p.showPageBreakGlyph(tick);
           p.addEventHandler(new PonEventHandler("click", () => {
             p.waitClickCallback("pb");
-          }));
+          }, "pb"));
           p.reserveAutoClick(tick); // オートモード時の自動クリックを予約
           return p.conductor.stop();
         }
@@ -565,7 +566,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         p.hideMessages();
         p.addEventHandler(new PonEventHandler("click", () => {
           p.waitClickCallback("hidemessages");
-        }));
+        }, "hidemessages"));
         return p.conductor.stop();
       },
     ),
@@ -1127,10 +1128,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         } else {
           p.addEventHandler(new PonEventHandler("click", () => {
             p.waitTransClickCallback();
-          }));
+          }, "waittrans"));
           p.addEventHandler(new PonEventHandler("trans", () => {
             p.waitTransCompleteCallback();
-          }));
+          }, "waittrans"));
           return p.conductor.stop();
         }
       },

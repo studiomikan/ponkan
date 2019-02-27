@@ -132,12 +132,12 @@ tv.systembutton = {
 # スキップ
 *act_skip
 ;startskip
-;return
+;return forcestart: true
 
-# ロード
+# オート
 *act_auto
 ;startautomode
-;return
+;return forcestart: true
 
 # ログ
 *act_log
@@ -145,7 +145,7 @@ tv.systembutton = {
 ;return
 
 # コンフィグ
-*act_log
+*act_config
 - alert('config');
 ;return
 

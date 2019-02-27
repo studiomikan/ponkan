@@ -117,10 +117,8 @@ export class Button extends BaseLayer {
         p.pushEventHandlers();
         p.addEventHandler(
           new PonEventHandler("return_subroutin", () => {
-            // TODO スキップ中だったらコンダクタ再開
-            // TODO lb, wb, waitclick, hidemessagesのクリックまちをクリア
-            alert("TODO スキップ中だったらコンダクタ再開");
-          }));
+            p.popEventHandlers();
+          }, "button_call"));
         // callする
         p.conductor.stop();
         p.conductor.callSubroutine(this.callFilePath, this.callLabel, false, 0).done(() => {

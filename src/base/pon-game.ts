@@ -211,15 +211,26 @@ export class PonGame {
       Logger.debug("FIRE! ", eventName, h);
       h.fire();
     });
-    this.clearEventHandler(eventName);
+    this.clearEventHandlerByName(eventName);
   }
 
   public clearAllEventHandler(): void {
     this.eventHandlers = {};
   }
 
-  public clearEventHandler(eventName: string): void {
-    this.eventHandlers[eventName] = null;
+  public clearEventHandler(eventHandler: PonEventHandler): void {
+    Object.keys(this.eventHandlers).forEach((eventName) => {
+      this.eventHandlers[eventName].forEach((eventHandler: PonEventHandler, index: number) => {
+        if (eventHandler === eventHandler) {
+          this.eventHandlers[eventName].splice(index, 1);
+          return;
+        }
+      });
+    });
+  }
+
+  public clearEventHandlerByName(eventName: string): void {
+    delete this.eventHandlers[eventName];
   }
 
   public pushEventHandlers(): void {

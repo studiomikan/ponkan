@@ -12,7 +12,7 @@ export interface IConductorEvent {
   onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break";
   onTag(tag: Tag, line: number, tick: number): "continue" | "break";
   onChangeStable(isStable: boolean): void;
-  onReturnSubroutin(): void;
+  onReturnSubroutin(forceStart: boolean): void;
 }
 
 export interface ICallStackNode {
@@ -108,19 +108,22 @@ export class Conductor {
 
   /**
    * サブルーチンから戻る
+   * @param forceStart 強制的にpb, lb, waitclickを終わらせるかどうか
    */
-  public returnSubroutine(): "continue" | "break" {
+  public returnSubroutine(forceStart: boolean = false): "continue" | "break" {
     let stackData = this.callStack.pop();
     if (stackData === undefined) {
       throw new Error("returnで戻れませんでした。callとreturnの対応が取れていません");
     }
     this._script = stackData.script;
     this._script.goTo(stackData.point + stackData.returnOffset);
-    this.eventCallbacks.onReturnSubroutin();
     if (stackData.continueConduct) {
+      this.eventCallbacks.onReturnSubroutin(forceStart);
       return "continue";
     } else {
-      return this.stop();
+      this.stop();
+      this.eventCallbacks.onReturnSubroutin(forceStart);
+      return "break";
     }
   }
 

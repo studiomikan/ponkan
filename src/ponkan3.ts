@@ -5,6 +5,7 @@ import { Conductor, ConductorState, IConductorEvent } from "./base/conductor";
 import { Logger } from "./base/logger";
 import { PonGame } from "./base/pon-game";
 import { PonMouseEvent } from "./base/pon-mouse-event";
+import { PonEventHandler } from "./base/pon-event-handler";
 import { PonKeyEvent } from "./base/pon-key-event";
 import { ISoundCallbacks, Sound, SoundBuffer } from "./base/sound";
 import { Tag } from "./base/tag";
@@ -324,8 +325,28 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.backPrimaryLayer.onChangeStable(isStable);
   }
 
-  public onReturnSubroutin(): void {
+  public onReturnSubroutin(forceStart: boolean = false): void {
     this.trigger("return_subroutin");
+    Logger.debug("return_subroutin", forceStart);
+    if (forceStart) {
+      // lb, pb等のイベントハンドラを削除
+      let targetList: PonEventHandler[] = [];
+      Object.keys(this.eventHandlers).forEach((eventName) => {
+        this.eventHandlers[eventName].forEach((eventHandler: PonEventHandler) => {
+          switch (eventHandler.info) {
+            case "lb":
+            case "pb":
+            case "waitclick":
+            case "hidemessages":
+              targetList.push(eventHandler);
+              break;
+          }
+        });
+      });
+      targetList.forEach(target => this.clearEventHandler(target))
+      // 強制開始
+      this.conductor.start();
+    }
   }
 
   // =========================================================
@@ -652,14 +673,14 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public waitTransClickCallback() {
     Logger.debug("click on trans. called waitTransClickCallback");
-    this.clearEventHandler("trans");
+    this.clearEventHandlerByName("trans");
     this.transManager.stop();
     this.conductor.start();
   }
 
   public waitTransCompleteCallback() {
     Logger.debug("complete trans. called waitTransCompleteCallback");
-    this.clearEventHandler("click");
+    this.clearEventHandlerByName("click");
     this.conductor.start();
   }
 
