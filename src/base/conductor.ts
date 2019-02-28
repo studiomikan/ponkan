@@ -38,6 +38,7 @@ export class Conductor {
 
   protected sleepStartTick: number = -1;
   protected sleepTime: number = -1;
+  protected stableBuffer: boolean = false;
 
   protected callStack: ICallStackNode[] = [];
 
@@ -141,6 +142,7 @@ export class Conductor {
       }
     }
 
+    this.callOnChangeStable();
     while (true) {
       let tag: Tag | null = this.script.getNextTag();
       if (tag == null) {
@@ -170,7 +172,7 @@ export class Conductor {
       if (tagReturnValue === "break") { break; }
       if (this.status !== ConductorState.Run) { break; }
     }
-    this.eventCallbacks.onChangeStable(this.isStable);
+    this.callOnChangeStable();
   }
 
   private applyJsEntity(values: any): void {
@@ -183,6 +185,13 @@ export class Conductor {
         }
       }
     }
+  }
+
+  private callOnChangeStable(): void {
+    if (this.stableBuffer !== this.isStable) {
+      this.eventCallbacks.onChangeStable(this.isStable);
+    }
+    this.stableBuffer = this.isStable;
   }
 
   public start(): "continue" | "break" {
