@@ -38,6 +38,7 @@ export class Conductor {
 
   protected sleepStartTick: number = -1;
   protected sleepTime: number = -1;
+  public sleepSender: string = "";
   protected stableBuffer: boolean = false;
 
   protected callStack: ICallStackNode[] = [];
@@ -198,6 +199,7 @@ export class Conductor {
     this._status = ConductorState.Run;
     this.sleepTime = -1;
     this.sleepStartTick = -1;
+    this.sleepSender = "";
     Logger.debug("Conductor start.");
     return "continue"
   }
@@ -208,11 +210,12 @@ export class Conductor {
     return "break"
   }
 
-  public sleep(tick: number, sleepTime: number): "continue" | "break"  {
+  public sleep(tick: number, sleepTime: number, sender: string): "continue" | "break"  {
     this._status = ConductorState.Sleep;
     this.sleepStartTick = tick;
     this.sleepTime = sleepTime;
-    Logger.debug("Conductor sleep.", sleepTime);
+    this.sleepSender = sender;
+    Logger.debug("Conductor sleep.", sleepTime, sender);
     return "break"
   }
 
@@ -224,6 +227,7 @@ export class Conductor {
     "_status",
     "sleepStartTick",
     "sleepTime",
+    "sleepSender",
   ];
 
   public store(saveMarkName: string, tick: number): any {

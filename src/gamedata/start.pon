@@ -51,11 +51,11 @@
 ;image "lay": 0, "page": "fore", "file": "image/bg0.png", "visible": true, "x": 0, "y": 0
 ;messageopt "align": "left"
 あいう
-;waitclick
 えお
 # ;auto
 ;pb
 ;indent
+;wait time:"1000", canskip:false
 かきくけこさしすせそたちつてとなにぬねの
 # ;hidemessages
 ;lb

@@ -204,14 +204,20 @@ export class PonGame {
     this.eventHandlers[eventName].push(handler);
   }
 
-  public trigger(eventName: string): void {
+  /**
+   * イベントハンドラの引き金を引く
+   * @param eventName イベント名
+   * @return イベントハンドラが1つ以上実行されればtrue
+   */
+  public trigger(eventName: string): boolean {
     let handlers: PonEventHandler[] = this.eventHandlers[eventName];
-    if (handlers == null) { return; }
+    if (handlers == null) { return false; }
     handlers.forEach((h) => {
       Logger.debug("FIRE! ", eventName, h);
       h.fire();
     });
     this.clearEventHandlerByName(eventName);
+    return true;
   }
 
   public clearAllEventHandler(): void {

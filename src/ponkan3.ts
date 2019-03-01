@@ -204,6 +204,11 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   public onPrimaryClick(): boolean {
+    // トリガーを発火
+    if (this.trigger("click")) {
+      return true;
+    }
+
     // skipタグで開始されたスキップモードを停止する
     // FIXME 入力で停止できるかどうか、タグで指定できるようにするべきではないか。
     this.skipMode = SkipType.INVALID;
@@ -212,15 +217,11 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.stopAutoMode();
 
     // コンダクターのスリープを解除する。
-    // テキスト出力のウェイト、waitタグの動作を解除し、次のwait系タグまで飛ばす。
-    // TODO canskipタグの判定必要か検討する
-    if (this.conductor.status === ConductorState.Sleep) {
+    // テキスト出力のウェイトの動作を解除し、次のwait系タグまで飛ばす。
+    if (this.conductor.status === ConductorState.Sleep && this.conductor.sleepSender === "ch") {
       this.conductor.start();
       this.skipMode = SkipType.UNTIL_CLICK_WAIT;
     }
-
-    // トリガーを発火
-    this.trigger("click");
 
     return true;
   }

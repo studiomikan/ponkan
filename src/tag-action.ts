@@ -364,6 +364,29 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     new TagAction(
+      ["wait"],
+      "スクリプト制御",
+      "指定時間を待つ",
+      [
+        new TagValue("time", "number", true, null, "停止時間(ms)"),
+        new TagValue("canskip", "boolean", false, true, "スキップ可能かどうか"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        if (p.isSkipping && values.canskip) {
+          return "continue";
+        } else {
+          if (values.canskip) {
+            p.addEventHandler(new PonEventHandler("click", () => {
+              p.conductor.start();
+              p.stopUntilClickSkip(); // 次のlb,pbまで飛ばされるのを防ぐ
+            }, "wait"));
+          }
+          return p.conductor.sleep(tick, values.time, "wait");
+        }
+      },
+    ),
+    new TagAction(
       ["waitclick"],
       "スクリプト制御",
       "クリック待ちで停止する",
@@ -491,7 +514,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         if (p.isSkipping || p.textSpeed === 0) {
           return "continue";
         } else {
-            return p.conductor.sleep(tick, p.textSpeed);
+          return p.conductor.sleep(tick, p.textSpeed, "ch");
         }
       },
     ),
