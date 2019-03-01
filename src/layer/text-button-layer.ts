@@ -24,6 +24,7 @@ export class TextButton extends Button {
     callFile: string | null = null,
     jumpLabel: string | null = null,
     callLabel: string | null = null,
+    isSystemButton: boolean = false,
     exp: string | null = null,
     text: string,
     normalBackgroundColor: number,
@@ -37,7 +38,7 @@ export class TextButton extends Button {
     this.freeImage();
     this.clearText();
 
-    this.initButton(jumpFile, callFile, jumpLabel, callLabel, exp);
+    this.initButton(jumpFile, callFile, jumpLabel, callLabel, isSystemButton, exp);
 
     this.txtBtnText = text;
     this.txtBtnNormalBackgroundColor = normalBackgroundColor;
@@ -49,6 +50,7 @@ export class TextButton extends Button {
 
     this.setBackgroundColor(normalBackgroundColor, normalBackgroundAlpha);
     this.addText(text);
+    this.setButtonStatus("disabled");
   }
 
   public resetButton(): void {
@@ -154,6 +156,7 @@ export class TextButtonLayer extends FrameAnimLayer {
     height: number,
     backgroundColors: number[],
     backgroundAlphas: number[],
+    isSystemButton: boolean,
   ): void {
 
     let name = `TextButton ${this.textButtons.length}`;
@@ -178,6 +181,7 @@ export class TextButtonLayer extends FrameAnimLayer {
       callFile,
       jumpLabel,
       callLabel,
+      isSystemButton,
       exp,
       text,
       normal,
@@ -228,6 +232,30 @@ export class TextButtonLayer extends FrameAnimLayer {
       this.deleteChildLayer(textButton);
     });
     this.textButtons = [];
+  }
+
+  public lockButtons(): void {
+    this.textButtons.forEach((textButton) => {
+      textButton.setButtonStatus("disabled");
+    });
+  }
+
+  public unlockButtons(): void {
+    this.textButtons.forEach((textButton) => {
+      textButton.setButtonStatus("normal");
+    });
+  }
+
+  public lockSystemButtons(): void {
+    this.textButtons.forEach((textButton) => {
+      textButton.lockSystemButton();
+    });
+  }
+
+  public unlockSystemButtons(): void {
+    this.textButtons.forEach((textButton) => {
+      textButton.unlockSystemButton();
+    });
   }
 
   public store(tick: number): any {

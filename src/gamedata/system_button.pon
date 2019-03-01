@@ -111,7 +111,8 @@ tv.systembutton = {
     bgalphas:     "&tv.systembutton.bgalphas",
     exp:          "&tv.button.exp",
     callfile:     "&tv.button.file",
-    calllabel:    "&tv.button.label"
+    calllabel:    "&tv.button.label",
+    system:       true
   }
 ;endfor
 

@@ -69,8 +69,9 @@ OK.
 ;backlay
 ;layopt "lay": 1, "page": "fore", "visible": false
 ;image "lay": 0, "page": "back", "file": "bg1.png", "visible": true, "x": 0, "y": 0
+;lockbutton
+;locksystembutton
 backlay.
-;pb
 
 # ;trans "time": 3000, "method": "crossfade"
 # ;trans "time": 3000, "method": "scroll-to-left"
@@ -79,6 +80,8 @@ backlay.
 # ;trans "time": 3000, "method": "scroll-to-bottom"
 ;trans "time": 3000, "method": "univ", "rule": "rule_around.png"
 ;waittrans "canskip": true
+;unlockbutton
+;unlocksystembutton
 
 end.
 ;pb

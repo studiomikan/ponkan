@@ -15,6 +15,7 @@ export class ImageButton extends Button {
     callFile: string | null = null,
     jumpLabel: string | null = null,
     callLabel: string | null = null,
+    isSystemButton: boolean = false,
     exp: string | null = null,
     file: string,
     direction: "horizontal" | "vertical",
@@ -24,7 +25,7 @@ export class ImageButton extends Button {
     this.resetButton();
     this.freeImage();
 
-    this.initButton(jumpFile, callFile, jumpLabel, callLabel, exp);
+    this.initButton(jumpFile, callFile, jumpLabel, callLabel, isSystemButton, exp);
     this.direction = direction;
 
     this.loadImage(file).done(() => {
@@ -33,6 +34,7 @@ export class ImageButton extends Button {
       } else {
         this.width = Math.floor(this.imageWidth / 3);
       }
+      this.setButtonStatus("disabled");
       cb.callDone();
     }).fail(() => {
       cb.callFail();
@@ -129,6 +131,7 @@ export class ImageButtonLayer extends TextButtonLayer {
     x: number,
     y: number,
     direction: "horizontal" | "vertical",
+    isSystemButton: boolean,
   ): AsyncCallbacks {
     let name = `ImageButton ${this.imageButtons.length}`;
     let btn = new ImageButton(name, this.resource, this.owner);
@@ -142,6 +145,7 @@ export class ImageButtonLayer extends TextButtonLayer {
       callFile,
       jumpLabel,
       callFile,
+      isSystemButton,
       exp,
       file,
       direction,
@@ -155,6 +159,34 @@ export class ImageButtonLayer extends TextButtonLayer {
       this.deleteChildLayer(imageButton);
     });
     this.imageButtons = [];
+  }
+
+  public lockButtons(): void {
+    super.lockButtons();
+    this.imageButtons.forEach((imageButton) => {
+      imageButton.setButtonStatus("disabled");
+    });
+  }
+
+  public unlockButtons(): void {
+    super.unlockButtons();
+    this.imageButtons.forEach((imageButton) => {
+      imageButton.setButtonStatus("normal");
+    });
+  }
+
+  public lockSystemButtons(): void {
+    super.lockSystemButtons();
+    this.imageButtons.forEach((imageButton) => {
+      imageButton.lockSystemButton();
+    });
+  }
+
+  public unlockSystemButtons(): void {
+    super.unlockSystemButtons();
+    this.imageButtons.forEach((imageButton) => {
+      imageButton.unlockSystemButton();
+    });
   }
 
   public store(tick: number): any {

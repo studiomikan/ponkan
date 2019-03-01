@@ -17,12 +17,15 @@ export class Button extends BaseLayer {
   protected jumpLabel: string | null = null;
   protected callLabel: string | null = null;
   protected exp: string | null = null;
+  protected isSystemButton: boolean = false;
+  protected systemButtonLocked: boolean = false;
 
   public initButton(
     jumpFilePath: string | null = null,
     callFilePath: string | null = null,
     jumpLabel: string | null = null,
     callLabel: string | null = null,
+    isSystemButton: boolean = false,
     exp: string | null = null,
   ): void {
     this.insideFlag = false;
@@ -30,6 +33,7 @@ export class Button extends BaseLayer {
     this.callFilePath = callFilePath;
     this.jumpLabel = jumpLabel;
     this.callLabel = callLabel;
+    this.isSystemButton = isSystemButton;
     this.exp = exp;
   }
 
@@ -44,8 +48,12 @@ export class Button extends BaseLayer {
   }
 
   public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
-    this.buttonStatus = status;
     let cursor: string = "auto";
+    if (this.isSystemButton && this.systemButtonLocked) {
+      this.buttonStatus = "disabled";
+    } else {
+      this.buttonStatus = status;
+    }
     switch (status) {
       case "normal": case "disabled":
         cursor = "auto";
@@ -60,8 +68,24 @@ export class Button extends BaseLayer {
     this.resource.getForeCanvasElm().style.cursor = cursor;
   }
 
+  public lockSystemButton(): void {
+    if (this.isSystemButton) {
+      this.systemButtonLocked = true;
+      this.setButtonStatus("disabled");
+    }
+  }
+
+  public unlockSystemButton(): void {
+    if (this.isSystemButton) {
+      this.systemButtonLocked = false;
+      this.setButtonStatus("normal");
+    }
+  }
+
   public onChangeStable(isStable: boolean): void {
     super.onChangeStable(isStable);
+    if (!this.isSystemButton) { return; }
+    if (this.systemButtonLocked) { return; }
     if (isStable) {
       if (this.insideFlag) {
         this.setButtonStatus("over");
@@ -125,7 +149,9 @@ export class Button extends BaseLayer {
           p.conductor.start();
         });
       }
-      this.setButtonStatus("disabled");
+      if (!this.isSystemButton) {
+        this.setButtonStatus("disabled");
+      }
       return false;
     } else {
       return true;
@@ -139,6 +165,8 @@ export class Button extends BaseLayer {
     "callFilePath",
     "jumpLabel",
     "callLabel",
+    "isSystemButton",
+    "systemButtonLocked",
     "exp"
   ];
 

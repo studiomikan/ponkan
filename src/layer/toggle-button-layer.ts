@@ -14,6 +14,7 @@ export class ImageToggleButton extends ToggleButton {
   public initImageToggleButton(
     filePath: string,
     varName: string,
+    isSystemButton: boolean = false,
     exp: string | null,
     direction: "horizontal" | "vertical",
   ): AsyncCallbacks {
@@ -30,7 +31,7 @@ export class ImageToggleButton extends ToggleButton {
       } else {
         this.width = Math.floor(this.imageWidth / 2);
       }
-      this.initToggleButton(varName, exp);
+      this.initToggleButton(varName, isSystemButton, exp);
       cb.callDone();
     }).fail(() => {
       cb.callFail();
@@ -108,6 +109,7 @@ export class ToggleButtonLayer extends ImageButtonLayer {
     x: number,
     y: number,
     varName: string,
+    isSystemButton: boolean = false,
     exp: string | null,
     direction: "horizontal" | "vertical",
   ): AsyncCallbacks {
@@ -121,6 +123,7 @@ export class ToggleButtonLayer extends ImageButtonLayer {
     return btn.initImageToggleButton(
       filePath,
       varName,
+      isSystemButton,
       exp,
       direction
     );
@@ -133,6 +136,34 @@ export class ToggleButtonLayer extends ImageButtonLayer {
       this.deleteChildLayer(toggleButton);
     });
     this.imageToggleButtons = [];
+  }
+
+  public lockButtons(): void {
+    super.lockButtons();
+    this.imageToggleButtons.forEach((toggleButton) => {
+      toggleButton.setButtonStatus("disabled");
+    });
+  }
+
+  public unlockButtons(): void {
+    super.unlockButtons();
+    this.imageToggleButtons.forEach((toggleButton) => {
+      toggleButton.setButtonStatus("enabled");
+    });
+  }
+
+  public lockSystemButtons(): void {
+    super.lockSystemButtons();
+    this.imageToggleButtons.forEach((toggleButton) => {
+      toggleButton.lockSystemButton();
+    });
+  }
+
+  public unlockSystemButtons(): void {
+    super.unlockSystemButtons();
+    this.imageToggleButtons.forEach((toggleButton) => {
+      toggleButton.unlockSystemButton();
+    });
   }
 
   public store(tick: number): any {

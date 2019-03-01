@@ -13,10 +13,17 @@ export class ToggleButton extends BaseLayer {
   protected buttonStatus: "enabled" | "disabled" = "disabled";
   protected varName: string = "toggle-button-value";
   protected exp: string | null = null;
+  protected isSystemButton: boolean = false;
+  protected systemButtonLocked: boolean = false;
 
-  public initToggleButton(varName: string, exp: string | null): void {
+  public initToggleButton(
+    varName: string,
+    isSystemButton: boolean,
+    exp: string | null
+  ): void {
     this.insideFlag = false;
     this.varName = varName;
+    this.isSystemButton = isSystemButton;
     this.exp = exp;
     this.setButtonStatus("disabled");
     this.setValue(this.getValue());
@@ -30,8 +37,11 @@ export class ToggleButton extends BaseLayer {
   }
 
   public setButtonStatus(status: "enabled" | "disabled"): void {
-    this.buttonStatus = status;
-
+    if (this.isSystemButton && this.systemButtonLocked) {
+      this.buttonStatus = "disabled";
+    } else {
+      this.buttonStatus = status;
+    }
     if (status === "enabled" && this.insideFlag) {
       this.resource.getForeCanvasElm().style.cursor = "pointer";
     } else {
@@ -39,6 +49,19 @@ export class ToggleButton extends BaseLayer {
     }
   }
 
+  public lockSystemButton(): void {
+    if (this.isSystemButton) {
+      this.systemButtonLocked = true;
+      this.setButtonStatus("disabled");
+    }
+  }
+
+  public unlockSystemButton(): void {
+    if (this.isSystemButton) {
+      this.systemButtonLocked = false;
+      this.setButtonStatus("enabled");
+    }
+  }
   public setValue(value: boolean): void {
     this.resource.tmpVar[this.varName] = value;
   }
@@ -49,6 +72,8 @@ export class ToggleButton extends BaseLayer {
 
   public onChangeStable(isStable: boolean): void {
     super.onChangeStable(isStable);
+    if (!this.isSystemButton) { return; }
+    if (this.systemButtonLocked) { return; }
     if (isStable) {
       this.setButtonStatus("enabled");
     } else {
@@ -99,6 +124,8 @@ export class ToggleButton extends BaseLayer {
     "insideFlag",
     "buttonStatus",
     "varName",
+    "isSystemButton",
+    "systemButtonLocked",
     "exp",
   ];
 
