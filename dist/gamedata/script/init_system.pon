@@ -81,7 +81,7 @@ for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
 ;lbglyph "lay": "&tv.layer.line", "pos": "eol"
 ;image {
   "lay": "linebreak",
-  "file": "linebreak.png",
+  "file": "image/linebreak.png",
   "visible": false,
   "x": 0,
   "y": 0
@@ -104,7 +104,7 @@ for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
 ;pbglyph "lay": "&tv.layer.page", "pos": "eol"
 ;image {
   "lay": "pagebreak",
-  "file": "pagebreak.png",
+  "file": "image/pagebreak.png",
   "visible": false,
   "x": 0,
   "y": 0
@@ -135,12 +135,12 @@ for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
 #=============================================
 # システムボタン
 #=============================================
-;call "file": "system_button.pon"
+;call "file": "script/system_button.pon"
 
 
 #=============================================
 # マクロ定義
 #=============================================
-;call "file": "macro.pon"
+;call "file": "script/macro.pon"
 
 ;return

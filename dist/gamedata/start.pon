@@ -1,20 +1,20 @@
 # ゲームの開始スクリプト
 
-;call "file": "init_system.pon"
+;call "file": "script/init_system.pon"
 
 - gv.memo = "テストスクリプトです";
 |save-mark-0001:セーブコメント01
 |セーブコメント02
 
-;image "lay": 0, "page": "fore", "file": "bg0.png", "visible": true, "x": 0, "y": 0
-;image "lay": 1, "file": "pagebreak.png", "visible": true, "x": 0, "y": 0
+;image "lay": 0, "page": "fore", "file": "image/bg0.png", "visible": true, "x": 0, "y": 0
+;image "lay": 1, "file": "image/pagebreak.png", "visible": true, "x": 0, "y": 0
 ;frameanim "lay": 1, "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.pageBreakFrames"
 ;startframeanim "lay": 1
-# ;loadsound "buf": 0, "file": "ohka_japan.mp3"
+# ;loadsound "buf": 0, "file": "sound/ohka_japan.mp3"
 # ;soundopt "buf": 0, "volume": 0.2
 # ;playsound "buf": 0
 
-;image "lay": 2, "page": "fore", "file": "okayu.jpg", "visible": true, "x": 0, "y": 0
+;image "lay": 2, "page": "fore", "file": "image/okayu.jpg", "visible": true, "x": 0, "y": 0
 ;layopt "lay": 3, "x": 300, "y": 100, "visible": true, "width": 300, "height": 300
 ;fillcolor "lay": 3, "color": "0xFF00FF", "alpha": 1
 ;messageopt "lay": 3, "align": "center", "margint": 0, "lineheight": 32
@@ -31,7 +31,7 @@
 }
 ;imagebutton {
   "lay": 3,
-  "file": "sample-button-save.png",
+  "file": "image/sample-button-save.png",
   "direction": "vertical",
   "x": 20,
   "y": 70,
@@ -39,7 +39,7 @@
 }
 ;togglebutton {
   "lay": 3,
-  "file": "sample-toggle-button.png",
+  "file": "image/sample-toggle-button.png",
   "direction": "vertical",
   "x": 20,
   "y": 140,
@@ -48,7 +48,7 @@
 
 *trans_loop
 ;clear
-;image "lay": 0, "page": "fore", "file": "bg0.png", "visible": true, "x": 0, "y": 0
+;image "lay": 0, "page": "fore", "file": "image/bg0.png", "visible": true, "x": 0, "y": 0
 ;messageopt "align": "left"
 あいうえお
 # ;auto

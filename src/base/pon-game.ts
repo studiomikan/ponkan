@@ -42,7 +42,7 @@ export class PonGame {
     this.backRenderer = new PonRenderer(elm, config.width, config.height);
     // this.backRenderer.canvasElm.style.display = "none";
     
-    this.resource = new Resource(this, "gamedata");
+    this.resource = new Resource(this, config.gameDataDir);
 
     this.transManager = new TransManager(this, this.resource);
 
