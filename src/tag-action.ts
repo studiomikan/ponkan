@@ -363,6 +363,31 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
+    new TagAction(
+      ["waitclick"],
+      "スクリプト制御",
+      "クリック待ちで停止する",
+      [
+        new TagValue("canskip", "boolean", false, true, "スキップ可能かどうか"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        p.stopUntilClickSkip(); // クリック待ちまでのスキップを停止
+        if (p.isSkipping && values.canskip) {
+          // UNTIL_CLICK_WAITが終わってもなおスキップ中なら、クリック待ちはしない
+          // ただし改行条件等を通常と揃えるために一度グリフを表示して、すぐに非表示にする
+          return "continue";
+        } else {
+          p.addEventHandler(new PonEventHandler("click", () => {
+            p.conductor.start();
+          }, "waitclick"));
+          if (values.canskip) {
+            p.reserveAutoClick(tick); // オートモード時の自動クリックを予約
+          }
+          return p.conductor.stop();
+        }
+      },
+    ),
     // ======================================================================
     // マクロ
     // ======================================================================
@@ -569,7 +594,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           // クリック待ちへ移行
           p.showLineBreakGlyph(tick);
           p.addEventHandler(new PonEventHandler("click", () => {
-            p.waitClickCallback("lb");
+            p.conductor.start();
+            p.hideBreakGlyph();
           }, "lb"));
           p.reserveAutoClick(tick); // オートモード時の自動クリックを予約
           return p.conductor.stop();
@@ -593,7 +619,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         } else {
           p.showPageBreakGlyph(tick);
           p.addEventHandler(new PonEventHandler("click", () => {
-            p.waitClickCallback("pb");
+            p.conductor.start();
+            p.hideBreakGlyph();
           }, "pb"));
           p.reserveAutoClick(tick); // オートモード時の自動クリックを予約
           return p.conductor.stop();
@@ -609,7 +636,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       (values, tick) => {
         p.hideMessages();
         p.addEventHandler(new PonEventHandler("click", () => {
-          p.waitClickCallback("hidemessages");
+          p.conductor.start();
+          p.showMessages();
         }, "hidemessages"));
         return p.conductor.stop();
       },

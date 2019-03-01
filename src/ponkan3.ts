@@ -653,20 +653,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     });
   }
 
-  public waitClickCallback(param: string) {
-    Logger.debug("event", "waitClickCallback " + param);
-    switch (param) {
-      case "lb": case "pb":
-        this.conductor.start();
-        this.hideBreakGlyph();
-        break;
-      case "hidemessages":
-        this.conductor.start();
-        this.showMessages();
-        break;
-    }
-  }
-
   // =========================================================
   // トランジション
   // =========================================================

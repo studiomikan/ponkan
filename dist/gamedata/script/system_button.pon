@@ -14,43 +14,43 @@ tv.systembutton = {
   buttons: [
     {
       text:  "Save",
-      file:  "system_button.pon",
+      file:  "script/system_button.pon",
       label: "act_save",
       exp:   ""
     },
     {
       text:  "Load",
-      file:  "system_button.pon",
+      file:  "script/system_button.pon",
       label: "act_load",
       exp:   ""
     },
     {
       text:  "Skip",
-      file:  "system_button.pon",
+      file:  "script/system_button.pon",
       label: "act_skip",
       exp:   ""
     },
     {
       text:  "Auto",
-      file:  "system_button.pon",
+      file:  "script/system_button.pon",
       label: "act_auto",
       exp:   ""
     },
     {
       text:  "Log",
-      file:  "system_button.pon",
+      file:  "script/system_button.pon",
       label: "act_log",
       exp:   ""
     },
     {
       text:  "Config",
-      file:  "system_button.pon",
+      file:  "script/system_button.pon",
       label: "act_config",
       exp:   ""
     },
     {
       text:  "x",
-      file:  "system_button.pon",
+      file:  "script/system_button.pon",
       label: "act_close",
       exp:   "",
       width:  24,
