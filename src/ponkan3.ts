@@ -3,10 +3,10 @@ import { AsyncTask } from "./base/async-task";
 import { BaseLayer } from "./base/base-layer";
 import { Conductor, ConductorState, IConductorEvent } from "./base/conductor";
 import { Logger } from "./base/logger";
-import { PonGame } from "./base/pon-game";
-import { PonMouseEvent } from "./base/pon-mouse-event";
 import { PonEventHandler } from "./base/pon-event-handler";
+import { PonGame } from "./base/pon-game";
 import { PonKeyEvent } from "./base/pon-key-event";
+import { PonMouseEvent } from "./base/pon-mouse-event";
 import { ISoundCallbacks, Sound, SoundBuffer } from "./base/sound";
 import { Tag } from "./base/tag";
 import * as Util from "./base/util.ts";
@@ -151,9 +151,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   protected update(tick: number): void {
     // オートモードによるクリックエミュレーション
     if (this.autoModeFlag && this.autoModeStartTick >= 0) {
-      let elapsed = tick - this.autoModeStartTick;
+      const elapsed = tick - this.autoModeStartTick;
       if (elapsed >= this.autoModeInterval) {
-        console.log('@@@@@@@@@@@@@AUTO CLICk', elapsed);
+        console.log("@@@@@@@@@@@@@AUTO CLICk", elapsed);
         this.onPrimaryClick();
         this.autoModeStartTick = -1;
         // onPrimaryClickで解除されてしまうのでもう一回
@@ -330,7 +330,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     Logger.debug("return_subroutin", forceStart);
     if (forceStart) {
       // lb, pb等のイベントハンドラを削除
-      let targetList: PonEventHandler[] = [];
+      const targetList: PonEventHandler[] = [];
       Object.keys(this.eventHandlers).forEach((eventName) => {
         this.eventHandlers[eventName].forEach((eventHandler: PonEventHandler) => {
           switch (eventHandler.info) {
@@ -343,7 +343,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
           }
         });
       });
-      targetList.forEach(target => this.clearEventHandler(target))
+      targetList.forEach((target) => this.clearEventHandler(target));
       // 強制開始
       this.conductor.start();
     }
@@ -451,7 +451,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   // [override]
   public flipPrimaryLayers(): void {
-    let tmp = this.forePrimaryLayer;
+    const tmp = this.forePrimaryLayer;
     this.forePrimaryLayer = this.backPrimaryLayer;
     this.backPrimaryLayer = tmp;
     super.flipPrimaryLayers();
@@ -636,9 +636,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   public hideMessages(): void {
-    this.foreLayers.forEach(layer => layer.storeVisible());
+    this.foreLayers.forEach((layer) => layer.storeVisible());
     this.foreLayers.forEach((layer) => {
-      if (layer.hideWithMessage) {
+      if (layer.autoHideWithMessage) {
         layer.visible = false;
       }
     });
@@ -683,7 +683,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.clearEventHandlerByName("click");
     this.conductor.start();
   }
-
 
   // =========================================================
   // セーブ・ロード
@@ -819,7 +818,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
     // スキップとオートモードは停止させる
     asyncTask.add((params: any, index: number): AsyncCallbacks => {
-      let cb = new AsyncCallbacks();
+      const cb = new AsyncCallbacks();
       window.setTimeout(() => {
         this.stopSkip();
         this.stopAutoMode();

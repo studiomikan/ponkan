@@ -68,7 +68,7 @@ tv.systembutton = {
   width:        "&(tv.systembutton.width + tv.systembutton.marginr) * tv.systembutton.buttons.length",
   height:       "&tv.systembutton.height",
   visible:      true,
-  hidemessages: true,
+  autohide:     true,
 }
 # ;fillcolor {
 #   lay:          "&tv.layer.systembutton",

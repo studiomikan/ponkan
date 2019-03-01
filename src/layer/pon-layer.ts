@@ -11,7 +11,7 @@ import { ToggleButtonLayer } from "./toggle-button-layer";
 // export class PonLayer extends FrameAnimLayer {
 export class PonLayer extends ToggleButtonLayer {
 
-  public hideWithMessage: boolean = false;
+  public autoHideWithMessage: boolean = false;
   public visibleBuffer: boolean;
 
   public constructor(name: string, resource: Resource, owner: PonGame) {

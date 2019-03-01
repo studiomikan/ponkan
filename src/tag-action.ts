@@ -1,11 +1,11 @@
 import { AsyncCallbacks } from "./base/async-callbacks";
 import { AsyncTask } from "./base/async-task";
+import { BaseLayer } from "./base/base-layer";
 import { Logger } from "./base/logger";
 import { PonEventHandler} from "./base/pon-event-handler";
 import { Resource } from "./base/resource";
 import { Sound } from "./base/sound";
 import { Tag } from "./base/tag";
-import { BaseLayer } from "./base/base-layer";
 import { PonLayer } from "./layer/pon-layer";
 import { Ponkan3 } from "./ponkan3";
 
@@ -212,7 +212,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("forcestart", "boolean", false, false, "戻った後、強制的にシナリオを再開する"),
       ],
       `[call]タグで呼び出したサブルーチンから、呼び出し元に戻ります。
-       
+
        forcestart属性は、システムボタンを作成する際に指定します。
        システムボタンで呼び出したサブルーチンで[skip]や[auto]を実行しても、通常はサブルーチンから戻るとスクリプトは停止してしまいます。
        forcestart属性をtrueにした時は、呼び出し元へ戻ると同時に、[lb][pb]などで停止していたとしても、強制的に再開されます。
@@ -497,7 +497,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.clearText();
-        })
+        });
         return "continue";
       },
     ),
@@ -728,7 +728,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("width", "number", false, null, "幅(px)"),
         new TagValue("height", "number", false, null, "高さ(px)"),
         new TagValue("alpha", "number", false, 1.0, "レイヤーのAlpha(0.0〜1.0)"),
-        new TagValue("hidemessages", "boolean", false, null, "hidemessagesで隠すかどうか"),
+        new TagValue("autohide", "boolean", false, null, "hidemessagesで同時に隠すかどうか"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
@@ -739,7 +739,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           if (values.width != null) { layer.width = values.width; }
           if (values.height != null) { layer.height = values.height; }
           if (values.alpha != null) { layer.alpha = values.alpha; }
-          if (values.hidemessages != null) { layer.hideWithMessage = values.hidemessages; }
+          if (values.autohide != null) { layer.autoHideWithMessage = values.autohide; }
         });
         return "continue";
       },
@@ -801,9 +801,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       `TODO タグの説明文`,
       (values, tick) => {
         values.page = "fore";
-        let fore: PonLayer[] = p.getLayers(values);
+        const fore: PonLayer[] = p.getLayers(values);
         values.page = "back";
-        let back: PonLayer[] = p.getLayers(values);
+        const back: PonLayer[] = p.getLayers(values);
         for (let i = 0; i < fore.length; i++) {
           fore[i].copyTo(back[i]);
         }
@@ -985,8 +985,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [],
       `TODO タグの説明文`,
       (values, tick) => {
-        p.foreLayers.forEach(layer => layer.lockButtons());
-        p.backLayers.forEach(layer => layer.lockButtons());
+        p.foreLayers.forEach((layer) => layer.lockButtons());
+        p.backLayers.forEach((layer) => layer.lockButtons());
         return "continue";
       },
     ),
@@ -997,8 +997,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [],
       `TODO タグの説明文`,
       (values, tick) => {
-        p.foreLayers.forEach(layer => layer.unlockButtons());
-        p.backLayers.forEach(layer => layer.unlockButtons());
+        p.foreLayers.forEach((layer) => layer.unlockButtons());
+        p.backLayers.forEach((layer) => layer.unlockButtons());
         return "continue";
       },
     ),
@@ -1009,8 +1009,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [],
       `TODO タグの説明文`,
       (values, tick) => {
-        p.foreLayers.forEach(layer => layer.lockSystemButtons());
-        p.backLayers.forEach(layer => layer.lockSystemButtons());
+        p.foreLayers.forEach((layer) => layer.lockSystemButtons());
+        p.backLayers.forEach((layer) => layer.lockSystemButtons());
         return "continue";
       },
     ),
@@ -1021,8 +1021,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [],
       `TODO タグの説明文`,
       (values, tick) => {
-        p.foreLayers.forEach(layer => layer.unlockSystemButtons());
-        p.backLayers.forEach(layer => layer.unlockSystemButtons());
+        p.foreLayers.forEach((layer) => layer.unlockSystemButtons());
+        p.backLayers.forEach((layer) => layer.unlockSystemButtons());
         return "continue";
       },
     ),
