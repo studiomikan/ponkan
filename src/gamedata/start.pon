@@ -55,7 +55,7 @@
 # ;auto
 ;pb
 ;indent
-;wait time:"1000", canskip:false
+# ;wait time:"1000", canskip:false
 かきくけこさしすせそたちつてとなにぬねの
 # ;hidemessages
 ;lb

@@ -302,14 +302,14 @@ export class BaseLayer {
       let result: boolean = true;
       // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる
       if (isInside != child.isInsideBuffer) {
-        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y);
+        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
         result = isInside ? child.onMouseEnter(e2) : child.onMouseLeave(e2);
       }
       child.isInsideBuffer = isInside;
       if (!result) { return false; }
       // onMouseMove
       if (isInside) {
-        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y);
+        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
         if (!child.onMouseMove(e2)) { return false; }
       }
       child.isInsideBuffer = isInside;
@@ -322,7 +322,7 @@ export class BaseLayer {
     for (let i = this.children.length - 1; i >= 0; i--) {
       let child: BaseLayer = this.children[i];
       if (this.isInsideOfChildLayer(child, e.x, e.y)) {
-        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y);
+        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
         if (!child.onMouseDown(e2)) { return false; }
       }
     }
@@ -334,7 +334,7 @@ export class BaseLayer {
     for (let i = this.children.length - 1; i >= 0; i--) {
       let child: BaseLayer = this.children[i];
       if (this.isInsideOfChildLayer(child, e.x, e.y)) {
-        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y);
+        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
         if (!child.onMouseUp(e2)) { return false; }
       }
     }
@@ -523,6 +523,23 @@ export class BaseLayer {
     this.textY = this.textMarginTop;
     this.textIndentPoint = 0;
     this.reservedTextIndentPoint = 0;
+  }
+
+  /**
+   * 表示しているテキストの内容を文字列で取得
+   * @return テキスト
+   */
+  public get messageText(): string {
+    let message: string = "";
+    this.textLines.forEach((textLine: PonSprite[], index: number) => {
+      if (index > 0 ) {
+        message += "\n"
+      }
+      textLine.forEach((sp) => {
+        message += sp.text;
+      });
+    });
+    return message;
   }
 
   /**

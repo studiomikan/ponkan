@@ -212,11 +212,11 @@ export class PonGame {
   public trigger(eventName: string): boolean {
     let handlers: PonEventHandler[] = this.eventHandlers[eventName];
     if (handlers == null) { return false; }
+    this.clearEventHandlerByName(eventName);
     handlers.forEach((h) => {
       Logger.debug("FIRE! ", eventName, h);
       h.fire();
     });
-    this.clearEventHandlerByName(eventName);
     return true;
   }
 
@@ -242,7 +242,7 @@ export class PonGame {
   public pushEventHandlers(): void {
     this.eventHandlersStack.push(this.eventHandlers);
     this.eventHandlers = {};
-    console.log("push eventhandlers: ", this.eventHandlers);
+    // console.log("push eventhandlers: ", this.eventHandlers);
   }
 
   public popEventHandlers(): void {
@@ -250,7 +250,7 @@ export class PonGame {
       throw new Error("Engine Error. eventHandlerStackの不正操作");
     }
     this.eventHandlers = this.eventHandlersStack.pop();
-    console.log("pop eventhandlers: ", this.eventHandlers);
+    // console.log("pop eventhandlers: ", this.eventHandlers);
   }
 
   private initWindowEvent(): void {
@@ -282,6 +282,11 @@ export class PonGame {
     canvas.addEventListener("mouseup", (e) => {
       try { this.onMouseUp(new PonMouseEvent(e)); }
       catch (ex) { this.error(ex); }
+    });
+    canvas.addEventListener("contextmenu", (e) => {
+      e.stopPropagation();
+      e.preventDefault ();
+      return false;
     });
   }
 

@@ -58,6 +58,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // メッセージ関係
   protected currentTextSpeed: number = 100;
   public nowaitModeFlag: boolean = false;
+  public hideMessageFlag: boolean = false;
   protected _messageLayerNum: number = 20;
   public get messageLayerNum(): number { return this._messageLayerNum; }
   public set messageLayerNum(num: number) { this._messageLayerNum = num; }
@@ -200,7 +201,11 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     if (!this.forePrimaryLayer.onMouseUp(e)) {
       return false;
     }
-    return this.onPrimaryClick();
+    if (e.isRight) {
+      return this.onPrimaryRightClick();
+    } else {
+      return this.onPrimaryClick();
+    }
   }
 
   public onPrimaryClick(): boolean {
@@ -224,6 +229,24 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     }
 
     return true;
+  }
+
+  public onPrimaryRightClick(): boolean {
+    console.log("onPrimaryRightClick ", this.conductor.isStable);
+    if (this.conductor.isStable) {
+      if (this.hideMessageFlag) {
+        this.popEventHandlers();
+        this.showMessages();
+      } else {
+        this.hideMessages();
+        this.pushEventHandlers();
+        this.addEventHandler(new PonEventHandler("click", () => {
+          this.showMessages();
+          this.popEventHandlers();
+        }, "hidemessages"));
+      }
+    }
+    return false;
   }
 
   // =========================================================
@@ -646,12 +669,14 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.messageLayer.visible = false;
     this.lineBreakGlyphLayer.visible = false;
     this.pageBreakGlyphLayer.visible = false;
+    this.hideMessageFlag = true;
   }
 
   public showMessages(): void {
     this.foreLayers.forEach((layer) => {
       layer.restoreVisible();
     });
+    this.hideMessageFlag = false;
   }
 
   // =========================================================
