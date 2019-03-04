@@ -11,6 +11,7 @@ import { ISoundCallbacks, Sound, SoundBuffer } from "./base/sound";
 import { Tag } from "./base/tag";
 import * as Util from "./base/util";
 import { PonLayer } from "./layer/pon-layer";
+import { HistoryLayer } from "./layer/history-layer";
 import { applyJsEntity, castTagValues, generateTagActions, TagAction, TagValue } from "./tag-action";
 import { PonPlugin } from "./plugin/pon-plugin";
 
@@ -78,6 +79,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public pageBreakGlyphX: number = 0;
   public pageBreakGlyphY: number = 0;
 
+  // メッセージ履歴
+  public historyLayer: HistoryLayer;
+
   // サウンド関係
   public soundBufferCount: number = DEFAULT_SOUND_BUFFER_COUNT;
   public readonly soundBuffers: SoundBuffer[] = [];
@@ -106,6 +110,11 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.backPrimaryLayer =
       this.addBackPrimaryLayer(new PonLayer("Back primary layer", this.resource, this)) as PonLayer;
     this.initLayers();
+
+    this.historyLayer = new HistoryLayer("HistoryLayer", this.resource, this);
+    this.addForePrimaryLayer(this.historyLayer);
+    this.historyLayer.init(config);
+    this.historyLayer.visible = true;
 
     this.initSounds(config);
 
@@ -191,20 +200,25 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // マウス
   // =========================================================
 
+  protected get eventReceivesLayer(): BaseLayer {
+    return this.historyLayer.visible ?
+      this.historyLayer : this.forePrimaryLayer;
+  }
+
   public onMouseEnter(e: PonMouseEvent): boolean  {
-    return this.forePrimaryLayer.onMouseEnter(e);
+    return this.eventReceivesLayer.onMouseEnter(e);
   }
   public onMouseLeave(e: PonMouseEvent): boolean  {
-    return this.forePrimaryLayer.onMouseLeave(e);
+    return this.eventReceivesLayer.onMouseLeave(e);
   }
   public onMouseMove(e: PonMouseEvent): boolean  {
-    return this.forePrimaryLayer.onMouseMove(e);
+    return this.eventReceivesLayer.onMouseMove(e);
   }
   public onMouseDown(e: PonMouseEvent): boolean  {
-    return this.forePrimaryLayer.onMouseDown(e);
+    return this.eventReceivesLayer.onMouseDown(e);
   }
   public onMouseUp(e: PonMouseEvent): boolean  {
-    if (!this.forePrimaryLayer.onMouseUp(e)) {
+    if (!this.eventReceivesLayer.onMouseUp(e)) {
       return false;
     }
     if (e.isRight) {
@@ -679,6 +693,17 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.hideMessageFlag = false;
   }
 
+  // =========================================================
+  // メッセージ履歴
+  // =========================================================
+
+  // public initHistoryLayer(config: any): void {
+  // }
+
+  // =========================================================
+  // トランジション
+  // =========================================================
+
   public backlay(lay: string): void {
     const fore: PonLayer[] = this.getLayers({lay: lay, page: "fore"});
     const back: PonLayer[] = this.getLayers({lay: lay, page: "back"});
@@ -687,10 +712,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     }
     this.plugins.forEach(p => p.onCopyLayer(true));
   }
-
-  // =========================================================
-  // トランジション
-  // =========================================================
 
   // [override]
   public flipPrimaryLayers(): void {
