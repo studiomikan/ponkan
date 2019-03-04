@@ -9,9 +9,10 @@ import { PonKeyEvent } from "./base/pon-key-event";
 import { PonMouseEvent } from "./base/pon-mouse-event";
 import { ISoundCallbacks, Sound, SoundBuffer } from "./base/sound";
 import { Tag } from "./base/tag";
-import * as Util from "./base/util.ts";
+import * as Util from "./base/util";
 import { PonLayer } from "./layer/pon-layer";
 import { applyJsEntity, castTagValues, generateTagActions, TagAction, TagValue } from "./tag-action";
+import { PonPlugin } from "./plugin/pon-plugin";
 
 export enum SkipType {
   INVALID = 0,
@@ -85,8 +86,12 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public get gameVar(): any { return this.resource.gameVar; }
   public get systemVar(): any { return this.resource.systemVar; }
 
+  // セーブ＆ロード
   protected saveDataPrefix: string = "ponkan-game";
   protected latestSaveData: any = {};
+
+  // プラグイン
+  protected plugins: PonPlugin[] = [];
 
   public constructor(parentId: string, config: any = {}) {
     super(parentId, config);
@@ -130,6 +135,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.stop();
     this.forePrimaryLayer.destroy();
     this.backPrimaryLayer.destroy();
+    this.plugins.forEach(p => p.destroy());
     super.destroy();
   }
 
@@ -146,6 +152,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public stop(): void {
     super.stop();
+    this.plugins.forEach(p => p.onSaveSystemVariables());
     this.resource.saveSystemData(this.saveDataPrefix);
   }
 
@@ -154,7 +161,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     if (this.autoModeFlag && this.autoModeStartTick >= 0) {
       const elapsed = tick - this.autoModeStartTick;
       if (elapsed >= this.autoModeInterval) {
-        console.log("@@@@@@@@@@@@@AUTO CLICk", elapsed);
         this.onPrimaryClick();
         this.autoModeStartTick = -1;
         // onPrimaryClickで解除されてしまうのでもう一回
@@ -232,7 +238,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   public onPrimaryRightClick(): boolean {
-    console.log("onPrimaryRightClick ", this.conductor.isStable);
     if (this.conductor.isStable) {
       if (this.hideMessageFlag) {
         this.popEventHandlers();
@@ -347,6 +352,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public onChangeStable(isStable: boolean): void {
     this.forePrimaryLayer.onChangeStable(isStable);
     this.backPrimaryLayer.onChangeStable(isStable);
+    this.plugins.forEach(p => p.onChangeStable(isStable));
   }
 
   public onReturnSubroutin(forceStart: boolean = false): void {
@@ -472,14 +478,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // =========================================================
   // レイヤ
   // =========================================================
-
-  // [override]
-  public flipPrimaryLayers(): void {
-    const tmp = this.forePrimaryLayer;
-    this.forePrimaryLayer = this.backPrimaryLayer;
-    this.backPrimaryLayer = tmp;
-    super.flipPrimaryLayers();
-  }
 
   private initLayers() {
     [this.forePrimaryLayer, this.backPrimaryLayer].forEach((primaryLayer: PonLayer) => {
@@ -669,6 +667,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.messageLayer.visible = false;
     this.lineBreakGlyphLayer.visible = false;
     this.pageBreakGlyphLayer.visible = false;
+    this.plugins.forEach(p => p.onChangeMessageVisible(false));
     this.hideMessageFlag = true;
   }
 
@@ -676,12 +675,31 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.foreLayers.forEach((layer) => {
       layer.restoreVisible();
     });
+    this.plugins.forEach(p => p.onChangeMessageVisible(true));
     this.hideMessageFlag = false;
+  }
+
+  public backlay(lay: string): void {
+    const fore: PonLayer[] = this.getLayers({lay: lay, page: "fore"});
+    const back: PonLayer[] = this.getLayers({lay: lay, page: "back"});
+    for (let i = 0; i < fore.length; i++) {
+      fore[i].copyTo(back[i]);
+    }
+    this.plugins.forEach(p => p.onCopyLayer(true));
   }
 
   // =========================================================
   // トランジション
   // =========================================================
+
+  // [override]
+  public flipPrimaryLayers(): void {
+    super.flipPrimaryLayers();
+    const tmp = this.forePrimaryLayer;
+    this.forePrimaryLayer = this.backPrimaryLayer;
+    this.backPrimaryLayer = tmp;
+    this.plugins.forEach(p => p.onFlipLayers());
+  }
 
   public waitTransClickCallback() {
     Logger.debug("click on trans. called waitTransClickCallback");
@@ -701,6 +719,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // =========================================================
 
   public onWindowClose(): boolean {
+    this.plugins.forEach(p => p.onSaveSystemVariables());
     this.resource.saveSystemData(this.saveDataPrefix);
     return true;
   }
@@ -727,6 +746,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       name: this.latestSaveData.name,
       comment: this.latestSaveData.comment,
     };
+    this.plugins.forEach(p => p.onSaveSystemVariables());
     this.resource.saveSystemData(this.saveDataPrefix);
   }
 
@@ -792,6 +812,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.soundBuffers.forEach((sound) => {
       data.soundBuffers.push(sound.store(tick));
     });
+
+    // プラグイン
+    this.plugins.forEach(p => p.onStore(data, tick));
   }
 
   public load(num: number, tick: number): AsyncCallbacks {
@@ -800,7 +823,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     const dataStr: string = this.resource.restoreFromLocalStorage(`${this.saveDataPrefix}_${num}`);
     const data: any = JSON.parse(dataStr);
 
-    console.log(data);
+    Logger.debug(data);
 
     Ponkan3.ponkanStoreParams.forEach((param: string) => {
       me[param] = data[param];
@@ -837,6 +860,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       }, 0);
       return cb;
     });
+
+    // プラグイン
+    this.plugins.forEach(p => p.onRestore(asyncTask, data, tick, true));
 
     return asyncTask.run();
   }

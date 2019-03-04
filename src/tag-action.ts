@@ -851,13 +851,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        values.page = "fore";
-        const fore: PonLayer[] = p.getLayers(values);
-        values.page = "back";
-        const back: PonLayer[] = p.getLayers(values);
-        for (let i = 0; i < fore.length; i++) {
-          fore[i].copyTo(back[i]);
-        }
+        p.backlay(values.lay);
         return "continue";
       },
     ),
