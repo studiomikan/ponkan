@@ -697,8 +697,25 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // メッセージ履歴
   // =========================================================
 
-  // public initHistoryLayer(config: any): void {
-  // }
+  public onAddChar(sender: PonLayer, ch: string): void {
+    if (sender === this.messageLayer) {
+      this.historyLayer.addHistoryChar(ch);
+    }
+  }
+
+  public onTextReturn(sender: PonLayer): void {
+    if (sender === this.messageLayer) {
+      this.historyLayer.addHistoryTextReturn();
+    }
+  }
+
+  public showHistoryLayer(): void {
+    this.historyLayer.show();
+  }
+
+  public hideHistoryLayer(): void {
+    this.historyLayer.hide();
+  }
 
   // =========================================================
   // トランジション

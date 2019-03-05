@@ -7,6 +7,7 @@ import { FrameAnimLayer } from "./frame-anim-layer";
 import { TextButtonLayer } from "./text-button-layer";
 import { ImageButtonLayer } from "./image-button-layer";
 import { ToggleButtonLayer } from "./toggle-button-layer";
+import { Ponkan3 } from "../ponkan3";
 
 // export class PonLayer extends FrameAnimLayer {
 export class PonLayer extends ToggleButtonLayer {
@@ -14,9 +15,25 @@ export class PonLayer extends ToggleButtonLayer {
   public autoHideWithMessage: boolean = false;
   public visibleBuffer: boolean;
 
-  public constructor(name: string, resource: Resource, owner: PonGame) {
+  public constructor(name: string, resource: Resource, owner: Ponkan3) {
     super(name, resource, owner);
     this.visibleBuffer = this.visible;
+  }
+
+  /**
+   * [override]
+   */
+  public addChar(ch: string): void {
+    super.addChar(ch);
+    (this.owner as Ponkan3).onAddChar(this, ch);
+  }
+
+  /**
+   * [override]
+   */
+  public addTextReturn(): void {
+    super.addTextReturn();
+    (this.owner as Ponkan3).onTextReturn(this);
   }
 
   protected static ponLayerStoreParams: string[] = [

@@ -392,8 +392,7 @@ export class BaseLayer {
   public addChar(ch: string): void {
     if (ch === "") { return; }
     if (ch.length > 1) {
-      this.addText(ch);
-      return;
+      return this.addText(ch);
     }
     if (ch === "\n" || ch === "\r") {
       this.addTextReturn();
