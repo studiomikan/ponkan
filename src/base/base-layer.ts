@@ -122,9 +122,9 @@ export class BaseLayer {
   public textMarginBottom: number  = 10;
   public textMarginLeft: number  = 10;
   /** 次の文字を描画する予定の位置。予定であって、自動改行等が発生した場合は次の行になるため注意。 */
-  public textX: number  = this.textMarginLeft;
+  public textX: number = NaN;
   /** 次の文字を描画する予定の位置。予定であって、自動改行等が発生した場合は次の行になるため注意。 */
-  public textY: number  = this.textMarginTop;
+  public textY: number = NaN;
   public textLineHeight: number  = 24;
   public textLinePitch: number  = 5;
   public textAutoReturn: boolean = true;
@@ -394,6 +394,10 @@ export class BaseLayer {
     if (ch.length > 1) {
       return this.addText(ch);
     }
+
+    if (isNaN(this.textX)) { this.textX = this.textMarginLeft; }
+    if (isNaN(this.textY)) { this.textY = this.textMarginTop; }
+
     if (ch === "\n" || ch === "\r") {
       this.addTextReturn();
       return;
