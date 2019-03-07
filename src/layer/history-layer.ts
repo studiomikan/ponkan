@@ -73,34 +73,35 @@ class SimpleButton extends BaseLayer {
 }
 
 class ScrollBarButton extends SimpleButton {
- 
+  public down: boolean = false;
   public downX: number = 0;
   public downY: number = 0;
 
   public onMouseDown(e: PonMouseEvent): boolean {
     super.onMouseDown(e);
+    this.down = true;
     this.downX = e.y;
     this.downY = e.y;
-    return false;
+    return true;
   }
 
   public onMouseMove(e: PonMouseEvent): boolean {
-    // this.y = e.y + this.downY;
-    return super.onMouseMove(e);
+    super.onMouseMove(e);
+    return true;
   }
 
   public onMouseUp(e: PonMouseEvent): boolean {
     super.onMouseUp(e);
-    return false;
+    this.down = false;
+    return true;
   }
-
 }
 
 class ScrollBar extends BaseLayer {
 
   protected minHeight: number = 16;
   protected bar: ScrollBarButton;
-  public mouseUp: (sender: SimpleButton) => void = function(){};
+  public onChangeCallback: (sender: ScrollBar) => void = function(){};
 
   public constructor(name: string, resource: Resource, owner: PonGame) {
     super(name, resource, owner);
@@ -108,8 +109,8 @@ class ScrollBar extends BaseLayer {
   }
 
   public initScrollBar(
-    bgColors: number[],
-    bgAlphas: number[],
+    bgColor: number,
+    bgAlpha: number,
     buttonColors: number[],
     buttonAlphas: number[],
     minHeight: number
@@ -123,6 +124,8 @@ class ScrollBar extends BaseLayer {
     this.bar.width = 32;
     this.bar.height = 32;
     this.addChild(this.bar);
+
+    this.setBackgroundColor(bgColor, bgAlpha);
   }
 
   public setValues(
@@ -157,17 +160,14 @@ class ScrollBar extends BaseLayer {
   }
 
   public onMouseEnter(e: PonMouseEvent): boolean {
-    if (super.onMouseEnter(e)) { return false; }
+    super.onMouseEnter(e);
+    this.resource.getForeCanvasElm().style.cursor = "pointer";
     return false;
   }
   
   public onMouseLeave(e: PonMouseEvent): boolean {
-    if (super.onMouseLeave(e)) { return false; }
-    return false;
-  }
-  
-  public onMouseMove(e: PonMouseEvent): boolean {
-    if (super.onMouseMove(e)) { return false; }
+    super.onMouseLeave(e);
+    this.resource.getForeCanvasElm().style.cursor = "auto";
     return false;
   }
   
@@ -176,14 +176,28 @@ class ScrollBar extends BaseLayer {
     return false;
   }
   
+  public onMouseMove(e: PonMouseEvent): boolean {
+    super.onMouseMove(e);
+    this.resource.getForeCanvasElm().style.cursor = "pointer";
+    if (this.bar.down) {
+      this.setBarY(e.y - this.bar.downY);
+      this.onChangeCallback(this);
+    }
+    return false;
+  }
+  
   public onMouseUp(e: PonMouseEvent): boolean {
     if (!super.onMouseUp(e)) { return false; }
-    let y: number = e.y - (this.bar.height / 2);
+    this.setBarY(e.y - (this.bar.height / 2));
+    this.onChangeCallback(this);
+    return false;
+  }
+
+  protected setBarY(y: number): void {
     let maxY: number = this.height - this.bar.height;
     if (y < 0) { y = 0; }
     if (y > maxY) { y = maxY; }
     this.bar.y = y;
-    return false;
   }
 
   public getBarPoint(): number {
@@ -376,8 +390,8 @@ export class HistoryLayer extends BaseLayer {
   protected initScrollBar(config: any): void {
     let sb = this.scrollBar;
     sb.initScrollBar(
-      [0x880000, 0x008800, 0x000088],
-      [1.0, 1.0, 1.0],
+      0x880000,
+      0.5,
       [0xFF0000, 0x00FF00, 0x0000FF],
       [1.0, 1.0, 1.0],
       16
@@ -387,10 +401,12 @@ export class HistoryLayer extends BaseLayer {
     sb.width = 32;
     sb.height = config.height - (32+20+10)*2 ;
 
-    sb.mouseUp = () => {
+    sb.onChangeCallback = () => {
       let p: number = Math.floor(this.textLayer.maxPoint * sb.getBarPoint());
-      this.textLayer.goTo(p);
-      this.textLayer.reDraw();
+      if (this.textLayer.currentPoint !== p) {
+        this.textLayer.goTo(p);
+        this.textLayer.reDraw();
+      }
     };
 
     this.addChild(sb);
