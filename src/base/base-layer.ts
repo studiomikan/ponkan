@@ -296,18 +296,23 @@ export class BaseLayer {
   /** onMouseEnter等を発生させるためのバッファ */
   protected isInsideBuffer: boolean = false;
   public onMouseMove(e: PonMouseEvent): boolean {
+    // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる
     for (let i = this.children.length - 1; i >= 0; i--) {
       let child: BaseLayer = this.children[i];
       let isInside = this.isInsideOfChildLayer(child, e.x, e.y)
       let result: boolean = true;
-      // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる
       if (isInside != child.isInsideBuffer) {
         let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
         result = isInside ? child.onMouseEnter(e2) : child.onMouseLeave(e2);
       }
       child.isInsideBuffer = isInside;
-      if (!result) { return false; }
-      // onMouseMove
+      if (!result) { break; }
+    }
+    // mousemove
+    for (let i = this.children.length - 1; i >= 0; i--) {
+      let child: BaseLayer = this.children[i];
+      let isInside = this.isInsideOfChildLayer(child, e.x, e.y)
+      let result: boolean = true;
       if (isInside) {
         let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
         if (!child.onMouseMove(e2)) { return false; }

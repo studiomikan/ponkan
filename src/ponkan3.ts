@@ -113,8 +113,8 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
     this.historyLayer = new HistoryLayer("HistoryLayer", this.resource, this);
     this.addForePrimaryLayer(this.historyLayer);
+    this.historyLayer.visible = false;
     this.historyLayer.init(config);
-    this.historyLayer.visible = true;
 
     this.initSounds(config);
 
