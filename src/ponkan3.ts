@@ -179,6 +179,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.conductor.conduct(tick);
     this.forePrimaryLayer.update(tick);
     this.backPrimaryLayer.update(tick);
+    this.historyLayer.update(tick);
   }
 
   public error(e: Error): void {

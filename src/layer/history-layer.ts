@@ -190,6 +190,8 @@ class ScrollBar extends BaseLayer {
     if (!super.onMouseUp(e)) { return false; }
     this.setBarY(e.y - (this.bar.height / 2));
     this.onChangeCallback(this);
+    // FIXME eの中身がおかしいが、現状使ってないのでこのまま
+    this.bar.onMouseUp(new PonMouseEvent(0,0,0)); 
     return false;
   }
 
@@ -212,6 +214,10 @@ class ScrollBar extends BaseLayer {
     }
   }
 
+  public get dragging(): boolean {
+    return this.bar.down;
+  }
+
 }
 
 class HistoryTextLayer extends BaseLayer {
@@ -219,8 +225,8 @@ class HistoryTextLayer extends BaseLayer {
   protected lines: string[][] = [[]];
   public get currentLine(): string[] { return this.lines[this.lines.length - 1]; }
   public scrollOffLines: number = 3;
-
   protected point: number = 0;
+  protected lazyRedrawFlag: boolean = false;
 
   public constructor(name: string, resource: Resource, owner: PonGame) {
     super(name, resource, owner);
@@ -284,13 +290,26 @@ class HistoryTextLayer extends BaseLayer {
     if (this.point > this.maxPoint) { this.point = this.maxPoint; }
   }
 
-  public reDraw(): void {
+  public redraw(): void {
     this.clearText();
-
+    
     let max = this.point + this.screenLineCount;
     for (let i = this.point; i < max && i < this.lines.length; i++) {
       this.lines[i].forEach(ch => this.addChar(ch));
       this.addTextReturn();
+    }
+  }
+
+  public redrawLazy(): void {
+    this.lazyRedrawFlag = true;
+  }
+
+  public update(tick: number): void {
+    super.update(tick);
+
+    if (this.lazyRedrawFlag) {
+      this.redraw();
+      this.lazyRedrawFlag = false;
     }
   }
 
@@ -405,7 +424,7 @@ export class HistoryLayer extends BaseLayer {
       let p: number = Math.floor(this.textLayer.maxPoint * sb.getBarPoint());
       if (this.textLayer.currentPoint !== p) {
         this.textLayer.goTo(p);
-        this.textLayer.reDraw();
+        this.textLayer.redrawLazy();
       }
     };
 
@@ -415,7 +434,7 @@ export class HistoryLayer extends BaseLayer {
   public addHistoryChar(ch: string): void {
     this.textLayer.add(ch);
     if (this.visible) {
-      this.textLayer.reDraw();
+      this.textLayer.redraw();
       this.resetScrollBar();
     }
   }
@@ -423,7 +442,7 @@ export class HistoryLayer extends BaseLayer {
   public addHistoryTextReturn(): void {
     this.textLayer.textReturn();
     if (this.visible) {
-      this.textLayer.reDraw();
+      this.textLayer.redraw();
       this.resetScrollBar();
     }
   }
@@ -434,7 +453,7 @@ export class HistoryLayer extends BaseLayer {
 
   public show(): void {
     // this.textLayer.goToEnd();
-    this.textLayer.reDraw();
+    this.textLayer.redraw();
     this.resetScrollBar();
     this.visible = true;
   }
@@ -445,13 +464,13 @@ export class HistoryLayer extends BaseLayer {
 
   public scrollUpPage(): void {
     this.textLayer.scrollUpPage();
-    this.textLayer.reDraw();
+    this.textLayer.redraw();
     this.resetScrollBar();
   }
 
   public scrollDownPage(): void {
     this.textLayer.scrollDownPage();
-    this.textLayer.reDraw();
+    this.textLayer.redraw();
     this.resetScrollBar();
   }
 
@@ -474,6 +493,12 @@ export class HistoryLayer extends BaseLayer {
   }
   public onMouseMove(e: PonMouseEvent): boolean  {
     super.onMouseMove(e);
+    // スクロール操作中ははみ出ても操作できるようにする
+    let sb = this.scrollBar;
+    if (sb.dragging) {
+      let e2 = new PonMouseEvent(e.x - sb.x, e.y - sb.y, e.button);
+      this.scrollBar.onMouseMove(e2);
+    }
     return false;
   }
   public onMouseDown(e: PonMouseEvent): boolean  {
@@ -482,6 +507,13 @@ export class HistoryLayer extends BaseLayer {
   }
   public onMouseUp(e: PonMouseEvent): boolean  {
     super.onMouseUp(e);
+    // スクロール操作中ははみ出ても操作できるようにする
+    let sb = this.scrollBar;
+    if (sb.dragging) {
+      let e2 = new PonMouseEvent(e.x - sb.x, e.y - sb.y, e.button);
+      this.scrollBar.onMouseUp(e2);
+      this.resource.getForeCanvasElm().style.cursor = "auto";
+    }
     return false;
   }
 
