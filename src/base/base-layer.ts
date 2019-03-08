@@ -151,6 +151,12 @@ export class BaseLayer {
   public set alpha(alpha: number) { this.container.alpha = alpha; }
   
   public get backgroundColor(): number { return this._backgroundColor; }
+  public set backgroundColor(backgroundColor: number) {
+    this.setBackgroundColor(backgroundColor, this._backgroundAlpha);
+  }
+  public set backgroundAlpha(backgroundAlpha: number) {
+    this.setBackgroundColor(this._backgroundColor, backgroundAlpha);
+  }
   public get backgroundAlpha(): number { return this._backgroundAlpha; }
 
   public get imageX(): number { return this.imageSprite === null ? 0 : this.imageSprite.x; }
@@ -735,6 +741,20 @@ export class BaseLayer {
     let params = BaseLayer.baseLayerStoreParams.filter(
       param => BaseLayer.baseLayerIgnoreParams.indexOf(param) == -1);
     params.forEach(p => you[p] = me[p]);
+  }
+
+  /**
+   * コンフィグを反映する。
+   * このメソッドでは単純に値の設定のみ行うため、
+   * 画像読み込みなどの非同期処理が必要なものには対応していない。
+   */
+  public applyConfig(config: any): void {
+    if (config != null) {
+      let me = (this as any);
+      Object.keys(config).forEach((key) => {
+        me[key] = config[key];
+      });
+    }
   }
 
 }

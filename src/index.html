@@ -16,10 +16,29 @@
     <script src="./ponkan3.js"></script>
     <script>
       var ponkan = new Ponkan3("game", {
-        "gameDataDir": "./gamedata",
-        "saveDataPrefix": "ponkan-sample",
-        "width": 1280,
-        "height": 720,
+        gameDataDir: "./gamedata",
+        saveDataPrefix: "ponkan-sample",
+        width: 1280,
+        height: 720,
+
+        // デフォルトのレイヤ設定
+        // layersDefault: {},
+
+        // 履歴レイヤ
+        history: {
+          text: {
+            textFontFamily: ["mplus-1p-regular"],
+            textFontSize: 24,
+            textLineHeight: 24,
+            textLinePitch: 5,
+            backgroundColor: 0x000000,
+            backgroundAlpha: 0.7,
+            textMarginTop: 100,
+            textMarginRight: 100,
+            textMarginBottom: 100,
+            textMarginLeft: 100,
+          }
+        }
       });
       WebFont.load({
         classes: false,

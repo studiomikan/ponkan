@@ -240,6 +240,10 @@ class HistoryTextLayer extends BaseLayer {
     this.setBackgroundColor(0x000000, 0.5);
     this.textAutoReturn = false;
 
+    if (config.history != null && config.history.text) {
+      this.applyConfig(config.history.text);
+    }
+
     this.point = 0;
     this.clear();
   }
