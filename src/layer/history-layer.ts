@@ -5,6 +5,7 @@ import { BaseLayer } from "../base/base-layer";
 import { PonMouseEvent } from "../base/pon-mouse-event";
 import { PonEventHandler } from "../base/pon-event-handler";
 import { PonGame } from "../base/pon-game";
+import * as Util from "../base/util";
 import { Ponkan3 } from "../ponkan3";
 import { Button } from "./button";
 
@@ -109,23 +110,21 @@ class ScrollBar extends BaseLayer {
   }
 
   public initScrollBar(
-    bgColor: number,
-    bgAlpha: number,
+    config: any,
     buttonColors: number[],
     buttonAlphas: number[],
-    minHeight: number
+    minHeight: number,
   ): void {
     // super.initButton(bgColors, bgAlphas);
     this.minHeight = minHeight;
+    this.applyConfig(config);
 
     this.bar.initButton(buttonColors, buttonAlphas);
     this.bar.x = 0;
     this.bar.y = 0;
-    this.bar.width = 32;
-    this.bar.height = 32;
+    this.bar.width = this.width;
+    this.bar.height = this.width;
     this.addChild(this.bar);
-
-    this.setBackgroundColor(bgColor, bgAlpha);
   }
 
   public setValues(
@@ -142,10 +141,8 @@ class ScrollBar extends BaseLayer {
     let height: number = Math.floor(this.height * screenLineCount / linesCount);
     if (height < this.minHeight) { height = this.minHeight; }
     if (height > this.height) { height = this.height; }
-    console.log("height:", height);
 
     let y: number;
-    console.log("currentPoint:", currentPoint);
     if (currentPoint === 0) {
       y = 0;
     } else if (currentPoint === maxPoint) {
@@ -360,6 +357,12 @@ export class HistoryLayer extends BaseLayer {
   }
 
   public init(config: any = {}) {
+    if (config.history == null) { config.history = {}; }
+    if (config.history.text == null) { config.history.text = {}; }
+    if (config.history.upButton == null) { config.history.upButton = {}; }
+    if (config.history.downButton == null) { config.history.downButton = {}; }
+    if (config.history.scrollBar == null) { config.history.scrollBar = {}; }
+
     this.x = 0;
     this.y = 0;
 
@@ -382,13 +385,13 @@ export class HistoryLayer extends BaseLayer {
 
   protected initScrollButtons(config: any): void {
     // TODO サイズ等を設定できるように
-    [this.upButton, this.downButton].forEach((button: SimpleButton) => {
+    const init = (button: SimpleButton, config: any) => {
+      if (config.bgColors == null) { config.bgColors = [0x4286f4, 0x4286f4, 0x4286f4]; };
+      if (config.bgAlphas == null) { config.bgAlphas = [0.7, 0.8, 0.9]; };
       button.visible = true;
       button.width = 32;
       button.height = 32;
-      button.initButton(
-        [0xFF0000, 0x00FF00, 0x0000FF],
-        [1.0, 1.0, 1.0]);
+      button.initButton(config.bgColors, config.bgAlphas);
       button.textColor = 0xFFFFFF;
       button.textFontFamily = ["mplus-1p-regular", "monospace"];
       button.textFontSize = 16;
@@ -398,31 +401,44 @@ export class HistoryLayer extends BaseLayer {
       button.textMarginTop = 6;
       button.textAlign = "center";
       this.addChild(button);
-    });
+    };
+    init(this.upButton, config.history.upButton);
+    init(this.downButton, config.history.downButton);
+
     this.upButton.x = config.width - 32 - 20;
     this.upButton.y = 20;
     this.upButton.addChar("▲");
     this.upButton.mouseUp = () => { this.scrollUpPage(); };
+    this.upButton.applyConfig(config.history.upButton);
 
     this.downButton.x = config.width - 32 - 20;
     this.downButton.y = config.height - 32 - 20;
     this.downButton.addChar("▼");
     this.downButton.mouseUp = () => { this.scrollDownPage(); };
+    this.downButton.applyConfig(config.history.downButton);
   }
 
   protected initScrollBar(config: any): void {
+    let c: any = Util.objClone(config.history.scrollBar);
+    c = Util.objExtend({
+      x: config.width - 32 - 20,
+      y: 20 + 32,
+      width: 32,
+      height: config.height - (32+20)*2,
+      backgroundColor: 0x4286f4,
+      backgroundAlpha: 0.1,
+      bgColors: [0x4286f4, 0x4286f4, 0x4286f4],
+      bgAlphas: [0.4, 0.5, 0.6],
+      minHeight: 16,
+    }, c);
+
     let sb = this.scrollBar;
     sb.initScrollBar(
-      0x880000,
-      0.5,
-      [0xFF0000, 0x00FF00, 0x0000FF],
-      [1.0, 1.0, 1.0],
-      16
+      c,
+      c.bgColors,
+      c.bgAlphas,
+      c.minHeight
     );
-    sb.x = config.width - 32 - 20;
-    sb.y = 20 + 32 + 10; 
-    sb.width = 32;
-    sb.height = config.height - (32+20+10)*2 ;
 
     sb.onChangeCallback = () => {
       let p: number = Math.floor(this.textLayer.maxPoint * sb.getBarPoint());

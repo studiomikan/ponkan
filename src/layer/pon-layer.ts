@@ -25,7 +25,9 @@ export class PonLayer extends ToggleButtonLayer {
    */
   public addChar(ch: string): void {
     super.addChar(ch);
-    (this.owner as Ponkan3).onAddChar(this, ch);
+    if (ch.length == 1) {
+      (this.owner as Ponkan3).onAddChar(this, ch);
+    }
   }
 
   /**
