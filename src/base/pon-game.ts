@@ -40,7 +40,7 @@ export class PonGame {
     }
     this.foreRenderer = new PonRenderer(elm, config.width, config.height);
     this.backRenderer = new PonRenderer(elm, config.width, config.height);
-    // this.backRenderer.canvasElm.style.display = "none";
+    this.backRenderer.canvasElm.style.display = "none";
     
     this.resource = new Resource(this, config.gameDataDir);
 
@@ -242,7 +242,7 @@ export class PonGame {
   public pushEventHandlers(): void {
     this.eventHandlersStack.push(this.eventHandlers);
     this.eventHandlers = {};
-    // console.log("push eventhandlers: ", this.eventHandlers);
+    console.log("push eventhandlers: ", JSON.stringify(this.eventHandlers));
   }
 
   public popEventHandlers(): void {
@@ -250,7 +250,7 @@ export class PonGame {
       throw new Error("Engine Error. eventHandlerStackの不正操作");
     }
     this.eventHandlers = this.eventHandlersStack.pop();
-    // console.log("pop eventhandlers: ", this.eventHandlers);
+    console.log("pop eventhandlers: ", JSON.stringify(this.eventHandlers));
   }
 
   private initWindowEvent(): void {

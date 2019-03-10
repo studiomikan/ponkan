@@ -63,6 +63,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   protected currentTextSpeed: number = 100;
   public nowaitModeFlag: boolean = false;
   public hideMessageFlag: boolean = false;
+  public hideMessageByRlickFlag: boolean = false;
   protected _messageLayerNum: number = 20;
   public get messageLayerNum(): number { return this._messageLayerNum; }
   public set messageLayerNum(num: number) { this._messageLayerNum = num; }
@@ -260,15 +261,24 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public onPrimaryRightClick(): boolean {
     if (this.conductor.isStable) {
-      if (this.hideMessageFlag) {
+      if (this.hideMessageByRlickFlag) {
+        // 右クリックによるメッセージ隠し中
         this.popEventHandlers();
         this.showMessages();
+        this.hideMessageByRlickFlag = false;
+      } else if (this.hideMessageFlag) {
+        // タグによるメッセージ隠し中
+        // clickにイベントハンドラが登録されてるのでそいつを呼んで復帰
+        this.trigger("click");
       } else {
+        // 右クリックによるメッセージ隠し
         this.hideMessages();
         this.pushEventHandlers();
+        this.hideMessageByRlickFlag = true;
         this.addEventHandler(new PonEventHandler("click", () => {
-          this.showMessages();
           this.popEventHandlers();
+          this.showMessages();
+          this.hideMessageByRlickFlag = false;
         }, "hidemessages"));
       }
     }
@@ -281,24 +291,48 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public onKeyDown(e: PonKeyEvent): boolean {
     Logger.debug("onKeyDown: ", e.key);
-    switch (e.key) {
-      case "Ctrl": case "ctrl": case "Control":
-        this.onPrimaryClick();
-        this.startSkipByCtrl();
-        break;
+    if (this.historyLayer.visible) {
+    } else {
+      switch (e.key) {
+        case "Ctrl": case "ctrl": case "Control":
+          this.onPrimaryClick();
+          this.startSkipByCtrl();
+          break;
+      }
     }
     return true;
   }
 
   public onKeyUp(e: PonKeyEvent): boolean {
-    Logger.debug("onKeyUp: ", e.key);
-    switch (e.key) {
-      case "Ctrl": case "ctrl": case "Control":
-        this.stopWhilePressingCtrlSkip();
-        break;
-      case "Enter": case "enter":
-        this.onPrimaryClick();
-        break;
+    Logger.debug("onKeyUp: ", e.key, this.historyLayer.visible);
+    if (this.historyLayer.visible) {
+      switch (e.key.toLowerCase()) {
+        case "esc": case "escape":
+          this.hideHistoryLayer();
+          break;
+        case "arrowup":
+          if (this.conductor.isStable) { this.historyLayer.scrollUpPage(); }
+          break;
+        case "arrowdown":
+          if (this.conductor.isStable) { this.historyLayer.scrollDownPage(); }
+          break;
+      }
+    } else {
+      console.log(e.key.toLowerCase(), this.conductor.isStable);
+      switch (e.key.toLowerCase()) {
+        case "ctrl": case "control":
+          this.stopWhilePressingCtrlSkip();
+          break;
+        case "esc": case "escape":
+          this.onPrimaryRightClick();
+          break;
+        case "enter":
+          this.onPrimaryClick();
+          break;
+        case "arrowup":
+          if (this.conductor.isStable) { this.showHistoryLayer(); }
+          break;
+      }
     }
     return true;
   }

@@ -17,7 +17,7 @@
 ;image "lay": 2, "page": "fore", "file": "image/okayu.jpg", "visible": true, "x": 0, "y": 0
 ;layopt "lay": 3, "x": 300, "y": 100, "visible": true, "width": 300, "height": 300
 ;fillcolor "lay": 3, "color": "0xFF00FF", "alpha": 1
-;messageopt "lay": 3, "align": "center", "margint": 0, "lineheight": 32
+;messageopt "lay": 3, "align": "center", "margint": 0, "lineheight": 24,
 ;textbutton {
   lay:    3,
   text:   "ボタン",
@@ -56,17 +56,19 @@
   x: 1280 / 2,
   y: 0
 }
-;messageopt "align": "left"
-;nowait
-;for "loops": 100, "indexvar": "i"
-  あいうえおかきくけこさしすせそ
-  = tv.i
-  ;br
-;endfor
-;showhistory
-;unlock
-;s
-;pb
+
+# ;messageopt "align": "left"
+# ;nowait
+# ;for "loops": 100, "indexvar": "i"
+#   あいうえおかきくけこさしすせそ
+#   = tv.i
+#   ;br
+# ;endfor
+# ;showhistory
+# ;unlock
+# ;s
+# ;pb
+あいうえお
 ;indent
 # ;wait time:"1000", canskip:false
 かきくけこさしすせそたちつてとなにぬねの
