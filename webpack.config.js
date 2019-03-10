@@ -2,6 +2,9 @@ const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const WriteFilePlugin = require('write-file-webpack-plugin');
 
+const devServerHost = process.env.WEBPACK_DEV_SERVER_HOST || 'localhost';
+const devServerPort = process.env.WEBPACK_DEV_SERVER_PORT || 8080;
+
 module.exports = {
   entry: {
     ponkan3: './src/ponkan3.ts'
@@ -12,6 +15,8 @@ module.exports = {
     filename: '[name].js'
   },
   devServer: {
+    host: devServerHost,
+    port: devServerPort,
     contentBase: path.join(__dirname, 'dist')
   },
   module: {
