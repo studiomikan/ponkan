@@ -3,6 +3,7 @@ import { AsyncTask } from "../base/async-task";
 import { Resource } from "../base/resource";
 import { BaseLayer } from "../base/base-layer";
 import { PonMouseEvent } from "../base/pon-mouse-event";
+import { PonWheelEvent } from "../base/pon-wheel-event";
 import { PonEventHandler } from "../base/pon-event-handler";
 import { PonGame } from "../base/pon-game";
 import * as Util from "../base/util";
@@ -232,7 +233,7 @@ class HistoryTextLayer extends BaseLayer {
   public init(config: any): void {
     this.width = config.width;
     this.height = config.height;
-    this.textAutoReturn = false;
+    this.textAutoReturn = true;
 
     if (config.history != null && config.history.text) {
       this.applyConfig(config.history.text);
@@ -346,6 +347,7 @@ export class HistoryLayer extends BaseLayer {
   protected downButton: SimpleButton;
   protected scrollBar: ScrollBar;
   protected closeButton: SimpleButton;
+  public wheelScrollCount: number = 3;
 
   public constructor(name: string, resource: Resource, owner: PonGame) {
     super(name, resource, owner);
@@ -368,6 +370,7 @@ export class HistoryLayer extends BaseLayer {
     this.y = 0;
     this.width = config.width;
     this.height = config.height;
+    this.wheelScrollCount = config.history.wheelScrollCount || 3;
 
     // 背景
     if (config.history.backgroundImage != null) {
@@ -412,7 +415,7 @@ export class HistoryLayer extends BaseLayer {
       button.textAlign = "center";
       this.addChild(button);
     };
-    init(this.upButton, config.history.upButton);
+    init(this.upButton, config.history.upButton) // ;
     init(this.downButton, config.history.downButton);
 
     this.upButton.x = config.width - 32 - 20;
@@ -522,8 +525,20 @@ export class HistoryLayer extends BaseLayer {
     this.visible = false;
   }
 
+  public scrollUp(count: number = 1): void {
+    this.textLayer.scrollUp(count);
+    this.textLayer.redraw();
+    this.resetScrollBar();
+  }
+
   public scrollUpPage(): void {
     this.textLayer.scrollUpPage();
+    this.textLayer.redraw();
+    this.resetScrollBar();
+  }
+
+  public scrollDown(count: number = 1): void {
+    this.textLayer.scrollDown(count);
     this.textLayer.redraw();
     this.resetScrollBar();
   }
@@ -579,5 +594,12 @@ export class HistoryLayer extends BaseLayer {
     }
     return false;
   }
-
+  public onMouseWheel(e: PonWheelEvent): boolean {
+    if (e.isUp) {
+      this.scrollUp(this.wheelScrollCount);
+    } else {
+      this.scrollDown(this.wheelScrollCount);
+    }
+    return false;
+  }
 }

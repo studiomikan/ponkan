@@ -1,6 +1,7 @@
 import * as PIXI from "pixi.js";
 import { PonGame } from "./pon-game";
 import { PonMouseEvent } from "./pon-mouse-event";
+import { PonWheelEvent } from "./pon-wheel-event";
 import { AsyncCallbacks } from "./async-callbacks";
 import { AsyncTask } from "./async-task";
 import { Logger } from "./logger";
@@ -360,6 +361,10 @@ export class BaseLayer {
     for (let i = this.children.length - 1; i >= 0; i--) {
       this.children[i].onChangeStable(isStable);
     }
+  }
+
+  public onMouseWheel(e: PonWheelEvent): boolean {
+    return true;
   }
 
   /**

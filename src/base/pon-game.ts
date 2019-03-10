@@ -2,6 +2,7 @@ import * as PIXI from "pixi.js";
 import { BaseLayer } from "./base-layer";
 import { Logger } from "./logger";
 import { PonMouseEvent } from "./pon-mouse-event";
+import { PonWheelEvent } from "./pon-wheel-event";
 import { PonKeyEvent } from "./pon-key-event";
 import { PonRenderer } from "./pon-renderer";
 import { PonEventHandler } from "./pon-event-handler";
@@ -134,6 +135,16 @@ export class PonGame {
     this.backPrimaryLayers.push(layer);
     this.backRenderer.addContainer(layer.container);
     return layer;
+  }
+
+  public removeForePrimaryLayer(layer: BaseLayer): void {
+    this.forePrimaryLayers = this.forePrimaryLayers.filter(a => a != layer);
+    this.foreRenderer.removeContainer(layer.container);
+  }
+
+  public removeBackPrimaryLayer(layer: BaseLayer): void {
+    this.backPrimaryLayers = this.backPrimaryLayers.filter(a => a != layer);
+    this.backRenderer.removeContainer(layer.container);
   }
 
   /**
@@ -283,6 +294,10 @@ export class PonGame {
       try { this.onMouseUp(new PonMouseEvent(e)); }
       catch (ex) { this.error(ex); }
     });
+    canvas.addEventListener("mousewheel", (e) => {
+      try { this.onMouseWheel(new PonWheelEvent(e as WheelEvent)); }
+      catch (ex) { this.error(ex); }
+    });
     canvas.addEventListener("contextmenu", (e) => {
       e.stopPropagation();
       e.preventDefault ();
@@ -295,6 +310,7 @@ export class PonGame {
   public onMouseMove(e: PonMouseEvent): boolean { return true; }
   public onMouseDown(e: PonMouseEvent): boolean { return true; }
   public onMouseUp(e: PonMouseEvent): boolean { return true; }
+  public onMouseWheel(e: PonWheelEvent): boolean { return true; }
 
   private initKeyboardEvent(): void {
     window.addEventListener("keydown", (e: KeyboardEvent) => {

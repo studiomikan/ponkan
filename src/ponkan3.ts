@@ -7,6 +7,7 @@ import { PonEventHandler } from "./base/pon-event-handler";
 import { PonGame } from "./base/pon-game";
 import { PonKeyEvent } from "./base/pon-key-event";
 import { PonMouseEvent } from "./base/pon-mouse-event";
+import { PonWheelEvent } from "./base/pon-wheel-event";
 import { ISoundCallbacks, Sound, SoundBuffer } from "./base/sound";
 import { Tag } from "./base/tag";
 import * as Util from "./base/util";
@@ -236,6 +237,29 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     }
   }
 
+  /** マウスホイールによる読み進め処理が連続して発生しないようにするためのフラグ */
+  protected onMouseWheelLocked: boolean = false;
+  public onMouseWheel(e: PonWheelEvent): boolean {
+    if (this.historyLayer.visible) {
+      return this.historyLayer.onMouseWheel(e);
+    } else {
+      if (!this.forePrimaryLayer.onMouseWheel(e)) {
+        return false;
+      } else if (this.conductor.isStable && e.isUp) {
+        this.showHistoryLayer();
+        return false;
+      } else if (!this.onMouseWheelLocked && e.isDown) {
+        this.onMouseWheelLocked = true;
+        window.setTimeout(() => {
+          this.onMouseWheelLocked = false;
+        }, 500);
+        return this.onPrimaryClick();
+      } else {
+        return true;
+      }
+    }
+  }
+
   public onPrimaryClick(): boolean {
     // トリガーを発火
     if (this.trigger("click")) {
@@ -318,7 +342,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
           break;
       }
     } else {
-      console.log(e.key.toLowerCase(), this.conductor.isStable);
       switch (e.key.toLowerCase()) {
         case "ctrl": case "control":
           this.stopWhilePressingCtrlSkip();
@@ -784,6 +807,10 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.forePrimaryLayer = this.backPrimaryLayer;
     this.backPrimaryLayer = tmp;
     this.plugins.forEach(p => p.onFlipLayers());
+
+    this.removeForePrimaryLayer(this.historyLayer);
+    this.removeBackPrimaryLayer(this.historyLayer);
+    this.addForePrimaryLayer(this.historyLayer);
   }
 
   public waitTransClickCallback() {
