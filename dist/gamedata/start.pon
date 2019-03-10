@@ -97,7 +97,6 @@ backlay.
 # ;trans "time": 3000, "method": "scroll-to-bottom"
 ;trans "time": 3000, "method": "univ", "rule": "rule/rule_around.png"
 ;waittrans "canskip": true
-;unlockbutton
 ;unlocksystembutton
 
 end.

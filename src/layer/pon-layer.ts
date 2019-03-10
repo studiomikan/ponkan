@@ -39,7 +39,7 @@ export class PonLayer extends ToggleButtonLayer {
   }
 
   protected static ponLayerStoreParams: string[] = [
-    "hideWithMessage"
+    "autoHideWithMessage"
   ];
 
   public storeVisible(): void {
