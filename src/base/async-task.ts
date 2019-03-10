@@ -12,6 +12,8 @@ export class AsyncTask {
   constructor() {
   }
 
+  public get count(): number { return this.tasks.length; }
+
   public add(task: (params: any, index: number) => AsyncCallbacks): void {
     this.tasks.push(task);
   }
@@ -21,14 +23,21 @@ export class AsyncTask {
       Logger.error(this);
       throw new Error("タスクが重複して実行されました");
     }
-    this._status = "run";
-    this.tasks.forEach((task, index: number) => {
-      task(index, params).done((data) => {
-        this.onTaskDone(index);
-      }).fail(() => {
-        this.onTaskFailed(index);
+    if (this.tasks.length == 0) {
+      // 擬似的に非同期のタスクを用意して実行
+      setTimeout(() => {
+        this.onTaskDone(0);
+      }, 0);
+    } else {
+      this._status = "run";
+      this.tasks.forEach((task, index: number) => {
+        task(index, params).done((data) => {
+          this.onTaskDone(index);
+        }).fail(() => {
+          this.onTaskFailed(index);
+        });
       });
-    });
+    }
     return this.completeCallbacks;
   }
 

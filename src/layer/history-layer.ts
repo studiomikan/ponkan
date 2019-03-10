@@ -230,11 +230,8 @@ class HistoryTextLayer extends BaseLayer {
   }
 
   public init(config: any): void {
-    let hc: any = config.history != null ? config.history : {};
-
     this.width = config.width;
     this.height = config.height;
-    this.setBackgroundColor(0x000000, 0.5);
     this.textAutoReturn = false;
 
     if (config.history != null && config.history.text) {
@@ -343,10 +340,12 @@ class HistoryTextLayer extends BaseLayer {
  */
 export class HistoryLayer extends BaseLayer {
 
+  protected config: any;
   protected textLayer: HistoryTextLayer;
   protected upButton: SimpleButton;
   protected downButton: SimpleButton;
   protected scrollBar: ScrollBar;
+  protected closeButton: SimpleButton;
 
   public constructor(name: string, resource: Resource, owner: PonGame) {
     super(name, resource, owner);
@@ -354,20 +353,28 @@ export class HistoryLayer extends BaseLayer {
     this.upButton = new SimpleButton("ScrollUpButton", resource, owner);
     this.downButton = new SimpleButton("ScrollDownButton", resource, owner);
     this.scrollBar = new ScrollBar("ScrollBar", resource, owner);
+    this.closeButton = new SimpleButton("CloseButton", resource, owner);
   }
 
-  public init(config: any = {}) {
+  public init(config: any = {}, asyncTask: AsyncTask) {
     if (config.history == null) { config.history = {}; }
     if (config.history.text == null) { config.history.text = {}; }
     if (config.history.upButton == null) { config.history.upButton = {}; }
     if (config.history.downButton == null) { config.history.downButton = {}; }
     if (config.history.scrollBar == null) { config.history.scrollBar = {}; }
+    if (config.history.closeButton == null) { config.history.closeButton = {}; }
 
     this.x = 0;
     this.y = 0;
-
     this.width = config.width;
     this.height = config.height;
+
+    // 背景
+    if (config.history.backgroundImage != null) {
+      asyncTask.add(() => {
+        return this.loadImage(config.history.backgroundImage);
+      });
+    }
 
     // テキスト
     this.textLayer.init(config);
@@ -379,6 +386,9 @@ export class HistoryLayer extends BaseLayer {
 
     // スクロールバー
     this.initScrollBar(config);
+
+    // 閉じるボタン
+    this.initCloseButton(config);
 
     let hc: any = config.history != null ? config.history : {}; 
   }
@@ -407,15 +417,17 @@ export class HistoryLayer extends BaseLayer {
 
     this.upButton.x = config.width - 32 - 20;
     this.upButton.y = 20;
-    this.upButton.addChar("▲");
     this.upButton.mouseUp = () => { this.scrollUpPage(); };
     this.upButton.applyConfig(config.history.upButton);
+    if (config.history.upButton.text == null) { config.history.upButton.text = "▲"; }
+    this.upButton.addChar(config.history.upButton.text);
 
     this.downButton.x = config.width - 32 - 20;
     this.downButton.y = config.height - 32 - 20;
-    this.downButton.addChar("▼");
     this.downButton.mouseUp = () => { this.scrollDownPage(); };
     this.downButton.applyConfig(config.history.downButton);
+    if (config.history.downButton.text == null) { config.history.downButton.text = "▼"; }
+    this.downButton.addChar(config.history.downButton.text);
   }
 
   protected initScrollBar(config: any): void {
@@ -449,6 +461,34 @@ export class HistoryLayer extends BaseLayer {
     };
 
     this.addChild(sb);
+  }
+
+
+  protected initCloseButton(config: any): void {
+    let c: any = Util.objClone(config.history.closeButton);
+    c = Util.objExtend({
+      x: config.width - 40 - 30,
+      y: 15,
+      width: 40,
+      height: 40,
+      textFontFamily: ["mplus-1p-regular", "monospace"],
+      textFontSize: 36,
+      textLineHeight: 36,
+      textAlign: "center",
+      textColor: 0xFFFFFF,
+      textMarginTop: 0,
+      textMarginRight: 0,
+      textMarginBottom: 0,
+      textMarginLeft: 0,
+      bgColors: [0x000000, 0x000000, 0x000000],
+      bgAlphas: [0.0, 0.0, 0.0],
+    }, c);
+    this.closeButton.initButton(c.bgColors, c.bgAlphas);
+    this.closeButton.applyConfig(c);
+    this.closeButton.addChar("×");
+    this.closeButton.mouseUp = () => { this.hide(); };
+
+    this.addChild(this.closeButton);
   }
 
   public addHistoryChar(ch: string): void {
@@ -527,12 +567,15 @@ export class HistoryLayer extends BaseLayer {
   }
   public onMouseUp(e: PonMouseEvent): boolean  {
     super.onMouseUp(e);
-    // スクロール操作中ははみ出ても操作できるようにする
     let sb = this.scrollBar;
     if (sb.dragging) {
+      // スクロール操作中ははみ出ても操作できるようにする
       let e2 = new PonMouseEvent(e.x - sb.x, e.y - sb.y, e.button);
       this.scrollBar.onMouseUp(e2);
       this.resource.getForeCanvasElm().style.cursor = "auto";
+    } else if (e.isRight) {
+      // 右クリックで閉じる
+      this.hide();
     }
     return false;
   }

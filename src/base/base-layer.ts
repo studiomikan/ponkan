@@ -75,8 +75,11 @@ export class BaseLayer {
       return this.textStyle.fontFamily;
     }
   }
-  public set textFontSize(fontSize: number | string) { this.textStyle.fontSize = fontSize; }
-  public get textFontSize(): number | string { return this.textStyle.fontSize; }
+  public set textFontSize(fontSize: number) {
+    this.textStyle.fontSize = fontSize;
+    if (this.textLineHeight < fontSize) { this.textLineHeight = fontSize; }
+  }
+  public get textFontSize(): number { return +this.textStyle.fontSize; }
   public set textFontWeight(fontWeight: string) { this.textStyle.fontWeight = fontWeight; }
   public get textFontWeight(): string { return this.textStyle.fontWeight; }
   public set textColor(color: number | string) { this.textStyle.fill = color; }
@@ -478,12 +481,12 @@ export class BaseLayer {
         break;
     }
     let x = startX;
-    let y = this.textY;
+    let y = this.textY + this.textLineHeight - this.textFontSize;
     let list: number[] = [];
     this.currentTextLine.forEach((sp) => {
       list.push(x);
       sp.x = x;
-      sp.y = this.textY;
+      sp.y = y;
       x += sp.width;
     });
 

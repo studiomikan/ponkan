@@ -35,6 +35,8 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     unknowntag: true,
   };
 
+  protected initialAsyncTask: AsyncTask;
+
   // conductor
   protected _conductor: Conductor;
   public get conductor(): Conductor { return this._conductor; }
@@ -101,6 +103,8 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     super(parentId, config);
     if (config.saveDataPrefix != null) { this.saveDataPrefix = config.saveDataPrefix; }
 
+    this.initialAsyncTask = new AsyncTask();
+
     this._conductor = new Conductor(this.resource, this);
 
     this.initTagAction();
@@ -114,7 +118,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.historyLayer = new HistoryLayer("HistoryLayer", this.resource, this);
     this.addForePrimaryLayer(this.historyLayer);
     this.historyLayer.visible = false;
-    this.historyLayer.init(config);
+    this.historyLayer.init(config, this.initialAsyncTask);
 
     this.initSounds(config);
 
@@ -151,11 +155,13 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public start(): void {
     super.start();
     this.resource.loadSystemData(this.saveDataPrefix);
-    this.conductor.loadScript("start.pon").done(() => {
-      Logger.debug("onLoadScript success");
-      this.conductor.start();
-    }).fail(() => {
-      Logger.debug("onLoadScript fail");
+    this.initialAsyncTask.run().done(() => {
+      this.conductor.loadScript("start.pon").done(() => {
+        Logger.debug("onLoadScript success");
+        this.conductor.start();
+      }).fail(() => {
+        Logger.debug("onLoadScript fail");
+      });
     });
   }
 

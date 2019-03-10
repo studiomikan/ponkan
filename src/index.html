@@ -28,44 +28,61 @@
 
         // 履歴レイヤ
         history: {
+          backgroundImage: "image/history.png",
+          // テキスト表示部分
           text: {
+            x: 190,
+            y: 130,
+            width: 900,
+            height: 500,
             textFontFamily: ["mplus-1p-regular"],
-            textFontSize: 24,
-            textLineHeight: 24,
-            textLinePitch: 5,
-            backgroundColor: 0x000000,
-            backgroundAlpha: 0.7,
-            textMarginTop: 100,
-            textMarginRight: 100,
-            textMarginBottom: 100,
-            textMarginLeft: 100,
+            textFontSize: 26,
+            textLineHeight: 26,
+            textLinePitch: 7,
+            textMarginTop: 0,
+            textMarginRight: 0,
+            textMarginBottom: 0,
+            textMarginLeft: 0,
           },
+          // 上スクロールボタン
           upButton: {
-            x: width - 32 - 20,
-            y: 20,
-            width: 32,
-            height: 32,
-            bgColors: [0x4286f4, 0x4286f4, 0x4286f4],
-            bgAlphas: [0.8, 0.9, 1.0],
+            x: width - 24 - 150,
+            y: 130,
+            width: 24,
+            height: 24,
+            textColor: 0x888888,
+            textFontSize: 10,
+            textLineHeight: 10,
+            bgColors: [0xFFFFFF, 0xFFFFFF, 0xFFFFFF],
+            bgAlphas: [1.0, 1.0, 1.0]
           },
+          // 下スクロールボタン
           downButton: {
-            x: width - 32 - 20,
-            y: height - 32 - 20,
-            width: 32,
-            height: 32,
-            bgColors: [0x4286f4, 0x4286f4, 0x4286f4],
-            bgAlphas: [0.8, 0.9, 1.0],
+            x: width - 24 - 150,
+            y: 130 + 500 - 24,
+            width: 24,
+            height: 24,
+            textColor: 0x888888,
+            textFontSize: 10,
+            textLineHeight: 10,
+            bgColors: [0xFFFFFF, 0xFFFFFF, 0xFFFFFF],
+            bgAlphas: [1.0, 1.0, 1.0]
           },
+          // スクロールバー
           scrollBar: {
-            x: width - 32 - 20,
-            y: 20 + 32,
-            width: 32,
-            height: height - (32+20)*2,
-            backgroundColor: 0x4286f4,
-            backgroundAlpha: 0.1,
-            bgColors: [0x4286f4, 0x4286f4, 0x4286f4],
-            bgAlphas: [0.4, 0.5, 0.6],
+            x: width - 24 - 150,
+            y: 130 + 24 + 1,
+            width: 24,
+            height: 500 - 24 - 24 - 2,
+            textColor: 0x888888,
+            backgroundColor: 0xFFFFFF,
+            backgroundAlpha: 0.5,
+            bgColors: [0xFFFFFF, 0xFFFFFF, 0xFFFFFF],
+            bgAlphas: [1.0, 1.0, 1.0]
           },
+          // 閉じるボタン
+          closeButton: {
+          }
         }
       });
       WebFont.load({
