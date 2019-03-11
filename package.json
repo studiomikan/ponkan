@@ -22,7 +22,7 @@
     "@types/howler": "=2.1.0",
     "@types/jsdom": "^12.2.3",
     "@types/mocha": "^5.2.6",
-    "@types/pixi.js": "=4.8.4",
+    "@types/pixi.js": "=4.8.5",
     "chai": "^4.2.0",
     "copy-webpack-plugin": "^4.6.0",
     "howler": "=2.1.1",
