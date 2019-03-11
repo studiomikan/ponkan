@@ -11,10 +11,10 @@ import { PonWheelEvent } from "./base/pon-wheel-event";
 import { ISoundCallbacks, Sound, SoundBuffer } from "./base/sound";
 import { Tag } from "./base/tag";
 import * as Util from "./base/util";
-import { PonLayer } from "./layer/pon-layer";
 import { HistoryLayer } from "./layer/history-layer";
-import { applyJsEntity, castTagValues, generateTagActions, TagAction, TagValue } from "./tag-action";
+import { PonLayer } from "./layer/pon-layer";
 import { PonPlugin } from "./plugin/pon-plugin";
+import { applyJsEntity, castTagValues, generateTagActions, TagAction, TagValue } from "./tag-action";
 
 export enum SkipType {
   INVALID = 0,
@@ -150,7 +150,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.stop();
     this.forePrimaryLayer.destroy();
     this.backPrimaryLayer.destroy();
-    this.plugins.forEach(p => p.destroy());
+    this.plugins.forEach((p) => p.destroy());
     super.destroy();
   }
 
@@ -169,7 +169,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public stop(): void {
     super.stop();
-    this.plugins.forEach(p => p.onSaveSystemVariables());
+    this.plugins.forEach((p) => p.onSaveSystemVariables());
     this.resource.saveSystemData(this.saveDataPrefix);
   }
 
@@ -316,6 +316,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public onKeyDown(e: PonKeyEvent): boolean {
     Logger.debug("onKeyDown: ", e.key);
     if (this.historyLayer.visible) {
+      // do nothing.
     } else {
       switch (e.key) {
         case "Ctrl": case "ctrl": case "Control":
@@ -430,7 +431,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public onChangeStable(isStable: boolean): void {
     this.forePrimaryLayer.onChangeStable(isStable);
     this.backPrimaryLayer.onChangeStable(isStable);
-    this.plugins.forEach(p => p.onChangeStable(isStable));
+    this.plugins.forEach((p) => p.onChangeStable(isStable));
   }
 
   public onReturnSubroutin(forceStart: boolean = false): void {
@@ -572,8 +573,8 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
     // デフォルト設定の反映
     if (config.layersDefault != null) {
-      this.foreLayers.forEach(lay => lay.applyConfig(config.layersDefault));
-      this.backLayers.forEach(lay => lay.applyConfig(config.layersDefault));
+      this.foreLayers.forEach((lay) => lay.applyConfig(config.layersDefault));
+      this.backLayers.forEach((lay) => lay.applyConfig(config.layersDefault));
     }
   }
 
@@ -751,7 +752,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.messageLayer.visible = false;
     this.lineBreakGlyphLayer.visible = false;
     this.pageBreakGlyphLayer.visible = false;
-    this.plugins.forEach(p => p.onChangeMessageVisible(false));
+    this.plugins.forEach((p) => p.onChangeMessageVisible(false));
     this.hideMessageFlag = true;
   }
 
@@ -759,7 +760,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.foreLayers.forEach((layer) => {
       layer.restoreVisible();
     });
-    this.plugins.forEach(p => p.onChangeMessageVisible(true));
+    this.plugins.forEach((p) => p.onChangeMessageVisible(true));
     this.hideMessageFlag = false;
   }
 
@@ -792,12 +793,12 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // =========================================================
 
   public backlay(lay: string): void {
-    const fore: PonLayer[] = this.getLayers({lay: lay, page: "fore"});
-    const back: PonLayer[] = this.getLayers({lay: lay, page: "back"});
+    const fore: PonLayer[] = this.getLayers({lay, page: "fore"});
+    const back: PonLayer[] = this.getLayers({lay, page: "back"});
     for (let i = 0; i < fore.length; i++) {
       fore[i].copyTo(back[i]);
     }
-    this.plugins.forEach(p => p.onCopyLayer(true));
+    this.plugins.forEach((p) => p.onCopyLayer(true));
   }
 
   // [override]
@@ -806,7 +807,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     const tmp = this.forePrimaryLayer;
     this.forePrimaryLayer = this.backPrimaryLayer;
     this.backPrimaryLayer = tmp;
-    this.plugins.forEach(p => p.onFlipLayers());
+    this.plugins.forEach((p) => p.onFlipLayers());
 
     this.removeForePrimaryLayer(this.historyLayer);
     this.removeBackPrimaryLayer(this.historyLayer);
@@ -831,7 +832,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // =========================================================
 
   public onWindowClose(): boolean {
-    this.plugins.forEach(p => p.onSaveSystemVariables());
+    this.plugins.forEach((p) => p.onSaveSystemVariables());
     this.resource.saveSystemData(this.saveDataPrefix);
     return true;
   }
@@ -858,7 +859,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       name: this.latestSaveData.name,
       comment: this.latestSaveData.comment,
     };
-    this.plugins.forEach(p => p.onSaveSystemVariables());
+    this.plugins.forEach((p) => p.onSaveSystemVariables());
     this.resource.saveSystemData(this.saveDataPrefix);
   }
 
@@ -926,7 +927,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     });
 
     // プラグイン
-    this.plugins.forEach(p => p.onStore(data, tick));
+    this.plugins.forEach((p) => p.onStore(data, tick));
   }
 
   public load(num: number, tick: number): AsyncCallbacks {
@@ -974,7 +975,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     });
 
     // プラグイン
-    this.plugins.forEach(p => p.onRestore(asyncTask, data, tick, true));
+    this.plugins.forEach((p) => p.onRestore(asyncTask, data, tick, true));
 
     return asyncTask.run();
   }

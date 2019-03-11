@@ -162,18 +162,18 @@ class ScrollBar extends BaseLayer {
     this.resource.getForeCanvasElm().style.cursor = "pointer";
     return false;
   }
-  
+
   public onMouseLeave(e: PonMouseEvent): boolean {
     super.onMouseLeave(e);
     this.resource.getForeCanvasElm().style.cursor = "auto";
     return false;
   }
-  
+
   public onMouseDown(e: PonMouseEvent): boolean {
     if (!super.onMouseDown(e)) { return false; }
     return false;
   }
-  
+
   public onMouseMove(e: PonMouseEvent): boolean {
     super.onMouseMove(e);
     this.resource.getForeCanvasElm().style.cursor = "pointer";
@@ -183,13 +183,13 @@ class ScrollBar extends BaseLayer {
     }
     return false;
   }
-  
+
   public onMouseUp(e: PonMouseEvent): boolean {
     if (!super.onMouseUp(e)) { return false; }
     this.setBarY(e.y - (this.bar.height / 2));
     this.onChangeCallback(this);
     // FIXME eの中身がおかしいが、現状使ってないのでこのまま
-    this.bar.onMouseUp(new PonMouseEvent(0,0,0)); 
+    this.bar.onMouseUp(new PonMouseEvent(0,0,0));
     return false;
   }
 
@@ -291,7 +291,7 @@ class HistoryTextLayer extends BaseLayer {
 
   public redraw(): void {
     this.clearText();
-    
+
     let max = this.point + this.screenLineCount;
     for (let i = this.point; i < max && i < this.lines.length; i++) {
       this.lines[i].forEach(ch => this.addChar(ch));
@@ -393,7 +393,7 @@ export class HistoryLayer extends BaseLayer {
     // 閉じるボタン
     this.initCloseButton(config);
 
-    let hc: any = config.history != null ? config.history : {}; 
+    let hc: any = config.history != null ? config.history : {};
   }
 
   protected initScrollButtons(config: any): void {

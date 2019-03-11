@@ -192,12 +192,12 @@ export class ImageButtonLayer extends TextButtonLayer {
   public store(tick: number): any {
     let data: any = super.store(tick);
     let me: any = this as any;
-  
+
     data.imageButtons = this.imageButtons.map(imageButton => imageButton.store(tick));
-  
+
     return data;
   }
-  
+
   public restore(asyncTask: AsyncTask, data: any, tick: number): void {
     this.clearImageButtons();
     if (data.imageButtons != null && data.imageButtons.length > 0) {
@@ -210,7 +210,7 @@ export class ImageButtonLayer extends TextButtonLayer {
     }
     super.restore(asyncTask, data, tick);
   }
-  
+
   protected restoreAfterLoadImage(data: any, tick: number): void {
     super.restoreAfterLoadImage(data, tick);
     if (data.imageButtons != null && data.imageButtons.length > 0) {
