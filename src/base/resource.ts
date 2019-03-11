@@ -1,5 +1,5 @@
 import { Howl, Howler } from 'howler';
-import * as Util from "./util.ts";
+import * as Util from "./util";
 import { AsyncCallbacks } from "./async-callbacks";
 import { Logger } from "./logger";
 import { PonGame } from "./pon-game";
@@ -13,7 +13,7 @@ export class Resource {
   public readonly tmpVar: any = {};
   public readonly gameVar: any = {};
   public readonly systemVar: any = {};
-  
+
   public readonly macroInfo: any = {};
   public macroParams: object | null = null;
 

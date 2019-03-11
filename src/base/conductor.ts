@@ -7,6 +7,7 @@ import { Tag } from "./tag";
 import { Macro } from "./macro";
 
 export interface IConductorEvent {
+  onLoadNewScript(labelName: string | null, countPage: boolean): void;
   onLabel(labelName: string, line: number, tick: number): "continue" | "break";
   onSaveMark(saveMarkName:string, comment: string, line: number, tick: number): "continue" | "break";
   onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break";
@@ -19,7 +20,7 @@ export interface ICallStackNode {
   script: Script;
   point: number;
   continueConduct: boolean
-  returnOffset: number 
+  returnOffset: number
 }
 
 export enum ConductorState {
@@ -66,14 +67,16 @@ export class Conductor {
    * ファイルが省略されたときは、現在のファイル内でラベル移動のみ行う。
    * @param file 移動先ファイル
    * @param label 移動先ラベル
+   * @param countPage 既読処理をするかどうか
    */
-  public jump(filePath: string | null, label: string | null = null): AsyncCallbacks {
+  public jump(filePath: string | null, label: string | null = null, countPage: boolean): AsyncCallbacks {
     const cb = new AsyncCallbacks();
     if (filePath != null && filePath != "") {
       this.loadScript(filePath).done(() => {
         if (label != null) {
           this.script.goToLabel(label);
         }
+        this.eventCallbacks.onLoadNewScript(label, countPage);
         cb.callDone({filePath: filePath, label: label});
       }).fail(() => {
         cb.callFail({filePath: filePath, label: label});

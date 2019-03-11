@@ -157,6 +157,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [],
       `TODO タグの説明文`,
       (values, tick) => {
+        p.passLatestLabel();
         p.conductor.stop();
         p.stopSkip();
         return "break";
@@ -169,9 +170,13 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [
         new TagValue("file", "string", false, null, "移動先のスクリプトファイル名。省略時は現在のファイル内で移動する"),
         new TagValue("label", "string", false, null, "移動先のラベル名。省略時はファイルの先頭"),
+        new TagValue("countpage", "boolean", false, true, "現在の位置を既読にするかどうか"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
+        if (values.countpage) {
+          p.passLatestLabel();
+        }
         if (values.file == null && values.label == null) {
           return "continue";
         } else {
@@ -189,9 +194,13 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [
         new TagValue("file", "string", false, null, "移動先のスクリプトファイル名。省略時は現在のファイル内で移動する"),
         new TagValue("label", "string", false, null, "移動先のラベル名。省略時はファイルの先頭"),
+        new TagValue("countpage", "boolean", false, false, "現在の位置を既読にするかどうか"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
+        if (values.countpage) {
+          p.passLatestLabel();
+        }
         if (values.file == null && values.label == null) {
           return "continue";
         } else {

@@ -10,6 +10,7 @@ import { PonMouseEvent } from "./base/pon-mouse-event";
 import { PonWheelEvent } from "./base/pon-wheel-event";
 import { ISoundCallbacks, Sound, SoundBuffer } from "./base/sound";
 import { Tag } from "./base/tag";
+import { ReadUnread } from "./base/read-unread";
 import * as Util from "./base/util";
 import { HistoryLayer } from "./layer/history-layer";
 import { PonLayer } from "./layer/pon-layer";
@@ -42,11 +43,16 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   protected _conductor: Conductor;
   public get conductor(): Conductor { return this._conductor; }
   public skipMode: SkipType = SkipType.INVALID;
+  public canSkipUnreadPart: boolean = false;
   public autoModeFlag: boolean = false;
   public autoModeInterval: number = 1000;
   public autoModeStartTick: number = -1;
   public autoModeLayerNum: number = DEFAULT_AUTO_MODE_LAYER_NUM;
   // public canStopSkipByTag: boolean = false;
+
+  // 既読処理
+  public latestLabelName: string = "__start__";
+  public readUnread: ReadUnread;
 
   // タグ関係
   public readonly tagActions: any = {};
@@ -108,6 +114,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.initialAsyncTask = new AsyncTask();
 
     this._conductor = new Conductor(this.resource, this);
+    this.readUnread = new ReadUnread(this.resource);
 
     this.initTagAction();
 
@@ -377,6 +384,13 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   // =========================================================
   // コンダクタ
   // =========================================================
+  public onLoadNewScript(labelName: string | null, countPage: boolean): void {
+    if (labelName == null || labelName == "") {
+      labelName = "__start__";
+    }
+    this.latestLabelName = labelName;
+  }
+
   public onTag(tag: Tag, line: number, tick: number): "continue" | "break" {
     Logger.debug("onTag: ", tag.name, tag.values, tag);
     const tagAction: TagAction = this.tagActions[tag.name];
@@ -407,7 +421,16 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public onLabel(labelName: string, line: number, tick: number): "continue" | "break" {
     Logger.debug("onLabel: ", labelName);
-    // TODO
+    this.passLatestLabel();
+    this.latestLabelName = labelName;
+
+    // TODO SkipType.WHILE_PRESSING_CTRLのときは強制でよいか？
+    if (this.skipMode === SkipType.UNTIL_S &&
+        !this.readUnread.isPassed(this.conductor.script, labelName) &&
+        !this.canSkipUnreadPart) {
+      this.stopSkip();
+    }
+
     return "continue";
   }
 
@@ -456,6 +479,14 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       // 強制開始
       this.conductor.start();
     }
+  }
+
+  // =========================================================
+  // 既読未読
+  // =========================================================
+
+  public passLatestLabel(): void {
+    this.readUnread.pass(this.conductor.script, this.latestLabelName);
   }
 
   // =========================================================
