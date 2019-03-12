@@ -21,7 +21,6 @@ export interface ICallStackNode {
   point: number;
   continueConduct: boolean;
   returnOffset: number;
-  latestSaveMarkName: string;
 }
 
 export enum ConductorState {
@@ -120,7 +119,6 @@ export class Conductor {
       point: this.script.getPoint(),
       continueConduct: continueConduct,
       returnOffset: returnOffset,
-      latestSaveMarkName: this.latestSaveMarkName,
     });
     return this.jump(filePath, label, countPage);
   }
@@ -140,7 +138,6 @@ export class Conductor {
     }
     this._script = stackData.script;
     this._script.goTo(stackData.point + stackData.returnOffset);
-    this.latestSaveMarkName = stackData.latestSaveMarkName;
     if (stackData.continueConduct) {
       this.eventCallbacks.onReturnSubroutin(forceStart);
       return "continue";

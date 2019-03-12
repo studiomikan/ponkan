@@ -422,13 +422,16 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     Logger.debug("onSaveMark: ", saveMarkName, comment);
 
     // 未読の場合はスキップを停止する
-    if (this.skipMode === SkipType.WHILE_PRESSING_CTRL) {
-      if (!this.canSkipUnreadPartByCtrl) {
-        this.stopSkip();
-      }
-    } else if (this.isSkipping ) {
-      if (!this.canSkipUnreadPart) {
-        this.stopSkip();
+    if (!this.conductor.isPassed(saveMarkName)) {
+      if (this.skipMode === SkipType.WHILE_PRESSING_CTRL) {
+        if (!this.canSkipUnreadPartByCtrl) {
+          this.stopSkip();
+        }
+      } else if (this.isSkipping) {
+        if (!this.canSkipUnreadPart) {
+          console.log("stop skip. cause", saveMarkName, this.canSkipUnreadPart);
+          this.stopSkip();
+        }
       }
     }
 

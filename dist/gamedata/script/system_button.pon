@@ -78,7 +78,7 @@ tv.systembutton = {
 ;messageopt  {
   lay:          "&tv.layer.systembutton",
   align:        "center",
-  margint:      0, 
+  margint:      0,
   lineheight:   16, fontsize:     16,
   fontweight:   "normal",
   color:        "&tv.systembutton.color",
@@ -115,7 +115,7 @@ tv.systembutton = {
   }
 ;endfor
 
-;return
+;return countpage: true
 ;s
 
 
