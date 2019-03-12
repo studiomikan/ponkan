@@ -5,9 +5,9 @@ import { Resource } from "./resource";
 import { Script } from "./script";
 import { Tag } from "./tag";
 import { Macro } from "./macro";
+import { ReadUnread } from "./read-unread";
 
 export interface IConductorEvent {
-  onLoadNewScript(labelName: string | null, countPage: boolean): void;
   onLabel(labelName: string, line: number, tick: number): "continue" | "break";
   onSaveMark(saveMarkName:string, comment: string, line: number, tick: number): "continue" | "break";
   onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break";
@@ -19,8 +19,9 @@ export interface IConductorEvent {
 export interface ICallStackNode {
   script: Script;
   point: number;
-  continueConduct: boolean
-  returnOffset: number
+  continueConduct: boolean;
+  returnOffset: number;
+  latestSaveMarkName: string;
 }
 
 export enum ConductorState {
@@ -44,10 +45,14 @@ export class Conductor {
 
   protected callStack: ICallStackNode[] = [];
 
+  public latestSaveMarkName: string = "";
+  public readUnread: ReadUnread;
+
   public constructor(resource: Resource, eventCallbacks: IConductorEvent) {
     this.resource = resource;
     this.eventCallbacks = eventCallbacks;
     this._script = new Script(this.resource, "dummy", ";s");
+    this.readUnread = new ReadUnread(this.resource);
   }
 
   public loadScript(filePath: string): AsyncCallbacks {
@@ -73,16 +78,23 @@ export class Conductor {
     const cb = new AsyncCallbacks();
     if (filePath != null && filePath != "") {
       this.loadScript(filePath).done(() => {
+        if (countPage) {
+          this.passLatestSaveMark();
+          this.latestSaveMarkName = "";
+        }
         if (label != null) {
           this.script.goToLabel(label);
         }
-        this.eventCallbacks.onLoadNewScript(label, countPage);
         cb.callDone({filePath: filePath, label: label});
       }).fail(() => {
         cb.callFail({filePath: filePath, label: label});
       });
     } else if (label != null) {
       window.setTimeout(() => {
+        if (countPage) {
+          this.passLatestSaveMark();
+          this.latestSaveMarkName = "";
+        }
         this.script.goToLabel(label);
         cb.callDone({filePath: filePath, label: label});
       }, 0);
@@ -99,29 +111,36 @@ export class Conductor {
   public callSubroutine(
     filePath: string | null,
     label: string | null = null,
+    countPage: boolean = false,
     continueConduct: boolean = true,
-    returnOffset: number = 0
+    returnOffset: number = 0,
   ): AsyncCallbacks {
     this.callStack.push({
       script: this.script,
       point: this.script.getPoint(),
       continueConduct: continueConduct,
-      returnOffset: returnOffset
+      returnOffset: returnOffset,
+      latestSaveMarkName: this.latestSaveMarkName,
     });
-    return this.jump(filePath, label);
+    return this.jump(filePath, label, countPage);
   }
 
   /**
    * サブルーチンから戻る
    * @param forceStart 強制的にpb, lb, waitclickを終わらせるかどうか
+   * @param countPage 既読処理をするかどうか
    */
-  public returnSubroutine(forceStart: boolean = false): "continue" | "break" {
+  public returnSubroutine(forceStart: boolean = false, countPage: boolean): "continue" | "break" {
     let stackData = this.callStack.pop();
     if (stackData === undefined) {
       throw new Error("returnで戻れませんでした。callとreturnの対応が取れていません");
     }
+    if (countPage) {
+      this.passLatestSaveMark();
+    }
     this._script = stackData.script;
     this._script.goTo(stackData.point + stackData.returnOffset);
+    this.latestSaveMarkName = stackData.latestSaveMarkName;
     if (stackData.continueConduct) {
       this.eventCallbacks.onReturnSubroutin(forceStart);
       return "continue";
@@ -131,6 +150,23 @@ export class Conductor {
       return "break";
     }
   }
+
+  public isPassed(labelName: string): boolean {
+    return this.readUnread.isPassed(this.script, labelName);
+  }
+
+  public isPassedLatestSaveMark(): boolean {
+    return this.isPassed(this.latestSaveMarkName);
+  }
+
+  public passSaveMark(saveMarkName: string): void {
+    this.readUnread.pass(this.script, saveMarkName);
+  }
+
+  public passLatestSaveMark(): void {
+    this.passSaveMark(this.latestSaveMarkName);
+  }
+
 
   public conduct(tick: number): void {
     if (this.status === ConductorState.Stop) { return; }
@@ -162,6 +198,8 @@ export class Conductor {
           tagReturnValue = this.eventCallbacks.onLabel(tag.values.__body__, tag.line, tick);
           break;
         case "__save_mark__":
+          this.passLatestSaveMark();
+          this.latestSaveMarkName = tag.values.name;
           tagReturnValue = this.eventCallbacks.onSaveMark(
             tag.values.name, tag.values.comment, tag.line, tick);
           break;

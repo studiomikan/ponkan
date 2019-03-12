@@ -24,6 +24,7 @@ export class TextButton extends Button {
     callFile: string | null = null,
     jumpLabel: string | null = null,
     callLabel: string | null = null,
+    countPage: boolean = true,
     isSystemButton: boolean = false,
     exp: string | null = null,
     text: string,
@@ -38,7 +39,7 @@ export class TextButton extends Button {
     this.freeImage();
     this.clearText();
 
-    this.initButton(jumpFile, callFile, jumpLabel, callLabel, isSystemButton, exp);
+    this.initButton(jumpFile, callFile, jumpLabel, callLabel, countPage, isSystemButton, exp);
 
     this.txtBtnText = text;
     this.txtBtnNormalBackgroundColor = normalBackgroundColor;
@@ -148,6 +149,7 @@ export class TextButtonLayer extends FrameAnimLayer {
     callFile: string | null = null,
     jumpLabel: string | null = null,
     callLabel: string | null = null,
+    countPage: boolean = true,
     exp: string | null = null,
     text: string,
     x: number,
@@ -181,6 +183,7 @@ export class TextButtonLayer extends FrameAnimLayer {
       callFile,
       jumpLabel,
       callLabel,
+      countPage,
       isSystemButton,
       exp,
       text,

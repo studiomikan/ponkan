@@ -10,8 +10,7 @@ export class ReadUnread {
     this.resource = resource;
   }
 
-  public pass(script: Script, label: string): void {
-    if (label == "") { return; }
+  public pass(script: Script, saveMarkName: string): void {
     let s = this.systemVar;
 
     if (s.trail == null) {
@@ -20,11 +19,12 @@ export class ReadUnread {
     if (s.trail[script.filePath] == null) {
       s.trail[script.filePath] = {};
     }
-    if (s.trail[script.filePath][label] == null) {
-      s.trail[script.filePath][label] = 1;
+    if (s.trail[script.filePath][saveMarkName] == null) {
+      s.trail[script.filePath][saveMarkName] = 1;
     } else {
-      s.trail[script.filePath][label]++;
+      s.trail[script.filePath][saveMarkName]++;
     }
+    Logger.debug("onSaveMark pass:", script.filePath, saveMarkName, s.trail[script.filePath][saveMarkName]);
   }
 
   public isPassed(script: Script, label: string): boolean {

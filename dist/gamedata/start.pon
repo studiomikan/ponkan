@@ -1,4 +1,5 @@
 # ゲームの開始スクリプト
+|game_start_mark:ゲーム開始
 
 ;call "file": "script/init_system.pon"
 
@@ -82,7 +83,7 @@ OK.
 ;pb
 
 # トランジションのテスト
-# ;backlay "lay": "0"
+|save_mark_before_trans:save_mark_before_trans
 ;backlay
 ;layopt "lay": 1, "page": "fore", "visible": false
 ;image "lay": 0, "page": "back", "file": "image/bg1.png", "visible": true, "x": 0, "y": 0

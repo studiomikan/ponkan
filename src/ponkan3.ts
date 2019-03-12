@@ -10,7 +10,6 @@ import { PonMouseEvent } from "./base/pon-mouse-event";
 import { PonWheelEvent } from "./base/pon-wheel-event";
 import { ISoundCallbacks, Sound, SoundBuffer } from "./base/sound";
 import { Tag } from "./base/tag";
-import { ReadUnread } from "./base/read-unread";
 import * as Util from "./base/util";
 import { HistoryLayer } from "./layer/history-layer";
 import { PonLayer } from "./layer/pon-layer";
@@ -44,15 +43,12 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public get conductor(): Conductor { return this._conductor; }
   public skipMode: SkipType = SkipType.INVALID;
   public canSkipUnreadPart: boolean = false;
+  public canSkipUnreadPartByCtrl: boolean = true;
   public autoModeFlag: boolean = false;
   public autoModeInterval: number = 1000;
   public autoModeStartTick: number = -1;
   public autoModeLayerNum: number = DEFAULT_AUTO_MODE_LAYER_NUM;
   // public canStopSkipByTag: boolean = false;
-
-  // 既読処理
-  public latestLabelName: string = "__start__";
-  public readUnread: ReadUnread;
 
   // タグ関係
   public readonly tagActions: any = {};
@@ -114,7 +110,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.initialAsyncTask = new AsyncTask();
 
     this._conductor = new Conductor(this.resource, this);
-    this.readUnread = new ReadUnread(this.resource);
 
     this.initTagAction();
 
@@ -388,7 +383,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     if (labelName == null || labelName == "") {
       labelName = "__start__";
     }
-    this.latestLabelName = labelName;
   }
 
   public onTag(tag: Tag, line: number, tick: number): "continue" | "break" {
@@ -421,21 +415,23 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public onLabel(labelName: string, line: number, tick: number): "continue" | "break" {
     Logger.debug("onLabel: ", labelName);
-    this.passLatestLabel();
-    this.latestLabelName = labelName;
-
-    // TODO SkipType.WHILE_PRESSING_CTRLのときは強制でよいか？
-    if (this.skipMode === SkipType.UNTIL_S &&
-        !this.readUnread.isPassed(this.conductor.script, labelName) &&
-        !this.canSkipUnreadPart) {
-      this.stopSkip();
-    }
-
     return "continue";
   }
 
   public onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): "continue" | "break" {
     Logger.debug("onSaveMark: ", saveMarkName, comment);
+
+    // 未読の場合はスキップを停止する
+    if (this.skipMode === SkipType.WHILE_PRESSING_CTRL) {
+      if (!this.canSkipUnreadPartByCtrl) {
+        this.stopSkip();
+      }
+    } else if (this.isSkipping ) {
+      if (!this.canSkipUnreadPart) {
+        this.stopSkip();
+      }
+    }
+
     this.updateSaveData(saveMarkName, comment, tick);
     return "continue";
   }
@@ -482,14 +478,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   // =========================================================
-  // 既読未読
-  // =========================================================
-
-  public passLatestLabel(): void {
-    this.readUnread.pass(this.conductor.script, this.latestLabelName);
-  }
-
-  // =========================================================
   // スキップ／オート関係
   // =========================================================
 
@@ -498,11 +486,16 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   public startSkipByTag(): void {
-    this.skipMode = SkipType.UNTIL_S;
+    if (this.conductor.isPassedLatestSaveMark() || this.canSkipUnreadPart) {
+      this.skipMode = SkipType.UNTIL_S;
+    }
   }
 
   public startSkipByCtrl(): void {
-    this.skipMode = SkipType.WHILE_PRESSING_CTRL;
+    console.log("@@@@@@@start", this.conductor.isPassedLatestSaveMark(), this.canSkipUnreadPartByCtrl);
+    if (this.conductor.isPassedLatestSaveMark() || this.canSkipUnreadPartByCtrl) {
+      this.skipMode = SkipType.WHILE_PRESSING_CTRL;
+    }
   }
 
   public stopWhilePressingCtrlSkip(): void {

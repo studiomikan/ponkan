@@ -157,7 +157,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [],
       `TODO タグの説明文`,
       (values, tick) => {
-        p.passLatestLabel();
+        p.conductor.passLatestSaveMark();
         p.conductor.stop();
         p.stopSkip();
         return "break";
@@ -174,13 +174,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        if (values.countpage) {
-          p.passLatestLabel();
-        }
         if (values.file == null && values.label == null) {
           return "continue";
         } else {
-          p.conductor.jump(values.file, values.label).done(() => {
+          p.conductor.jump(values.file, values.label, values.countpage).done(() => {
             p.conductor.start();
           });
           return p.conductor.stop();
@@ -198,13 +195,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        if (values.countpage) {
-          p.passLatestLabel();
-        }
         if (values.file == null && values.label == null) {
           return "continue";
         } else {
-          p.conductor.callSubroutine(values.file, values.label).done(() => {
+          p.conductor.callSubroutine(values.file, values.label, values.countpage).done(() => {
             p.conductor.start();
           });
           return p.conductor.stop();
@@ -219,6 +213,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("file", "string", false, null, "移動先のスクリプトファイル名。省略時は現在のファイル内で移動する"),
         new TagValue("label", "string", false, null, "移動先のラベル名。省略時はファイルの先頭"),
         new TagValue("forcestart", "boolean", false, false, "戻った後、強制的にシナリオを再開する"),
+        new TagValue("countpage", "boolean", false, true, "現在の位置を既読にするかどうか"),
       ],
       `[call]タグで呼び出したサブルーチンから、呼び出し元に戻ります。
 
@@ -227,7 +222,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
        forcestart属性をtrueにした時は、呼び出し元へ戻ると同時に、[lb][pb]などで停止していたとしても、強制的に再開されます。
        ただし[s]タグでスクリプトが完全に停止していた場合は停止したままです。`,
       (values, tick) => {
-        return p.conductor.returnSubroutine(values.forcestart);
+        return p.conductor.returnSubroutine(values.forcestart, values.countpage);
       },
     ),
     new TagAction(
@@ -887,6 +882,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("bgcolors", "array", true, null, "背景色の配列(0xRRGGBB)。通常時、マウスオーバー時、マウス押下時の順"),
         new TagValue("bgalphas", "array", false, [1, 1, 1], "背景色のAlphaの配列(0.0〜1.0)。通常時、マウスオーバー時、マウス押下時の順"),
         new TagValue("system", "boolean", false, false, "システム用ボタンとする場合はtrue"),
+        new TagValue("countpage", "boolean", false, true, "現在の位置を既読にするかどうか"),
       ],
       `指定のレイヤーに、テキストと背景色を用いたボタンを配置します。
        配置直後はボタンはロックされた状態となり、押下することはできません。
@@ -898,6 +894,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
             values.callfile,
             values.jumplabel,
             values.calllabel,
+            values.countpage,
             values.exp,
             values.text,
             values.x,
@@ -945,6 +942,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("y", "number", false, 0, "y座標(px)"),
         new TagValue("direction", "string", false, "horizontal", `ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"`),
         new TagValue("system", "boolean", false, false, "システム用ボタンとする場合はtrue"),
+        new TagValue("countpage", "boolean", false, true, "現在の位置を既読にするかどうか"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
@@ -954,6 +952,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
             values.callfile,
             values.jumplabel,
             values.calllabel,
+            values.countpage,
             values.exp,
             values.file,
             values.x,

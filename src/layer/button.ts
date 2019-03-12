@@ -16,6 +16,7 @@ export class Button extends BaseLayer {
   protected callFilePath: string | null = null;
   protected jumpLabel: string | null = null;
   protected callLabel: string | null = null;
+  protected countPage: boolean = true;
   protected exp: string | null = null;
   protected isSystemButton: boolean = false;
   protected systemButtonLocked: boolean = false;
@@ -25,6 +26,7 @@ export class Button extends BaseLayer {
     callFilePath: string | null = null,
     jumpLabel: string | null = null,
     callLabel: string | null = null,
+    countPage: boolean = true,
     isSystemButton: boolean = false,
     exp: string | null = null,
   ): void {
@@ -33,6 +35,7 @@ export class Button extends BaseLayer {
     this.callFilePath = callFilePath;
     this.jumpLabel = jumpLabel;
     this.callLabel = callLabel;
+    this.countPage = countPage;
     this.isSystemButton = isSystemButton;
     this.exp = exp;
   }
@@ -124,7 +127,7 @@ export class Button extends BaseLayer {
       }
       if (this.jumpFilePath != null || this.jumpLabel != null) {
         p.conductor.stop();
-        p.conductor.jump(this.jumpFilePath, this.jumpLabel).done(() => {
+        p.conductor.jump(this.jumpFilePath, this.jumpLabel, this.countPage).done(() => {
           p.conductor.start();
         });
       } else if (this.callFilePath != null || this.callLabel != null) {
@@ -136,7 +139,7 @@ export class Button extends BaseLayer {
           }, "button_call"));
         // callする
         p.conductor.stop();
-        p.conductor.callSubroutine(this.callFilePath, this.callLabel, false, 0).done(() => {
+        p.conductor.callSubroutine(this.callFilePath, this.callLabel, this.countPage, false, 0).done(() => {
           p.conductor.start();
         });
       }
