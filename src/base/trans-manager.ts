@@ -288,16 +288,6 @@ export class TransManager {
   public drawUniv(tick: number, elapsedTime: number): void {
     let uniforms = (this.filter.uniforms as any);
 
-    let t = (this.game.backRenderer.texture);
-    console.log(t);
-    if (!t.trim) {
-      let r = new PIXI.Rectangle(0, 0, t.width, t.height);
-      t.trim = r;
-      let trans = new PIXI.TextureMatrix(t);
-      trans.update();
-      t._updateUvs();
-    }
-
     uniforms.subSampler = this.game.backRenderer.texture;
     uniforms.ruleSampler = (this.ruleSprite as PIXI.Sprite).texture;
     uniforms.table = this.table;

@@ -115,7 +115,6 @@ export class ScriptParser {
             valuesStr += " " + line.trim();
           }
         }
-        console.log(valuesStr);
         // values = JSON.parse(valuesStr);
         values = eval(`(${valuesStr})`);
       }

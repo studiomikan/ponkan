@@ -461,20 +461,22 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     Logger.debug("return_subroutin", forceStart);
     if (forceStart) {
       // lb, pb等のイベントハンドラを削除
-      const targetList: PonEventHandler[] = [];
-      Object.keys(this.eventHandlers).forEach((eventName) => {
-        this.eventHandlers[eventName].forEach((eventHandler: PonEventHandler) => {
-          switch (eventHandler.info) {
-            case "lb":
-            case "pb":
-            case "waitclick":
-            case "hidemessages":
-              targetList.push(eventHandler);
-              break;
-          }
-        });
-      });
-      targetList.forEach((target) => this.clearEventHandler(target));
+      // const targetList: PonEventHandler[] = [];
+      // Object.keys(this.eventHandlers).forEach((eventName) => {
+      //   this.eventHandlers[eventName].forEach((eventHandler: PonEventHandler) => {
+      //     switch (eventHandler.info) {
+      //       case "lb":
+      //       case "pb":
+      //       case "waitclick":
+      //       case "hidemessages":
+      //         targetList.push(eventHandler);
+      //         break;
+      //     }
+      //   });
+      // });
+      // targetList.forEach((target) => this.clearEventHandler(target));
+      this.hideBreakGlyph();
+      this.clearAllEventHandler();
       // 強制開始
       this.conductor.start();
     }

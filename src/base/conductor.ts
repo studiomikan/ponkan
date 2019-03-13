@@ -75,12 +75,12 @@ export class Conductor {
    */
   public jump(filePath: string | null, label: string | null = null, countPage: boolean): AsyncCallbacks {
     const cb = new AsyncCallbacks();
+    if (countPage) {
+      this.passLatestSaveMark();
+      this.latestSaveMarkName = "";
+    }
     if (filePath != null && filePath != "") {
       this.loadScript(filePath).done(() => {
-        if (countPage) {
-          this.passLatestSaveMark();
-          this.latestSaveMarkName = "";
-        }
         if (label != null) {
           this.script.goToLabel(label);
         }
@@ -90,10 +90,6 @@ export class Conductor {
       });
     } else if (label != null) {
       window.setTimeout(() => {
-        if (countPage) {
-          this.passLatestSaveMark();
-          this.latestSaveMarkName = "";
-        }
         this.script.goToLabel(label);
         cb.callDone({filePath: filePath, label: label});
       }, 0);
@@ -128,7 +124,7 @@ export class Conductor {
    * @param forceStart 強制的にpb, lb, waitclickを終わらせるかどうか
    * @param countPage 既読処理をするかどうか
    */
-  public returnSubroutine(forceStart: boolean = false, countPage: boolean): "continue" | "break" {
+  public returnSubroutine(forceStart: boolean = false, countPage: boolean = true): "continue" | "break" {
     let stackData = this.callStack.pop();
     if (stackData === undefined) {
       throw new Error("returnで戻れませんでした。callとreturnの対応が取れていません");
@@ -157,6 +153,7 @@ export class Conductor {
   }
 
   public passSaveMark(saveMarkName: string): void {
+    console.log("passSaveMark", this.script.filePath, saveMarkName)
     this.readUnread.pass(this.script, saveMarkName);
   }
 
