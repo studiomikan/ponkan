@@ -1363,5 +1363,16 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return p.conductor.stop();
       },
     ),
+    new TagAction(
+      ["screenshot"],
+      "セーブ／ロード", "現在の画面のスクリーンショットを取る",
+      [],
+      `現在の画面の状態でスクリーンショットを取ります。\n` +
+      `取得されたスクリーンショットは [save] で保存されます。`,
+      (values, tick) => {
+        p.reserveScreenShot();
+        return "continue";
+      },
+    ),
   ];
 }

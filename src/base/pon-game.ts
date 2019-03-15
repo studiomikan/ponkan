@@ -8,6 +8,7 @@ import { PonRenderer } from "./pon-renderer";
 import { PonEventHandler } from "./pon-event-handler";
 import { Resource } from "./resource";
 import { TransManager } from "./trans-manager";
+import { ScreenShot } from "./screen-shot";
 
 export class PonGame {
   public readonly resource: Resource;
@@ -23,6 +24,8 @@ export class PonGame {
   private backPrimaryLayers: BaseLayer[] = [];
 
   public readonly transManager: TransManager;
+  public readonly screenShot: ScreenShot;
+  public reserveScreenShotFlag: boolean = false;
 
   public get width(): number { return this.foreRenderer.width; }
   public get height(): number { return this.foreRenderer.height; }
@@ -42,14 +45,21 @@ export class PonGame {
     this.foreRenderer = new PonRenderer(elm, config.width, config.height);
     this.backRenderer = new PonRenderer(elm, config.width, config.height);
     this.backRenderer.canvasElm.style.display = "none";
-    
+
     this.resource = new Resource(this, config.gameDataDir);
 
     this.transManager = new TransManager(this, this.resource);
+    this.screenShot = new ScreenShot(config);
 
     this.initWindowEvent();
     this.initMouseEventOnCanvas();
     this.initKeyboardEvent();
+  }
+
+  private initScreenShot(): void {
+  }
+
+  private testss(): void {
   }
 
   public destroy(): void {
@@ -92,6 +102,11 @@ export class PonGame {
       } else {
         this.backRenderer.draw(tick); // TODO 本来はここのback不要
         this.foreRenderer.draw(tick);
+      }
+
+      if (this.reserveScreenShotFlag) {
+        this.screenShot.draw(this.foreRenderer.canvasElm);
+        this.reserveScreenShotFlag = false;
       }
 
       this.loopCount++;
@@ -195,6 +210,10 @@ export class PonGame {
     this.backPrimaryLayers.forEach((back) => {
       this.backRenderer.addContainer(back.container);
     });
+  }
+
+  public reserveScreenShot(): void {
+    this.reserveScreenShotFlag = true;
   }
 
   /**
