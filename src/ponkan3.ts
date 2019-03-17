@@ -460,21 +460,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.trigger("return_subroutin");
     Logger.debug("return_subroutin", forceStart);
     if (forceStart) {
-      // lb, pb等のイベントハンドラを削除
-      // const targetList: PonEventHandler[] = [];
-      // Object.keys(this.eventHandlers).forEach((eventName) => {
-      //   this.eventHandlers[eventName].forEach((eventHandler: PonEventHandler) => {
-      //     switch (eventHandler.info) {
-      //       case "lb":
-      //       case "pb":
-      //       case "waitclick":
-      //       case "hidemessages":
-      //         targetList.push(eventHandler);
-      //         break;
-      //     }
-      //   });
-      // });
-      // targetList.forEach((target) => this.clearEventHandler(target));
       this.hideBreakGlyph();
       this.clearAllEventHandler();
       // 強制開始
@@ -593,6 +578,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       primaryLayer.y = 0;
       primaryLayer.width = this.width;
       primaryLayer.height = this.height;
+      primaryLayer.visible = true;
       primaryLayer.setBackgroundColor(0x000000, 1.0);
     });
     for (let i = 0; i < this.layerCount; i++) {
@@ -637,6 +623,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
    */
   public createLayer(name: string) {
     const layer = new PonLayer(name, this.resource, this);
+    layer.visible = false;
     return layer;
   }
 
@@ -1004,6 +991,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       window.setTimeout(() => {
         this.stopSkip();
         this.stopAutoMode();
+        cb.callDone()
       }, 0);
       return cb;
     });

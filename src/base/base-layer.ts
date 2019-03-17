@@ -69,7 +69,7 @@ export class BaseLayer {
     strokeThickness: 0,
   });
   public set textFontFamily(fontFamily: string[]) { this.textStyle.fontFamily = fontFamily; }
-  public get textFontFamily(): string[] { 
+  public get textFontFamily(): string[] {
     if (typeof this.textStyle.fontFamily === "string") {
       return [this.textStyle.fontFamily];
     } else {
@@ -188,7 +188,7 @@ export class BaseLayer {
     this.imageSpriteCallbacks = {
       pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
         this.imageContainer.addChild(child);
-      }, 
+      },
       pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
         this.imageContainer.removeChild(child);
       }
@@ -201,7 +201,7 @@ export class BaseLayer {
     this.textSpriteCallbacks = {
       pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
         this.textContainer.addChild(child);
-      }, 
+      },
       pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
         this.textContainer.removeChild(child);
       }
@@ -212,12 +212,13 @@ export class BaseLayer {
     this.childSpriteCallbacks = {
       pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
         this.childContainer.addChild(child);
-      }, 
+      },
       pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
         this.childContainer.removeChild(child);
       }
     };
 
+    this.visible = false;
     Logger.debug("new layer =>", this);
   }
 

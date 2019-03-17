@@ -39,7 +39,8 @@ export class PonLayer extends ToggleButtonLayer {
   }
 
   protected static ponLayerStoreParams: string[] = [
-    "autoHideWithMessage"
+    "autoHideWithMessage",
+    "visibleBuffer"
   ];
 
   public storeVisible(): void {
@@ -54,16 +55,11 @@ export class PonLayer extends ToggleButtonLayer {
     let data: any = super.store(tick);
     let me: any = this as any;
     PonLayer.ponLayerStoreParams.forEach(p => data[p] = me[p]);
-
-    if (this.visible !== this.visibleBuffer) {
-      // 万が一hidemessages中に呼ばれたときは、bufferの方を保存する
-      data.visible = this.visibleBuffer;
-    }
-
     return data;
   }
 
   public restore(asyncTask: AsyncTask, data: any, tick: number): void {
+    super.restore(asyncTask, data, tick);
     let me: any = this as any;
     PonLayer.ponLayerStoreParams.forEach(p => me[p] = data[p]);
   }

@@ -12,7 +12,7 @@ export class FrameAnimLayer extends BaseLayer {
   protected frameAnimHeight: number = 32;
   protected frameAnimFrames: any[] = [];
   protected frameAnimStartTick: number = -1;
-  protected frameAnimState: "stop" | "run"  = "stop"; 
+  protected frameAnimState: "stop" | "run"  = "stop";
 
   public initFrameAnim(
     loop: boolean,
@@ -129,7 +129,7 @@ export class FrameAnimLayer extends BaseLayer {
     if (data.frameAnimFrames.length !== 0) {
       if (data.frameAnimState === "run") {
         this.startFrameAnim(tick);
-        console.log("data.frameAnimState", data.frameAnimState, this.frameAnimState, this.frameAnimFrames)
+        Logger.debug("data.frameAnimState", data.frameAnimState, this.frameAnimState, this.frameAnimFrames);
       }
     }
   }

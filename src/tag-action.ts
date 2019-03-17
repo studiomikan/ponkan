@@ -550,6 +550,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         p.getLayers(values).forEach((layer) => {
           layer.clearText();
         });
+        p.hideBreakGlyph();
         return "continue";
       },
     ),
