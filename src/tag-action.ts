@@ -617,7 +617,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           // ただし改行条件等を通常と揃えるために一度グリフを表示して、すぐに非表示にする
           p.showLineBreakGlyph(tick);
           p.hideBreakGlyph();
-          return "continue";
+          return "break"; // クリック待ちはしないが、一回描画する
         } else {
           // クリック待ちへ移行
           p.showLineBreakGlyph(tick);
@@ -643,7 +643,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           // ただし改行条件等を通常と揃えるために一度グリフを表示して、すぐに非表示にする
           p.showPageBreakGlyph(tick);
           p.hideBreakGlyph();
-          return "continue";
+          return "break"; // クリック待ちはしないが、一回描画する
         } else {
           p.showPageBreakGlyph(tick);
           p.addEventHandler(new PonEventHandler("click", () => {

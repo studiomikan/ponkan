@@ -27,6 +27,7 @@ export class ToggleButton extends BaseLayer {
     this.exp = exp;
     this.setButtonStatus("disabled");
     this.setValue(this.getValue());
+    this.visible = true;
   }
 
   public resetToggleButton(): void {

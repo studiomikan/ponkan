@@ -18,7 +18,7 @@ tv.layer = {
   page: 22,
   // オートモード状態表示
   auto: 23,
-  
+
   // システムボタン
   systembutton: 24,
 }
@@ -42,7 +42,7 @@ tv.layer = {
   "y": "&576-20-200",
   "width": "&1024-20-20-500",
   "height": 200,
-  "visible": true 
+  "visible": true
 }
 ;messageopt {
   "lay": "message",
@@ -67,7 +67,7 @@ tv.layer = {
   "marginb": 10,
   "marginl": 10
 }
-;fillcolor "lay": "mes", "color": "0x4286f4", "alpha": 0.7 
+;fillcolor "lay": "mes", "color": "0x4286f4", "alpha": 0.7
 ;textspeed "time": 50
 
 

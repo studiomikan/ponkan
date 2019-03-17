@@ -38,6 +38,7 @@ export class Button extends BaseLayer {
     this.countPage = countPage;
     this.isSystemButton = isSystemButton;
     this.exp = exp;
+    this.visible = true;
   }
 
   public resetButton(): void {
@@ -184,7 +185,7 @@ export class Button extends BaseLayer {
     Button.buttonStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
-    
+
     this.insideFlag = false;
     this.setButtonStatus("normal");
   }
