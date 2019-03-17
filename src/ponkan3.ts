@@ -867,11 +867,11 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   public save(num: number, tick: number): void {
-    // TODO 実装
+
     Logger.debug("==SAVE=============================================");
     Logger.debug(num, this.latestSaveData);
-    Logger.debug("===================================================");
 
+    // セーブデータの保存
     let saveStr: string;
     try {
       saveStr = JSON.stringify(this.latestSaveData);
@@ -881,15 +881,20 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     }
     this.resource.storeToLocalStorage(`${this.saveDataPrefix}_${num}`, saveStr);
 
+    // システムデータの保存
     const comment: string = this.latestSaveData.comment;
     if (this.systemVar.saveComments == null) { this.systemVar.saveComments = []; }
     this.systemVar.saveComments[num] = {
       date: this.getNowDateStr(),
       name: this.latestSaveData.name,
       comment: this.latestSaveData.comment,
+      screenShot: this.screenShot.getDataUrl()
     };
+    Logger.debug(this.systemVar.saveComments[num]);
+
     this.plugins.forEach((p) => p.onSaveSystemVariables());
     this.resource.saveSystemData(this.saveDataPrefix);
+    Logger.debug("===================================================");
   }
 
   public getNowDateStr(): string {

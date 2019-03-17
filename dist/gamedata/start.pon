@@ -103,8 +103,8 @@ backlay.
 
 end.
 ;pb
-;jump "label": "trans_loop"
-;s
+# ;jump "label": "trans_loop"
+# ;s
 
 
 # セーブ関係のテスト
