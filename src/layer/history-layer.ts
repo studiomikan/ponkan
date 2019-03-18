@@ -28,6 +28,7 @@ class SimpleButton extends BaseLayer {
     this.bgAlphas = bgAlphas;
 
     this.setStatus("normal");
+    this.visible = true;
   }
 
   public setStatus(status: "normal" | "over" | "on") {
@@ -118,6 +119,7 @@ class ScrollBar extends BaseLayer {
   ): void {
     // super.initButton(bgColors, bgAlphas);
     this.minHeight = minHeight;
+    this.visible = true;
     this.applyConfig(config);
 
     this.bar.initButton(buttonColors, buttonAlphas);
@@ -228,6 +230,7 @@ class HistoryTextLayer extends BaseLayer {
 
   public constructor(name: string, resource: Resource, owner: PonGame) {
     super(name, resource, owner);
+    this.visible = true;
   }
 
   public init(config: any): void {

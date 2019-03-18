@@ -58,6 +58,9 @@
   y: 0
 }
 
+;macro_depth1 p: 100
+;pb
+
 # ;messageopt "align": "left"
 # ;nowait
 # ;for "loops": 100, "indexvar": "i"
@@ -82,6 +85,8 @@
 ;lb
 OK.
 ;pb
+
+
 
 # トランジションのテスト
 |save_mark_before_trans:save_mark_before_trans

@@ -1,5 +1,22 @@
 - console.log("macro.pon");
 
+;macro name: "macro_depth1"
+  = mp.p
+  ;macro_depth2 p: 200
+  = mp.p
+;endmacro
+
+;macro name: "macro_depth2"
+  = mp.p
+  ;macro_depth3 p: 300
+  = mp.p
+;endmacro
+
+;macro name: "macro_depth3"
+  = mp.p
+;endmacro
+
+
 ;macro "name": "print"
 ;print2
 かんりょう。
@@ -9,7 +26,7 @@
 １２
 ;print3
 ５
-;pbc 
+;pbc
 ;endmacro
 
 ;macro "name": "print3"

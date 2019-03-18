@@ -6,6 +6,7 @@ export class Macro {
   public readonly name: string;
   public readonly tags: Tag[];
   protected tagPoint: number = 0;
+  public params: any = {};
 
   public constructor(name: string, tags: Tag[]) {
     this.name = name;

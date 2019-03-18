@@ -4,6 +4,7 @@ import { AsyncCallbacks } from "./async-callbacks";
 import { ScriptParser } from "./script-parser";
 import { Tag } from "./tag";
 import { Macro } from "./macro";
+import * as Util from "./util";
 import { applyJsEntity, castTagValues } from "../tag-action";
 
 export interface IForLoopInfo {
@@ -106,7 +107,7 @@ export class Script {
       return macro.getCurrentTag();
     }
   }
-  
+
   /**
    * 次のタグを取得する。
    * スクリプトファイル終端の場合はnullが返る
@@ -134,10 +135,13 @@ export class Script {
           this.callMacro(tag);
           return this.getNextTag();
         } else {
+          console.log(macro.params);
+          this.resource.setMacroParams(macro.params);
           return tag;
         }
       } else {
         this.macroStack.pop();
+        this.resource.resetMacroParams();
         return this.getNextTag();
       }
     }
@@ -146,7 +150,7 @@ export class Script {
   protected callMacro(tag: Tag): void {
     let macro: Macro = this.resource.getMacro(tag.name).clone();
     macro.resetTagPoint();
-    this.resource.setMacroParams(tag.values);
+    macro.params = Util.objClone(tag.values);
     this.macroStack.push(macro);
   }
 
