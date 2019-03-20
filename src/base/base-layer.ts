@@ -530,6 +530,14 @@ export class BaseLayer {
   }
 
   /**
+   * インデント位置をクリアする
+   */
+  public clearIndentPoint(): void {
+    this.textIndentPoint = 0;
+    this.reservedTextIndentPoint = 0;
+  }
+
+  /**
    * テキストをクリアする。
    * 描画していたテキストは全削除される。
    * テキストの描画開始位置は初期化される。
@@ -544,8 +552,7 @@ export class BaseLayer {
     this.textLines = [[]];
     this.textX = this.textMarginLeft;
     this.textY = this.textMarginTop;
-    this.textIndentPoint = 0;
-    this.reservedTextIndentPoint = 0;
+    this.clearIndentPoint();
   }
 
   /**

@@ -147,6 +147,39 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
+    new TagAction(
+      ["clearsysvar"],
+      "その他",
+      "システム変数をクリア",
+      [],
+      ``,
+      (values, tick) => {
+        p.resource.systemVar = {};
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["cleargamevar"],
+      "その他",
+      "ゲーム変数をクリア",
+      [],
+      ``,
+      (values, tick) => {
+        p.resource.gameVar = {};
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["cleartmpvar"],
+      "その他",
+      "一時変数をクリア",
+      [],
+      ``,
+      (values, tick) => {
+        p.resource.tmpVar = {};
+        return "continue";
+      },
+    ),
     // ======================================================================
     // スクリプト制御
     // ======================================================================
@@ -594,12 +627,27 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "メッセージ操作",
       "インデント位置を設定する",
       [
-        new TagValue("lay", "string", false, "message", "出力する文字"),
+        new TagValue("lay", "number", false, "message", "対象レイヤー"),
+        new TagValue("page", "string", false, "fore", "対象ページ"),
       ],
-      `TODO タグの説明文`,
+      `現在の文字描画位置でインデントするように設定します。` +
+      `インデント位置は [endindent] または [clear] でクリアされます。`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.setIndentPoint();
+        });
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["endindent"],
+      "メッセージ操作",
+      "インデント位置をクリアする",
+      [],
+      `[indent] で設定したインデント位置をクリアします。`,
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          layer.clearIndentPoint();
         });
         return "continue";
       },
@@ -674,7 +722,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // レイヤー関係
     // ======================================================================
     new TagAction(
-      ["messagelay", "meslay"],
+      ["messagelayer", "messagelay", "meslay", "meslay"],
       "レイヤー操作",
       "メッセージレイヤーを指定する",
       [

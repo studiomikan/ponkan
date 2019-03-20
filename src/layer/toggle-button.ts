@@ -44,9 +44,9 @@ export class ToggleButton extends BaseLayer {
       this.buttonStatus = status;
     }
     if (status === "enabled" && this.insideFlag) {
-      this.resource.getForeCanvasElm().style.cursor = "pointer";
+      this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
     } else {
-      this.resource.getForeCanvasElm().style.cursor = "auto";
+      this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
     }
   }
 
@@ -85,7 +85,7 @@ export class ToggleButton extends BaseLayer {
   public onMouseEnter(e: PonMouseEvent): boolean {
     if (!super.onMouseEnter(e)) { return false; }
     if (this.buttonStatus !== "disabled") {
-      this.resource.getForeCanvasElm().style.cursor = "pointer";
+      this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
     }
     this.insideFlag = true;
     return true;
@@ -94,7 +94,7 @@ export class ToggleButton extends BaseLayer {
   public onMouseLeave(e: PonMouseEvent): boolean {
     if (!super.onMouseLeave(e)) { return false; }
     if (this.buttonStatus !== "disabled") {
-      this.resource.getForeCanvasElm().style.cursor = "auto";
+      this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
     }
     this.insideFlag = false;
     return true;
@@ -103,7 +103,7 @@ export class ToggleButton extends BaseLayer {
   public onMouseDown(e: PonMouseEvent): boolean {
     if (!super.onMouseDown(e)) { return false; }
     if (this.buttonStatus !== "disabled") {
-      this.resource.getForeCanvasElm().style.cursor = "pointer";
+      this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.on;
     }
     return true;
   }

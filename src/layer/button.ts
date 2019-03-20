@@ -58,9 +58,7 @@ export class Button extends BaseLayer {
     } else {
       this.buttonStatus = status;
     }
-    this.resource.getForeCanvasElm().style.cursor = {
-      disabled: "auto", normal: "auto", over: "pointer", on: "pointer"
-    }[status];
+    this.resource.getForeCanvasElm().style.cursor = this.resource.cursor[status];
   }
 
   public lockSystemButton(): void {

@@ -35,9 +35,7 @@ class SimpleButton extends BaseLayer {
     this.status = status;
     const c = { normal: 0, over: 1, on: 2, }[status];
     this.setBackgroundColor(this.bgColors[c], this.bgAlphas[c]);
-    this.resource.getForeCanvasElm().style.cursor = {
-      normal: "auto", over: "pointer", on: "pointer"
-    }[status];
+    this.resource.getForeCanvasElm().style.cursor = this.resource.cursor[status];
   }
 
   public onMouseEnter(e: PonMouseEvent): boolean {
@@ -161,13 +159,13 @@ class ScrollBar extends BaseLayer {
 
   public onMouseEnter(e: PonMouseEvent): boolean {
     super.onMouseEnter(e);
-    this.resource.getForeCanvasElm().style.cursor = "pointer";
+    this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
     return false;
   }
 
   public onMouseLeave(e: PonMouseEvent): boolean {
     super.onMouseLeave(e);
-    this.resource.getForeCanvasElm().style.cursor = "auto";
+    this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
     return false;
   }
 
@@ -178,7 +176,7 @@ class ScrollBar extends BaseLayer {
 
   public onMouseMove(e: PonMouseEvent): boolean {
     super.onMouseMove(e);
-    this.resource.getForeCanvasElm().style.cursor = "pointer";
+    this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
     if (this.bar.down) {
       this.setBarY(e.y - this.bar.downY);
       this.onChangeCallback(this);
@@ -590,7 +588,7 @@ export class HistoryLayer extends BaseLayer {
       // スクロール操作中ははみ出ても操作できるようにする
       let e2 = new PonMouseEvent(e.x - sb.x, e.y - sb.y, e.button);
       this.scrollBar.onMouseUp(e2);
-      this.resource.getForeCanvasElm().style.cursor = "auto";
+      this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
     } else if (e.isRight) {
       // 右クリックで閉じる
       this.hide();

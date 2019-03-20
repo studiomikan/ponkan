@@ -10,9 +10,16 @@ import { Sound, ISoundCallbacks } from "./sound";
 export class Resource {
   private ponGame: PonGame;
   private basePath: string;
-  public readonly tmpVar: any = {};
-  public readonly gameVar: any = {};
-  public readonly systemVar: any = {};
+  public tmpVar: any = {};
+  public gameVar: any = {};
+  public systemVar: any = {};
+
+  public cursor: any = {
+    "disabled": "auto",
+    "normal": "auto",
+    "over": "pointer",
+    "on": "pointer"
+  }
 
   public readonly macroInfo: any = {};
   public macroParams: object | null = null;
@@ -80,6 +87,7 @@ export class Resource {
 
   // tslint:disable
   public evalJs(js: string): any {
+    let ponkan = this.ponGame;
     let tv = this.tmpVar;
     let gv = this.gameVar;
     let sv = this.systemVar;
