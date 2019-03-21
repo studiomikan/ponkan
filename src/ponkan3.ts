@@ -751,7 +751,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       x = Math.floor((this.isQuakePhase ? Math.random() : -Math.random()) * this.quakeMaxX);
       y = Math.floor(Math.random() * this.quakeMaxY * 2 - this.quakeMaxY);
     }
-    console.log(x, y, this.isQuakePhase)
     this.forePrimaryLayer.x = x;
     this.forePrimaryLayer.y = y;
     this.backPrimaryLayer.x = x;
