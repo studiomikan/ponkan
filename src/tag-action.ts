@@ -180,6 +180,20 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
+    new TagAction(
+      ["clickskipopt", "clickskip"],
+      "その他",
+      "クリックスキップの設定",
+      [
+        new TagValue("enabled", "boolean", true, null, "有効ならtrue、無効ならfalseを指定"),
+      ],
+      `クリックスキップの有効無効を設定します。
+      （クリックスキップとは、テキスト表示途中にクリックすると行末・ページ末までスキップする機能のことです。）`,
+      (values, tick) => {
+        p.clickSkipEnabled = values.enabled;
+        return "continue";
+      },
+    ),
     // ======================================================================
     // スクリプト制御
     // ======================================================================
@@ -746,10 +760,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [
         new TagValue("lay", "number", false, null, "グリフとして使用するレイヤー"),
         new TagValue("pos", "string", false, null,
-          `グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。` +
-          `"eol"を指定すると文章の末尾に表示。` +
-          `"relative"を指定するとメッセージレイヤーとの相対位置で固定表示。` +
-          `"absolute"を指定すると画面上の絶対位置で固定表示。`),
+          `グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。
+           "eol"を指定すると文章の末尾に表示。
+           "relative"を指定するとメッセージレイヤーとの相対位置で固定表示。
+           "absolute"を指定すると画面上の絶対位置で固定表示。`),
         new TagValue("x", "number", false, null, "グリフの表示位置（メッセージレイヤーからの相対位置）"),
         new TagValue("y", "number", false, null, "グリフの表示位置（メッセージレイヤーからの相対位置）"),
       ],
@@ -769,10 +783,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [
         new TagValue("lay", "number", false, null, "グリフとして使用するレイヤー"),
         new TagValue("pos", "string", false, null,
-          `グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。` +
-          `"eol"を指定すると文章の末尾に表示。` +
-          `"relative"を指定するとメッセージレイヤーとの相対位置で固定表示。` +
-          `"absolute"を指定すると画面上の絶対位置で固定表示。`),
+          `グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。
+           "eol"を指定すると文章の末尾に表示。
+           "relative"を指定するとメッセージレイヤーとの相対位置で固定表示。
+           "absolute"を指定すると画面上の絶対位置で固定表示。`),
         new TagValue("x", "number", false, null, "グリフの表示位置（メッセージレイヤーからの相対位置）"),
         new TagValue("y", "number", false, null, "グリフの表示位置（メッセージレイヤーからの相対位置）"),
       ],
@@ -1416,8 +1430,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ["screenshot"],
       "セーブ／ロード", "現在の画面のスクリーンショットを取る",
       [],
-      `現在の画面の状態でスクリーンショットを取ります。\n` +
-      `取得されたスクリーンショットは [save] で保存されます。`,
+      `現在の画面の状態でスクリーンショットを取ります。
+       取得されたスクリーンショットは [save] で保存されます。`,
       (values, tick) => {
         p.reserveScreenShot();
         return "continue";

@@ -64,6 +64,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   // メッセージ関係
   protected currentTextSpeed: number = 100;
+  public clickSkipEnabled: boolean = true;
   public nowaitModeFlag: boolean = false;
   public hideMessageFlag: boolean = false;
   public hideMessageByRlickFlag: boolean = false;
@@ -277,7 +278,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
     // コンダクターのスリープを解除する。
     // テキスト出力のウェイトの動作を解除し、次のwait系タグまで飛ばす。
-    if (this.conductor.status === ConductorState.Sleep && this.conductor.sleepSender === "ch") {
+    if (this.clickSkipEnabled &&
+        this.conductor.status === ConductorState.Sleep &&
+        this.conductor.sleepSender === "ch") {
       this.conductor.start();
       this.skipMode = SkipType.UNTIL_CLICK_WAIT;
     }
