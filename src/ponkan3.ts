@@ -61,7 +61,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public get foreLayers(): PonLayer[] { return this.forePrimaryLayer.children as PonLayer[]; }
   public get backLayers(): PonLayer[] { return this.backPrimaryLayer.children as PonLayer[]; }
   public currentPage: "fore" | "back" = "fore";
-  protected isQuaking: boolean = false;
+  public isQuaking: boolean = false;
   protected quakeStartTick: number = -1;
   protected quakeTime: number = 0;
   protected quakeMaxX: number = 20;

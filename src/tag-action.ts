@@ -209,6 +209,46 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
+    new TagAction(
+      ["stopquake"],
+      "その他",
+      "画面揺れ効果の停止",
+      [],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        p.stopQuake();
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["waitquake"],
+      "その他",
+      "画面揺れ効果の終了待ち",
+      [
+        new TagValue("canskip", "boolean", false, true, "スキップ可能かどうか"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        if (!p.isQuaking) {
+          return "continue";
+        }
+        if (p.isSkipping && values.canskip) {
+          p.stopQuake();
+          return "break";
+        } else {
+          if (values.canskip) {
+            p.addEventHandler(new PonEventHandler("click", () => {
+              p.stopQuake();
+              p.conductor.start();
+            }, "waitquake"));
+          }
+          p.addEventHandler(new PonEventHandler("quake", () => {
+            p.conductor.start();
+          }, "waitquake"));
+          return p.conductor.stop();
+        }
+      },
+    ),
     // ======================================================================
     // スクリプト制御
     // ======================================================================
@@ -470,7 +510,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           p.addEventHandler(new PonEventHandler("click", () => {
             p.conductor.start();
           }, "waitclick"));
-          if (values.canskip) {
+          if (p.autoModeFlag && values.canskip) {
             p.reserveAutoClick(tick); // オートモード時の自動クリックを予約
           }
           return p.conductor.stop();
@@ -1384,9 +1424,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           p.waitTransClickCallback();
           return "break";
         } else {
-          p.addEventHandler(new PonEventHandler("click", () => {
-            p.waitTransClickCallback();
-          }, "waittrans"));
+          if (values.canskip) {
+            p.addEventHandler(new PonEventHandler("click", () => {
+              p.waitTransClickCallback();
+            }, "waittrans"));
+          }
           p.addEventHandler(new PonEventHandler("trans", () => {
             p.waitTransCompleteCallback();
           }, "waittrans"));

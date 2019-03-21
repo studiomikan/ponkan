@@ -77,9 +77,10 @@
 # ;wait time:"1000", canskip:false
 かきくけこさしすせそたちつてとなにぬねの
 # ;hidemessages
+;lb
 ;screenshot
 ;quake time: 2000, x: 10, y: 30
-;lb
+;waitquake canskip: true
 はひふへほまみむめもやいゆ
 ;lb
 えよらりるれろ
