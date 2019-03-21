@@ -61,6 +61,13 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public get foreLayers(): PonLayer[] { return this.forePrimaryLayer.children as PonLayer[]; }
   public get backLayers(): PonLayer[] { return this.backPrimaryLayer.children as PonLayer[]; }
   public currentPage: "fore" | "back" = "fore";
+  protected isQuaking: boolean = false;
+  protected quakeStartTick: number = -1;
+  protected quakeTime: number = 0;
+  protected quakeMaxX: number = 10;
+  protected quakeMaxY: number = 10;
+  protected quakeFrameCount: number = 0;
+  protected quakeIntervalFrame: number = 2;
 
   // メッセージ関係
   protected currentTextSpeed: number = 100;
@@ -485,7 +492,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   public startSkipByCtrl(): void {
-    console.log("@@@@@@@start", this.conductor.isPassedLatestSaveMark(), this.canSkipUnreadPartByCtrl);
     if (this.conductor.isPassedLatestSaveMark() || this.canSkipUnreadPartByCtrl) {
       this.skipMode = SkipType.WHILE_PRESSING_CTRL;
     }
@@ -687,6 +693,50 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       pageLayers = this.foreLayers;
     }
     return this.getTargetLayers(pageLayers, lay);
+  }
+
+  // =========================================================
+  // Quake
+  // =========================================================
+
+  public startQuake(tick: number, time: number, maxX: number, maxY: number): void {
+    this.isQuaking = true;
+    this.quakeStartTick = tick;
+    this.quakeTime = time;
+    this.quakeMaxX = maxX;
+    this.quakeMaxY = maxY;
+    this.quakeFrameCount = 0;
+  }
+
+  public stopQuake(): void {
+    this.isQuaking = false;
+    this.quakeStartTick = -1;
+    this.quakeTime = 0;
+    this.quakeMaxX = 10;
+    this.quakeMaxY = 10;
+    this.quakeFrameCount = 0;
+    this.quakeIntervalFrame = 2;
+
+    // TODO ゆれをもとに戻す
+    this.forePrimaryLayer.x = 0;
+    this.forePrimaryLayer.y = 0;
+    this.backPrimaryLayer.x = 0;
+    this.backPrimaryLayer.y = 0;
+  }
+
+  protected quake(tick: number): void {
+    if (this.quakeFrameCount++ % this.quakeIntervalFrame !== 0) {
+      return;
+    }
+
+    let elapsed: number = tick - this.quakeStartTick;
+    if (elapsed > this.quakeTime) {
+      this.stopQuake();
+      return;
+    }
+
+    let x = Math.floor(this.quakeMaxX - (Math.random() * this.quakeMaxX * 2));
+    let y = Math.floor(this.quakeMaxY - (Math.random() * this.quakeMaxY * 2));
   }
 
   // =========================================================
