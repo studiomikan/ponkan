@@ -194,6 +194,21 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
+    new TagAction(
+      ["quake"],
+      "その他",
+      "画面揺れ効果の開始",
+      [
+        new TagValue("time", "number", true, null, "画面揺れの時間"),
+        new TagValue("x", "number", false, 20, "横方向の揺れの最大値"),
+        new TagValue("y", "number", false, 20, "縦方向の揺れの最大値"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        p.startQuake(tick, values.time, values.x, values.y);
+        return "continue";
+      },
+    ),
     // ======================================================================
     // スクリプト制御
     // ======================================================================

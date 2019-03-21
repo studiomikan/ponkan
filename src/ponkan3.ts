@@ -64,10 +64,11 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   protected isQuaking: boolean = false;
   protected quakeStartTick: number = -1;
   protected quakeTime: number = 0;
-  protected quakeMaxX: number = 10;
-  protected quakeMaxY: number = 10;
+  protected quakeMaxX: number = 20;
+  protected quakeMaxY: number = 20;
+  protected isQuakePhase: boolean = true;
   protected quakeFrameCount: number = 0;
-  protected quakeIntervalFrame: number = 2;
+  protected quakeIntervalFrame: number = 4;
 
   // メッセージ関係
   protected currentTextSpeed: number = 100;
@@ -198,6 +199,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.forePrimaryLayer.update(tick);
     this.backPrimaryLayer.update(tick);
     this.historyLayer.update(tick);
+    this.quake(tick);
   }
 
   public error(e: Error): void {
@@ -705,6 +707,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.quakeTime = time;
     this.quakeMaxX = maxX;
     this.quakeMaxY = maxY;
+    this.isQuakePhase = true;
     this.quakeFrameCount = 0;
   }
 
@@ -712,31 +715,48 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.isQuaking = false;
     this.quakeStartTick = -1;
     this.quakeTime = 0;
-    this.quakeMaxX = 10;
-    this.quakeMaxY = 10;
+    this.quakeMaxX = 20;
+    this.quakeMaxY = 20;
+    this.isQuakePhase = true;
     this.quakeFrameCount = 0;
-    this.quakeIntervalFrame = 2;
 
-    // TODO ゆれをもとに戻す
     this.forePrimaryLayer.x = 0;
     this.forePrimaryLayer.y = 0;
     this.backPrimaryLayer.x = 0;
     this.backPrimaryLayer.y = 0;
+
+    this.trigger("quake");
   }
 
   protected quake(tick: number): void {
     if (this.quakeFrameCount++ % this.quakeIntervalFrame !== 0) {
       return;
     }
-
     let elapsed: number = tick - this.quakeStartTick;
     if (elapsed > this.quakeTime) {
       this.stopQuake();
       return;
     }
-
-    let x = Math.floor(this.quakeMaxX - (Math.random() * this.quakeMaxX * 2));
-    let y = Math.floor(this.quakeMaxY - (Math.random() * this.quakeMaxY * 2));
+    let x: number;
+    let y: number;
+    if (this.quakeMaxY === this.quakeMaxX) {
+      x = Math.floor(Math.random() * this.quakeMaxX * 2 - this.quakeMaxX);
+      y = Math.floor(Math.random() * this.quakeMaxY * 2 - this.quakeMaxY);
+    } else if (this.quakeMaxX < this.quakeMaxY) {
+      // 縦揺れ
+      x = Math.floor(Math.random() * this.quakeMaxX * 2 - this.quakeMaxX);
+      y = Math.floor((this.isQuakePhase ? Math.random() : -Math.random()) * this.quakeMaxY);
+    } else {
+      // 横揺れ
+      x = Math.floor((this.isQuakePhase ? Math.random() : -Math.random()) * this.quakeMaxX);
+      y = Math.floor(Math.random() * this.quakeMaxY * 2 - this.quakeMaxY);
+    }
+    console.log(x, y, this.isQuakePhase)
+    this.forePrimaryLayer.x = x;
+    this.forePrimaryLayer.y = y;
+    this.backPrimaryLayer.x = x;
+    this.backPrimaryLayer.y = y;
+    this.isQuakePhase = !this.isQuakePhase;
   }
 
   // =========================================================
