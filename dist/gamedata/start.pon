@@ -89,12 +89,12 @@ OK.
 
 # トランジションのテスト
 |save_mark_before_trans:save_mark_before_trans
-;backlay
-;layopt "lay": 1, "page": "fore", "visible": false
-;image "lay": 0, "page": "back", "file": "image/bg1.png", "visible": true, "x": 0, "y": 0
+;preparetrans
+;layopt "lay": 1, "visible": false
+;image "lay": 0, "file": "image/bg1.png", "visible": true, "x": 0, "y": 0
 ;lockbutton
 ;locksystembutton
-backlay.
+preparetrans
 
 # ;trans "time": 3000, "method": "crossfade"
 # ;trans "time": 3000, "method": "scroll-to-left"

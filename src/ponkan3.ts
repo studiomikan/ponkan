@@ -691,9 +691,12 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
    */
   public getLayers(values: any): PonLayer[] {
     const lay: string = "" + values.lay as string;
-    const page: string = "" + values.page as string;
+    let page: string = "" + values.page as string;
     let pageLayers: PonLayer[];
-    if (page != null && page === "back") {
+    if (values.page == null) {
+      page = this.currentPage;
+    }
+    if (page === "back") {
       pageLayers = this.backLayers;
     } else {
       pageLayers = this.foreLayers;
@@ -908,6 +911,12 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.removeForePrimaryLayer(this.historyLayer);
     this.removeBackPrimaryLayer(this.historyLayer);
     this.addForePrimaryLayer(this.historyLayer);
+  }
+
+  // [override]
+  public onCompleteTrans(): boolean {
+    this.currentPage = "fore";
+    return super.onCompleteTrans();
   }
 
   public waitTransClickCallback() {
