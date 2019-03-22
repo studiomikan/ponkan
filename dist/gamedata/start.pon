@@ -58,20 +58,18 @@
   y: 0
 }
 
-;macro_depth1 p: 100
+# ;macro_depth1 p: 100
+# ;pb
+
+;messageopt "align": "right"
+テキスト1
+;pb
+# ;locate x: 400
+;locate y: 200
+テキスト2
 ;pb
 
-# ;messageopt "align": "left"
-# ;nowait
-# ;for "loops": 100, "indexvar": "i"
-#   あいうえおかきくけこさしすせそ
-#   = tv.i
-#   ;br
-# ;endfor
-# ;showhistory
-# ;unlock
-# ;s
-# ;pb
+
 あいうえお
 ;indent
 # ;wait time:"1000", canskip:false

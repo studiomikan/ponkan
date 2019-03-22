@@ -132,6 +132,7 @@ export class BaseLayer {
   public textLineHeight: number  = 24;
   public textLinePitch: number  = 5;
   public textAutoReturn: boolean = true;
+  public textLocatePoint: number = 0;
   public textIndentPoint: number = 0;
   public reservedTextIndentPoint: number = 0;
   public textAlign: "left" | "center" | "right" = "left";
@@ -153,7 +154,7 @@ export class BaseLayer {
   public set visible(visible: boolean) { this.container.visible = visible; }
   public get alpha(): number { return this.container.alpha; }
   public set alpha(alpha: number) { this.container.alpha = alpha; }
-  
+
   public get backgroundColor(): number { return this._backgroundColor; }
   public set backgroundColor(backgroundColor: number) {
     this.setBackgroundColor(backgroundColor, this._backgroundAlpha);
@@ -454,7 +455,7 @@ export class BaseLayer {
   public getNextTextPos(chWidth: number): {x: number, y: number} {
     // 自動改行の判定
     let lineWidth = this.getCurrentLineWidth();
-    let totalMargin = this.textMarginLeft + this.textMarginRight;
+    let totalMargin = this.textMarginLeft + this.textMarginRight + this.textLocatePoint;
     if (this.textIndentPoint !== 0) {
       switch (this.textAlign) {
         case "left": case "center":
@@ -472,7 +473,7 @@ export class BaseLayer {
     // 追加する1文字に合わせて、既存の文字の位置を調整＆次の文字位置の算出
     let newLineWidth = this.getCurrentLineWidth() + chWidth;
     let startX: number = 0;
-    let leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft;
+    let leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft + this.textLocatePoint;
     switch (this.textAlign) {
       case "left":
         startX = leftMargin;
@@ -482,7 +483,7 @@ export class BaseLayer {
         startX = center - (newLineWidth / 2);
         break;
       case "right":
-        let right = this.textIndentPoint !== 0 ? this.textIndentPoint : this.width - this.textMarginRight;
+        let right = this.textIndentPoint !== 0 ? this.textIndentPoint : this.width - this.textMarginRight - this.textLocatePoint;
         startX = right - newLineWidth;
         break;
     }
@@ -505,9 +506,41 @@ export class BaseLayer {
   public addTextReturn(): void {
     this.textY += this.textLineHeight + this.textLinePitch;
     this.textLines.push([]);
+    this.textLocatePoint = 0;
     if (this.reservedTextIndentPoint !== 0) {
       this.textIndentPoint = this.reservedTextIndentPoint;
     }
+  }
+
+  /**
+   * テキストの表示位置を指定する。
+   * 内部的には、指定前とは別の行として扱われる。
+   * また、xとyの座標には、別途marginが考慮される。
+   * @param x x座標
+   * @param y y座標
+   */
+  public setCharLocate(x: number | null, y: number | null): void {
+    let line = this.currentTextLine;
+    let tmpY: number = this.textY;
+    let tmpX: number = line[line.length - 1].x;
+    let tmpX2: number = line[0].x;
+
+    this.addTextReturn();
+    if (x != null) {
+      this.textLocatePoint = x;
+    } else {
+      if (this.textAlign !== "right") {
+        this.textLocatePoint = tmpX;
+      } else {
+        this.textLocatePoint = tmpX2;
+      }
+    }
+    if (y != null) {
+      this.textY = y + this.textMarginTop;
+    } else {
+      this.textY = tmpY;
+    }
+    console.log("setCharLocate ", this.textLocatePoint, this.textY, "(",x, y, this.textMarginTop);
   }
 
   /**
@@ -516,7 +549,7 @@ export class BaseLayer {
   public setIndentPoint(): void {
     switch (this.textAlign) {
       case "left":
-        let leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft;
+        let leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft + this.textLocatePoint;
         this.reservedTextIndentPoint = leftMargin + this.getCurrentLineWidth();
         break;
       case "center":
@@ -552,6 +585,7 @@ export class BaseLayer {
     this.textLines = [[]];
     this.textX = this.textMarginLeft;
     this.textY = this.textMarginTop;
+    this.textLocatePoint = 0;
     this.clearIndentPoint();
   }
 

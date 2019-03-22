@@ -74,6 +74,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   protected currentTextSpeed: number = 100;
   public clickSkipEnabled: boolean = true;
   public nowaitModeFlag: boolean = false;
+  public addCharWithBackFlag: boolean = false;
   public hideMessageFlag: boolean = false;
   public hideMessageByRlickFlag: boolean = false;
   protected _messageLayerNum: number = 20;
@@ -781,6 +782,10 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     return this.foreLayers[this.messageLayerNum];
   }
 
+  public get backMessageLayer(): PonLayer {
+    return this.backLayers[this.messageLayerNum];
+  }
+
   public get lineBreakGlyphLayer(): PonLayer {
     return this.foreLayers[this.lineBreakGlyphLayerNum];
   }
@@ -977,6 +982,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     "currentPage",
     "currentTextSpeed",
     "nowaitModeFlag",
+    "addCharWithBackFlag",
     "messageLayerNum",
     "lineBreakGlyphLayerNum",
     "lineBreakGlyphPos",

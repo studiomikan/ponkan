@@ -610,6 +610,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "文字を出力する",
       [
         new TagValue("lay", "string", false, "message", "出力する文字"),
+        new TagValue("page", "string", false, "fore", "対象ページ"),
         new TagValue("text", "string", true, null, "出力する文字"),
       ],
       `TODO タグの説明文`,
@@ -617,6 +618,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         p.getLayers(values).forEach((layer) => {
           layer.addChar(values.text);
         });
+        if (values.page === "fore" && p.addCharWithBackFlag) {
+          values.page = "back";
+          p.getLayers(values).forEach((layer) => {
+            layer.addChar(values.text);
+          });
+        }
         if (p.isSkipping || p.textSpeed === 0) {
           return "continue";
         } else {
@@ -692,6 +699,24 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     new TagAction(
+      ["textlocate", "locate"],
+      "メッセージ操作",
+      "文字表示位置を指定する",
+      [
+        new TagValue("lay", "number", false, "message", "対象レイヤー"),
+        new TagValue("page", "string", false, "fore", "対象ページ"),
+        new TagValue("x", "number", false, null, "x座標"),
+        new TagValue("y", "number", false, null, "x座標"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          layer.setCharLocate(values.x, values.y);
+        });
+        return "continue";
+      },
+    ),
+    new TagAction(
       ["indent"],
       "メッセージ操作",
       "インデント位置を設定する",
@@ -699,8 +724,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("lay", "number", false, "message", "対象レイヤー"),
         new TagValue("page", "string", false, "fore", "対象ページ"),
       ],
-      `現在の文字描画位置でインデントするように設定します。` +
-      `インデント位置は [endindent] または [clear] でクリアされます。`,
+      `現在の文字描画位置でインデントするように設定します。
+       インデント位置は [endindent] または [clear] でクリアされます。`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.setIndentPoint();
