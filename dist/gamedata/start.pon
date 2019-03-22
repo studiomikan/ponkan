@@ -61,17 +61,16 @@
 # ;macro_depth1 p: 100
 # ;pb
 
-;messageopt "align": "right"
+;messageopt "align": "left"
+テキスト1
+;indent
 テキスト1
 ;pb
 # ;locate x: 400
 ;locate y: 200
 テキスト2
-;pb
-
-
-あいうえお
-;indent
+# あいうえお
+;lb
 # ;wait time:"1000", canskip:false
 かきくけこさしすせそたちつてとなにぬねの
 # ;hidemessages

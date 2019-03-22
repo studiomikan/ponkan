@@ -455,8 +455,18 @@ export class BaseLayer {
   public getNextTextPos(chWidth: number): {x: number, y: number} {
     // 自動改行の判定
     let lineWidth = this.getCurrentLineWidth();
-    let totalMargin = this.textMarginLeft + this.textMarginRight + this.textLocatePoint;
-    if (this.textIndentPoint !== 0) {
+    let totalMargin = this.textMarginLeft + this.textMarginRight;
+    let indentOrLocate: number = 0;
+    if (this.textLocatePoint !== 0) {
+      switch (this.textAlign) {
+        case "left": case "center":
+          totalMargin = this.textIndentPoint + this.textMarginRight;
+          break;
+        case "right":
+          totalMargin = (this.width - this.textLocatePoint) - this.textMarginLeft;
+          break;
+      }
+    } else if (this.textIndentPoint !== 0) {
       switch (this.textAlign) {
         case "left": case "center":
           totalMargin = this.textIndentPoint + this.textMarginRight;
@@ -472,18 +482,27 @@ export class BaseLayer {
 
     // 追加する1文字に合わせて、既存の文字の位置を調整＆次の文字位置の算出
     let newLineWidth = this.getCurrentLineWidth() + chWidth;
+    let leftMargin: number = 0;
     let startX: number = 0;
-    let leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft + this.textLocatePoint;
     switch (this.textAlign) {
       case "left":
+        leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft + this.textLocatePoint;
         startX = leftMargin;
         break;
       case "center":
+        leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft + this.textLocatePoint;
         let center = leftMargin + (this.width - leftMargin - this.textMarginRight) / 2;
         startX = center - (newLineWidth / 2);
         break;
       case "right":
-        let right = this.textIndentPoint !== 0 ? this.textIndentPoint : this.width - this.textMarginRight - this.textLocatePoint;
+        let right: number;
+        if (this.textLocatePoint !== 0) {
+          right = this.textLocatePoint;
+        } else if (this.textIndentPoint !== 0) {
+          right = this.textIndentPoint;
+        } else {
+          right = this.width - this.textMarginRight;
+        }
         startX = right - newLineWidth;
         break;
     }
@@ -540,7 +559,6 @@ export class BaseLayer {
     } else {
       this.textY = tmpY;
     }
-    console.log("setCharLocate ", this.textLocatePoint, this.textY, "(",x, y, this.textMarginTop);
   }
 
   /**
@@ -556,8 +574,14 @@ export class BaseLayer {
         this.reservedTextIndentPoint = this.textX;
         break;
       case "right":
-        let rightMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginRight;
-        this.reservedTextIndentPoint = this.width - rightMargin - this.getCurrentLineWidth();
+        let rightMargin: number = 0;
+        if (this.textLocatePoint !== 0) {
+          this.reservedTextIndentPoint = this.textLocatePoint - this.getCurrentLineWidth();
+        } else if (this.textIndentPoint !== 0) {
+          this.reservedTextIndentPoint = this.textIndentPoint - this.getCurrentLineWidth();
+        } else {
+          this.reservedTextIndentPoint = this.width - this.textMarginRight - this.getCurrentLineWidth();
+        }
         break;
     }
   }
