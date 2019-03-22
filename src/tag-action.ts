@@ -1465,6 +1465,22 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // メッセージ履歴関係
     // ======================================================================
     new TagAction(
+      ["historyopt"],
+      "メッセージ履歴",
+      "メッセージ履歴を設定する",
+      [
+        new TagValue("output", "boolean", false, null, "メッセージレイヤに文字を出力するかどうか"),
+        new TagValue("enabled", "boolean", false, null, "メッセージレイヤを表示できるかどうか"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        if (values.output) {
+          p.historyLayer.outputFlag = true;
+        }
+        return "continue";
+      },
+    ),
+    new TagAction(
       ["showhistory", "history"],
       "メッセージ履歴",
       "メッセージ履歴を表示する",

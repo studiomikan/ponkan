@@ -249,12 +249,10 @@ class HistoryTextLayer extends BaseLayer {
   }
 
   public add(ch: string): void {
-    // this.addChar(ch);
     this.currentLine.push(ch);
   }
 
   public textReturn(): void {
-    // this.addTextReturn();
     this.lines.push([]);
   }
 
@@ -349,6 +347,7 @@ export class HistoryLayer extends BaseLayer {
   protected scrollBar: ScrollBar;
   protected closeButton: SimpleButton;
   public wheelScrollCount: number = 3;
+  public outputFlag: boolean = true;
 
   public constructor(name: string, resource: Resource, owner: PonGame) {
     super(name, resource, owner);
@@ -496,18 +495,22 @@ export class HistoryLayer extends BaseLayer {
   }
 
   public addHistoryChar(ch: string): void {
-    this.textLayer.add(ch);
-    if (this.visible) {
-      this.textLayer.redraw();
-      this.resetScrollBar();
+    if (this.outputFlag) {
+      this.textLayer.add(ch);
+      if (this.visible) {
+        this.textLayer.redraw();
+        this.resetScrollBar();
+      }
     }
   }
 
   public addHistoryTextReturn(): void {
-    this.textLayer.textReturn();
-    if (this.visible) {
-      this.textLayer.redraw();
-      this.resetScrollBar();
+    if (this.outputFlag) {
+      this.textLayer.textReturn();
+      if (this.visible) {
+        this.textLayer.redraw();
+        this.resetScrollBar();
+      }
     }
   }
 

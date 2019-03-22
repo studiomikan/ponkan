@@ -97,6 +97,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   // メッセージ履歴
   public historyLayer: HistoryLayer;
+  public enabledHistory: boolean = true;
 
   // サウンド関係
   public soundBufferCount: number = DEFAULT_SOUND_BUFFER_COUNT;
@@ -369,7 +370,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
           this.onPrimaryClick();
           break;
         case "arrowup":
-          if (this.conductor.isStable) { this.showHistoryLayer(); }
+          if (this.conductor.isStable && this.enabledHistory) {
+            this.showHistoryLayer();
+          }
           break;
       }
     }
