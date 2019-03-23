@@ -703,7 +703,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "メッセージ操作",
       "文字表示位置を指定する",
       [
-        new TagValue("lay", "number", false, "message", "対象レイヤー"),
+        new TagValue("lay", "string", false, "message", "対象レイヤー"),
         new TagValue("page", "string", false, null, "対象ページ"),
         new TagValue("x", "number", false, null, "x座標"),
         new TagValue("y", "number", false, null, "x座標"),
@@ -721,7 +721,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "メッセージ操作",
       "インデント位置を設定する",
       [
-        new TagValue("lay", "number", false, "message", "対象レイヤー"),
+        new TagValue("lay", "string", false, "message", "対象レイヤー"),
         new TagValue("page", "string", false, null, "対象ページ"),
       ],
       `現在の文字描画位置でインデントするように設定します。
@@ -1400,11 +1400,27 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "トランジション",
       "表レイヤを裏レイヤにコピーする",
       [
-        new TagValue("lay", "number", false, "all", "対象レイヤー"),
+        new TagValue("lay", "string", false, "all", "対象レイヤー"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
         p.backlay(values.lay);
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["copylay"],
+      "トランジション",
+      "レイヤ情報をコピーする",
+      [
+        new TagValue("srclay", "number", true, null, "コピー元レイヤー"),
+        new TagValue("destlay", "number", true, null, "コピー先レイヤー"),
+        new TagValue("srcpage", "string", false, "fore", "コピー元ページ"),
+        new TagValue("destpage", "string", false, "fore", "コピー先ページ"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        p.copylay(values.srclay, values.destlay, values.srcpage, values.destpage);
         return "continue";
       },
     ),

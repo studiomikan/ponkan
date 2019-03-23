@@ -900,6 +900,20 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.plugins.forEach((p) => p.onCopyLayer(true));
   }
 
+  public copylay(srclay: string, destlay: string, srcpage: string, destpage: string): void {
+    const srcLayers: PonLayer[] = this.getLayers({lay: srclay, page: srcpage});
+    const destLayers: PonLayer[] = this.getLayers({lay: destlay, page: destpage});
+    if (srcLayers.length !== destLayers.length) {
+      throw new Error("コピー元と先のレイヤ数が異なります(copylay)");
+    }
+    for (let i = 0; i < srcLayers.length; i++) {
+      if (srcLayers[i] !== destLayers[i]) {
+        srcLayers[i].copyTo(destLayers[i]);
+      }
+    }
+    this.plugins.forEach((p) => p.onCopyLayer(true));
+  }
+
   // [override]
   public flipPrimaryLayers(): void {
     super.flipPrimaryLayers();
