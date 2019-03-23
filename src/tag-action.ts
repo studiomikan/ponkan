@@ -1459,6 +1459,21 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     new TagAction(
+      ["stoptrans"],
+      "トランジション",
+      "トランジションを停止する",
+      [],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        if (!p.transManager.isRunning) {
+          return "continue";
+        } else {
+          p.transManager.stop();
+          return "break";
+        }
+      },
+    ),
+    new TagAction(
       ["waittrans", "wt"],
       "トランジション",
       "トランジションの終了を待つ",
