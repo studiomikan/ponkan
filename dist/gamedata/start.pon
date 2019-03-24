@@ -70,6 +70,7 @@
          {x: 0, y: 400, alpha: 0.5},],
   ease: "none"
 }
+;waitmove canskip: true
 
 ;messageopt "align": "left"
 テキスト1

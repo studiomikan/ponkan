@@ -14,7 +14,8 @@ export interface IMovePos {
 
 export class MovableLayer extends ToggleButtonLayer {
 
-  protected isMoving: boolean = false
+  protected _isMoving: boolean = false;
+  public get isMoving(): boolean { return this._isMoving; }
   protected moveType: "linear" | "bezier2" | "bezier3" | "catmullrom" = "linear";
   protected moveEase: "none" | "in" | "out" | "both" = "none";
   protected movePosList: IMovePos[] = [];
@@ -35,15 +36,6 @@ export class MovableLayer extends ToggleButtonLayer {
     ease: "none" | "in" | "out" | "both",
   ): void {
 
-    // let pathStrList: string[] = path.trim().slice(1, -1).split(/\)\(/);
-    // let posList: IMovePos[] = [];
-    //
-    // posList.push({ x: this.x, y: this.y, alpha: this.alpha });
-    // pathStrList.forEach((pathStr) => {
-    //   let pos: string[] = pathStr.split(",");
-    //   posList.push({ x: +pos[0], y: +pos[1], alpha: +pos[2] });
-    // });
-
     if (type === "bezier2" && path.length !== 2) {
       throw new Error("bezier2ではpathを2点指定する必要があります。");
     }
@@ -56,7 +48,7 @@ export class MovableLayer extends ToggleButtonLayer {
 
     path.unshift({ x: this.x, y: this.y, alpha: this.alpha });
 
-    this.isMoving = true;
+    this._isMoving = true;
     this.moveType = type;
     this.moveEase = ease;
     this.movePosList = path;
@@ -72,20 +64,21 @@ export class MovableLayer extends ToggleButtonLayer {
   }
 
   public stopMove(): void {
-    if (this.isMoving) {
+    if (this._isMoving) {
       let lastPos: IMovePos = this.movePosList[this.movePosList.length - 1];
       this.x = lastPos.x;
       this.y = lastPos.y;
       this.alpha = lastPos.alpha;
-      this.isMoving = false;
+      this._isMoving = false;
       this.movePosList = [];
+      this.owner.trigger("move");
     }
   }
 
   // [override]
   public update(tick: number): void {
     super.update(tick)
-    if (this.isMoving) {
+    if (this._isMoving) {
       let phase: number = (tick - this.moveStartTick) / this.moveTime;
 
       // easeの処理
@@ -267,9 +260,4 @@ export class MovableLayer extends ToggleButtonLayer {
     return (2 * p1 - 2 * p2 + v0 + v1) * t3 +
            (-3 * p1 + 3 * p2 - 2 * v0 - v1) * t2 + v0 * t + p1;
   }
-
-
-
-
 }
-

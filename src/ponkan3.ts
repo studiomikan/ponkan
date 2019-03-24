@@ -704,6 +704,25 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     return this.getTargetLayers(pageLayers, lay);
   }
 
+  public get hasMovingLayer(): boolean {
+    return this.foreLayers.filter(layer => layer.isMoving).length > 0 ||
+           this.backLayers.filter(layer => layer.isMoving).length > 0;
+  }
+
+  public waitMoveClickCallback() {
+    Logger.debug("click on move. called waitMoveClickCallback");
+    this.clearEventHandlerByName("move");
+    this.foreLayers.forEach(layer => layer.stopMove());
+    this.backLayers.forEach(layer => layer.stopMove());
+    this.conductor.start();
+  }
+
+  public waitMoveCompleteCallback() {
+    Logger.debug("complete move. called waitMoveCompleteCallback");
+    this.clearEventHandlerByName("click");
+    this.conductor.start();
+  }
+
   // =========================================================
   // Quake
   // =========================================================

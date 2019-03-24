@@ -1275,7 +1275,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("time", "number", true, null, "自動移動させる時間"),
         new TagValue("path", "array", true, null, "自動移動させる位置を指定"),
         new TagValue("type", "string", false, "linear", `自動移動のタイプ。"linear" | "bezier2" | "bezier3" | "catmullrom"`),
-        new TagValue("ease", "string", false, "both", `自動移動の入り・抜きの指定。"none" | "in" | "out" | "both" `),
+        new TagValue("ease", "string", false, "none", `自動移動の入り・抜きの指定。"none" | "in" | "out" | "both" `),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
@@ -1283,6 +1283,50 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           layer.startMove(tick, values.time, values.path, values.type, values.ease);
         });
         return "continue";
+      },
+    ),
+    new TagAction(
+      ["stopmove"],
+      "アニメーション",
+      "自動移動を停止する",
+      [
+        new TagValue("lay", "string", false, "all", "対象レイヤー"),
+        new TagValue("page", "string", false, null, "対象ページ"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          layer.stopMove();
+        });
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["waitmove", "wm"],
+      "アニメーション",
+      "自動移動の終了を待つ",
+      [
+        new TagValue("canskip", "boolean", false, true, "スキップ可能かどうか"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        if (!p.hasMovingLayer) {
+          return "continue";
+        }
+        if (p.isSkipping && values.canskip) {
+          p.waitMoveClickCallback();
+          return "break";
+        } else {
+          if (values.canskip) {
+            p.addEventHandler(new PonEventHandler("click", () => {
+              p.waitMoveClickCallback();
+            }, "waitmove"));
+          }
+          p.addEventHandler(new PonEventHandler("move", () => {
+            p.waitMoveCompleteCallback();
+          }, "waitmove"));
+          return p.conductor.stop();
+        }
       },
     ),
     // ======================================================================
