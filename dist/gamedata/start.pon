@@ -61,6 +61,16 @@
 # ;macro_depth1 p: 100
 # ;pb
 
+;move {
+  lay: 2,
+  time: 1000,
+  type: "catmullrom",
+  path: [{x: 400, y: 0, alpha: 0.1},
+         {x: 400, y: 400, alpha: 1.0},
+         {x: 0, y: 400, alpha: 0.5},],
+  ease: "none"
+}
+
 ;messageopt "align": "left"
 テキスト1
 ;indent

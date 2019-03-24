@@ -560,7 +560,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("page", "string", false, null, "対象ページ"),
         new TagValue("fontfamily", "array", false, null, "フォント名の配列"),
         new TagValue("fontsize", "number", false, null, "フォントサイズ(px)"),
-        new TagValue("fontweight", "string", false, null, `フォントウェイト。"normal" / "bold"`),
+        new TagValue("fontweight", "string", false, null, `フォントウェイト。"normal" | "bold"`),
         new TagValue("color", "number", false, null, "文字色(0xRRGGBB)"),
         new TagValue("margint", "number", false, null, "テキスト描画のマージン　上"),
         new TagValue("marginr", "number", false, null, "テキスト描画のマージン　右"),
@@ -568,7 +568,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("marginl", "number", false, null, "テキスト描画のマージン　左"),
         new TagValue("lineheight", "number", false, null, "テキストの行の高さ(px)"),
         new TagValue("linepitch", "number", false, null, "テキストの行間(px)"),
-        new TagValue("align", "string", false, null, `テキスト寄せの方向。"left" / "center" / "right"`),
+        new TagValue("align", "string", false, null, `テキスト寄せの方向。"left" | "center" | "right"`),
         new TagValue("shadow", "boolean", false, null, "影の表示非表示"),
         new TagValue("shadowalpha", "number", false, null, "影のAlpha(0.0〜1.0)"),
         new TagValue("shadowangle", "number", false, null, "影の角度(ラジアン)"),
@@ -1261,6 +1261,26 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.deleteFrameAnim();
+        });
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["startmove", "move"],
+      "アニメーション",
+      "自動移動を開始する",
+      [
+        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("time", "number", true, null, "自動移動させる時間"),
+        new TagValue("path", "array", true, null, "自動移動させる位置を指定"),
+        new TagValue("type", "string", false, "linear", `自動移動のタイプ。"linear" | "bezier2" | "bezier3" | "catmullrom"`),
+        new TagValue("ease", "string", false, "both", `自動移動の入り・抜きの指定。"none" | "in" | "out" | "both" `),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          layer.startMove(tick, values.time, values.path, values.type, values.ease);
         });
         return "continue";
       },

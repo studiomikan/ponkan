@@ -7,10 +7,10 @@ import { FrameAnimLayer } from "./frame-anim-layer";
 import { TextButtonLayer } from "./text-button-layer";
 import { ImageButtonLayer } from "./image-button-layer";
 import { ToggleButtonLayer } from "./toggle-button-layer";
+import { MovableLayer } from "./movable-layer";
 import { Ponkan3 } from "../ponkan3";
 
-// export class PonLayer extends FrameAnimLayer {
-export class PonLayer extends ToggleButtonLayer {
+export class PonLayer extends MovableLayer {
 
   public autoHideWithMessage: boolean = false;
   public visibleBuffer: boolean;
