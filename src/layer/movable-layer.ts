@@ -260,4 +260,35 @@ export class MovableLayer extends ToggleButtonLayer {
     return (2 * p1 - 2 * p2 + v0 + v1) * t3 +
            (-3 * p1 + 3 * p2 - 2 * v0 - v1) * t2 + v0 * t + p1;
   }
+
+  public store(tick: number): any {
+    let data: any = super.store(tick);
+    // 自動移動中だった場合、自動移動が終わったものとして保存する。
+    if (this.isMoving) {
+      let endPos = this.movePosList[this.movePosList.length - 1];
+      data.x = endPos.x;
+      data.y = endPos.y;
+      data.alpha = endPos.alpha;
+    }
+    return data;
+  }
+
+  protected static movableLayerCopyParams: string[] = [
+    "_isMoving",
+    "moveType",
+    "moveEase",
+    "movePosList",
+    "movePoint",
+    "moveTime",
+    "moveTotalTime",
+    "moveStartTick",
+  ];
+
+  public copyTo(dest: MovableLayer): void {
+    super.copyTo(dest);
+    let me: any = this as any;
+    let you: any = dest as any;
+    MovableLayer.movableLayerCopyParams.forEach(p => you[p] = me[p]);
+  }
+
 }

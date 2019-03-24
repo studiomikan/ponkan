@@ -169,13 +169,13 @@ export class ToggleButtonLayer extends ImageButtonLayer {
   public store(tick: number): any {
     let data: any = super.store(tick);
     let me: any = this as any;
-  
-    data.imageToggleButtons = 
+
+    data.imageToggleButtons =
       this.imageToggleButtons.map(toggleButton => toggleButton.store(tick));
-  
+
     return data;
   }
-  
+
   public restore(asyncTask: AsyncTask, data: any, tick: number): void {
     this.clearToggleButtons();
     if (data.imageToggleButtons != null && data.imageToggleButtons.length > 0) {
@@ -188,7 +188,7 @@ export class ToggleButtonLayer extends ImageButtonLayer {
     }
     super.restore(asyncTask, data, tick);
   }
-  
+
   protected restoreAfterLoadImage(data: any, tick: number): void {
     super.restoreAfterLoadImage(data, tick);
     if (data.imageToggleButtons != null && data.imageToggleButtons.length > 0) {
