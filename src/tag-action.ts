@@ -1456,6 +1456,79 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
+    new TagAction(
+      ["waitsoundstop", "waitsound"],
+      "サウンド",
+      "音声の再生終了を待つ",
+      [
+        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+        new TagValue("canskip", "boolean", false, true, "スキップ可能かどうか"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        let s: Sound = p.getSound(values.buf);
+        if (!s.playing || s.loop) {
+          return "continue";
+        }
+        if (p.isSkipping && values.canskip) {
+          s.stop();
+          return "continue";
+        } else {
+          if (values.canskip) {
+            p.addEventHandler(new PonEventHandler("click", () => {
+              p.waitSoundStopClickCallback(s);
+            }, "waitsoundstop"));
+          }
+          p.addEventHandler(new PonEventHandler("soundstop", () => {
+            p.waitSoundStopCallback(s);
+          }, "waitsoundstop"));
+          return p.conductor.stop();
+        }
+      },
+    ),
+    new TagAction(
+      ["waitsoundfade", "waitfade"],
+      "サウンド",
+      "音声のフェード終了を待つ",
+      [
+        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+        new TagValue("canskip", "boolean", false, true, "スキップ可能かどうか"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        let s: Sound = p.getSound(values.buf);
+        if (!s.fading) {
+          return "continue";
+        }
+        if (p.isSkipping && values.canskip) {
+          s.endFade();
+          return "continue";
+        } else {
+          if (values.canskip) {
+            p.addEventHandler(new PonEventHandler("click", () => {
+              p.waitSoundFadeClickCallback(s);
+            }, "waitsoundfade"));
+          }
+          p.addEventHandler(new PonEventHandler("soundfade", () => {
+            p.waitSoundFadeCallback(s);
+          }, "waitsoundfade"));
+          return p.conductor.stop();
+        }
+      },
+    ),
+    new TagAction(
+      ["endfadesound", "endfade"],
+      "サウンド",
+      "音声のフェードを終了する",
+      [
+        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        p.getSound(values.buf).endFade();
+        return "continue";
+      },
+    ),
     // ======================================================================
     // トランジション
     // ======================================================================

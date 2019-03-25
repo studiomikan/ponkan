@@ -5,6 +5,7 @@ import { AsyncCallbacks } from './async-callbacks';
 import { AsyncTask } from "./async-task";
 
 export interface ISoundCallbacks {
+  onStop(bufferNum: number): void;
   onFadeComplete(bufferNum: number): void;
 }
 
@@ -38,14 +39,7 @@ export class Sound {
     this.callbacks = callbacks;
     this.howl = howl;
 
-    this.howl.off("playerror").on("playerror", () => {
-      throw new Error(`音声の再生に失敗しました(${filePath})`);
-    });
-
-    this.howl.off("fade").on("fade", () => {
-      this.onFade();
-    });
-
+    this.setHowlerEvent();
     Logger.debug("new Sound: ", this.howl.state(), this.howl);
   }
 
@@ -54,8 +48,34 @@ export class Sound {
     this.howl.unload();
   }
 
+  protected setHowlerEvent() {
+    this.howl.off("playerror").on("playerror", () => {
+      throw new Error(`音声の再生に失敗しました(${this.filePath})`);
+    });
+    this.howl.off("end").on("end", () => {
+      this.stop();
+    });
+    this.howl.off("fade").on("fade", () => {
+      this.onFade();
+    });
+  }
+
+  public get playing(): boolean {
+    return this._state === SoundState.Play ||
+           this._state === SoundState.Fade ||
+           this._state === SoundState.Fadein ||
+           this._state === SoundState.Fadeout;
+  }
+
+  public get fading(): boolean {
+    return this._state === SoundState.Fade ||
+           this._state === SoundState.Fadein ||
+           this._state === SoundState.Fadeout;
+  }
+
   public play() {
     this.seek = 0;
+    this.setHowlerEvent();
     this.howl.play();
     this._state = SoundState.Play;
   }
@@ -67,10 +87,13 @@ export class Sound {
     }
     this.howl.off("fade");
     this.howl.off("play");
+    this.howl.off("end");
     this._state = SoundState.Stop;
+    this.callbacks.onStop(this.bufferNum);
   }
 
   public pause() {
+    this.setHowlerEvent();
     this.howl.pause();
     this._state = SoundState.Pause;
   }
@@ -80,6 +103,7 @@ export class Sound {
     this.fadeTargetVolume = volume;
     this.fadeTime = time;
     this.stopAfterFade = autoStop;
+    this.setHowlerEvent();
     this.howl.fade(this.fadeStartVolume * this.volume2,
                    this.fadeTargetVolume * this.volume2, time);
     this._state = SoundState.Fade;
@@ -93,6 +117,7 @@ export class Sound {
     this.stopAfterFade = false;
 
     this.howl.once("play", () => {
+      this.setHowlerEvent();
       this.howl.fade(this.fadeStartVolume * this.volume2,
                      this.fadeTargetVolume * this.volume2, time);
     });
@@ -106,9 +131,14 @@ export class Sound {
     this.fadeTargetVolume = 0;
     this.fadeTime = time;
     this.stopAfterFade = autoStop;
+    this.setHowlerEvent();
     this.howl.fade(this.fadeStartVolume * this.volume2,
                    this.fadeTargetVolume * this.volume2, time);
     this._state = SoundState.Fadein;
+  }
+
+  public endFade(): void {
+    this.fadeout(0, this.stopAfterFade);
   }
 
   protected onFade() {

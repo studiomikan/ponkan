@@ -551,6 +551,9 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     }
 
     const callbacks: ISoundCallbacks = {
+      onStop: (bufferNum: number) => {
+        this.onSoundStop(bufferNum);
+      },
       onFadeComplete: (bufferNum: number) => {
         this.onSoundFadeComplete(bufferNum);
       },
@@ -578,9 +581,36 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     }
   }
 
+  public onSoundStop(bufferNum: number) {
+    Logger.debug("onSoundStop: ", bufferNum);
+    this.trigger("soundstop");
+  }
+
   public onSoundFadeComplete(bufferNum: number) {
-    // TODO waitfadeなどの対応
     Logger.debug("onSoundFadeComplete: ", bufferNum);
+    this.trigger("soundfade");
+  }
+
+  public waitSoundStopCallback(sound: Sound): void {
+    this.clearEventHandlerByName("click");
+    this.conductor.start();
+  }
+
+  public waitSoundStopClickCallback(sound: Sound): void {
+    this.clearEventHandlerByName("soundstop");
+    sound.stop();
+    this.conductor.start();
+  }
+
+  public waitSoundFadeCallback(sound: Sound): void {
+    this.clearEventHandlerByName("click");
+    this.conductor.start();
+  }
+
+  public waitSoundFadeClickCallback(sound: Sound): void {
+    this.clearEventHandlerByName("soundfade");
+    sound.endFade();
+    this.conductor.start();
   }
 
   // =========================================================
