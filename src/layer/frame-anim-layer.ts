@@ -6,7 +6,8 @@ import { BaseLayer } from "../base/base-layer";
 // TODO pauseもできるようにする
 export class FrameAnimLayer extends BaseLayer {
 
-  protected frameAnimLoop: boolean = false;
+  protected _frameAnimLoop: boolean = false;
+  public get frameAnimLoop(): boolean { return this._frameAnimLoop; }
   protected frameAnimTime: number = 50;
   protected frameAnimWidth: number = 32;
   protected frameAnimHeight: number = 32;
@@ -21,8 +22,8 @@ export class FrameAnimLayer extends BaseLayer {
     height: number,
     frames: any[]
   ): void {
-    this.stopFrameAnim();
-    this.frameAnimLoop = loop;
+    this.stopFrameAnim(false);
+    this._frameAnimLoop = loop;
     this.frameAnimTime = time;
     this.frameAnimWidth = this.width = width;
     this.frameAnimHeight = this.height = height;
@@ -45,14 +46,19 @@ export class FrameAnimLayer extends BaseLayer {
     this.frameAnimStartTick = tick;
   }
 
-  public stopFrameAnim(): void {
-    this.frameAnimState = "stop";
-    this.frameAnimStartTick = -1;
+  public stopFrameAnim(triggerEvent: boolean = true): void {
+    if (this.frameAnimState === "run") {
+      this.frameAnimState = "stop";
+      this.frameAnimStartTick = -1;
+      if (triggerEvent) {
+        this.owner.trigger("frameanim");
+      }
+    }
   }
 
   public deleteFrameAnim(): void {
     this.stopFrameAnim();
-    this.frameAnimLoop = false;
+    this._frameAnimLoop = false;
     this.frameAnimTime = 50;
     this.frameAnimWidth = 32;
     this.frameAnimHeight = 32;
@@ -68,8 +74,8 @@ export class FrameAnimLayer extends BaseLayer {
       let start = this.frameAnimStartTick;
       let time = this.frameAnimTime;
       let frames = this.frameAnimFrames;
-      
-      if (!this.frameAnimLoop && tick - start > frames.length * time) {
+
+      if (!this._frameAnimLoop && tick - start > frames.length * time) {
         let frame = frames[frames.length - 1]
         this.applyFrameAnim(frame);
         this.stopFrameAnim();
@@ -115,7 +121,7 @@ export class FrameAnimLayer extends BaseLayer {
   }
 
   public restore(asyncTask: AsyncTask, data: any, tick: number): void {
-    this.stopFrameAnim();
+    this.stopFrameAnim(false);
     super.restore(asyncTask, data, tick);
   }
 
@@ -125,7 +131,7 @@ export class FrameAnimLayer extends BaseLayer {
     FrameAnimLayer.frameAnimLayerStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
-    
+
     if (data.frameAnimFrames.length !== 0) {
       if (data.frameAnimState === "run") {
         this.startFrameAnim(tick);
@@ -144,4 +150,3 @@ export class FrameAnimLayer extends BaseLayer {
   }
 
 }
-

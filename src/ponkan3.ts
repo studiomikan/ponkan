@@ -591,7 +591,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.trigger("soundfade");
   }
 
-  public waitSoundStopCallback(sound: Sound): void {
+  public waitSoundCompleteCallback(sound: Sound): void {
     this.clearEventHandlerByName("click");
     this.conductor.start();
   }
@@ -602,7 +602,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.conductor.start();
   }
 
-  public waitSoundFadeCallback(sound: Sound): void {
+  public waitSoundFadeCompleteCallback(sound: Sound): void {
     this.clearEventHandlerByName("click");
     this.conductor.start();
   }
@@ -751,6 +751,21 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     Logger.debug("complete move. called waitMoveCompleteCallback");
     this.clearEventHandlerByName("click");
     this.conductor.start();
+  }
+
+  public waitFrameAnimClickCallback(layers: PonLayer[]) {
+    this.clearEventHandlerByName("frameanim");
+    layers.forEach((layer) => {
+      layer.stopFrameAnim();
+    });
+    this.conductor.start();
+  }
+
+  public waitFrameAnimCompleteCallback(layers: PonLayer[]) {
+    if (layers.filter(l => l.frameAnimRunning).length === 0) {
+      this.clearEventHandlerByName("click");
+      this.conductor.start();
+    }
   }
 
   // =========================================================

@@ -8,14 +8,14 @@
 |セーブコメント02
 
 ;image "lay": 0, "page": "fore", "file": "image/bg0.png", "visible": true, "x": 0, "y": 0
-;image "lay": 1, "file": "image/pagebreak.png", "visible": true, "x": 0, "y": 0
-;frameanim "lay": 1, "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.pageBreakFrames"
-;startframeanim "lay": 1
+;image "lay": 1, "page": "fore", "file": "image/okayu.jpg", "visible": true, "x": 0, "y": 0
+;image "lay": 2, "file": "image/pagebreak.png", "visible": true, "x": 0, "y": 0
+;frameanim "lay": 2, "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.pageBreakFrames"
+;startframeanim "lay": 2
 # ;loadsound "buf": 0, "file": "sound/ohka_japan.mp3"
 # ;soundopt "buf": 0, "volume": 0.2
 # ;playsound "buf": 0
 
-;image "lay": 2, "page": "fore", "file": "image/okayu.jpg", "visible": true, "x": 0, "y": 0
 ;layopt "lay": 3, "x": 300, "y": 100, "visible": true, "width": 300, "height": 300
 ;fillcolor "lay": 3, "color": "0xFF00FF", "alpha": 1
 ;messageopt "lay": 3, "align": "center", "margint": 0, "lineheight": 24,

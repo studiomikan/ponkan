@@ -1266,6 +1266,37 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     new TagAction(
+      ["waitframeanim", "waitfanim"],
+      "アニメーション",
+      "フレームアニメーションの終了を待つ",
+      [
+        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("canskip", "boolean", false, true, "スキップ可能かどうか"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        let layers = p.getLayers(values).filter(l => l.frameAnimRunning && !l.frameAnimLoop);
+        if (layers.length === 0) {
+          return "continue";
+        }
+        if (p.isSkipping && values.canskip) {
+          p.waitFrameAnimClickCallback(layers);
+          return "break";
+        } else {
+          if (values.canskip) {
+            p.addEventHandler(new PonEventHandler("click", () => {
+              p.waitFrameAnimClickCallback(layers);
+            }, "waitframeanim"));
+          }
+          p.addEventHandler(new PonEventHandler("frameanim", () => {
+            p.waitFrameAnimCompleteCallback(layers);
+          }, "waitframeanim"));
+          return p.conductor.stop();
+        }
+      },
+    ),
+    new TagAction(
       ["startmove", "move"],
       "アニメーション",
       "自動移動を開始する",
@@ -1471,7 +1502,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           return "continue";
         }
         if (p.isSkipping && values.canskip) {
-          s.stop();
+          p.waitSoundStopClickCallback(s);
           return "continue";
         } else {
           if (values.canskip) {
@@ -1480,7 +1511,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
             }, "waitsoundstop"));
           }
           p.addEventHandler(new PonEventHandler("soundstop", () => {
-            p.waitSoundStopCallback(s);
+            p.waitSoundCompleteCallback(s);
           }, "waitsoundstop"));
           return p.conductor.stop();
         }
@@ -1501,7 +1532,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           return "continue";
         }
         if (p.isSkipping && values.canskip) {
-          s.endFade();
+          p.waitSoundFadeClickCallback(s);
           return "continue";
         } else {
           if (values.canskip) {
@@ -1510,7 +1541,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
             }, "waitsoundfade"));
           }
           p.addEventHandler(new PonEventHandler("soundfade", () => {
-            p.waitSoundFadeCallback(s);
+            p.waitSoundFadeCompleteCallback(s);
           }, "waitsoundfade"));
           return p.conductor.stop();
         }
