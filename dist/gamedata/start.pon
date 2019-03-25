@@ -61,7 +61,7 @@
 # ;macro_depth1 p: 100
 # ;pb
 
-# ;loadsound "buf": 0, "file": "sound/trumpet1.mp3"
+# ;loadsound "buf": 0, "file": "sound/pekowave1.wav"
 # ;soundopt buf: 0, loop: false, volume: 0.1
 # ロード
 # ;lb
