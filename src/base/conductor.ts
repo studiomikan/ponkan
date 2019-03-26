@@ -14,14 +14,7 @@ export interface IConductorEvent {
   onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break";
   onTag(tag: Tag, line: number, tick: number): "continue" | "break";
   onChangeStable(isStable: boolean): void;
-  onReturnSubroutin(forceStart: boolean): void;
-}
-
-export interface ICallStackNode {
-  script: Script;
-  point: number;
-  continueConduct: boolean;
-  returnOffset: number;
+  // onReturnSubroutin(forceStart: boolean): void;
 }
 
 export enum ConductorState {
@@ -32,6 +25,7 @@ export enum ConductorState {
 
 export class Conductor {
   protected resource: Resource;
+  public readonly name: string;
   protected eventCallbacks: IConductorEvent;
   protected _script: Script;
   public get script(): Script { return this._script; }
@@ -43,15 +37,15 @@ export class Conductor {
   public sleepSender: string = "";
   protected stableBuffer: boolean = false;
 
-  protected callStack: ICallStackNode[] = [];
   protected eventHandlers: any = {};
   protected eventHandlersStack: Array<any> = [];
 
   public latestSaveMarkName: string = "";
   public readUnread: ReadUnread;
 
-  public constructor(resource: Resource, eventCallbacks: IConductorEvent) {
+  public constructor(resource: Resource, name: string, eventCallbacks: IConductorEvent) {
     this.resource = resource;
+    this.name = name;
     this.eventCallbacks = eventCallbacks;
     this._script = new Script(this.resource, "dummy", ";s");
     this.readUnread = new ReadUnread(this.resource);
@@ -100,52 +94,52 @@ export class Conductor {
     return cb;
   }
 
-  /**
-   * サブルーチンを呼び出す
-   * @param file 移動先ファイル
-   * @param label 移動先ラベル
-   * @param statusAtReturn return時に状態を復元する場合は値を設定。未設定時はRunのまま
-   */
-  public callSubroutine(
-    filePath: string | null,
-    label: string | null = null,
-    countPage: boolean = false,
-    continueConduct: boolean = true,
-    returnOffset: number = 0,
-  ): AsyncCallbacks {
-    this.callStack.push({
-      script: this.script,
-      point: this.script.getPoint(),
-      continueConduct: continueConduct,
-      returnOffset: returnOffset,
-    });
-    return this.jump(filePath, label, countPage);
-  }
-
-  /**
-   * サブルーチンから戻る
-   * @param forceStart 強制的にpb, lb, waitclickを終わらせるかどうか
-   * @param countPage 既読処理をするかどうか
-   */
-  public returnSubroutine(forceStart: boolean = false, countPage: boolean = true): "continue" | "break" {
-    let stackData = this.callStack.pop();
-    if (stackData === undefined) {
-      throw new Error("returnで戻れませんでした。callとreturnの対応が取れていません");
-    }
-    if (countPage) {
-      this.passLatestSaveMark();
-    }
-    this._script = stackData.script;
-    this._script.goTo(stackData.point + stackData.returnOffset);
-    if (stackData.continueConduct) {
-      this.eventCallbacks.onReturnSubroutin(forceStart);
-      return "continue";
-    } else {
-      this.stop();
-      this.eventCallbacks.onReturnSubroutin(forceStart);
-      return "break";
-    }
-  }
+  // /**
+  //  * サブルーチンを呼び出す
+  //  * @param file 移動先ファイル
+  //  * @param label 移動先ラベル
+  //  * @param statusAtReturn return時に状態を復元する場合は値を設定。未設定時はRunのまま
+  //  */
+  // public callSubroutine(
+  //   filePath: string | null,
+  //   label: string | null = null,
+  //   countPage: boolean = false,
+  //   continueConduct: boolean = true,
+  //   returnOffset: number = 0,
+  // ): AsyncCallbacks {
+  //   this.callStack.push({
+  //     script: this.script,
+  //     point: this.script.getPoint(),
+  //     continueConduct: continueConduct,
+  //     returnOffset: returnOffset,
+  //   });
+  //   return this.jump(filePath, label, countPage);
+  // }
+  //
+  // /**
+  //  * サブルーチンから戻る
+  //  * @param forceStart 強制的にpb, lb, waitclickを終わらせるかどうか
+  //  * @param countPage 既読処理をするかどうか
+  //  */
+  // public returnSubroutine(forceStart: boolean = false, countPage: boolean = true): "continue" | "break" {
+  //   let stackData = this.callStack.pop();
+  //   if (stackData === undefined) {
+  //     throw new Error("returnで戻れませんでした。callとreturnの対応が取れていません");
+  //   }
+  //   if (countPage) {
+  //     this.passLatestSaveMark();
+  //   }
+  //   this._script = stackData.script;
+  //   this._script.goTo(stackData.point + stackData.returnOffset);
+  //   if (stackData.continueConduct) {
+  //     this.eventCallbacks.onReturnSubroutin(forceStart);
+  //     return "continue";
+  //   } else {
+  //     this.stop();
+  //     this.eventCallbacks.onReturnSubroutin(forceStart);
+  //     return "break";
+  //   }
+  // }
 
   public isPassed(labelName: string): boolean {
     return this.readUnread.isPassed(this.script, labelName);
@@ -156,7 +150,6 @@ export class Conductor {
   }
 
   public passSaveMark(saveMarkName: string): void {
-    console.log("passSaveMark", this.script.filePath, saveMarkName)
     this.readUnread.pass(this.script, saveMarkName);
   }
 
@@ -238,13 +231,13 @@ export class Conductor {
     this.sleepTime = -1;
     this.sleepStartTick = -1;
     this.sleepSender = "";
-    Logger.debug("Conductor start.");
+    Logger.debug(`Conductor start. (${this.name})`);
     return "continue"
   }
 
   public stop(): "continue" | "break" {
     this._status = ConductorState.Stop;
-    Logger.debug("Conductor stop.");
+    Logger.debug(`Conductor stop. (${this.name})`);
     return "break"
   }
 
@@ -253,7 +246,7 @@ export class Conductor {
     this.sleepStartTick = tick;
     this.sleepTime = sleepTime;
     this.sleepSender = sender;
-    Logger.debug("Conductor sleep.", sleepTime, sender);
+    Logger.debug(`Conductor sleep. (${this.name})`, sleepTime, sender);
     return "break"
   }
 
@@ -267,6 +260,10 @@ export class Conductor {
       this.eventHandlers[eventName] = [];
     }
     this.eventHandlers[eventName].push(handler);
+  }
+
+  public hasEventHandler(eventName: string): boolean {
+    return this.eventHandlers[eventName] != null;
   }
 
   /**
@@ -304,19 +301,17 @@ export class Conductor {
     delete this.eventHandlers[eventName];
   }
 
-  public pushEventHandlers(): void {
-    this.eventHandlersStack.push(this.eventHandlers);
-    this.eventHandlers = {};
-    console.log("push eventhandlers: ", JSON.stringify(this.eventHandlers));
-  }
-
-  public popEventHandlers(): void {
-    if (this.eventHandlersStack.length === 0) {
-      throw new Error("Engine Error. eventHandlerStackの不正操作");
-    }
-    this.eventHandlers = this.eventHandlersStack.pop();
-    console.log("pop eventhandlers: ", JSON.stringify(this.eventHandlers));
-  }
+  // public pushEventHandlers(): void {
+  //   this.eventHandlersStack.push(this.eventHandlers);
+  //   this.eventHandlers = {};
+  // }
+  //
+  // public popEventHandlers(): void {
+  //   if (this.eventHandlersStack.length === 0) {
+  //     throw new Error("Engine Error. eventHandlerStackの不正操作");
+  //   }
+  //   this.eventHandlers = this.eventHandlersStack.pop();
+  // }
 
   protected static conductorStoreParams = [
     "_status",
@@ -336,9 +331,9 @@ export class Conductor {
     data.scriptFilePath = this.script.filePath;
     data.saveMarkName = saveMarkName;
 
-    if (this.callStack.length !== 0) {
-      throw new Error("サブルーチンの呼び出し中にセーブすることはできません");
-    }
+    // if (this.callStack.length !== 0) {
+    //   throw new Error("サブルーチンの呼び出し中にセーブすることはできません");
+    // }
     if (this.script.isInsideOfMacro()) {
       throw new Error("マクロの中でセーブすることはできません");
     }

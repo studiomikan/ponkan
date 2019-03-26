@@ -131,14 +131,15 @@ export class Button extends BaseLayer {
         });
       } else if (this.callFilePath != null || this.callLabel != null) {
         // ボタンによるcall時はイベントハンドラもスタックしておく
-        p.conductor.pushEventHandlers();
-        p.conductor.addEventHandler(
-          new PonEventHandler("return_subroutin", () => {
-            p.conductor.popEventHandlers();
-          }, "button_call"));
+        // p.conductor.pushEventHandlers();
+        // p.conductor.addEventHandler(
+        //   new PonEventHandler("return_subroutin", () => {
+        //     p.conductor.popEventHandlers();
+        //   }, "button_call"));
         // callする
-        p.conductor.stop();
-        p.conductor.callSubroutine(this.callFilePath, this.callLabel, this.countPage, false, 0).done(() => {
+        // p.conductor.stop();
+        // p.conductor.callSubroutine(this.callFilePath, this.callLabel, this.countPage, false, 0).done(() => {
+        p.callSubroutine(this.callFilePath, this.callLabel, this.countPage).done(() => {
           p.conductor.start();
         });
       }

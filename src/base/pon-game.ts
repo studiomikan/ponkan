@@ -1,4 +1,6 @@
 import * as PIXI from "pixi.js";
+import { AsyncTask } from "./async-task";
+import { AsyncCallbacks } from "./async-callbacks";
 import { BaseLayer } from "./base-layer";
 import { Logger } from "./logger";
 import { Conductor, ConductorState, IConductorEvent } from "./conductor";
@@ -24,9 +26,8 @@ export class PonGame implements IConductorEvent {
   public readonly foreRenderer: PonRenderer;
   public readonly backRenderer: PonRenderer;
 
-  // conductor
-  protected _conductor: Conductor;
-  public get conductor(): Conductor { return this._conductor; }
+  // コンダクタ
+  protected conductorStack: Conductor[] = [];
 
   // レイヤ
   private forePrimaryLayers: BaseLayer[] = [];
@@ -38,9 +39,6 @@ export class PonGame implements IConductorEvent {
 
   public get width(): number { return this.foreRenderer.width; }
   public get height(): number { return this.foreRenderer.height; }
-
-  // protected eventHandlers: any = {};
-  // protected eventHandlersStack: Array<any> = [];
 
   public constructor(parentId: string, config: any = {}) {
     const elm: HTMLElement | null = document.getElementById(parentId);
@@ -64,7 +62,8 @@ export class PonGame implements IConductorEvent {
     this.initMouseEventOnCanvas();
     this.initKeyboardEvent();
 
-    this._conductor = new Conductor(this.resource, this);
+    let mainConductor: Conductor = new Conductor(this.resource, "Main Conductor", this);
+    this.conductorStack.push(mainConductor);
   }
 
   public destroy(): void {
@@ -95,6 +94,10 @@ export class PonGame implements IConductorEvent {
   public unlock(): void {
     this.isLocked = false;
   }
+
+  //============================================================
+  // 描画・更新ループ等のゲーム基礎部分
+  //============================================================
 
   private loop(): void {
     try {
@@ -133,6 +136,7 @@ export class PonGame implements IConductorEvent {
 
   protected update(tick: number): void {
     // should to override
+    // this.conductor.conduct(tick);
   }
 
   public error(e: Error): void {
@@ -140,6 +144,61 @@ export class PonGame implements IConductorEvent {
     alert(e.message);
   }
 
+  //============================================================
+  // コンダクタ関係
+  //============================================================
+
+  public get conductor(): Conductor {
+    return this.conductorStack[this.conductorStack.length - 1];
+  }
+
+  public get mainConductor(): Conductor {
+    return this.conductorStack[0];
+  }
+
+  /**
+   * サブルーチンを呼び出す。
+   * @param file 移動先ファイル
+   * @param label 移動先ラベル
+   */
+  public callSubroutine(
+    filePath: string | null,
+    label: string | null = null,
+    countPage: boolean = false
+  ): AsyncCallbacks {
+
+    let subConductor = new Conductor(
+      this.resource, `Sub Conductor ${this.conductorStack.length}`, this);
+    this.conductorStack.push(subConductor);
+    return this.conductor.jump(filePath, label, countPage);
+  }
+
+  /**
+   * サブルーチンから戻る
+   * @param forceStart 強制的にpb, lb, waitclickを終わらせるかどうか
+   * @param countPage 既読処理をするかどうか
+   */
+  public returnSubroutine(forceStart: boolean = false, countPage: boolean = true): "continue" | "break" {
+    if (this.conductorStack.length === 1) {
+      throw new Error("returnで戻れませんでした。callとreturnの対応が取れていません");
+    }
+
+    // return前のシナリオの既読を済ませる
+    if (countPage) {
+      this.conductor.passLatestSaveMark();
+    }
+
+    console.log("BEFORE ", this.conductor.name, this.conductor.status);
+    this.conductorStack.pop();
+    this.onReturnSubroutin(forceStart);
+    if (forceStart) {
+      this.conductor.clearAllEventHandler();
+      this.conductor.start();
+    }
+    this.conductor.trigger("return_subroutin");
+    console.log("AFTER", this.conductor.name, this.conductor.status);
+    return "break";
+  }
 
   public onLoadNewScript(labelName: string | null, countPage: boolean): void {
   }
@@ -165,6 +224,10 @@ export class PonGame implements IConductorEvent {
 
   public onReturnSubroutin(forceStart: boolean = false): void {
   }
+
+  //============================================================
+  // レイヤー関係
+  //============================================================
 
   public clearLayer(): void {
     this.forePrimaryLayers.forEach((layer) => {
@@ -260,65 +323,13 @@ export class PonGame implements IConductorEvent {
    * この時点で表レイヤ・裏レイヤの入れ替えは完了している。
    */
   public onCompleteTrans(): boolean {
+    this.conductor.trigger("trans");
     return true;
   }
-  //
-  // public addEventHandler(handler: PonEventHandler): void {
-  //   let eventName: string = handler.eventName;
-  //   if (this.eventHandlers[eventName] == null) {
-  //     this.eventHandlers[eventName] = [];
-  //   }
-  //   this.eventHandlers[eventName].push(handler);
-  // }
-  //
-  // /**
-  //  * イベントハンドラの引き金を引く
-  //  * @param eventName イベント名
-  //  * @return イベントハンドラが1つ以上実行されればtrue
-  //  */
-  // public trigger(eventName: string): boolean {
-  //   let handlers: PonEventHandler[] = this.eventHandlers[eventName];
-  //   if (handlers == null) { return false; }
-  //   this.clearEventHandlerByName(eventName);
-  //   handlers.forEach((h) => {
-  //     Logger.debug("FIRE! ", eventName, h);
-  //     h.fire();
-  //   });
-  //   return true;
-  // }
-  //
-  // public clearAllEventHandler(): void {
-  //   this.eventHandlers = {};
-  // }
-  //
-  // public clearEventHandler(eventHandler: PonEventHandler): void {
-  //   Object.keys(this.eventHandlers).forEach((eventName) => {
-  //     this.eventHandlers[eventName].forEach((eventHandler: PonEventHandler, index: number) => {
-  //       if (eventHandler === eventHandler) {
-  //         this.eventHandlers[eventName].splice(index, 1);
-  //         return;
-  //       }
-  //     });
-  //   });
-  // }
-  //
-  // public clearEventHandlerByName(eventName: string): void {
-  //   delete this.eventHandlers[eventName];
-  // }
-  //
-  // public pushEventHandlers(): void {
-  //   this.eventHandlersStack.push(this.eventHandlers);
-  //   this.eventHandlers = {};
-  //   console.log("push eventhandlers: ", JSON.stringify(this.eventHandlers));
-  // }
-  //
-  // public popEventHandlers(): void {
-  //   if (this.eventHandlersStack.length === 0) {
-  //     throw new Error("Engine Error. eventHandlerStackの不正操作");
-  //   }
-  //   this.eventHandlers = this.eventHandlersStack.pop();
-  //   console.log("pop eventhandlers: ", JSON.stringify(this.eventHandlers));
-  // }
+
+  //============================================================
+  // ブラウザイベント関係
+  //============================================================
 
   private initWindowEvent(): void {
     window.addEventListener('unload', () => {

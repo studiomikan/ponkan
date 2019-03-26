@@ -131,27 +131,6 @@ export class Ponkan3 extends PonGame {
     this.historyLayer.init(config, this.initialAsyncTask);
 
     this.initSounds(config);
-
-    // テスト
-    // const layer = this.forePrimaryLayer;
-    // layer.x = 100;
-    // layer.y = 100;
-    // layer.width = 200;
-    // layer.height = 200;
-    // layer.setBackgoundColor(0x808080, 1.0);
-    // layer.loadImage("okayu.jpg").done(() => {
-    //   layer.addText("あいうえおかきくけこさしすせそ");
-    //   layer.addTextReturn();
-    //   layer.addText("Hello PIXI.js");
-    //   layer.alpha = 1;
-    //
-    //   const layer2 = new PonLayer(name, this.resource);
-    //   layer2.width = 100;
-    //   layer2.height = 100;
-    //   layer2.setBackgoundColor(0xff0000, 1.0);
-    //   // this.addForePrimaryLayer(layer2);
-    //   layer.addChild(layer2);
-    // });
   }
 
   public destroy() {
@@ -167,10 +146,10 @@ export class Ponkan3 extends PonGame {
     this.resource.loadSystemData(this.saveDataPrefix);
     this.initialAsyncTask.run().done(() => {
       this.conductor.loadScript("start.pon").done(() => {
-        Logger.debug("onLoadScript success");
+        // Logger.debug("onLoadScript success");
         this.conductor.start();
       }).fail(() => {
-        Logger.debug("onLoadScript fail");
+        // Logger.debug("onLoadScript fail");
       });
     });
   }
@@ -270,6 +249,13 @@ export class Ponkan3 extends PonGame {
   }
 
   public onPrimaryClick(): boolean {
+    // 右クリックによるメッセージ隠し状態なら、解除して終わり
+    if (this.hideMessageByRlickFlag) {
+      this.showMessages();
+      this.hideMessageByRlickFlag = false;
+      return true;
+    }
+
     // トリガーを発火
     if (this.conductor.trigger("click")) {
       return true;
@@ -296,26 +282,26 @@ export class Ponkan3 extends PonGame {
 
   public onPrimaryRightClick(): boolean {
     // TODO conductorにはんどらが移動した関係で修正が必要
-    if (this.conductor.isStable) {
-      if (this.hideMessageByRlickFlag) {
-        // 右クリックによるメッセージ隠し中
-        this.conductor.popEventHandlers();
-        this.showMessages();
-        this.hideMessageByRlickFlag = false;
-      } else if (this.hideMessageFlag) {
-        // タグによるメッセージ隠し中
-        // clickにイベントハンドラが登録されてるのでそいつを呼んで復帰
-        this.conductor.trigger("click");
-      } else {
-        // 右クリックによるメッセージ隠し
+
+    if (this.hideMessageByRlickFlag) {
+      // 右クリックによるメッセージ隠しを解除
+      this.showMessages();
+      this.hideMessageByRlickFlag = false;
+    } else if (this.hideMessageFlag) {
+      // タグによるメッセージ隠し中
+      // clickにイベントハンドラが登録されてるのでそいつを呼んで復帰
+      this.conductor.trigger("click");
+    } else {
+      // 右クリックによるメッセージ隠し
+      if (this.conductor.isStable &&
+          !this.conductor.hasEventHandler("move") &&
+          !this.conductor.hasEventHandler("trans") &&
+          !this.conductor.hasEventHandler("frameanim") &&
+          !this.conductor.hasEventHandler("soundstop") &&
+          !this.conductor.hasEventHandler("soundfade")
+      ) {
         this.hideMessages();
-        this.conductor.pushEventHandlers();
         this.hideMessageByRlickFlag = true;
-        this.conductor.addEventHandler(new PonEventHandler("click", () => {
-          this.conductor.popEventHandlers();
-          this.showMessages();
-          this.hideMessageByRlickFlag = false;
-        }, "hidemessages"));
       }
     }
     return false;
@@ -326,7 +312,7 @@ export class Ponkan3 extends PonGame {
   // =========================================================
 
   public onKeyDown(e: PonKeyEvent): boolean {
-    Logger.debug("onKeyDown: ", e.key);
+    // Logger.debug("onKeyDown: ", e.key);
     if (this.historyLayer.visible) {
       // do nothing.
     } else {
@@ -341,7 +327,7 @@ export class Ponkan3 extends PonGame {
   }
 
   public onKeyUp(e: PonKeyEvent): boolean {
-    Logger.debug("onKeyUp: ", e.key, this.historyLayer.visible);
+    // Logger.debug("onKeyUp: ", e.key, this.historyLayer.visible);
     if (this.historyLayer.visible) {
       switch (e.key.toLowerCase()) {
         case "esc": case "escape":
@@ -385,7 +371,7 @@ export class Ponkan3 extends PonGame {
         this.tagActions[name] = tagAction;
       });
     });
-    Logger.debug("TagActionMap: ", this.tagActions);
+    // Logger.debug("TagActionMap: ", this.tagActions);
   }
 
   // =========================================================
@@ -401,7 +387,7 @@ export class Ponkan3 extends PonGame {
     Logger.debug("onTag: ", tag.name, tag.values, tag);
     const tagAction: TagAction = this.tagActions[tag.name];
     if (tagAction === null || tagAction === undefined) {
-      Logger.debug("Unknown Tag: ", tag.name, tag);
+      // Logger.debug("Unknown Tag: ", tag.name, tag);
       if (this.raiseError.unknowntag) {
         throw new Error(`${tag.name}というタグは存在しません`);
       } else {
@@ -470,12 +456,8 @@ export class Ponkan3 extends PonGame {
 
   public onReturnSubroutin(forceStart: boolean = false): void {
     this.conductor.trigger("return_subroutin");
-    Logger.debug("return_subroutin", forceStart);
     if (forceStart) {
       this.hideBreakGlyph();
-      this.conductor.clearAllEventHandler();
-      // 強制開始
-      this.conductor.start();
     }
   }
 
@@ -578,12 +560,10 @@ export class Ponkan3 extends PonGame {
   }
 
   public onSoundStop(bufferNum: number) {
-    Logger.debug("onSoundStop: ", bufferNum);
     this.conductor.trigger("soundstop");
   }
 
   public onSoundFadeComplete(bufferNum: number) {
-    Logger.debug("onSoundFadeComplete: ", bufferNum);
     this.conductor.trigger("soundfade");
   }
 
@@ -736,7 +716,6 @@ export class Ponkan3 extends PonGame {
   }
 
   public waitMoveClickCallback() {
-    Logger.debug("click on move. called waitMoveClickCallback");
     this.conductor.clearEventHandlerByName("move");
     this.foreLayers.forEach(layer => layer.stopMove());
     this.backLayers.forEach(layer => layer.stopMove());
@@ -744,7 +723,6 @@ export class Ponkan3 extends PonGame {
   }
 
   public waitMoveCompleteCallback() {
-    Logger.debug("complete move. called waitMoveCompleteCallback");
     this.conductor.clearEventHandlerByName("click");
     this.conductor.start();
   }
@@ -994,19 +972,16 @@ export class Ponkan3 extends PonGame {
    */
   public onCompleteTrans(): boolean {
     this.currentPage = "fore";
-    this.conductor.trigger("trans");
     return super.onCompleteTrans();
   }
 
   public waitTransClickCallback() {
-    Logger.debug("click on trans. called waitTransClickCallback");
     this.conductor.clearEventHandlerByName("trans");
     this.transManager.stop();
     this.conductor.start();
   }
 
   public waitTransCompleteCallback() {
-    Logger.debug("complete trans. called waitTransCompleteCallback");
     this.conductor.clearEventHandlerByName("click");
     this.conductor.start();
   }

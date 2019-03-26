@@ -220,7 +220,7 @@ export class BaseLayer {
     };
 
     this.visible = false;
-    Logger.debug("new layer =>", this);
+    // Logger.debug("new layer =>", this);
   }
 
   /**
@@ -636,14 +636,14 @@ export class BaseLayer {
    * @param filePath ファイルパス
    */
   public loadImage(filePath: string): AsyncCallbacks {
-    Logger.debug("BaseLayer.loadImage call: ", filePath);
+    // Logger.debug("BaseLayer.loadImage call: ", filePath);
     const cb = new AsyncCallbacks();
 
     this.freeImage();
     const width = this.width;
     const height = this.height;
     this.resource.loadImage(filePath).done((image) => {
-      Logger.debug("BaseLayer.loadImage success: ", image);
+      // Logger.debug("BaseLayer.loadImage success: ", image);
       this.image = <HTMLImageElement> image;
       this.imageFilePath = filePath;
       this.imageSprite = new PonSprite(this.imageSpriteCallbacks);
@@ -654,7 +654,7 @@ export class BaseLayer {
       this.imageY = 0;
       cb.callDone(this);
     }).fail(() => {
-      Logger.debug("BaseLayer.loadImage fail: ");
+      // Logger.debug("BaseLayer.loadImage fail: ");
       cb.callFail(this);
     });
 

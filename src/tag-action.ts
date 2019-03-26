@@ -99,14 +99,14 @@ export function castTagValues(tag: Tag, tagAction: TagAction) {
           // Logger.debug(Array.isArray(value));
           // Logger.debug(typeof value);
           if (!Array.isArray(value)) {
-            Logger.debug(value);
+            // Logger.debug(value);
             throw new Error(`${tag.name}タグの${def.name}は配列である必要があります`);
           }
           tag.values[def.name] = value;
           break;
         case "object":
           if (typeof value !== "object" || Array.isArray(value)) {
-            Logger.debug(value);
+            // Logger.debug(value);
             throw new Error(`${tag.name}タグの${def.name}はオブジェクトである必要があります`);
           }
           tag.values[def.name] = value;
@@ -300,7 +300,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         if (values.file == null && values.label == null) {
           return "continue";
         } else {
-          p.conductor.callSubroutine(values.file, values.label, values.countpage).done(() => {
+          p.callSubroutine(values.file, values.label, values.countpage).done(() => {
             p.conductor.start();
           });
           return p.conductor.stop();
@@ -324,7 +324,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
        forcestart属性をtrueにした時は、呼び出し元へ戻ると同時に、[lb][pb]などで停止していたとしても、強制的に再開されます。
        ただし[s]タグでスクリプトが完全に停止していた場合は停止したままです。`,
       (values, tick) => {
-        return p.conductor.returnSubroutine(values.forcestart, values.countpage);
+        return p.returnSubroutine(values.forcestart, values.countpage);
       },
     ),
     new TagAction(
