@@ -55,7 +55,7 @@ export class MovableLayer extends ToggleButtonLayer {
     this.movePoint = 0;
     this.moveTime = time;
     this.moveTotalTime = time * (path.length - 1);
-    this.moveStartTick = tick;
+    this.moveStartTick = -1; // この時点では-1としておき、初めてのupdate時に設定する
 
     // bezier2、bezier3のときはmoveTime == moveTotalTimeとする
     if (type === "bezier2" || type === "bezier3") {
@@ -79,6 +79,10 @@ export class MovableLayer extends ToggleButtonLayer {
   public update(tick: number): void {
     super.update(tick)
     if (this._isMoving) {
+      if (this.moveStartTick === -1) {
+        this.moveStartTick = tick;
+      }
+
       let phase: number = (tick - this.moveStartTick) / this.moveTime;
 
       // easeの処理

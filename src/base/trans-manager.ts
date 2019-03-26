@@ -99,7 +99,7 @@ export class TransManager {
 
   private startTick: number = -1;
   private time: number = 1000;
-  private method: "univ" | 
+  private method: "univ" |
                   "scroll-to-right" |
                   "scroll-to-left" |
                   "scroll-to-top" |
@@ -176,7 +176,7 @@ export class TransManager {
       this.ruleSprite = PIXI.Sprite.from(ruleImage);
       this.ruleSprite.width = width;
       this.ruleSprite.height = height;
-    
+
       let maskSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
       maskSprite.width = width;
       maskSprite.height = height;
@@ -207,8 +207,8 @@ export class TransManager {
     // レンダラーの入れ替え
     this.game.resetPrimaryLayersRenderer();
     // フィルタをクリア
-    this.game.foreRenderer.container.filters = null; 
-    this.game.backRenderer.container.filters = null; 
+    this.game.foreRenderer.container.filters = null;
+    this.game.backRenderer.container.filters = null;
 
     // 完了イベント
     this.game.onCompleteTrans();

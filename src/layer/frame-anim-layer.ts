@@ -43,7 +43,7 @@ export class FrameAnimLayer extends BaseLayer {
       throw new Error("アニメーション定義が未定義です");
     }
     this.frameAnimState = "run";
-    this.frameAnimStartTick = tick;
+    this.frameAnimStartTick = -1; // この時点では-1としておき、初めてのupdate時に設定する
   }
 
   public stopFrameAnim(triggerEvent: boolean = true): void {
@@ -71,6 +71,10 @@ export class FrameAnimLayer extends BaseLayer {
   public update(tick: number): void {
     super.update(tick);
     if (this.frameAnimRunning) {
+      if (this.frameAnimStartTick === -1) {
+        this.frameAnimStartTick = tick;
+      }
+
       let start = this.frameAnimStartTick;
       let time = this.frameAnimTime;
       let frames = this.frameAnimFrames;
