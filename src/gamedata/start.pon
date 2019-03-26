@@ -46,6 +46,11 @@
   "y": 140,
   "statevar": "sample-toggle-button"
 }
+# ;layopt "lay": 4, "x": 100, "y": 50, "visible": true
+# ;image lay: 4, file: "image/okayu.jpg"
+
+
+
 
 *trans_loop
 ;clear
@@ -80,7 +85,9 @@
   path: [{x: 400, y: 0, alpha: 0.1},
          {x: 400, y: 400, alpha: 1.0},
          {x: 0, y: 400, alpha: 0.5},
-         {x: 0, y: 0, alpha: 1.0} ],
+         {x: 0, y: 0, alpha: 1.0},
+         {x: 100, y: 0, alpha: 1.0},
+         ],
   ease: "none"
 }
 ;waitmove canskip: true

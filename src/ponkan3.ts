@@ -30,7 +30,7 @@ const DEFAULT_PAGE_BREAK_LAYER_NUM = 22;
 const DEFAULT_AUTO_MODE_LAYER_NUM = 23;
 const DEFAULT_SOUND_BUFFER_COUNT = 5;
 
-export class Ponkan3 extends PonGame implements IConductorEvent {
+export class Ponkan3 extends PonGame {
   // ゲーム設定
   public raiseError: any = {
     unknowntag: true,
@@ -38,9 +38,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   protected initialAsyncTask: AsyncTask;
 
-  // conductor
-  protected _conductor: Conductor;
-  public get conductor(): Conductor { return this._conductor; }
   public skipMode: SkipType = SkipType.INVALID;
   public canSkipUnreadPart: boolean = false;
   public canSkipUnreadPartByCtrl: boolean = true;
@@ -119,8 +116,6 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     if (config.saveDataPrefix != null) { this.saveDataPrefix = config.saveDataPrefix; }
 
     this.initialAsyncTask = new AsyncTask();
-
-    this._conductor = new Conductor(this.resource, this);
 
     this.initTagAction();
 
@@ -276,7 +271,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public onPrimaryClick(): boolean {
     // トリガーを発火
-    if (this.trigger("click")) {
+    if (this.conductor.trigger("click")) {
       return true;
     }
 
@@ -300,23 +295,24 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   public onPrimaryRightClick(): boolean {
+    // TODO conductorにはんどらが移動した関係で修正が必要
     if (this.conductor.isStable) {
       if (this.hideMessageByRlickFlag) {
         // 右クリックによるメッセージ隠し中
-        this.popEventHandlers();
+        this.conductor.popEventHandlers();
         this.showMessages();
         this.hideMessageByRlickFlag = false;
       } else if (this.hideMessageFlag) {
         // タグによるメッセージ隠し中
         // clickにイベントハンドラが登録されてるのでそいつを呼んで復帰
-        this.trigger("click");
+        this.conductor.trigger("click");
       } else {
         // 右クリックによるメッセージ隠し
         this.hideMessages();
-        this.pushEventHandlers();
+        this.conductor.pushEventHandlers();
         this.hideMessageByRlickFlag = true;
-        this.addEventHandler(new PonEventHandler("click", () => {
-          this.popEventHandlers();
+        this.conductor.addEventHandler(new PonEventHandler("click", () => {
+          this.conductor.popEventHandlers();
           this.showMessages();
           this.hideMessageByRlickFlag = false;
         }, "hidemessages"));
@@ -473,11 +469,11 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   }
 
   public onReturnSubroutin(forceStart: boolean = false): void {
-    this.trigger("return_subroutin");
+    this.conductor.trigger("return_subroutin");
     Logger.debug("return_subroutin", forceStart);
     if (forceStart) {
       this.hideBreakGlyph();
-      this.clearAllEventHandler();
+      this.conductor.clearAllEventHandler();
       // 強制開始
       this.conductor.start();
     }
@@ -583,32 +579,32 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public onSoundStop(bufferNum: number) {
     Logger.debug("onSoundStop: ", bufferNum);
-    this.trigger("soundstop");
+    this.conductor.trigger("soundstop");
   }
 
   public onSoundFadeComplete(bufferNum: number) {
     Logger.debug("onSoundFadeComplete: ", bufferNum);
-    this.trigger("soundfade");
+    this.conductor.trigger("soundfade");
   }
 
   public waitSoundCompleteCallback(sound: Sound): void {
-    this.clearEventHandlerByName("click");
+    this.conductor.clearEventHandlerByName("click");
     this.conductor.start();
   }
 
   public waitSoundStopClickCallback(sound: Sound): void {
-    this.clearEventHandlerByName("soundstop");
+    this.conductor.clearEventHandlerByName("soundstop");
     sound.stop();
     this.conductor.start();
   }
 
   public waitSoundFadeCompleteCallback(sound: Sound): void {
-    this.clearEventHandlerByName("click");
+    this.conductor.clearEventHandlerByName("click");
     this.conductor.start();
   }
 
   public waitSoundFadeClickCallback(sound: Sound): void {
-    this.clearEventHandlerByName("soundfade");
+    this.conductor.clearEventHandlerByName("soundfade");
     sound.endFade();
     this.conductor.start();
   }
@@ -741,7 +737,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public waitMoveClickCallback() {
     Logger.debug("click on move. called waitMoveClickCallback");
-    this.clearEventHandlerByName("move");
+    this.conductor.clearEventHandlerByName("move");
     this.foreLayers.forEach(layer => layer.stopMove());
     this.backLayers.forEach(layer => layer.stopMove());
     this.conductor.start();
@@ -749,12 +745,12 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public waitMoveCompleteCallback() {
     Logger.debug("complete move. called waitMoveCompleteCallback");
-    this.clearEventHandlerByName("click");
+    this.conductor.clearEventHandlerByName("click");
     this.conductor.start();
   }
 
   public waitFrameAnimClickCallback(layers: PonLayer[]) {
-    this.clearEventHandlerByName("frameanim");
+    this.conductor.clearEventHandlerByName("frameanim");
     layers.forEach((layer) => {
       layer.stopFrameAnim();
     });
@@ -763,7 +759,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
 
   public waitFrameAnimCompleteCallback(layers: PonLayer[]) {
     if (layers.filter(l => l.frameAnimRunning).length === 0) {
-      this.clearEventHandlerByName("click");
+      this.conductor.clearEventHandlerByName("click");
       this.conductor.start();
     }
   }
@@ -796,7 +792,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.backPrimaryLayer.x = 0;
     this.backPrimaryLayer.y = 0;
 
-    this.trigger("quake");
+    this.conductor.trigger("quake");
   }
 
   protected quake(tick: number): void {
@@ -991,22 +987,27 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.addForePrimaryLayer(this.historyLayer);
   }
 
-  // [override]
+  /**
+   * [override]
+   * トランジション完了時にTransManagerから呼ばれる。
+   * この時点で表レイヤ・裏レイヤの入れ替えは完了している。
+   */
   public onCompleteTrans(): boolean {
     this.currentPage = "fore";
+    this.conductor.trigger("trans");
     return super.onCompleteTrans();
   }
 
   public waitTransClickCallback() {
     Logger.debug("click on trans. called waitTransClickCallback");
-    this.clearEventHandlerByName("trans");
+    this.conductor.clearEventHandlerByName("trans");
     this.transManager.stop();
     this.conductor.start();
   }
 
   public waitTransCompleteCallback() {
     Logger.debug("complete trans. called waitTransCompleteCallback");
-    this.clearEventHandlerByName("click");
+    this.conductor.clearEventHandlerByName("click");
     this.conductor.start();
   }
 
@@ -1197,7 +1198,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
         date: "----/--/-- --:--:--.---",
         name: "未設定",
         comment: "未設定",
-        screenShot: null
+        screenShot: ""
       };
     }
   }
@@ -1206,6 +1207,10 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     return this.systemVar != null &&
            this.systemVar.saveDataInfo != null &&
            this.systemVar.saveDataInfo[num] != null;
+  }
+
+  public getSaveDataScreenShot(num: number): string {
+    return this.getSaveDataInfo(num).screenShot;
   }
 
 }

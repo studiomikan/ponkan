@@ -120,7 +120,7 @@ export class TextButton extends Button {
     TextButton.textButtonStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
-    
+
     this.clearText();
     this.addText(data.txtBtnText);
   }
@@ -264,12 +264,12 @@ export class TextButtonLayer extends FrameAnimLayer {
   public store(tick: number): any {
     let data: any = super.store(tick);
     let me: any = this as any;
-  
+
     data.textButtons = this.textButtons.map(textButton => textButton.store(tick));
-  
+
     return data;
   }
-  
+
   public restore(asyncTask: AsyncTask, data: any, tick: number): void {
     this.clearTextButtons();
     if (data.textButtons != null && data.textButtons.length > 0) {
@@ -282,7 +282,7 @@ export class TextButtonLayer extends FrameAnimLayer {
     }
     super.restore(asyncTask, data, tick);
   }
-  
+
   protected restoreAfterLoadImage(data: any, tick: number): void {
     super.restoreAfterLoadImage(data, tick);
     if (data.textButtons != null && data.textButtons.length > 0) {

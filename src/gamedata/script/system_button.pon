@@ -14,8 +14,8 @@ tv.systembutton = {
   buttons: [
     {
       text:  "Save",
-      file:  "script/system_button.pon",
-      label: "act_save",
+      file:  "script/save.pon",
+      label: "save_start",
       exp:   ""
     },
     {

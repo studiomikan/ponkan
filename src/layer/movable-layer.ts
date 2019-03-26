@@ -71,7 +71,7 @@ export class MovableLayer extends ToggleButtonLayer {
       this.alpha = lastPos.alpha;
       this._isMoving = false;
       this.movePosList = [];
-      this.owner.trigger("move");
+      this.owner.conductor.trigger("move");
     }
   }
 

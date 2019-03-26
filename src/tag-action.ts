@@ -237,12 +237,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           return "break";
         } else {
           if (values.canskip) {
-            p.addEventHandler(new PonEventHandler("click", () => {
+            p.conductor.addEventHandler(new PonEventHandler("click", () => {
               p.stopQuake();
               p.conductor.start();
             }, "waitquake"));
           }
-          p.addEventHandler(new PonEventHandler("quake", () => {
+          p.conductor.addEventHandler(new PonEventHandler("quake", () => {
             p.conductor.start();
           }, "waitquake"));
           return p.conductor.stop();
@@ -483,7 +483,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           return "continue";
         } else {
           if (values.canskip) {
-            p.addEventHandler(new PonEventHandler("click", () => {
+            p.conductor.addEventHandler(new PonEventHandler("click", () => {
               p.conductor.start();
               p.stopUntilClickSkip(); // 次のlb,pbまで飛ばされるのを防ぐ
             }, "wait"));
@@ -507,7 +507,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           // ただし改行条件等を通常と揃えるために一度グリフを表示して、すぐに非表示にする
           return "continue";
         } else {
-          p.addEventHandler(new PonEventHandler("click", () => {
+          p.conductor.addEventHandler(new PonEventHandler("click", () => {
             p.conductor.start();
           }, "waitclick"));
           if (p.autoModeFlag && values.canskip) {
@@ -763,7 +763,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         } else {
           // クリック待ちへ移行
           p.showLineBreakGlyph(tick);
-          p.addEventHandler(new PonEventHandler("click", () => {
+          p.conductor.addEventHandler(new PonEventHandler("click", () => {
             p.conductor.start();
             p.hideBreakGlyph();
           }, "lb"));
@@ -788,7 +788,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           return "break"; // クリック待ちはしないが、一回描画する
         } else {
           p.showPageBreakGlyph(tick);
-          p.addEventHandler(new PonEventHandler("click", () => {
+          p.conductor.addEventHandler(new PonEventHandler("click", () => {
             p.conductor.start();
             p.hideBreakGlyph();
           }, "pb"));
@@ -805,7 +805,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       `TODO タグの説明文`,
       (values, tick) => {
         p.hideMessages();
-        p.addEventHandler(new PonEventHandler("click", () => {
+        p.conductor.addEventHandler(new PonEventHandler("click", () => {
           p.conductor.start();
           p.showMessages();
         }, "hidemessages"));
@@ -1285,11 +1285,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           return "break";
         } else {
           if (values.canskip) {
-            p.addEventHandler(new PonEventHandler("click", () => {
+            p.conductor.addEventHandler(new PonEventHandler("click", () => {
               p.waitFrameAnimClickCallback(layers);
             }, "waitframeanim"));
           }
-          p.addEventHandler(new PonEventHandler("frameanim", () => {
+          p.conductor.addEventHandler(new PonEventHandler("frameanim", () => {
             p.waitFrameAnimCompleteCallback(layers);
           }, "waitframeanim"));
           return p.conductor.stop();
@@ -1349,11 +1349,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           return "break";
         } else {
           if (values.canskip) {
-            p.addEventHandler(new PonEventHandler("click", () => {
+            p.conductor.addEventHandler(new PonEventHandler("click", () => {
               p.waitMoveClickCallback();
             }, "waitmove"));
           }
-          p.addEventHandler(new PonEventHandler("move", () => {
+          p.conductor.addEventHandler(new PonEventHandler("move", () => {
             p.waitMoveCompleteCallback();
           }, "waitmove"));
           return p.conductor.stop();
@@ -1506,11 +1506,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           return "continue";
         } else {
           if (values.canskip) {
-            p.addEventHandler(new PonEventHandler("click", () => {
+            p.conductor.addEventHandler(new PonEventHandler("click", () => {
               p.waitSoundStopClickCallback(s);
             }, "waitsoundstop"));
           }
-          p.addEventHandler(new PonEventHandler("soundstop", () => {
+          p.conductor.addEventHandler(new PonEventHandler("soundstop", () => {
             p.waitSoundCompleteCallback(s);
           }, "waitsoundstop"));
           return p.conductor.stop();
@@ -1536,11 +1536,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           return "continue";
         } else {
           if (values.canskip) {
-            p.addEventHandler(new PonEventHandler("click", () => {
+            p.conductor.addEventHandler(new PonEventHandler("click", () => {
               p.waitSoundFadeClickCallback(s);
             }, "waitsoundfade"));
           }
-          p.addEventHandler(new PonEventHandler("soundfade", () => {
+          p.conductor.addEventHandler(new PonEventHandler("soundfade", () => {
             p.waitSoundFadeCompleteCallback(s);
           }, "waitsoundfade"));
           return p.conductor.stop();
@@ -1674,11 +1674,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           return "break";
         } else {
           if (values.canskip) {
-            p.addEventHandler(new PonEventHandler("click", () => {
+            p.conductor.addEventHandler(new PonEventHandler("click", () => {
               p.waitTransClickCallback();
             }, "waittrans"));
           }
-          p.addEventHandler(new PonEventHandler("trans", () => {
+          p.conductor.addEventHandler(new PonEventHandler("trans", () => {
             p.waitTransCompleteCallback();
           }, "waittrans"));
           return p.conductor.stop();

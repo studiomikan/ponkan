@@ -1,0 +1,29 @@
+# セーブ画面
+*save_start
+
+---
+tv.save = {
+  // 背景画像
+  bg: "image/save.png",
+
+};
+---
+
+# 背景
+;image {
+  lay: "&tv.layer.save",
+  file: "&tv.save.bg",
+  visible: true,
+  x: 0,
+  y: 0
+}
+
+
+
+
+
+
+
+;s
+
+

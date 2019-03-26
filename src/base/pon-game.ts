@@ -1,6 +1,8 @@
 import * as PIXI from "pixi.js";
 import { BaseLayer } from "./base-layer";
 import { Logger } from "./logger";
+import { Conductor, ConductorState, IConductorEvent } from "./conductor";
+import { Tag } from "./tag";
 import { PonMouseEvent } from "./pon-mouse-event";
 import { PonWheelEvent } from "./pon-wheel-event";
 import { PonKeyEvent } from "./pon-key-event";
@@ -10,7 +12,9 @@ import { Resource } from "./resource";
 import { TransManager } from "./trans-manager";
 import { ScreenShot } from "./screen-shot";
 
-export class PonGame {
+export class PonGame implements IConductorEvent {
+  public isLocked: boolean = false;
+
   public readonly resource: Resource;
   private loopFlag: boolean = false;
   private loopCount: number = 0;
@@ -20,6 +24,11 @@ export class PonGame {
   public readonly foreRenderer: PonRenderer;
   public readonly backRenderer: PonRenderer;
 
+  // conductor
+  protected _conductor: Conductor;
+  public get conductor(): Conductor { return this._conductor; }
+
+  // レイヤ
   private forePrimaryLayers: BaseLayer[] = [];
   private backPrimaryLayers: BaseLayer[] = [];
 
@@ -30,8 +39,8 @@ export class PonGame {
   public get width(): number { return this.foreRenderer.width; }
   public get height(): number { return this.foreRenderer.height; }
 
-  protected eventHandlers: any = {};
-  protected eventHandlersStack: Array<any> = [];
+  // protected eventHandlers: any = {};
+  // protected eventHandlersStack: Array<any> = [];
 
   public constructor(parentId: string, config: any = {}) {
     const elm: HTMLElement | null = document.getElementById(parentId);
@@ -54,12 +63,8 @@ export class PonGame {
     this.initWindowEvent();
     this.initMouseEventOnCanvas();
     this.initKeyboardEvent();
-  }
 
-  private initScreenShot(): void {
-  }
-
-  private testss(): void {
+    this._conductor = new Conductor(this.resource, this);
   }
 
   public destroy(): void {
@@ -81,6 +86,14 @@ export class PonGame {
     this.fpsPreTick = 0;
     this.fpsCount = 0;
     this.fps = 0;
+  }
+
+  public lock(): void {
+    this.isLocked = true;
+  }
+
+  public unlock(): void {
+    this.isLocked = false;
   }
 
   private loop(): void {
@@ -125,6 +138,32 @@ export class PonGame {
   public error(e: Error): void {
     Logger.error(e);
     alert(e.message);
+  }
+
+
+  public onLoadNewScript(labelName: string | null, countPage: boolean): void {
+  }
+
+  public onTag(tag: Tag, line: number, tick: number): "continue" | "break" {
+    return "continue";
+  }
+
+  public onLabel(labelName: string, line: number, tick: number): "continue" | "break" {
+    return "continue";
+  }
+
+  public onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): "continue" | "break" {
+    return "continue";
+  }
+
+  public onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break" {
+    return "continue";
+  }
+
+  public onChangeStable(isStable: boolean): void {
+  }
+
+  public onReturnSubroutin(forceStart: boolean = false): void {
   }
 
   public clearLayer(): void {
@@ -221,67 +260,65 @@ export class PonGame {
    * この時点で表レイヤ・裏レイヤの入れ替えは完了している。
    */
   public onCompleteTrans(): boolean {
-    // トリガーを発火
-    this.trigger("trans");
     return true;
   }
-
-  public addEventHandler(handler: PonEventHandler): void {
-    let eventName: string = handler.eventName;
-    if (this.eventHandlers[eventName] == null) {
-      this.eventHandlers[eventName] = [];
-    }
-    this.eventHandlers[eventName].push(handler);
-  }
-
-  /**
-   * イベントハンドラの引き金を引く
-   * @param eventName イベント名
-   * @return イベントハンドラが1つ以上実行されればtrue
-   */
-  public trigger(eventName: string): boolean {
-    let handlers: PonEventHandler[] = this.eventHandlers[eventName];
-    if (handlers == null) { return false; }
-    this.clearEventHandlerByName(eventName);
-    handlers.forEach((h) => {
-      Logger.debug("FIRE! ", eventName, h);
-      h.fire();
-    });
-    return true;
-  }
-
-  public clearAllEventHandler(): void {
-    this.eventHandlers = {};
-  }
-
-  public clearEventHandler(eventHandler: PonEventHandler): void {
-    Object.keys(this.eventHandlers).forEach((eventName) => {
-      this.eventHandlers[eventName].forEach((eventHandler: PonEventHandler, index: number) => {
-        if (eventHandler === eventHandler) {
-          this.eventHandlers[eventName].splice(index, 1);
-          return;
-        }
-      });
-    });
-  }
-
-  public clearEventHandlerByName(eventName: string): void {
-    delete this.eventHandlers[eventName];
-  }
-
-  public pushEventHandlers(): void {
-    this.eventHandlersStack.push(this.eventHandlers);
-    this.eventHandlers = {};
-    console.log("push eventhandlers: ", JSON.stringify(this.eventHandlers));
-  }
-
-  public popEventHandlers(): void {
-    if (this.eventHandlersStack.length === 0) {
-      throw new Error("Engine Error. eventHandlerStackの不正操作");
-    }
-    this.eventHandlers = this.eventHandlersStack.pop();
-    console.log("pop eventhandlers: ", JSON.stringify(this.eventHandlers));
-  }
+  //
+  // public addEventHandler(handler: PonEventHandler): void {
+  //   let eventName: string = handler.eventName;
+  //   if (this.eventHandlers[eventName] == null) {
+  //     this.eventHandlers[eventName] = [];
+  //   }
+  //   this.eventHandlers[eventName].push(handler);
+  // }
+  //
+  // /**
+  //  * イベントハンドラの引き金を引く
+  //  * @param eventName イベント名
+  //  * @return イベントハンドラが1つ以上実行されればtrue
+  //  */
+  // public trigger(eventName: string): boolean {
+  //   let handlers: PonEventHandler[] = this.eventHandlers[eventName];
+  //   if (handlers == null) { return false; }
+  //   this.clearEventHandlerByName(eventName);
+  //   handlers.forEach((h) => {
+  //     Logger.debug("FIRE! ", eventName, h);
+  //     h.fire();
+  //   });
+  //   return true;
+  // }
+  //
+  // public clearAllEventHandler(): void {
+  //   this.eventHandlers = {};
+  // }
+  //
+  // public clearEventHandler(eventHandler: PonEventHandler): void {
+  //   Object.keys(this.eventHandlers).forEach((eventName) => {
+  //     this.eventHandlers[eventName].forEach((eventHandler: PonEventHandler, index: number) => {
+  //       if (eventHandler === eventHandler) {
+  //         this.eventHandlers[eventName].splice(index, 1);
+  //         return;
+  //       }
+  //     });
+  //   });
+  // }
+  //
+  // public clearEventHandlerByName(eventName: string): void {
+  //   delete this.eventHandlers[eventName];
+  // }
+  //
+  // public pushEventHandlers(): void {
+  //   this.eventHandlersStack.push(this.eventHandlers);
+  //   this.eventHandlers = {};
+  //   console.log("push eventhandlers: ", JSON.stringify(this.eventHandlers));
+  // }
+  //
+  // public popEventHandlers(): void {
+  //   if (this.eventHandlersStack.length === 0) {
+  //     throw new Error("Engine Error. eventHandlerStackの不正操作");
+  //   }
+  //   this.eventHandlers = this.eventHandlersStack.pop();
+  //   console.log("pop eventhandlers: ", JSON.stringify(this.eventHandlers));
+  // }
 
   private initWindowEvent(): void {
     window.addEventListener('unload', () => {
@@ -294,27 +331,27 @@ export class PonGame {
   private initMouseEventOnCanvas(): void {
     const canvas = this.foreRenderer.canvasElm;
     canvas.addEventListener("mouseenter", (e) => {
-      try { this.onMouseEnter(new PonMouseEvent(e)); }
+      try { if (this.isLocked) { return } this.onMouseEnter(new PonMouseEvent(e)); }
       catch (ex) { this.error(ex); }
     });
     canvas.addEventListener("mouseleave", (e) => {
-      try { this.onMouseLeave(new PonMouseEvent(e)); }
+      try { if (this.isLocked) { return } this.onMouseLeave(new PonMouseEvent(e)); }
       catch (ex) { this.error(ex); }
     });
     canvas.addEventListener("mousemove", (e) => {
-      try { this.onMouseMove(new PonMouseEvent(e)); }
+      try { if (this.isLocked) { return } this.onMouseMove(new PonMouseEvent(e)); }
       catch (ex) { this.error(ex); }
     });
     canvas.addEventListener("mousedown", (e) => {
-      try { this.onMouseDown(new PonMouseEvent(e)); }
+      try { if (this.isLocked) { return } this.onMouseDown(new PonMouseEvent(e)); }
       catch (ex) { this.error(ex); }
     });
     canvas.addEventListener("mouseup", (e) => {
-      try { this.onMouseUp(new PonMouseEvent(e)); }
+      try { if (this.isLocked) { return } this.onMouseUp(new PonMouseEvent(e)); }
       catch (ex) { this.error(ex); }
     });
     canvas.addEventListener("mousewheel", (e) => {
-      try { this.onMouseWheel(new PonWheelEvent(e as WheelEvent)); }
+      try { if (this.isLocked) { return } this.onMouseWheel(new PonWheelEvent(e as WheelEvent)); }
       catch (ex) { this.error(ex); }
     });
     canvas.addEventListener("contextmenu", (e) => {
@@ -333,11 +370,11 @@ export class PonGame {
 
   private initKeyboardEvent(): void {
     window.addEventListener("keydown", (e: KeyboardEvent) => {
-      try { this.onKeyDown(new PonKeyEvent(e)); }
+      try { if (this.isLocked) { return } this.onKeyDown(new PonKeyEvent(e)); }
       catch (ex) { this.error(ex); }
     });
     window.addEventListener("keyup", (e: KeyboardEvent) => {
-      try { this.onKeyUp(new PonKeyEvent(e)); }
+      try { if (this.isLocked) { return } this.onKeyUp(new PonKeyEvent(e)); }
       catch (ex) { this.error(ex); }
     });
   }

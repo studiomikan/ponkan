@@ -131,10 +131,10 @@ export class Button extends BaseLayer {
         });
       } else if (this.callFilePath != null || this.callLabel != null) {
         // ボタンによるcall時はイベントハンドラもスタックしておく
-        p.pushEventHandlers();
-        p.addEventHandler(
+        p.conductor.pushEventHandlers();
+        p.conductor.addEventHandler(
           new PonEventHandler("return_subroutin", () => {
-            p.popEventHandlers();
+            p.conductor.popEventHandlers();
           }, "button_call"));
         // callする
         p.conductor.stop();

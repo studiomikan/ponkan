@@ -6,6 +6,7 @@ import { Script } from "./script";
 import { Tag } from "./tag";
 import { Macro } from "./macro";
 import { ReadUnread } from "./read-unread";
+import { PonEventHandler } from "./pon-event-handler";
 
 export interface IConductorEvent {
   onLabel(labelName: string, line: number, tick: number): "continue" | "break";
@@ -43,6 +44,8 @@ export class Conductor {
   protected stableBuffer: boolean = false;
 
   protected callStack: ICallStackNode[] = [];
+  protected eventHandlers: any = {};
+  protected eventHandlersStack: Array<any> = [];
 
   public latestSaveMarkName: string = "";
   public readUnread: ReadUnread;
@@ -256,6 +259,63 @@ export class Conductor {
 
   public get isStable(): boolean {
     return this._status === ConductorState.Stop;
+  }
+
+  public addEventHandler(handler: PonEventHandler): void {
+    let eventName: string = handler.eventName;
+    if (this.eventHandlers[eventName] == null) {
+      this.eventHandlers[eventName] = [];
+    }
+    this.eventHandlers[eventName].push(handler);
+  }
+
+  /**
+   * イベントハンドラの引き金を引く
+   * @param eventName イベント名
+   * @return イベントハンドラが1つ以上実行されればtrue
+   */
+  public trigger(eventName: string): boolean {
+    let handlers: PonEventHandler[] = this.eventHandlers[eventName];
+    if (handlers == null) { return false; }
+    this.clearEventHandlerByName(eventName);
+    handlers.forEach((h) => {
+      Logger.debug("FIRE! ", eventName, h);
+      h.fire();
+    });
+    return true;
+  }
+
+  public clearAllEventHandler(): void {
+    this.eventHandlers = {};
+  }
+
+  public clearEventHandler(eventHandler: PonEventHandler): void {
+    Object.keys(this.eventHandlers).forEach((eventName) => {
+      this.eventHandlers[eventName].forEach((eventHandler: PonEventHandler, index: number) => {
+        if (eventHandler === eventHandler) {
+          this.eventHandlers[eventName].splice(index, 1);
+          return;
+        }
+      });
+    });
+  }
+
+  public clearEventHandlerByName(eventName: string): void {
+    delete this.eventHandlers[eventName];
+  }
+
+  public pushEventHandlers(): void {
+    this.eventHandlersStack.push(this.eventHandlers);
+    this.eventHandlers = {};
+    console.log("push eventhandlers: ", JSON.stringify(this.eventHandlers));
+  }
+
+  public popEventHandlers(): void {
+    if (this.eventHandlersStack.length === 0) {
+      throw new Error("Engine Error. eventHandlerStackの不正操作");
+    }
+    this.eventHandlers = this.eventHandlersStack.pop();
+    console.log("pop eventhandlers: ", JSON.stringify(this.eventHandlers));
   }
 
   protected static conductorStoreParams = [

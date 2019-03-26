@@ -51,7 +51,7 @@ export class FrameAnimLayer extends BaseLayer {
       this.frameAnimState = "stop";
       this.frameAnimStartTick = -1;
       if (triggerEvent) {
-        this.owner.trigger("frameanim");
+        this.owner.conductor.trigger("frameanim");
       }
     }
   }
@@ -104,7 +104,7 @@ export class FrameAnimLayer extends BaseLayer {
   }
 
   protected static frameAnimLayerStoreParams: string[] = [
-    "frameAnimLoop",
+    "_frameAnimLoop",
     "frameAnimTime",
     "frameAnimWidth",
     "frameAnimHeight",
