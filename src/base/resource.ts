@@ -12,7 +12,7 @@ export class Resource {
   private basePath: string;
   public tmpVar: any = {};
   public gameVar: any = {};
-  public systemVar: any = {};
+  public systemVar: any = { saveDataInfo: [] };
 
   public cursor: any = {
     "disabled": "auto",
@@ -96,7 +96,6 @@ export class Resource {
       return eval(js);
     })();
   }
-  // tslint:enable
 
   public setMacroParams(params: any): void {
     this.macroParams = params;
@@ -202,21 +201,6 @@ export class Resource {
     return cb;
   }
 
-  // public loadTransRule(filePath: string): AsyncCallbacks {
-  //   const cb = new AsyncCallbacks();
-  //   this.loadImage(filePath).done((image) => {
-  //     let canvas: HTMLCanvasElement = this.bufferCanvas;
-  //     let context: CanvasRenderingContext2D = this.bufferCanvasContext;
-  //     context.drawImage(image, 0, 0, canvas.width, canvas.height);
-  //     // (document.querySelector("body") as HTMLElement).appendChild(canvas);
-  //     let ruleData: ImageData = context.getImageData(0, 0, canvas.width, canvas.height)
-  //     cb.callDone(ruleData);
-  //   }).fail(() => {
-  //     cb.callFail();
-  //   });
-  //   return cb;
-  // }
-
   public loadSound(
     filePath: string,
     bufferNum: number,
@@ -259,6 +243,16 @@ export class Resource {
       return data;
     } else {
       throw new Error(`ストレージ${name}にはデータがありません`);
+    }
+  }
+
+  public copyLocalStorage(srcName: string, destName: string): boolean {
+    try {
+      let srcData: string = this.restoreFromLocalStorage(srcName);
+      this.storeToLocalStorage(destName, srcData);
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 

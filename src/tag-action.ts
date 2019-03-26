@@ -1750,12 +1750,40 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ),
     new TagAction(
       ["screenshot"],
-      "セーブ／ロード", "現在の画面のスクリーンショットを取る",
+      "セーブ／ロード",
+      "現在の画面のスクリーンショットを取る",
       [],
       `現在の画面の状態でスクリーンショットを取ります。
        取得されたスクリーンショットは [save] で保存されます。`,
       (values, tick) => {
         p.reserveScreenShot();
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["copysavedata", "copysave"],
+      "セーブ／ロード",
+      "セーブデータをコピーする",
+      [
+        new TagValue("srcnum", "number", true, null, "コピー元のセーブ番号"),
+        new TagValue("destnum", "number", true, null, "コピー先のセーブ番号"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        p.copySaveData(values.srcnum, values.destnum);
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["deletesavedata", "delsavedata", "delsave"],
+      "セーブ／ロード",
+      "セーブデータを削除する",
+      [
+        new TagValue("num", "number", true, null, "セーブ番号"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        p.deleteSaveData(values.num);
         return "continue";
       },
     ),

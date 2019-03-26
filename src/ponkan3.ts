@@ -1020,6 +1020,10 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     return true;
   }
 
+  protected getSaveDataName(num: number): string {
+    return `${this.saveDataPrefix}_${num}`;
+  }
+
   public save(num: number, tick: number): void {
 
     Logger.debug("==SAVE=============================================");
@@ -1033,18 +1037,18 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
       Logger.error(e);
       throw new Error("セーブデータの保存に失敗しました。JSON文字列に変換できません");
     }
-    this.resource.storeToLocalStorage(`${this.saveDataPrefix}_${num}`, saveStr);
+    this.resource.storeToLocalStorage(this.getSaveDataName(num), saveStr);
 
     // システムデータの保存
     const comment: string = this.latestSaveData.comment;
-    if (this.systemVar.saveComments == null) { this.systemVar.saveComments = []; }
-    this.systemVar.saveComments[num] = {
+    if (this.systemVar.saveDataInfo == null) { this.systemVar.saveDataInfo = []; }
+    this.systemVar.saveDataInfo[num] = {
       date: this.getNowDateStr(),
       name: this.latestSaveData.name,
       comment: this.latestSaveData.comment,
       screenShot: this.screenShot.getDataUrl()
     };
-    Logger.debug(this.systemVar.saveComments[num]);
+    Logger.debug(this.systemVar.saveDataInfo[num]);
 
     this.plugins.forEach((p) => p.onSaveSystemVariables());
     this.resource.saveSystemData(this.saveDataPrefix);
@@ -1122,7 +1126,7 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
   public load(num: number, tick: number): AsyncCallbacks {
     const asyncTask = new AsyncTask();
     const me: any = this as any;
-    const dataStr: string = this.resource.restoreFromLocalStorage(`${this.saveDataPrefix}_${num}`);
+    const dataStr: string = this.resource.restoreFromLocalStorage(this.getSaveDataName(num));
     const data: any = JSON.parse(dataStr);
 
     Logger.debug(data);
@@ -1168,6 +1172,40 @@ export class Ponkan3 extends PonGame implements IConductorEvent {
     this.plugins.forEach((p) => p.onRestore(asyncTask, data, tick, true));
 
     return asyncTask.run();
+  }
+
+  public copySaveData(srcNum: number, destNum: number): void {
+    this.resource.copyLocalStorage(this.getSaveDataName(srcNum), this.getSaveDataName(destNum));
+  }
+
+  public deleteSaveData(num: number): void {
+    this.systemVar.saveDataInfo[num] = {
+      date: "----/--/-- --:--:--.---",
+      name: "未設定",
+      comment: "未設定",
+      screenShot: null
+    };
+    this.resource.storeToLocalStorage(this.getSaveDataName(num), "");
+    this.resource.saveSystemData(this.saveDataPrefix);
+  }
+
+  public getSaveDataInfo(num: number): any {
+    if (this.existSaveData(num)) {
+      return this.systemVar.saveDataInfo[num];
+    } else {
+      return {
+        date: "----/--/-- --:--:--.---",
+        name: "未設定",
+        comment: "未設定",
+        screenShot: null
+      };
+    }
+  }
+
+  public existSaveData(num: number): boolean {
+    return this.systemVar != null &&
+           this.systemVar.saveDataInfo != null &&
+           this.systemVar.saveDataInfo[num] != null;
   }
 
 }
