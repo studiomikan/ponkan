@@ -999,10 +999,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
         new TagValue("page", "string", false, null, "対象ページ"),
-        new TagValue("jumpfile", "string", false, null, "ボタン押下時にjumpするスクリプトファイル名"),
-        new TagValue("callfile", "string", false, null, "ボタン押下時にcallするスクリプトファイル名"),
-        new TagValue("jumplabel", "string", false, null, "jump先のラベル名"),
-        new TagValue("calllabel", "string", false, null, "call先のラベル名"),
+        new TagValue("jump", "boolean", false, true, "ボタン押下時にjumpする場合はtrue"),
+        new TagValue("call", "boolean", false, null, "ボタン押下時にcallする場合はtrue"),
+        new TagValue("file", "string", false, null, "ボタン押下時にjumpまたはcallするスクリプトファイル名"),
+        new TagValue("label", "string", false, null, "ボタン押下時にjumpまたはcallするラベル名"),
         new TagValue("exp", "string", false, null, "ボタン押下時に実行するJavaScript"),
         new TagValue("text", "string", true, null, "テキスト"),
         new TagValue("x", "number", false, 0, "x座標(px)"),
@@ -1020,10 +1020,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.addTextButton(
-            values.jumpfile,
-            values.callfile,
-            values.jumplabel,
-            values.calllabel,
+            values.jump,
+            values.call,
+            values.file,
+            values.label,
             values.countpage,
             values.exp,
             values.text,
@@ -1062,10 +1062,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
         new TagValue("page", "string", false, null, "対象ページ"),
-        new TagValue("jumpfile", "string", false, null, "ボタン押下時にjumpするスクリプトファイル名"),
-        new TagValue("callfile", "string", false, null, "ボタン押下時にcallするスクリプトファイル名"),
-        new TagValue("jumplabel", "string", false, null, "jump先のラベル名"),
-        new TagValue("calllabel", "string", false, null, "call先のラベル名"),
+        new TagValue("jump", "boolean", false, true, "ボタン押下時にjumpする場合はtrue"),
+        new TagValue("call", "boolean", false, null, "ボタン押下時にcallする場合はtrue"),
+        new TagValue("file", "string", false, null, "ボタン押下時にjumpまたはcallするスクリプトファイル名"),
+        new TagValue("label", "string", false, null, "ボタン押下時にjumpまたはcallするラベル名"),
         new TagValue("exp", "string", false, null, "ボタン押下時に実行するJavaScript"),
         new TagValue("file", "string", true, null, "ボタンにする画像ファイル"),
         new TagValue("x", "number", false, 0, "x座標(px)"),
@@ -1078,10 +1078,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.addImageButton(
-            values.jumpfile,
-            values.callfile,
-            values.jumplabel,
-            values.calllabel,
+            values.jump,
+            values.call,
+            values.file,
+            values.label,
             values.countpage,
             values.exp,
             values.file,

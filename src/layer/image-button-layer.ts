@@ -11,10 +11,10 @@ export class ImageButton extends Button {
   protected direction: "horizontal" | "vertical" = "horizontal";
 
   public initImageButton(
-    jumpFile: string | null = null,
-    callFile: string | null = null,
-    jumpLabel: string | null = null,
-    callLabel: string | null = null,
+    jump: boolean = true,
+    call: boolean = false,
+    filePath: string | null = null,
+    label: string | null = null,
     countPage: boolean = true,
     isSystemButton: boolean = false,
     exp: string | null = null,
@@ -26,7 +26,7 @@ export class ImageButton extends Button {
     this.resetButton();
     this.freeImage();
 
-    this.initButton(jumpFile, callFile, jumpLabel, callLabel, countPage, isSystemButton, exp);
+    this.initButton(jump, call, filePath, label, countPage, isSystemButton, exp);
     this.direction = direction;
 
     this.loadImage(file).done(() => {
@@ -123,10 +123,10 @@ export class ImageButtonLayer extends TextButtonLayer {
   private imageButtons: ImageButton[] = [];
 
   public addImageButton(
-    jumpFile: string | null = null,
-    callFile: string | null = null,
-    jumpLabel: string | null = null,
-    callLabel: string | null = null,
+    jump: boolean = true,
+    call: boolean = false,
+    filePath: string | null = null,
+    label: string | null = null,
     countPage: boolean = true,
     exp: string | null = null,
     file: string,
@@ -143,10 +143,10 @@ export class ImageButtonLayer extends TextButtonLayer {
     btn.x = x;
     btn.y = y;
     return btn.initImageButton(
-      jumpFile,
-      callFile,
-      jumpLabel,
-      callFile,
+      jump,
+      call,
+      filePath,
+      label,
       countPage,
       isSystemButton,
       exp,

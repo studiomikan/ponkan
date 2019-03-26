@@ -293,13 +293,7 @@ export class Ponkan3 extends PonGame {
       this.conductor.trigger("click");
     } else {
       // 右クリックによるメッセージ隠し
-      if (this.conductor.isStable &&
-          !this.conductor.hasEventHandler("move") &&
-          !this.conductor.hasEventHandler("trans") &&
-          !this.conductor.hasEventHandler("frameanim") &&
-          !this.conductor.hasEventHandler("soundstop") &&
-          !this.conductor.hasEventHandler("soundfade")
-      ) {
+      if (this.conductor.isStable) {
         this.hideMessages();
         this.hideMessageByRlickFlag = true;
       }

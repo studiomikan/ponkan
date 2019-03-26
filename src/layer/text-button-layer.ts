@@ -20,10 +20,10 @@ export class TextButton extends Button {
   private txtBtnOnBackgroundAlpha: number = 1.0;
 
   public initTextButton(
-    jumpFile: string | null = null,
-    callFile: string | null = null,
-    jumpLabel: string | null = null,
-    callLabel: string | null = null,
+    jump: boolean = true,
+    call: boolean = false,
+    filePath: string | null = null,
+    label: string | null = null,
     countPage: boolean = true,
     isSystemButton: boolean = false,
     exp: string | null = null,
@@ -39,7 +39,7 @@ export class TextButton extends Button {
     this.freeImage();
     this.clearText();
 
-    this.initButton(jumpFile, callFile, jumpLabel, callLabel, countPage, isSystemButton, exp);
+    this.initButton(jump, call, filePath, label, countPage, isSystemButton, exp);
 
     this.txtBtnText = text;
     this.txtBtnNormalBackgroundColor = normalBackgroundColor;
@@ -145,10 +145,10 @@ export class TextButtonLayer extends FrameAnimLayer {
   protected textButtons: TextButton[] = [];
 
   public addTextButton(
-    jumpFile: string | null = null,
-    callFile: string | null = null,
-    jumpLabel: string | null = null,
-    callLabel: string | null = null,
+    jump: boolean = true,
+    call: boolean = false,
+    filePath: string | null = null,
+    label: string | null = null,
     countPage: boolean = true,
     exp: string | null = null,
     text: string,
@@ -179,10 +179,10 @@ export class TextButtonLayer extends FrameAnimLayer {
     btn.width = width;
     btn.height = height;
     btn.initTextButton(
-      jumpFile,
-      callFile,
-      jumpLabel,
-      callLabel,
+      jump,
+      call,
+      filePath,
+      label,
       countPage,
       isSystemButton,
       exp,

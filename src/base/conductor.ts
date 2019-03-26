@@ -251,7 +251,12 @@ export class Conductor {
   }
 
   public get isStable(): boolean {
-    return this._status === ConductorState.Stop;
+    return this._status === ConductorState.Stop &&
+           !this.hasEventHandler("move") &&
+           !this.hasEventHandler("trans") &&
+           !this.hasEventHandler("frameanim") &&
+           !this.hasEventHandler("soundstop") &&
+           !this.hasEventHandler("soundfade");
   }
 
   public addEventHandler(handler: PonEventHandler): void {

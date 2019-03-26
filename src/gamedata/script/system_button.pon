@@ -109,8 +109,10 @@ tv.systembutton = {
     bgcolors:     "&tv.systembutton.bgcolors",
     bgalphas:     "&tv.systembutton.bgalphas",
     exp:          "&tv.button.exp",
-    callfile:     "&tv.button.file",
-    calllabel:    "&tv.button.label",
+    jump:         false,
+    call:         true,
+    file:         "&tv.button.file",
+    label:        "&tv.button.label",
     system:       true
   }
 ;endfor

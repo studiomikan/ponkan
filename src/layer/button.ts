@@ -12,29 +12,29 @@ import { Ponkan3 } from "../ponkan3";
 export class Button extends BaseLayer {
   protected insideFlag : boolean = false;
   protected buttonStatus: "normal" | "over" | "on" | "disabled" = "disabled";
-  protected jumpFilePath: string | null = null;
-  protected callFilePath: string | null = null;
-  protected jumpLabel: string | null = null;
-  protected callLabel: string | null = null;
+  protected jump: boolean = true;
+  protected call: boolean = false;
+  protected filePath: string | null = null;
+  protected label: string | null = null;
   protected countPage: boolean = true;
   protected exp: string | null = null;
   protected isSystemButton: boolean = false;
   protected systemButtonLocked: boolean = false;
 
   public initButton(
-    jumpFilePath: string | null = null,
-    callFilePath: string | null = null,
-    jumpLabel: string | null = null,
-    callLabel: string | null = null,
+    jump: boolean = true,
+    call: boolean = false,
+    filePath: string | null = null,
+    label: string | null = null,
     countPage: boolean = true,
     isSystemButton: boolean = false,
     exp: string | null = null,
   ): void {
     this.insideFlag = false;
-    this.jumpFilePath = jumpFilePath;
-    this.callFilePath = callFilePath;
-    this.jumpLabel = jumpLabel;
-    this.callLabel = callLabel;
+    this.jump = jump;
+    this.call = call;
+    this.filePath = filePath;
+    this.label = label;
     this.countPage = countPage;
     this.isSystemButton = isSystemButton;
     this.exp = exp;
@@ -44,10 +44,10 @@ export class Button extends BaseLayer {
   public resetButton(): void {
     this.setButtonStatus("disabled");
     this.insideFlag = false;
-    this.jumpFilePath = null;
-    this.callFilePath = null;
-    this.jumpLabel = null;
-    this.callLabel = null;
+    this.jump = true;
+    this.call = false;
+    this.filePath = null;
+    this.label = null;
     this.exp = null;
   }
 
@@ -120,28 +120,21 @@ export class Button extends BaseLayer {
     if (!super.onMouseUp(e)) { return false; }
     if (this.buttonStatus !== "disabled") {
       let p: Ponkan3 = this.owner as Ponkan3;
-      // TODO ボタン動作時、スキップとオートを止める
       if (this.exp !== null && this.exp !== "") {
         this.resource.evalJs(this.exp);
       }
-      if (this.jumpFilePath != null || this.jumpLabel != null) {
-        p.conductor.stop();
-        p.conductor.jump(this.jumpFilePath, this.jumpLabel, this.countPage).done(() => {
-          p.conductor.start();
-        });
-      } else if (this.callFilePath != null || this.callLabel != null) {
-        // ボタンによるcall時はイベントハンドラもスタックしておく
-        // p.conductor.pushEventHandlers();
-        // p.conductor.addEventHandler(
-        //   new PonEventHandler("return_subroutin", () => {
-        //     p.conductor.popEventHandlers();
-        //   }, "button_call"));
-        // callする
-        // p.conductor.stop();
-        // p.conductor.callSubroutine(this.callFilePath, this.callLabel, this.countPage, false, 0).done(() => {
-        p.callSubroutine(this.callFilePath, this.callLabel, this.countPage).done(() => {
-          p.conductor.start();
-        });
+      if (this.filePath != null || this.label != null) {
+        if (this.jump) {
+          p.conductor.stop();
+          p.conductor.jump(this.filePath, this.label, this.countPage).done(() => {
+            p.conductor.start();
+          });
+        } else if (this.call) {
+          p.callSubroutine(this.filePath, this.label, this.countPage).done(() => {
+            p.conductor.start();
+          });
+          p.conductor.stop();
+        }
       }
       if (!this.isSystemButton) {
         this.setButtonStatus("disabled");
@@ -155,10 +148,10 @@ export class Button extends BaseLayer {
   protected static buttonStoreParams: string[] = [
     "insideFlag",
     "buttonStatus",
-    "jumpFilePath",
-    "callFilePath",
-    "jumpLabel",
-    "callLabel",
+    "jump",
+    "call",
+    "filePath",
+    "label",
     "isSystemButton",
     "systemButtonLocked",
     "exp"
