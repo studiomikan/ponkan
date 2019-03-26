@@ -65,6 +65,7 @@ export class Button extends BaseLayer {
     if (this.isSystemButton) {
       this.systemButtonLocked = true;
       this.setButtonStatus("disabled");
+      console.log("call lockSystemButton", this.name);
     }
   }
 
@@ -168,9 +169,9 @@ export class Button extends BaseLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
+  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
     this.resetButton();
-    super.restore(asyncTask, data, tick);
+    super.restore(asyncTask, data, tick, clear);
   }
 
   public restoreAfterLoadImage(data: any, tick: number): void {
@@ -179,7 +180,6 @@ export class Button extends BaseLayer {
     Button.buttonStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
-
     this.insideFlag = false;
     this.setButtonStatus("normal");
   }

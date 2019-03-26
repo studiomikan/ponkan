@@ -139,9 +139,9 @@ export class ToggleButton extends BaseLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
+  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
     this.resetToggleButton();
-    super.restore(asyncTask, data, tick);
+    super.restore(asyncTask, data, tick, clear);
   }
 
   public restoreAfterLoadImage(data: any, tick: number): void {

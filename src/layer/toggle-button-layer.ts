@@ -77,8 +77,8 @@ export class ImageToggleButton extends ToggleButton {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
-    super.restore(asyncTask, data, tick);
+  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+    super.restore(asyncTask, data, tick, clear);
   }
 
   public restoreAfterLoadImage(data: any, tick: number): void {
@@ -176,17 +176,26 @@ export class ToggleButtonLayer extends ImageButtonLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
-    this.clearToggleButtons();
-    if (data.imageToggleButtons != null && data.imageToggleButtons.length > 0) {
-      data.imageToggleButtons.forEach((toggleButtonData: any) => {
-        let btn = new ImageToggleButton(toggleButtonData.name, this.resource, this.owner);
-        this.addChild(btn);
-        this.imageToggleButtons.push(btn);
-        btn.restore(asyncTask, toggleButtonData, tick);
-      });
+  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+    if (data.imageToggleButtons.length > 0) {
+      if (data.imageToggleButtons.length === this.imageToggleButtons.length) {
+        // 数が同じ場合（たとえばtemploadなどでロードしたときなど）は読み込み直さない
+        data.imageToggleButtons.forEach((toggleButtonData: any, i: number) => {
+          this.imageToggleButtons[i].restore(asyncTask, toggleButtonData, tick, clear);
+        });
+      } else {
+        this.clearToggleButtons();
+        data.imageToggleButtons.forEach((toggleButtonData: any) => {
+          let btn = new ImageToggleButton(toggleButtonData.name, this.resource, this.owner);
+          this.addChild(btn);
+          this.imageToggleButtons.push(btn);
+          btn.restore(asyncTask, toggleButtonData, tick, clear);
+        });
+      }
+    } else {
+      this.clearToggleButtons();
     }
-    super.restore(asyncTask, data, tick);
+    super.restore(asyncTask, data, tick, clear);
   }
 
   protected restoreAfterLoadImage(data: any, tick: number): void {

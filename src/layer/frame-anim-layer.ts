@@ -124,9 +124,9 @@ export class FrameAnimLayer extends BaseLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
+  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
     this.stopFrameAnim(false);
-    super.restore(asyncTask, data, tick);
+    super.restore(asyncTask, data, tick, clear);
   }
 
   protected restoreAfterLoadImage(data: any, tick: number): void {

@@ -58,8 +58,8 @@ export class PonLayer extends MovableLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
-    super.restore(asyncTask, data, tick);
+  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+    super.restore(asyncTask, data, tick, clear);
     let me: any = this as any;
     PonLayer.ponLayerStoreParams.forEach(p => me[p] = data[p]);
   }

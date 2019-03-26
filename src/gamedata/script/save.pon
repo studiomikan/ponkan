@@ -1,5 +1,6 @@
 # セーブ画面
 *save_start
+;tempsave num: 0
 
 ---
 tv.save = {
@@ -40,8 +41,9 @@ tv.save = {
 
 # セーブ画面を終わる
 *exit
-;layopt { lay: "&tv.layer.save", blocklclick: true, visible: false }
-;rclick jump: false, call: false
+# ;layopt { lay: "&tv.layer.save", blocklclick: true, visible: false }
+# ;rclick jump: false, call: false
 ;unlocksystembuttons
+;tempload num: 0, sound: false, toback: false
 ;return
 

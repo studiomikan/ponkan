@@ -1762,7 +1762,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        p.save(values.num, tick);
+        p.save(tick, values.num);
         return "continue";
       },
     ),
@@ -1775,7 +1775,39 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        p.load(values.num, tick).done(() => {
+        p.load(tick, values.num).done(() => {
+          p.conductor.start();
+        }).fail(() => {
+          p.error(new Error(`セーブデータのロードに失敗しました(${values.num})`));
+        });
+        return p.conductor.stop();
+      },
+    ),
+    new TagAction(
+      ["tempsave"],
+      "セーブ／ロード",
+      "一時セーブする",
+      [
+        new TagValue("num", "number", true, null, "セーブ番号"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        p.tempSave(tick, values.num);
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["tempload"],
+      "セーブ／ロード",
+      "一時セーブデータから復元する",
+      [
+        new TagValue("num", "number", true, null, "セーブ番号"),
+        new TagValue("sound", "boolean", false, false, "音声もロードするかどうか"),
+        new TagValue("toback", "boolean", false, false, "表レイヤーを裏レイヤーとして復元するかどうか"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        p.tempLoad(tick, values.num, values.sound, values.toback).done(() => {
           p.conductor.start();
         }).fail(() => {
           p.error(new Error(`セーブデータのロードに失敗しました(${values.num})`));

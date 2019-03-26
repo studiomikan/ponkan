@@ -716,7 +716,7 @@ export class BaseLayer {
   }
 
   protected static baseLayerStoreParams: string[] = [
-    // "name",
+    "name",
     "x",
     "y",
     "width",
@@ -777,7 +777,7 @@ export class BaseLayer {
    * 子レイヤーの状態は変化しないことに注意。
    * 継承先で子レイヤーを使用している場合は、継承先で独自に復元処理を実装する
    */
-  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
+  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
     let storeParams = () => {
       let me: any = this as any;
       let restoreParams = BaseLayer.baseLayerStoreParams.filter(
@@ -786,7 +786,9 @@ export class BaseLayer {
     };
 
     // テキストはクリアする
-    this.clearText();
+    if (clear) {
+      this.clearText();
+    }
 
     // 背景色
     this.clearBackgroundColor();
@@ -795,8 +797,10 @@ export class BaseLayer {
     }
 
     // 画像がある場合は非同期で読み込んでその後にサイズ等を復元する
-    this.freeImage();
-    if (data.imageFilePath != null && data.imageFilePath !== "") {
+    if (data.imageFilePath != null &&
+        data.imageFilePath !== "" &&
+        data.imageFilePath !== this.imageFilePath) {
+      this.freeImage();
       asyncTask.add((params: any, index: number): AsyncCallbacks => {
         let cb = this.loadImage(data.imageFilePath);
         cb.done(() => {

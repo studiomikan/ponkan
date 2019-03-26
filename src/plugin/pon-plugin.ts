@@ -33,8 +33,16 @@ export class PonPlugin {
    * @param data 復元元データ
    * @param tick 復元時の時間
    * @param clear メッセージをクリアする場合はtrue
+   * @param sound 音声を復元する場合はtrue
+   * @param toBack 表レイヤーを裏レイヤーに復元する場合はtrue
    */
-  public onRestore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+  public onRestore(
+    asyncTask: AsyncTask,
+    data: any,
+    tick: number,
+    clear: boolean,
+    sound: boolean,
+    toBack: boolean): void {
   }
 
   /**

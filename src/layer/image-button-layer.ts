@@ -95,8 +95,8 @@ export class ImageButton extends Button {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
-    super.restore(asyncTask, data, tick);
+  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+    super.restore(asyncTask, data, tick, clear);
   }
 
   public restoreAfterLoadImage(data: any, tick: number): void {
@@ -201,17 +201,27 @@ export class ImageButtonLayer extends TextButtonLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
-    this.clearImageButtons();
-    if (data.imageButtons != null && data.imageButtons.length > 0) {
-      data.imageButtons.forEach((imageButtonData: any) => {
-        let btn = new ImageButton(imageButtonData.name, this.resource, this.owner);
-        this.addChild(btn);
-        this.imageButtons.push(btn);
-        btn.restore(asyncTask, imageButtonData, tick);
-      });
+  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+    if (data.imageButtons.length > 0) {
+      if (data.imageButtons.length === this.imageButtons.length) {
+        // 数が同じ場合（たとえばtemploadなどでロードしたときなど）は読み込み直さない
+        data.imageButtons.forEach((imageButtonData: any, i: number) => {
+          this.imageButtons[i].restore(asyncTask, imageButtonData, tick, clear);
+        });
+      } else {
+        // 数が合わない場合は一度破棄して作り直す
+        this.clearImageButtons();
+        data.imageButtons.forEach((imageButtonData: any) => {
+          let btn = new ImageButton(imageButtonData.name, this.resource, this.owner);
+          this.addChild(btn);
+          this.imageButtons.push(btn);
+          btn.restore(asyncTask, imageButtonData, tick, clear);
+        });
+      }
+    } else {
+      this.clearImageButtons();
     }
-    super.restore(asyncTask, data, tick);
+    super.restore(asyncTask, data, tick, clear);
   }
 
   protected restoreAfterLoadImage(data: any, tick: number): void {

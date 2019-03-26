@@ -188,7 +188,7 @@ export class PonGame implements IConductorEvent {
       this.conductor.passLatestSaveMark();
     }
 
-    console.log("BEFORE ", this.conductor.name, this.conductor.status);
+    // console.log("BEFORE ", this.conductor.name, this.conductor.status);
     this.conductorStack.pop();
     this.onReturnSubroutin(forceStart);
     if (forceStart) {
@@ -196,7 +196,8 @@ export class PonGame implements IConductorEvent {
       this.conductor.start();
     }
     this.conductor.trigger("return_subroutin");
-    console.log("AFTER", this.conductor.name, this.conductor.status);
+    // console.log("AFTER", this.conductor.name, this.conductor.status);
+    this.onChangeStable(this.conductor.isStable);
     return "break";
   }
 

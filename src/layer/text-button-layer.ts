@@ -110,9 +110,9 @@ export class TextButton extends Button {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
-    super.restore(asyncTask, data, tick);
-  }
+  // public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+  //   super.restore(asyncTask, data, tick, clear);
+  // }
 
   public restoreAfterLoadImage(data: any, tick: number): void {
     super.restoreAfterLoadImage(data, tick);
@@ -270,17 +270,17 @@ export class TextButtonLayer extends FrameAnimLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
+  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
     this.clearTextButtons();
     if (data.textButtons != null && data.textButtons.length > 0) {
       data.textButtons.forEach((textButtonData: any) => {
         let btn = new TextButton(textButtonData.name, this.resource, this.owner);
         this.addChild(btn);
         this.textButtons.push(btn);
-        btn.restore(asyncTask, textButtonData, tick);
+        btn.restore(asyncTask, textButtonData, tick, clear);
       });
     }
-    super.restore(asyncTask, data, tick);
+    super.restore(asyncTask, data, tick, clear);
   }
 
   protected restoreAfterLoadImage(data: any, tick: number): void {
