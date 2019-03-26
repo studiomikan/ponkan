@@ -13,17 +13,35 @@ tv.save = {
 ;image {
   lay: "&tv.layer.save",
   file: "&tv.save.bg",
-  visible: true,
+  visible: false,
   x: 0,
   y: 0
 }
+# このレイヤより下のレイヤのマウスイベントが発生しないようにする
+# ただし右クリックは防がない。
+;layopt {
+  lay: "&tv.layer.save",
+  blocklclick: true,
+  blockcclick: true,
+  blockmove: true,
+  blockwheel: true,
+  visible: true
+}
+;locksystembuttons
 
-
-
-
+;rclick jump: true, label: "exit", enable: true
 
 
 
 ;s
 
+
+
+
+# セーブ画面を終わる
+*exit
+;layopt { lay: "&tv.layer.save", blocklclick: true, visible: false }
+;rclick jump: false, call: false
+;unlocksystembuttons
+;return
 

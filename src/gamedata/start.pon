@@ -32,7 +32,7 @@
 }
 ;imagebutton {
   "lay": 3,
-  "file": "image/sample-button-save.png",
+  "imagefile": "image/sample-button-save.png",
   "direction": "vertical",
   "x": 20,
   "y": 70,
@@ -40,17 +40,19 @@
 }
 ;togglebutton {
   "lay": 3,
-  "file": "image/sample-toggle-button.png",
+  "imagefile": "image/sample-toggle-button.png",
   "direction": "vertical",
   "x": 20,
   "y": 140,
   "statevar": "sample-toggle-button"
 }
-# ;layopt "lay": 4, "x": 100, "y": 50, "visible": true
-# ;image lay: 4, file: "image/okayu.jpg"
+;layopt "lay": 4, "x": 100, "y": 50, "visible": true
+;image lay: 4, file: "image/okayu.jpg"
 ;unlockbuttons
+;unlocksystembuttons
 
 
+;rclick jump: true, label: "jump-target-label"
 
 *trans_loop
 ;clear

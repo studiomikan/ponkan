@@ -249,6 +249,30 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         }
       },
     ),
+    new TagAction(
+      ["rightclick", "rclick"],
+      "その他",
+      "右クリック時の動作を設定する",
+      [
+        new TagValue("jump", "boolean", false, null, "右クリック時にjumpする場合はtrue"),
+        new TagValue("call", "boolean", false, null, "右クリック時にcallする場合はtrue"),
+        new TagValue("file", "string", false, null, "jumpまたはcallするスクリプトファイル名"),
+        new TagValue("label", "string", false, null, "jumpまたはcallするラベル名"),
+        new TagValue("enabled", "boolean", false, null, "右クリックの有効無効"),
+      ],
+      `右クリックまたは ESC キーを押下時の動作を設定します。
+       jump と call の両方を false に設定した場合、デフォルトの動作（メッセージレイヤーを隠す）になります。
+			 jump を true に設定した場合、file と label で指定した場所へジャンプします。
+			 call を true に設定した場合、file と label で指定した場所でサブルーチンを呼び出します。`,
+      (values, tick) => {
+        if (values.jump != null) { p.rightClickJump = values.jump; }
+        if (values.call != null) { p.rightClickCall = values.call; }
+        if (values.file != null) { p.rightClickFilePath = values.file; }
+        if (values.label != null) { p.rightClickLabel = values.label; }
+        if (values.enabled != null) { p.rightClickEnabled = values.enabled; }
+        return "continue";
+      },
+    ),
     // ======================================================================
     // スクリプト制御
     // ======================================================================
@@ -615,6 +639,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
+        p.hideBreakGlyph();
         p.getLayers(values).forEach((layer) => {
           layer.addChar(values.text);
         });
@@ -927,6 +952,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("height", "number", false, null, "高さ(px)"),
         new TagValue("alpha", "number", false, 1.0, "レイヤーのAlpha(0.0〜1.0)"),
         new TagValue("autohide", "boolean", false, null, "hidemessagesで同時に隠すかどうか"),
+        new TagValue("blocklclick", "boolean", false, null, "左クリックイベントを遮断するかどうか"),
+        new TagValue("blockrclick", "boolean", false, null, "右クリックイベントを遮断するかどうか"),
+        new TagValue("blockcclick", "boolean", false, null, "中クリックイベントを遮断するかどうか"),
+        new TagValue("blockmove", "boolean", false, null, "マウス移動イベントを遮断するかどうか"),
+        new TagValue("blockwheel", "boolean", false, null, "マウスホイールイベントを遮断するかどうか"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
@@ -938,6 +968,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           if (values.height != null) { layer.height = values.height; }
           if (values.alpha != null) { layer.alpha = values.alpha; }
           if (values.autohide != null) { layer.autoHideWithMessage = values.autohide; }
+          if (values.blocklclick != null) { layer.blockLeftClickFlag = values.blocklclick; }
+          if (values.blockrclick != null) { layer.blockRightClickFlag = values.blockrclick; }
+          if (values.blockcclick != null) { layer.blockCenterClickFlag = values.blockcclick; }
+          if (values.blockmove != null) { layer.blockMouseMove = values.blockmove; }
+          if (values.blockwheel != null) { layer.blockWheelFlag = values.blockwheel; }
         });
         return "continue";
       },
@@ -1067,7 +1102,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("file", "string", false, null, "ボタン押下時にjumpまたはcallするスクリプトファイル名"),
         new TagValue("label", "string", false, null, "ボタン押下時にjumpまたはcallするラベル名"),
         new TagValue("exp", "string", false, null, "ボタン押下時に実行するJavaScript"),
-        new TagValue("file", "string", true, null, "ボタンにする画像ファイル"),
+        new TagValue("imagefile", "string", true, null, "ボタンにする画像ファイル"),
         new TagValue("x", "number", false, 0, "x座標(px)"),
         new TagValue("y", "number", false, 0, "y座標(px)"),
         new TagValue("direction", "string", false, "horizontal", `ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"`),
@@ -1084,7 +1119,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
             values.label,
             values.countpage,
             values.exp,
-            values.file,
+            values.imagefile,
             values.x,
             values.y,
             values.direction,
@@ -1120,7 +1155,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("lay", "string", true, null, "対象レイヤー"),
         new TagValue("page", "string", false, null, "対象ページ"),
         new TagValue("exp", "string", false, null, "ボタン押下時に実行するJavaScript"),
-        new TagValue("file", "string", true, null, "ボタンにする画像ファイル"),
+        new TagValue("imagefile", "string", true, null, "ボタンにする画像ファイル"),
         new TagValue("x", "number", false, 0, "x座標(px)"),
         new TagValue("y", "number", false, 0, "y座標(px)"),
         new TagValue("statevar", "string", true, null, "選択状態を格納する一時変数の名前"),
@@ -1131,7 +1166,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.addToggleButton(
-            values.file,
+            values.imagefile,
             values.x,
             values.y,
             values.statevar,

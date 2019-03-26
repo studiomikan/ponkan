@@ -70,7 +70,7 @@ export class Conductor {
    * @param label 移動先ラベル
    * @param countPage 既読処理をするかどうか
    */
-  public jump(filePath: string | null, label: string | null = null, countPage: boolean): AsyncCallbacks {
+  public jump(filePath: string | null, label: string | null = null, countPage: boolean = true): AsyncCallbacks {
     const cb = new AsyncCallbacks();
     if (countPage) {
       this.passLatestSaveMark();
@@ -94,53 +94,6 @@ export class Conductor {
     return cb;
   }
 
-  // /**
-  //  * サブルーチンを呼び出す
-  //  * @param file 移動先ファイル
-  //  * @param label 移動先ラベル
-  //  * @param statusAtReturn return時に状態を復元する場合は値を設定。未設定時はRunのまま
-  //  */
-  // public callSubroutine(
-  //   filePath: string | null,
-  //   label: string | null = null,
-  //   countPage: boolean = false,
-  //   continueConduct: boolean = true,
-  //   returnOffset: number = 0,
-  // ): AsyncCallbacks {
-  //   this.callStack.push({
-  //     script: this.script,
-  //     point: this.script.getPoint(),
-  //     continueConduct: continueConduct,
-  //     returnOffset: returnOffset,
-  //   });
-  //   return this.jump(filePath, label, countPage);
-  // }
-  //
-  // /**
-  //  * サブルーチンから戻る
-  //  * @param forceStart 強制的にpb, lb, waitclickを終わらせるかどうか
-  //  * @param countPage 既読処理をするかどうか
-  //  */
-  // public returnSubroutine(forceStart: boolean = false, countPage: boolean = true): "continue" | "break" {
-  //   let stackData = this.callStack.pop();
-  //   if (stackData === undefined) {
-  //     throw new Error("returnで戻れませんでした。callとreturnの対応が取れていません");
-  //   }
-  //   if (countPage) {
-  //     this.passLatestSaveMark();
-  //   }
-  //   this._script = stackData.script;
-  //   this._script.goTo(stackData.point + stackData.returnOffset);
-  //   if (stackData.continueConduct) {
-  //     this.eventCallbacks.onReturnSubroutin(forceStart);
-  //     return "continue";
-  //   } else {
-  //     this.stop();
-  //     this.eventCallbacks.onReturnSubroutin(forceStart);
-  //     return "break";
-  //   }
-  // }
-
   public isPassed(labelName: string): boolean {
     return this.readUnread.isPassed(this.script, labelName);
   }
@@ -156,7 +109,6 @@ export class Conductor {
   public passLatestSaveMark(): void {
     this.passSaveMark(this.latestSaveMarkName);
   }
-
 
   public conduct(tick: number): void {
     if (this.status === ConductorState.Stop) { return; }

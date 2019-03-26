@@ -136,7 +136,9 @@ export class Button extends BaseLayer {
           p.conductor.stop();
         }
       }
-      if (!this.isSystemButton) {
+      if (this.isSystemButton) {
+        this.setButtonStatus("normal");
+      } else {
         this.setButtonStatus("disabled");
       }
       return false;

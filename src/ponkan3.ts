@@ -92,6 +92,13 @@ export class Ponkan3 extends PonGame {
   public pageBreakGlyphX: number = 0;
   public pageBreakGlyphY: number = 0;
 
+  // 右クリック
+  public rightClickJump: boolean = false;
+  public rightClickCall: boolean = false;
+  public rightClickFilePath: string | null = null;
+  public rightClickLabel: string | null = null;
+  public rightClickEnabled: boolean = true;
+
   // メッセージ履歴
   public historyLayer: HistoryLayer;
   public enabledHistory: boolean = true;
@@ -100,13 +107,14 @@ export class Ponkan3 extends PonGame {
   public soundBufferCount: number = DEFAULT_SOUND_BUFFER_COUNT;
   public readonly soundBuffers: SoundBuffer[] = [];
 
+  // セーブ＆ロード
+  protected saveDataPrefix: string = "ponkan-game";
+  protected latestSaveData: any = {};
+
   public get tmpVar(): any { return this.resource.tmpVar; }
   public get gameVar(): any { return this.resource.gameVar; }
   public get systemVar(): any { return this.resource.systemVar; }
 
-  // セーブ＆ロード
-  protected saveDataPrefix: string = "ponkan-game";
-  protected latestSaveData: any = {};
 
   // プラグイン
   protected plugins: PonPlugin[] = [];
@@ -281,21 +289,32 @@ export class Ponkan3 extends PonGame {
   }
 
   public onPrimaryRightClick(): boolean {
-    // TODO conductorにはんどらが移動した関係で修正が必要
+    Logger.debug("onPrimaryRightClick", this.rightClickEnabled, this.rightClickJump, this.rightClickCall);
 
-    if (this.hideMessageByRlickFlag) {
-      // 右クリックによるメッセージ隠しを解除
-      this.showMessages();
-      this.hideMessageByRlickFlag = false;
-    } else if (this.hideMessageFlag) {
-      // タグによるメッセージ隠し中
-      // clickにイベントハンドラが登録されてるのでそいつを呼んで復帰
-      this.conductor.trigger("click");
+    if (!this.rightClickEnabled) {
+      return false;
+    }
+
+    if (this.rightClickJump) {
+      // ジャンプさせる
+      this.conductor.jump(this.rightClickFilePath, this.rightClickLabel, false);
+      this.conductor.start();
+    } else if (this.rightClickCall) {
+      // 右クリックサブルーチン呼び出し
+      this.callSubroutine(this.rightClickFilePath, this.rightClickLabel, false);
     } else {
-      // 右クリックによるメッセージ隠し
-      if (this.conductor.isStable) {
-        this.hideMessages();
-        this.hideMessageByRlickFlag = true;
+      // デフォルト動作：メッセージレイヤを隠す／戻す
+      if (this.hideMessageFlag) {
+        if (this.hideMessageByRlickFlag) {
+          // 右クリックによるメッセージ隠し中
+          this.showMessagesByRightClick();
+        } else {
+          // タグによるメッセージ隠し中
+          // clickにイベントハンドラが登録されてるのでそいつを呼んで復帰
+          this.conductor.trigger("click");
+        }
+      } else {
+        this.hideMessagesByRightClick();
       }
     }
     return false;
@@ -893,6 +912,20 @@ export class Ponkan3 extends PonGame {
     });
     this.plugins.forEach((p) => p.onChangeMessageVisible(true));
     this.hideMessageFlag = false;
+  }
+
+  public hideMessagesByRightClick(): void {
+    if (this.conductor.isStable && this.conductor === this.mainConductor) {
+      this.hideMessages();
+      this.hideMessageByRlickFlag = true;
+    }
+  }
+
+  public showMessagesByRightClick(): void {
+    if (this.hideMessageByRlickFlag) {
+      this.showMessages();
+      this.hideMessageByRlickFlag = false;
+    }
   }
 
   // =========================================================
