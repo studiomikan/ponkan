@@ -7,8 +7,8 @@ const devServerPort = process.env.WEBPACK_DEV_SERVER_PORT || 8080;
 
 module.exports = {
   entry: {
-    ponkan3: './src/ponkan3.ts'
-  },  
+    ponkan3: path.join(__dirname, 'src/ponkan3.ts')
+  },
   output: {
     path: path.join(__dirname, 'dist'),
     publicPath: '/assets',
@@ -32,15 +32,15 @@ module.exports = {
     // new UglifyJSPlugin(),
     new CopyWebpackPlugin(
       [ { from: '', to: 'gamedata/', }, ],
-      { context: 'src/gamedata' }
+      { context: path.join(__dirname, 'src/gamedata') }
     ),
     new CopyWebpackPlugin(
       [ { from: '', to: 'fonts/', }, ],
-      { context: 'src/fonts' }
+      { context: path.join(__dirname, 'src/fonts') }
     ),
     new CopyWebpackPlugin(
       [ { from: '', to: '', }, ],
-      { context: 'src/index.html' }
+      { context: path.join(__dirname, 'src/index.html') }
     ),
     new WriteFilePlugin(),
   ]

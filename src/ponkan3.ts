@@ -290,9 +290,10 @@ export class Ponkan3 extends PonGame {
   }
 
   public onPrimaryRightClick(): boolean {
-    Logger.debug("onPrimaryRightClick", this.rightClickEnabled, this.rightClickJump, this.rightClickCall);
-
     if (!this.rightClickEnabled) {
+      return false;
+    }
+    if (!this.conductor.isStable) {
       return false;
     }
 
