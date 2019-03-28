@@ -8,6 +8,7 @@
 |セーブコメント02
 
 ;image "lay": 0, "page": "fore", "file": "image/bg0.png", "visible": true, "x": 0, "y": 0
+;childimage lay: "0", file: "image/okayu.jpg", x: 100, y: 500
 ;image "lay": 1, "page": "fore", "file": "image/okayu.jpg", "visible": true, "x": 0, "y": 0
 ;image "lay": 2, "file": "image/pagebreak.png", "visible": true, "x": 0, "y": 0
 ;frameanim "lay": 2, "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.pageBreakFrames"
@@ -19,6 +20,14 @@
 ;layopt "lay": 3, "x": 300, "y": 100, "visible": true, "width": 300, "height": 300
 ;fillcolor "lay": 3, "color": "0xFF00FF", "alpha": 1
 ;messageopt "lay": 3, "align": "center", "margint": 0, "lineheight": 24,
+;imagebutton {
+  "lay": 3,
+  "imagefile": "image/sample-button-save.png",
+  "direction": "vertical",
+  "x": 20,
+  "y": 70,
+  "exp": "alert('onClickImageButton');"
+}
 ;textbutton {
   lay:    3,
   text:   "ボタン",
@@ -29,14 +38,6 @@
   bgcolors: ["0xFF0000", "0x00FF00", "0x0000FF"],
   exp:    "alert('onClickTextButton')",
   calllabel:  "button-action-call"
-}
-;imagebutton {
-  "lay": 3,
-  "imagefile": "image/sample-button-save.png",
-  "direction": "vertical",
-  "x": 20,
-  "y": 70,
-  "exp": "alert('onClickImageButton');"
 }
 ;togglebutton {
   "lay": 3,
@@ -51,12 +52,10 @@
 ;unlockbuttons
 ;unlocksystembuttons
 
-
-;rclick jump: true, label: "jump-target-label"
+# ;rclick jump: true, label: "jump-target-label"
 
 *trans_loop
 ;clear
-;image "lay": 0, "page": "fore", "file": "image/bg0.png", "visible": true, "x": 0, "y": 0
 ;layopt {
   lay: "message",
   width: 1280 / 2,

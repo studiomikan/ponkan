@@ -7,6 +7,8 @@ tv.save = {
   // 背景画像
   bg: "image/save.png",
 
+  // ボタン用レイヤ
+  btnLay: tv.layer.save + 1,
 };
 ---
 
@@ -28,12 +30,34 @@ tv.save = {
   blockwheel: true,
   visible: true
 }
+# システムボタンをロック
 ;locksystembuttons
-
+# 右クリックで画面を終了
 ;rclick jump: true, label: "exit", enable: true
 
+---
+---
 
+# ボタンの設置
+;layopt lay: "&tv.save.btnLay", x: 0, y: 0, width: 1280, height: 720, visible: true
+;mesopt lay: "&tv.save.btnLay", color: 0x000000
+;textbutton {
+  lay:    "&tv.save.btnLay",
+  text:   "",
+  x:      60,
+  y:      140,
+  width:  550,
+  height: 150,
+  bgcolors: ["0xFFFFFF", "0xFFFFFF", "0xFFFFFF"],
+  bgalphas: [0.75, 0.9, 1.0],
+  exp:    "alert('onClickTextButton')",
+}
+# ;for loops: 6, indexvar: "i"
+# ;endfor
 
+;childimage lay: "&tv.save.btnLay + 1", file: "image/okayu.jpg", x: 0, y: 0, alpha: 1
+
+;unlockbuttons
 ;s
 
 

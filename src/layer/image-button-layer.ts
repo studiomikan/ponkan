@@ -238,7 +238,7 @@ export class ImageButtonLayer extends TextButtonLayer {
 
     dest.clearImageButtons();
     this.imageButtons.forEach((srcBtn) => {
-      let destBtn = new ImageButton(name, dest.resource, dest.owner);
+      let destBtn = new ImageButton(srcBtn.name, dest.resource, dest.owner);
       dest.addChild(destBtn);
       dest.imageButtons.push(destBtn);
       srcBtn.copyTo(destBtn);

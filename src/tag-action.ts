@@ -1009,6 +1009,34 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     new TagAction(
+      ["loadchildimage", "childimage", ""],
+      "レイヤー操作",
+      "レイヤーに追加で画像を読み込む",
+      [
+        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("file", "string", true, null, "読み込む画像ファイルパス"),
+        new TagValue("x", "number", true, null, "x座標(px)"),
+        new TagValue("y", "number", true, null, "y座標(px)"),
+        new TagValue("alpha", "number", false, 1.0, "表示非表示"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        const task: AsyncTask = new AsyncTask();
+        p.getLayers(values).forEach((layer) => {
+          task.add(() => {
+            return layer.loadChildImage(values.file, values.x, values.y, values.alpha);
+          });
+        });
+        task.run().done(() => {
+          p.conductor.start();
+        }).fail(() => {
+          p.error(new Error("追加の画像読み込みに失敗しました。"));
+        });
+        return p.conductor.stop();
+      },
+    ),
+    new TagAction(
       ["freeimage", "free"],
       "レイヤー操作",
       "レイヤーの画像を開放する",
@@ -1020,6 +1048,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.freeImage();
+          layer.freeChildImages();
         });
         return "continue";
       },

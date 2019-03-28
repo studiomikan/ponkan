@@ -92,33 +92,38 @@ export class Button extends BaseLayer {
   }
 
   public onMouseEnter(e: PonMouseEvent): boolean {
-    if (!super.onMouseEnter(e)) { return false; }
+    // if (!super.onMouseEnter(e)) { return false; }
     if (this.buttonStatus !== "disabled") {
       this.setButtonStatus("over");
     }
     this.insideFlag = true;
-    return true;
+    return false;
   }
 
   public onMouseLeave(e: PonMouseEvent): boolean {
-    if (!super.onMouseLeave(e)) { return false; }
+    // if (!super.onMouseLeave(e)) { return false; }
     if (this.buttonStatus !== "disabled") {
       this.setButtonStatus("normal");
     }
     this.insideFlag = false;
-    return true;
+    return false;
+  }
+
+  public onMouseMove(e: PonMouseEvent): boolean {
+    // if (!super.onMouseLeave(e)) { return false; }
+    return false;
   }
 
   public onMouseDown(e: PonMouseEvent): boolean {
-    if (!super.onMouseDown(e)) { return false; }
+    // if (!super.onMouseDown(e)) { return false; }
     if (this.buttonStatus !== "disabled") {
       this.setButtonStatus("on");
     }
-    return true;
+    return false;
   }
 
   public onMouseUp(e: PonMouseEvent): boolean {
-    if (!super.onMouseUp(e)) { return false; }
+    // if (!super.onMouseUp(e)) { return false; }
     if (this.buttonStatus !== "disabled") {
       let p: Ponkan3 = this.owner as Ponkan3;
       if (this.exp !== null && this.exp !== "") {
@@ -144,7 +149,7 @@ export class Button extends BaseLayer {
       }
       return false;
     } else {
-      return true;
+      return false;
     }
   }
 
