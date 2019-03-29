@@ -60,6 +60,8 @@ tv.save = {
   tv.y = tv.pos[tv.i][1];
   tv.imageOffsetX = 10;
   tv.imageOffsetY = 10;
+  tv.ssImage = ponkan.getSaveDataScreenShot(0);
+  console.log("@@@@@ss", tv.ssImage);
   ---
   ;layopt lay: "&tv.save.btnLay", x: 0, y: 0, width: 1280, height: 720, visible: true
   ;mesopt lay: "&tv.save.btnLay", color: 0x000000
@@ -76,7 +78,7 @@ tv.save = {
   }
   ;childimage {
     lay:  "&tv.save.btnLay",
-    file: "image/okayu.jpg",
+    file: "&tv.ssImage",
     x:    "&tv.x + tv.imageOffsetX",
     y:    "&tv.y + tv.imageOffsetY",
     alpha: 1

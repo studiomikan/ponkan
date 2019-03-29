@@ -196,7 +196,11 @@ export class Resource {
         cb.callFail(image);
       }
     };
-    image.src = path;
+    if (filePath.indexOf("data:image/") === 0) {
+      image.src = filePath;
+    } else {
+      image.src = path;
+    }
 
     return cb;
   }

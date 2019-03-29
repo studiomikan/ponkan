@@ -146,7 +146,7 @@ end.
 # セーブ関係のテスト
 ;clear
 |
-;save "num": 1
+;save "num": 0
 
 SAVE.
 ;pb
