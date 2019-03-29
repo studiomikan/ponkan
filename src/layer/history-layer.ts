@@ -68,6 +68,7 @@ class SimpleButton extends BaseLayer {
   public onMouseUp(e: PonMouseEvent): boolean {
     // if (!super.onMouseUp(e)) { return false; }
     if (this.status !== "on") { return true; }
+    if (!e.isLeft) { return true; }
     this.mouseUp(this);
     return false;
   }
@@ -93,6 +94,7 @@ class ScrollBarButton extends SimpleButton {
 
   public onMouseUp(e: PonMouseEvent): boolean {
     super.onMouseUp(e);
+    if (!e.isLeft) { return true; }
     this.down = false;
     return true;
   }
@@ -186,6 +188,7 @@ class ScrollBar extends BaseLayer {
 
   public onMouseUp(e: PonMouseEvent): boolean {
     if (!super.onMouseUp(e)) { return false; }
+    if (!e.isLeft) { return true; }
     this.setBarY(e.y - (this.bar.height / 2));
     this.onChangeCallback(this);
     // FIXME eの中身がおかしいが、現状使ってないのでこのまま
@@ -586,6 +589,7 @@ export class HistoryLayer extends BaseLayer {
   }
   public onMouseUp(e: PonMouseEvent): boolean  {
     super.onMouseUp(e);
+    if (!e.isLeft) { return true; }
     let sb = this.scrollBar;
     if (sb.dragging) {
       // スクロール操作中ははみ出ても操作できるようにする

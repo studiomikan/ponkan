@@ -165,7 +165,7 @@ export class Resource {
         cb.callDone(script);
       } catch (e) {
         Logger.error(e);
-        cb.callFail();
+        cb.callFail(e);
       }
     }).fail(() => {
       cb.callFail();

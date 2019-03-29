@@ -14,7 +14,7 @@ export interface IConductorEvent {
   onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break";
   onTag(tag: Tag, line: number, tick: number): "continue" | "break";
   onChangeStable(isStable: boolean): void;
-  // onReturnSubroutin(forceStart: boolean): void;
+  onError(e: any): void;
 }
 
 export enum ConductorState {
@@ -27,6 +27,7 @@ export class Conductor {
   protected resource: Resource;
   public readonly name: string;
   protected eventCallbacks: IConductorEvent;
+  public latestScriptFilePath: string = ""; // パースエラー時のメッセージ用
   protected _script: Script;
   public get script(): Script { return this._script; }
   protected _status: ConductorState = ConductorState.Stop;
@@ -47,16 +48,18 @@ export class Conductor {
     this.resource = resource;
     this.name = name;
     this.eventCallbacks = eventCallbacks;
-    this._script = new Script(this.resource, "dummy", ";s");
+    this._script = new Script(this.resource, "__dummy__", ";s");
     this.readUnread = new ReadUnread(this.resource);
   }
 
   public loadScript(filePath: string): AsyncCallbacks {
+    this.latestScriptFilePath = filePath;
     const cb = new AsyncCallbacks();
     this.resource.loadScript(filePath).done((script: Script) => {
       this._script = script;
       cb.callDone(filePath);
-    }).fail(() => {
+    }).fail((e: any) => {
+      this.eventCallbacks.onError(e);
       cb.callFail(filePath);
     });
     return cb;

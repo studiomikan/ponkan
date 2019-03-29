@@ -191,7 +191,8 @@ export class Ponkan3 extends PonGame {
     this.conductor.stop();
     let message: string = e.message;
 
-    const filePath: string = this.conductor.script.filePath;
+    let filePath: string = this.conductor.script.filePath;
+    if (filePath === "__dummy__") { filePath = this.conductor.latestScriptFilePath; }
     const latestTag: Tag | null = this.conductor.script.getLatestTag();
     if (latestTag !== null) {
       message = `(${filePath}:${latestTag.line}) ` + message;

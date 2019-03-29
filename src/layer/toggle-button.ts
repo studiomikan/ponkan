@@ -110,6 +110,7 @@ export class ToggleButton extends BaseLayer {
 
   public onMouseUp(e: PonMouseEvent): boolean {
     if (!super.onMouseUp(e)) { return false; }
+    if (!e.isLeft) { return true; }
     if (this.buttonStatus !== "disabled") {
       this.setValue(!this.getValue());
       if (this.exp !== null && this.exp !== "") {

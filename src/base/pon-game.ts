@@ -226,6 +226,10 @@ export class PonGame implements IConductorEvent {
   public onReturnSubroutin(forceStart: boolean = false): void {
   }
 
+  public onError(e: Error): void {
+    this.error(e);
+  }
+
   //============================================================
   // レイヤー関係
   //============================================================

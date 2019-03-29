@@ -206,8 +206,8 @@ export class PonSprite {
     this.pixiSprite = new PIXI.Sprite(texture);
     this.pixiSprite.x = this.x;
     this.pixiSprite.y = this.y;
-    this.pixiSprite.width = image.width;
-    this.pixiSprite.height = image.height;
+    this.width = image.width;
+    this.height = image.height;
 
     this.pixiSprite.anchor.set(0);
     this.callbacks.pixiContainerAddChild(this.pixiSprite);

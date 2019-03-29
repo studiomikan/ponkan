@@ -123,7 +123,7 @@ export class Button extends BaseLayer {
   }
 
   public onMouseUp(e: PonMouseEvent): boolean {
-    // if (!super.onMouseUp(e)) { return false; }
+    if (!e.isLeft) { return true; }
     if (this.buttonStatus !== "disabled") {
       let p: Ponkan3 = this.owner as Ponkan3;
       if (this.exp !== null && this.exp !== "") {

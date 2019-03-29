@@ -47,8 +47,8 @@
   "y": 140,
   "statevar": "sample-toggle-button"
 }
-;layopt "lay": 4, "x": 100, "y": 50, "visible": true
-;image lay: 4, file: "image/okayu.jpg"
+# ;layopt "lay": 4, "x": 100, "y": 50, "visible": true
+# ;image lay: 4, file: "image/okayu.jpg"
 ;unlockbuttons
 ;unlocksystembuttons
 
