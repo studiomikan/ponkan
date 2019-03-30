@@ -8,6 +8,7 @@ export class ScreenShot {
   private context: CanvasRenderingContext2D;
   private dataType: string = "image/jpeg";
   private quality: number | null = 0.85;
+  public readonly nodata: string = "image/nodata.png";
 
   public constructor(config: any) {
     this.canvas = document.createElement("canvas");
@@ -22,6 +23,7 @@ export class ScreenShot {
     else { this.canvas.height = 180; }
     if (cfg.dataType != null) { this.dataType = cfg.dataType; }
     if (cfg.quality != null) { this.quality = cfg.quality; }
+    if (cfg.nodata != null) { this.nodata = cfg.nodata; }
 
     let context: CanvasRenderingContext2D | null = this.canvas.getContext("2d");
     if (context == null) { throw new Error("Canvasの初期化に失敗しました"); }

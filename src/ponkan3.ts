@@ -1044,6 +1044,7 @@ export class Ponkan3 extends PonGame {
       throw new Error("セーブデータの保存に失敗しました。JSON文字列に変換できません");
     }
     this.resource.storeToLocalStorage(this.getSaveDataName(num), saveStr);
+    console.log("SAVE! ", this.latestSaveData);
 
     // システムデータの保存
     const comment: string = this.latestSaveData.comment;
@@ -1052,6 +1053,7 @@ export class Ponkan3 extends PonGame {
       date: this.getNowDateStr(),
       name: this.latestSaveData.name,
       comment: this.latestSaveData.comment,
+      text: this.latestSaveData.text,
       screenShot: this.screenShot.getDataUrl()
     };
     Logger.debug(this.systemVar.saveDataInfo[num]);
@@ -1107,6 +1109,7 @@ export class Ponkan3 extends PonGame {
     data.tick = tick;
     data.saveMarkName = saveMarkName;
     data.comment = comment;
+    data.text = this.messageLayer.text;
 
     Ponkan3.ponkanStoreParams.forEach((param: string) => {
       data[param] = me[param];
@@ -1149,7 +1152,7 @@ export class Ponkan3 extends PonGame {
     const dataStr: string = this.resource.restoreFromLocalStorage(this.getSaveDataName(num));
     const data: any = JSON.parse(dataStr);
 
-    Logger.debug(data);
+    Logger.debug("LOAD! ", data);
 
     Ponkan3.ponkanStoreParams.forEach((param: string) => {
       me[param] = data[param];
@@ -1250,6 +1253,7 @@ export class Ponkan3 extends PonGame {
       date: "----/--/-- --:--:--.---",
       name: "未設定",
       comment: "未設定",
+      message: "",
       screenShot: null
     };
     this.resource.storeToLocalStorage(this.getSaveDataName(num), "");
@@ -1258,13 +1262,18 @@ export class Ponkan3 extends PonGame {
 
   public getSaveDataInfo(num: number): any {
     if (this.existSaveData(num)) {
-      return this.systemVar.saveDataInfo[num];
+      let data = this.systemVar.saveDataInfo[num];
+      if (data.screenShot == null || data.screenShot == "") {
+        data.screenShot = this.screenShot.nodata;
+      }
+      return data;
     } else {
       return {
         date: "----/--/-- --:--:--.---",
         name: "未設定",
         comment: "未設定",
-        screenShot: ""
+        message: "",
+        screenShot: this.screenShot.nodata
       };
     }
   }

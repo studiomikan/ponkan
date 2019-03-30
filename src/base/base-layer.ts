@@ -443,6 +443,19 @@ export class BaseLayer {
     return this.textLines[this.textLines.length - 1];
   }
 
+  public get text(): string {
+    let str = "";
+    this.textLines.forEach((textLine: PonSprite[]) => {
+      if (str !== "") {
+        str += "\n";
+      }
+      textLine.forEach((sp) => {
+        str += sp.text;
+      });
+    });
+    return str;
+  }
+
   /**
    * レイヤにテキストを追加する
    */
@@ -587,8 +600,8 @@ export class BaseLayer {
   public setCharLocate(x: number | null, y: number | null): void {
     let line = this.currentTextLine;
     let tmpY: number = this.textY;
-    let tmpX: number = line[line.length - 1].x;
-    let tmpX2: number = line[0].x;
+    let tmpX: number = line.length === 0 ? 0 : line[line.length - 1].x;
+    let tmpX2: number = line.length === 0 ? 0 : line[0].x;
 
     this.addTextReturn();
     if (x != null) {
