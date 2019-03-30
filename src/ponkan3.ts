@@ -1066,13 +1066,14 @@ export class Ponkan3 extends PonGame {
   public getNowDateStr(): string {
     const d: Date = new Date();
     const year = d.getFullYear();
-    const month = d.getMonth() + 1;
-    const day = d.getDate();
-    const hours = d.getHours();
-    const minutes = d.getMinutes();
-    const seconds = d.getSeconds();
-    const millisecond = d.getMilliseconds();
-    return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}.${millisecond}`;
+    const month = ("0" + (d.getMonth() + 1)).substring(0, 2);
+    const day = ("0" + d.getDate()).substring(0, 2);
+    const hours = ("0" + d.getHours()).substring(0, 2);
+    const minutes = ("0" + d.getMinutes()).substring(0, 2);
+    const seconds = ("0" + d.getSeconds()).substring(0, 2);
+    return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+    // const millisecond = d.getMilliseconds();
+    // return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}.${millisecond}`;
   }
 
   protected static ponkanStoreParams: string[] = [
@@ -1248,14 +1249,19 @@ export class Ponkan3 extends PonGame {
     this.resource.copyLocalStorage(this.getSaveDataName(srcNum), this.getSaveDataName(destNum));
   }
 
-  public deleteSaveData(num: number): void {
-    this.systemVar.saveDataInfo[num] = {
+  public get emptySaveData(): any {
+    return  {
       date: "----/--/-- --:--:--.---",
-      name: "未設定",
-      comment: "未設定",
+      name: "",
+      comment: "NO DATA",
       message: "",
-      screenShot: null
+      text: "",
+      screenShot: this.screenShot.nodata,
     };
+  }
+
+  public deleteSaveData(num: number): void {
+    this.systemVar.saveDataInfo[num] = this.emptySaveData;
     this.resource.storeToLocalStorage(this.getSaveDataName(num), "");
     this.resource.saveSystemData(this.saveDataPrefix);
   }
@@ -1268,13 +1274,7 @@ export class Ponkan3 extends PonGame {
       }
       return data;
     } else {
-      return {
-        date: "----/--/-- --:--:--.---",
-        name: "未設定",
-        comment: "未設定",
-        message: "",
-        screenShot: this.screenShot.nodata
-      };
+      return this.emptySaveData;
     }
   }
 
@@ -1287,6 +1287,24 @@ export class Ponkan3 extends PonGame {
   public getSaveDataScreenShot(num: number): string {
     return this.getSaveDataInfo(num).screenShot;
   }
+
+  public splitStrByLength(str: string, length: number): string[] {
+    let splitedAry: string[] = [];
+    if (str == null || length == null || length < 1) {
+      return splitedAry;
+    }
+    let index: number = 0;
+    let start: number = index;
+    let end: number = start + length;
+    while (start < str.length) {
+      splitedAry[index] = str.substring(start, end);
+      index++;
+      start = end;
+      end = start + length;
+    }
+    return splitedAry;
+  }
+
 
 }
 

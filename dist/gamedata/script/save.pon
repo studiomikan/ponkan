@@ -54,10 +54,11 @@ tv.save = {
 ;meslay lay: "&tv.save.textLay"
 ;mesopt {
   fontfamily: ["mplus-1p-regular", "monospace"],
-  fontsize: 24,
-  lineheight: 24,
+  fontsize: 18,
+  lineheight: 18,
   align: "left",
   color: 0x000000,
+  autoreturn: false,
   margint: 0, marginr: 0, marginb: 0, marginl: 0
 }
 
@@ -79,8 +80,14 @@ tv.page = 0;
   tv.imageOffsetY = 10;
   tv.saveNum = (tv.page * 6) + tv.i;
   tv.saveInfo = ponkan.getSaveDataInfo(tv.saveNum);
-  console.log("@@@@@info", tv.saveInfo);
-  console.log("@@@@@num", tv.saveNum);
+  tv.text = tv.saveInfo.text.replace(/\n/, "");
+  if (tv.text.length > 42) {
+    tv.text = tv.text.substring(0, 42) + "...";
+  }
+  tv.lineList = ponkan.splitStrByLength(tv.text, 15);
+  if (tv.lineList[0] == null) { tv.lineList[0] = ""; }
+  if (tv.lineList[1] == null) { tv.lineList[1] = ""; }
+  if (tv.lineList[2] == null) { tv.lineList[2] = ""; }
   ---
   ;layopt lay: "&tv.save.btnLay", x: 0, y: 0, width: 1280, height: 720, visible: true
   ;mesopt lay: "&tv.save.btnLay", color: 0x000000
@@ -102,8 +109,23 @@ tv.page = 0;
     y:    "&tv.y + tv.imageOffsetY",
     alpha: 1
   }
+  ;mesopt fontsize: 12, lineheight: 12
+
   ;locate x: "&tv.x + 251", y: "&tv.y + 10"
-  あいうえお
+  = "No." + (tv.saveNum + 1)
+  ;locate x: "&tv.x + 251 + 50", y: "&tv.y + 10"
+  = tv.saveInfo.date
+
+  ;mesopt fontsize: 16, lineheight: 16
+
+  ;locate x: "&tv.x + 251", y: "&tv.y + 50"
+  = tv.saveInfo.comment
+  ;locate x: "&tv.x + 251", y: "&tv.y + 78"
+  = tv.lineList[0]
+  ;locate x: "&tv.x + 251", y: "&tv.y + 78 + 22"
+  = tv.lineList[1]
+  ;locate x: "&tv.x + 251", y: "&tv.y + 78 + 22 + 22"
+  = tv.lineList[2]
 ;endfor
 ;endnowait
 
