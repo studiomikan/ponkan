@@ -81,6 +81,8 @@
 BIG
 ;mesopt fontsize: 12, lineheight: 36
 small
+;mesopt fontsize: 24
+Normal
 
 ;pb
 

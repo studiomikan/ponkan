@@ -85,6 +85,7 @@ tv.savePageNum = 0;
   if (tv.lineList[1] == null) { tv.lineList[1] = ""; }
   if (tv.lineList[2] == null) { tv.lineList[2] = ""; }
   tv.exp = "tv.clickedSaveNum = " + tv.saveNum + ";";
+  tv.deleteExp = "tv.clickedDeleteNum = " + tv.saveNum + ";";
   ---
   ;textbutton {
     lay:    "&tv.save.btnLay",
@@ -107,14 +108,11 @@ tv.savePageNum = 0;
     alpha: 1
   }
   ;mesopt fontsize: 14, lineheight: 14, color: 0x000000
-
   ;locate x: "&tv.x + 251", y: "&tv.y + 10"
   = "No." + (tv.saveNum + 1)
   ;locate x: "&tv.x + 251 + 50", y: "&tv.y + 10"
   = tv.saveInfo.date
-
   ;mesopt fontsize: 16, lineheight: 16, color: 0x000000
-
   ;locate x: "&tv.x + 251", y: "&tv.y + 44"
   = tv.saveInfo.comment
   ;locate x: "&tv.x + 251", y: "&tv.y + 78"
@@ -123,18 +121,17 @@ tv.savePageNum = 0;
   = tv.lineList[1]
   ;locate x: "&tv.x + 251", y: "&tv.y + 78 + 22 + 22"
   = tv.lineList[2]
+  ;imagebutton {
+    lay:       "&tv.save.btnLay",
+    imagefile: "image/close_button_small.png",
+    x:         "&tv.x + (550 - 25)",
+    y:         "&tv.y + 10",
+    exp:       "&tv.deleteExp",
+    jump:      true,
+    label:     "on_click_delete_button"
+  }
 ;endfor
 ;endnowait
-
-# セーブ画面の閉じるボタン
-;imagebutton {
-  lay:       "&tv.save.btnLay",
-  imagefile: "image/close_button.png",
-  x:         "&1280 - 30 - 24",
-  y:         23,
-  jump:      true,
-  label:     "exit"
-}
 
 # ページ送りボタン
 ---
@@ -176,6 +173,16 @@ PAGE:
 ;endfor
 ;endnowait
 
+# セーブ画面の閉じるボタン
+;imagebutton {
+  lay:       "&tv.save.btnLay",
+  imagefile: "image/close_button.png",
+  x:         "&1280 - 30 - 24",
+  y:         23,
+  jump:      true,
+  label:     "exit"
+}
+
 
 # トランジションで表示
 ;trans method: "crossfade", time: "&tv.transTime"
@@ -208,16 +215,24 @@ PAGE:
 # セーブする
 #=========================================================================================
 *on_click_save_button
-
----
-alert(tv.clickedSaveNum);
----
 ;save num: "&tv.clickedSaveNum"
-
 -tv.transTime = 100;
 ;jump label: "draw"
 ;s
 
+
+#=========================================================================================
+# 削除する
+#=========================================================================================
+*on_click_delete_button
+---
+alert("TODO ダイアログ");
+alert(tv.clickedDeleteNum);
+---
+;deletesavedata num: "&tv.clickedDeleteNum"
+-tv.transTime = 100;
+;jump label: "draw"
+;s
 
 
 #=========================================================================================
