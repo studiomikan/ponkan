@@ -1,6 +1,7 @@
 # セーブ画面
 *save_start
 ;tempsave num: 0
+;screenshot
 
 ---
 tv.save = {
@@ -12,9 +13,17 @@ tv.save = {
   // テキスト用レイヤ
   textLay: tv.layer.save + 2,
 };
+tv.transTime = 200;
 ---
 
-# 背景
+#=========================================================================================
+# 描画処理
+#=========================================================================================
+*draw
+
+;preparetrans
+
+# 背景の設定
 ;image {
   lay: "&tv.layer.save",
   file: "&tv.save.bg",
@@ -22,12 +31,13 @@ tv.save = {
   x: 0,
   y: 0
 }
+;layopt lay: "&tv.layer.save", visible: true
 
 # ボタン用レイヤの設定
-;layopt {
-  lay: "&tv.layer.save",
-  visible: true
-}
+;layopt lay: "&tv.save.btnLay", x: 0, y: 0, width: 1280, height: 720, visible: true
+;mesopt lay: "&tv.save.btnLay", color: 0x000000
+;clearbuttons lay: "&tv.save.btnLay"
+
 # テキスト用レイヤの設定
 ;layopt lay: "&tv.save.textLay", x:0, y: 0, width: 1280, height: 720, visible: true
 ;meslay lay: "&tv.save.textLay"
@@ -42,16 +52,14 @@ tv.save = {
   margint: 0, marginr: 0, marginb: 0, marginl: 0
 }
 
-*start_draw
-
-;backlay
-
 # ボタンをロック
-;lockbuttons
+;lockbuttons page: "fore"
+;lockbuttons page: "back"
 # システムボタンをロック
-;locksystembuttons
+;locksystembuttons page: "fore"
+;locksystembuttons page: "back"
 
-# ボタンの設置
+# セーブボタンの設置
 ---
 tv.page = 0;
 ---
@@ -78,8 +86,6 @@ tv.page = 0;
   if (tv.lineList[1] == null) { tv.lineList[1] = ""; }
   if (tv.lineList[2] == null) { tv.lineList[2] = ""; }
   ---
-  ;layopt lay: "&tv.save.btnLay", x: 0, y: 0, width: 1280, height: 720, visible: true
-  ;mesopt lay: "&tv.save.btnLay", color: 0x000000
   ;textbutton {
     lay:    "&tv.save.btnLay",
     text:   "",
@@ -90,6 +96,8 @@ tv.page = 0;
     bgcolors: ["0xFFFFFF", "0xFFFFFF", "0xFFFFFF"],
     bgalphas: [0.75, 0.85, 0.9],
     exp:    "alert('onClickTextButton')",
+    jump:   true,
+    label:  "on_click_save_button"
   }
   ;childimage {
     lay:  "&tv.save.btnLay",
@@ -98,14 +106,14 @@ tv.page = 0;
     y:    "&tv.y + tv.imageOffsetY",
     alpha: 1
   }
-  ;mesopt fontsize: 12, lineheight: 12
+  ;mesopt fontsize: 12, lineheight: 12, color: 0x000000
 
   ;locate x: "&tv.x + 251", y: "&tv.y + 10"
   = "No." + (tv.saveNum + 1)
   ;locate x: "&tv.x + 251 + 50", y: "&tv.y + 10"
   = tv.saveInfo.date
 
-  ;mesopt fontsize: 16, lineheight: 16
+  ;mesopt fontsize: 16, lineheight: 16, color: 0x000000
 
   ;locate x: "&tv.x + 251", y: "&tv.y + 44"
   = tv.saveInfo.comment
@@ -128,6 +136,20 @@ tv.page = 0;
   label:     "exit"
 }
 
+# ページ送りボタン
+;mesopt fontsize: 24, lineheight: 24, color: 0xFFFFFF
+;locate x: 300, y: 20
+;nowait
+PAGE:
+;endnowait
+
+
+
+# トランジションで表示
+;trans method: "crossfade", time: "&tv.transTime"
+;waittrans canskip: false
+- tv.transTime = 1;
+
 # セーブのボタンのロックを解除
 ;unlockbuttons lay: "&tv.save.btnLay"
 # 右クリックで画面を終了
@@ -135,12 +157,26 @@ tv.page = 0;
 ;s
 
 
+#=========================================================================================
+# セーブする
+#=========================================================================================
+*on_click_save_button
 
+
+
+;jump label: "draw"
+;s
+
+
+
+#=========================================================================================
 # セーブ画面を終わる
+#=========================================================================================
 *exit
 # ;layopt { lay: "&tv.layer.save", blocklclick: true, visible: false }
 # ;rclick jump: false, call: false
 # ;unlocksystembuttons
-;tempload num: 0, sound: false, toback: false
+;tempload num: 0, sound: false, toback: true
+;trans method: "crossfade", time: 200
 ;return
 

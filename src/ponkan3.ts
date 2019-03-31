@@ -718,7 +718,7 @@ export class Ponkan3 extends PonGame {
     const lay: string = "" + values.lay as string;
     let page: string = "" + values.page as string;
     let pageLayers: PonLayer[];
-    if (values.page == null) {
+    if (values.page == null || values.page === "current") {
       page = this.currentPage;
     }
     if (page === "back") {

@@ -581,7 +581,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "テキストの設定",
       [
         new TagValue("lay", "string", false, "message", "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
         new TagValue("fontfamily", "array", false, null, "フォント名の配列"),
         new TagValue("fontsize", "number", false, null, "フォントサイズ(px)"),
         new TagValue("fontweight", "string", false, null, `フォントウェイト。"normal" | "bold"`),
@@ -634,7 +634,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "文字を出力する",
       [
         new TagValue("lay", "string", false, "message", "出力する文字"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
         new TagValue("text", "string", true, null, "出力する文字"),
       ],
       `TODO タグの説明文`,
@@ -677,7 +677,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "テキストをクリアする",
       [
         new TagValue("lay", "string", false, "message", "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
@@ -729,7 +729,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "文字表示位置を指定する",
       [
         new TagValue("lay", "string", false, "message", "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
         new TagValue("x", "number", false, null, "x座標"),
         new TagValue("y", "number", false, null, "x座標"),
       ],
@@ -747,7 +747,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "インデント位置を設定する",
       [
         new TagValue("lay", "string", false, "message", "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
       ],
       `現在の文字描画位置でインデントするように設定します。
        インデント位置は [endindent] または [clear] でクリアされます。`,
@@ -910,7 +910,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤーを塗りつぶす",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
         new TagValue("color", "number", true, null, "塗りつぶし色(0xRRGGBB)"),
         new TagValue("alpha", "number", false, 1.0, "塗りつぶしのAlpha(0.0〜1.0)"),
       ],
@@ -928,7 +928,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤー塗りつぶしをクリアする",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
@@ -944,7 +944,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤーの設定",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
         new TagValue("visible", "boolean", false, null, "表示非表示"),
         new TagValue("x", "number", false, null, "x座標(px)"),
         new TagValue("y", "number", false, null, "y座標(px)"),
@@ -983,7 +983,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤーに画像を読み込む",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
         new TagValue("file", "string", true, null, "読み込む画像ファイルパス"),
         new TagValue("visible", "boolean", false, null, "表示非表示"),
         new TagValue("x", "number", false, null, "x座標(px)"),
@@ -1014,7 +1014,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤーに追加で画像を読み込む",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
         new TagValue("file", "string", true, null, "読み込む画像ファイルパス"),
         new TagValue("x", "number", true, null, "x座標(px)"),
         new TagValue("y", "number", true, null, "y座標(px)"),
@@ -1042,7 +1042,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤーの画像を開放する",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
@@ -1062,7 +1062,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤーにテキストボタンを配置する",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
         new TagValue("jump", "boolean", false, true, "ボタン押下時にjumpする場合はtrue"),
         new TagValue("call", "boolean", false, null, "ボタン押下時にcallする場合はtrue"),
         new TagValue("file", "string", false, null, "ボタン押下時にjumpまたはcallするスクリプトファイル名"),
@@ -1104,12 +1104,30 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     new TagAction(
-      ["cleartextbutton", "cleartxtbtn"],
+      ["clearbuttons", "clearbutton", "clearbtn"],
+      "ボタン",
+      "すべてのボタンをクリアする",
+      [
+        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          layer.clearTextButtons();
+          layer.clearImageButtons();
+          layer.clearToggleButtons();
+        });
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["cleartextbuttons", "cleartextbutton", "cleartxtbtn"],
       "ボタン",
       "テキストボタンをクリアする",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
@@ -1125,7 +1143,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤーに画像ボタンを配置する",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
         new TagValue("jump", "boolean", false, true, "ボタン押下時にjumpする場合はtrue"),
         new TagValue("call", "boolean", false, null, "ボタン押下時にcallする場合はtrue"),
         new TagValue("file", "string", false, null, "ボタン押下時にjumpまたはcallするスクリプトファイル名"),
@@ -1161,12 +1179,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     new TagAction(
-      ["clearimagebutton", "clearimgbtn"],
+      ["clearimagebuttons", "clearimagebutton", "clearimgbtn"],
       "ボタン",
       "画像ボタンをクリアする",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
@@ -1182,7 +1200,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤーにトグルボタンを配置する",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
         new TagValue("exp", "string", false, null, "ボタン押下時に実行するJavaScript"),
         new TagValue("imagefile", "string", true, null, "ボタンにする画像ファイル"),
         new TagValue("x", "number", false, 0, "x座標(px)"),
@@ -1210,12 +1228,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     new TagAction(
-      ["cleartogglebutton", "cleartglbtn"],
+      ["cleartogglebuttons", "cleartogglebutton", "cleartglbtn"],
       "ボタン",
       "トグルボタンをクリアする",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
@@ -1231,7 +1249,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "ボタンをロックする",
       [
         new TagValue("lay", "string", false, "all", "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
@@ -1249,7 +1267,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "ボタンをアンロックする",
       [
         new TagValue("lay", "string", false, "all", "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
@@ -1294,7 +1312,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "フレームアニメーションを設定する",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
         new TagValue("loop", "boolean", false, false, "アニメーションをループさせるかどうか"),
         new TagValue("time", "number", true, null, "1フレームの時間"),
         new TagValue("width", "number", true, null, "1フレームの幅"),
@@ -1315,7 +1333,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "フレームアニメーションを開始する",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
@@ -1331,7 +1349,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "フレームアニメーションを停止する",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
@@ -1347,7 +1365,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "フレームアニメーションの終了を待つ",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
         new TagValue("canskip", "boolean", false, true, "スキップ可能かどうか"),
       ],
       `TODO タグの説明文`,
@@ -1378,7 +1396,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "自動移動を開始する",
       [
         new TagValue("lay", "string", true, null, "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
         new TagValue("time", "number", true, null, "自動移動させる時間"),
         new TagValue("path", "array", true, null, "自動移動させる位置を指定"),
         new TagValue("type", "string", false, "linear", `自動移動のタイプ。"linear" | "bezier2" | "bezier3" | "catmullrom"`),
@@ -1398,7 +1416,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "自動移動を停止する",
       [
         new TagValue("lay", "string", false, "all", "対象レイヤー"),
-        new TagValue("page", "string", false, null, "対象ページ"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
