@@ -77,6 +77,11 @@
 # ;waitsoundfade buf:0, canskip: true
 # ;lb
 
+;mesopt fontsize: 36, lineheight: 36
+BIG
+;mesopt fontsize: 12, lineheight: 36
+small
+
 ;pb
 
 ;move {

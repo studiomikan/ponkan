@@ -106,7 +106,7 @@ tv.page = 0;
     y:    "&tv.y + tv.imageOffsetY",
     alpha: 1
   }
-  ;mesopt fontsize: 12, lineheight: 12, color: 0x000000
+  ;mesopt fontsize: 14, lineheight: 14, color: 0x000000
 
   ;locate x: "&tv.x + 251", y: "&tv.y + 10"
   = "No." + (tv.saveNum + 1)
@@ -142,7 +142,6 @@ tv.page = 0;
 ;nowait
 PAGE:
 ;endnowait
-
 
 
 # トランジションで表示

@@ -876,9 +876,9 @@ export class Ponkan3 extends PonGame {
   ): void {
     const mesLay = this.messageLayer;
     if (pos === "eol") {
-      const glyphPos = mesLay.getNextTextPos(lay.width);
+      const glyphPos = mesLay.getNextTextPos(lay.width, lay.height);
       lay.x = mesLay.x + glyphPos.x;
-      lay.y = mesLay.y + glyphPos.y + mesLay.textLineHeight - lay.height;
+      lay.y = mesLay.y + glyphPos.y;
     } else if (pos === "relative") {
       lay.x = mesLay.x + x;
       lay.y = mesLay.y + y;

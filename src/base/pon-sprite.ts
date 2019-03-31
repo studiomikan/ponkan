@@ -157,12 +157,13 @@ export class PonSprite {
    */
   public createText(text: string, style: PIXI.TextStyle): void {
     this.clear();
-    this.pixiSprite = new PIXI.Text(text, style);
+    this._textStyle = style.clone();
+
+    this.pixiSprite = new PIXI.Text(text, this._textStyle);
     this.pixiSprite.x = this.x;
     this.pixiSprite.y = this.y;
     this._width = this.pixiSprite.width;
     this._height = this.pixiSprite.height;
-    this._textStyle = style.clone();
 
     this.pixiSprite.anchor.set(0);
     this.callbacks.pixiContainerAddChild(this.pixiSprite);

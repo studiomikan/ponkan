@@ -491,7 +491,7 @@ export class BaseLayer {
     sp.y = pos.y;
     this.currentTextLine.push(sp);
     this.textX = pos.x + sp.width;
-    this.textY = pos.y;
+    // this.textY = pos.y;
   }
 
   public getCurrentLineWidth() {
@@ -511,7 +511,7 @@ export class BaseLayer {
    * @param chWidth 追加しようとしている文字の横幅
    * @return 表示位置
    */
-  public getNextTextPos(chWidth: number): {x: number, y: number} {
+  public getNextTextPos(chWidth: number, chHeight: number = this.textFontSize): {x: number, y: number} {
     // 自動改行の判定
     let lineWidth = this.getCurrentLineWidth();
     let totalMargin = this.textMarginLeft + this.textMarginRight;
@@ -566,15 +566,14 @@ export class BaseLayer {
         break;
     }
     let x = startX;
-    let y = this.textY + this.textLineHeight - this.textFontSize;
     let list: number[] = [];
     this.currentTextLine.forEach((sp) => {
       list.push(x);
       sp.x = x;
-      sp.y = y;
       x += sp.width;
     });
 
+    let y = this.textY + this.textLineHeight - chHeight;
     return {x: x, y: y};
   }
 
@@ -582,6 +581,7 @@ export class BaseLayer {
    * テキストを改行する
    */
   public addTextReturn(): void {
+    console.log("@@@@@@textreturn");
     this.textY += this.textLineHeight + this.textLinePitch;
     this.textLines.push([]);
     this.textLocatePoint = 0;
