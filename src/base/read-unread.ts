@@ -24,7 +24,7 @@ export class ReadUnread {
     } else {
       s.trail[script.filePath][saveMarkName]++;
     }
-    Logger.debug("onSaveMark pass:", script.filePath, saveMarkName, s.trail[script.filePath][saveMarkName]);
+    // Logger.debug("onSaveMark pass:", script.filePath, saveMarkName, s.trail[script.filePath][saveMarkName]);
   }
 
   public isPassed(script: Script, label: string): boolean {

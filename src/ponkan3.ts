@@ -109,6 +109,7 @@ export class Ponkan3 extends PonGame {
 
   // セーブ＆ロード
   protected saveDataPrefix: string = "ponkan-game";
+  protected latestSaveComment: string = "";
   protected latestSaveData: any = {};
   protected tempSaveData: any = {};
 
@@ -166,7 +167,7 @@ export class Ponkan3 extends PonGame {
   public stop(): void {
     super.stop();
     this.plugins.forEach((p) => p.onSaveSystemVariables());
-    this.resource.saveSystemData(this.saveDataPrefix);
+    // this.resource.saveSystemData(this.saveDataPrefix);
   }
 
   protected update(tick: number): void {
@@ -443,13 +444,15 @@ export class Ponkan3 extends PonGame {
         }
       } else if (this.isSkipping) {
         if (!this.canSkipUnreadPart) {
-          console.log("stop skip. cause", saveMarkName, this.canSkipUnreadPart);
           this.stopSkip();
         }
       }
     }
 
-    this.latestSaveData = this.generateSaveData(saveMarkName, comment, tick);
+    if (comment != null && comment !== "") {
+      this.latestSaveComment = comment;
+    }
+    this.latestSaveData = this.generateSaveData(saveMarkName, this.latestSaveComment, tick);
     return "continue";
   }
 

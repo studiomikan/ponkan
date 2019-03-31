@@ -340,6 +340,9 @@ export class PonGame implements IConductorEvent {
     window.addEventListener('unload', () => {
       this.onWindowClose()
     })
+    window.addEventListener('beforeunload', () => {
+      this.onWindowClose()
+    })
   }
 
   public onWindowClose(): boolean { return true; };

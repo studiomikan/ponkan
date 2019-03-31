@@ -134,7 +134,7 @@ export class ScriptParser {
     let p: number = body.indexOf(":");
     if (p !== -1) {
       let name: string = body.substring(0, p);
-      let comment: string = body.substring(p);
+      let comment: string = body.substring(p + 1);
       this.addTag("__save_mark__", { __body__: body, name: name, comment: comment });
     } else if (body.length > 0) {
       let name: string = `__save_mark_${this.currentLineNum}__`;

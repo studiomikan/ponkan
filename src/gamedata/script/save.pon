@@ -22,36 +22,16 @@ tv.save = {
   x: 0,
   y: 0
 }
-# このレイヤより下のレイヤのマウスイベントが発生しないようにする
-# ただし右クリックは防がない。
+
+# ボタン用レイヤの設定
 ;layopt {
   lay: "&tv.layer.save",
-  blocklclick: true,
-  blockcclick: true,
-  blockmove: true,
-  blockwheel: true,
   visible: true
 }
-# ;mesopt {
-#   lay:        "&tv.save.btnLay",
-#   fontfamily: ["mplus-1p-regular", "monospace"],
-#   lineheight: 36,
-#   fontsize:   36,
-#   fontweight:   "normal",
-#   align:      "center",
-#   margint:    0,
-#   marginr:    0,
-#   marginb:    0,
-#   marginl:    0,
-# }
-# システムボタンをロック
-;locksystembuttons
-# 右クリックで画面を終了
-;rclick jump: true, label: "exit", enable: true
-
-# メッセージの設定
+# テキスト用レイヤの設定
 ;layopt lay: "&tv.save.textLay", x:0, y: 0, width: 1280, height: 720, visible: true
 ;meslay lay: "&tv.save.textLay"
+;clear lay: "&tv.save.textLay"
 ;mesopt {
   fontfamily: ["mplus-1p-regular", "monospace"],
   fontsize: 18,
@@ -61,6 +41,15 @@ tv.save = {
   autoreturn: false,
   margint: 0, marginr: 0, marginb: 0, marginl: 0
 }
+
+*start_draw
+
+;backlay
+
+# ボタンをロック
+;lockbuttons
+# システムボタンをロック
+;locksystembuttons
 
 # ボタンの設置
 ---
@@ -118,7 +107,7 @@ tv.page = 0;
 
   ;mesopt fontsize: 16, lineheight: 16
 
-  ;locate x: "&tv.x + 251", y: "&tv.y + 50"
+  ;locate x: "&tv.x + 251", y: "&tv.y + 44"
   = tv.saveInfo.comment
   ;locate x: "&tv.x + 251", y: "&tv.y + 78"
   = tv.lineList[0]
@@ -139,7 +128,10 @@ tv.page = 0;
   label:     "exit"
 }
 
-;unlockbuttons
+# セーブのボタンのロックを解除
+;unlockbuttons lay: "&tv.save.btnLay"
+# 右クリックで画面を終了
+;rclick jump: true, label: "exit", enable: true
 ;s
 
 

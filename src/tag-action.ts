@@ -1229,11 +1229,17 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ["lockbuttons", "lockbutton",  "lock"],
       "ボタン",
       "ボタンをロックする",
-      [],
+      [
+        new TagValue("lay", "string", false, "all", "対象レイヤー"),
+        new TagValue("page", "string", false, null, "対象ページ"),
+      ],
       `TODO タグの説明文`,
       (values, tick) => {
-        p.foreLayers.forEach((layer) => layer.lockButtons());
-        p.backLayers.forEach((layer) => layer.lockButtons());
+        p.getLayers(values).forEach((layer) => {
+          layer.lockButtons();
+        });
+        // p.foreLayers.forEach((layer) => layer.lockButtons());
+        // p.backLayers.forEach((layer) => layer.lockButtons());
         return "continue";
       },
     ),
@@ -1241,11 +1247,17 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ["unlockbuttons", "unlockbutton", "unlock"],
       "ボタン",
       "ボタンをアンロックする",
-      [],
+      [
+        new TagValue("lay", "string", false, "all", "対象レイヤー"),
+        new TagValue("page", "string", false, null, "対象ページ"),
+      ],
       `TODO タグの説明文`,
       (values, tick) => {
-        p.foreLayers.forEach((layer) => layer.unlockButtons());
-        p.backLayers.forEach((layer) => layer.unlockButtons());
+        p.getLayers(values).forEach((layer) => {
+          layer.unlockButtons();
+        });
+        // p.foreLayers.forEach((layer) => layer.unlockButtons());
+        // p.backLayers.forEach((layer) => layer.unlockButtons());
         return "continue";
       },
     ),
