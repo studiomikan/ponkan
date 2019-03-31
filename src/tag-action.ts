@@ -1068,7 +1068,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("file", "string", false, null, "ボタン押下時にjumpまたはcallするスクリプトファイル名"),
         new TagValue("label", "string", false, null, "ボタン押下時にjumpまたはcallするラベル名"),
         new TagValue("exp", "string", false, null, "ボタン押下時に実行するJavaScript"),
-        new TagValue("text", "string", true, null, "テキスト"),
+        new TagValue("text", "string", false, "", "テキスト"),
         new TagValue("x", "number", false, 0, "x座標(px)"),
         new TagValue("y", "number", false, 0, "y座標(px)"),
         new TagValue("width", "number", true, null, "幅(px)"),
@@ -1076,6 +1076,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("bgcolors", "array", true, null, "背景色の配列(0xRRGGBB)。通常時、マウスオーバー時、マウス押下時の順"),
         new TagValue("bgalphas", "array", false, [1, 1, 1], "背景色のAlphaの配列(0.0〜1.0)。通常時、マウスオーバー時、マウス押下時の順"),
         new TagValue("system", "boolean", false, false, "システム用ボタンとする場合はtrue"),
+        new TagValue("margint", "number", false, 0, "テキスト描画のマージン　上"),
+        new TagValue("marginr", "number", false, 0, "テキスト描画のマージン　右"),
+        new TagValue("marginb", "number", false, 0, "テキスト描画のマージン　下"),
+        new TagValue("marginl", "number", false, 0, "テキスト描画のマージン　左"),
+        new TagValue("marginl", "number", false, 0, "テキスト描画のマージン　左"),
+        new TagValue("align", "string", false, "center", `テキスト寄せの方向。"left" | "center" | "right"`),
         new TagValue("countpage", "boolean", false, true, "現在の位置を既読にするかどうか"),
       ],
       `指定のレイヤーに、テキストと背景色を用いたボタンを配置します。
@@ -1098,6 +1104,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
             values.bgcolors,
             values.bgalphas,
             values.system,
+            values.margint,
+            values.marginr,
+            values.marginb,
+            values.marginl,
           );
         });
         return "continue";
@@ -1792,9 +1802,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        if (values.output) {
-          p.historyLayer.outputFlag = true;
-        }
+        if (values.output != null) { p.historyLayer.outputFlag = values.output; }
+        if (values.enabled != null) { p.enabledHistory = values.enabled; }
         return "continue";
       },
     ),

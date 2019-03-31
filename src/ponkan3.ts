@@ -244,7 +244,7 @@ export class Ponkan3 extends PonGame {
     } else {
       if (!this.forePrimaryLayer.onMouseWheel(e)) {
         return false;
-      } else if (this.conductor.isStable && e.isUp) {
+      } else if (this.conductor.isStable && this.enabledHistory && e.isUp) {
         this.showHistoryLayer();
         return false;
       } else if (!this.onMouseWheelLocked && e.isDown) {

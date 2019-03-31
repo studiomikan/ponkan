@@ -1,7 +1,9 @@
 import { Logger } from "./logger";
+import { Resource } from "./resource";
 import { Tag } from "./tag";
 
 export class ScriptParser {
+  private resource: Resource;
   private scriptText: string;
   private lines: string[] = [];
   private currentLineNum: number = 0;
@@ -9,7 +11,8 @@ export class ScriptParser {
 
   public get tags(): Tag[] { return this._tags; }
 
-  public constructor(scriptText: string) {
+  public constructor(resource: Resource, scriptText: string) {
+    this.resource = resource;
     this.scriptText = scriptText;
     this.currentLineNum = 0;
     this.lines = this.scriptText.split(/\n/g);
@@ -116,7 +119,7 @@ export class ScriptParser {
           }
         }
         // values = JSON.parse(valuesStr);
-        values = eval(`(${valuesStr})`);
+        values = this.resource.evalJs(`(${valuesStr})`);
       }
       values.__body__ = body;
       this.addTag(tagName, values);

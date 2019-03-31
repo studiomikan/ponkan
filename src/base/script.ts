@@ -30,7 +30,7 @@ export class Script {
   public constructor(resource: Resource, filePath: string, scriptText: string) {
     this.resource = resource;
     this._filePath = filePath;
-    this.parser = new ScriptParser(scriptText);
+    this.parser = new ScriptParser(this.resource, scriptText);
   }
 
   public debugPrint(): void {

@@ -581,7 +581,6 @@ export class BaseLayer {
    * テキストを改行する
    */
   public addTextReturn(): void {
-    console.log("@@@@@@textreturn");
     this.textY += this.textLineHeight + this.textLinePitch;
     this.textLines.push([]);
     this.textLocatePoint = 0;
@@ -767,6 +766,7 @@ export class BaseLayer {
     "textLineHeight",
     "textLinePitch",
     "textAutoReturn",
+    "textLocatePoint",
     "textIndentPoint",
     "reservedTextIndentPoint",
     "textAlign",

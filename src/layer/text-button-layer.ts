@@ -159,6 +159,11 @@ export class TextButtonLayer extends FrameAnimLayer {
     backgroundColors: number[],
     backgroundAlphas: number[],
     isSystemButton: boolean,
+    textMarginTop: number = 0,
+    textMarginRight: number = 0,
+    textMarginBottom: number = 0,
+    textMarginLeft: number = 0,
+    textAlign: "left" | "center" | "right" = "center",
   ): void {
 
     let name = `TextButton ${this.textButtons.length}`;
@@ -178,6 +183,11 @@ export class TextButtonLayer extends FrameAnimLayer {
     btn.y = y;
     btn.width = width;
     btn.height = height;
+    btn.textMarginTop = textMarginTop;
+    btn.textMarginRight = textMarginRight;
+    btn.textMarginBottom = textMarginBottom;
+    btn.textMarginLeft = textMarginLeft;
+    btn.textAlign = textAlign;
     btn.initTextButton(
       jump,
       call,
@@ -221,7 +231,8 @@ export class TextButtonLayer extends FrameAnimLayer {
       "textLineHeight",
       "textLinePitch",
       "textAutoReturn",
-      "textIndentPoint",
+      // "textLocatePoint",
+      // "textIndentPoint",
       "textAlign",
     ].forEach((param) => {
       dest[param] = me[param];

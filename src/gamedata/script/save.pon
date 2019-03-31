@@ -1,6 +1,7 @@
 # セーブ画面
 *save_start
 ;tempsave num: 0
+;historyopt enabled: false
 ;screenshot
 
 ---
@@ -14,6 +15,7 @@ tv.save = {
   textLay: tv.layer.save + 2,
 };
 tv.transTime = 200;
+tv.savePageNum = 0;
 ---
 
 #=========================================================================================
@@ -60,9 +62,6 @@ tv.transTime = 200;
 ;locksystembuttons page: "back"
 
 # セーブボタンの設置
----
-tv.page = 0;
----
 ;nowait
 ;for loops: 6, indexvar: "i"
   ---
@@ -75,7 +74,7 @@ tv.page = 0;
   tv.y = tv.pos[tv.i][1];
   tv.imageOffsetX = 10;
   tv.imageOffsetY = 10;
-  tv.saveNum = (tv.page * 6) + tv.i;
+  tv.saveNum = (tv.savePageNum * 6) + tv.i;
   tv.saveInfo = ponkan.getSaveDataInfo(tv.saveNum);
   tv.text = tv.saveInfo.text.replace(/\n/, "");
   if (tv.text.length > 42) {
@@ -85,6 +84,7 @@ tv.page = 0;
   if (tv.lineList[0] == null) { tv.lineList[0] = ""; }
   if (tv.lineList[1] == null) { tv.lineList[1] = ""; }
   if (tv.lineList[2] == null) { tv.lineList[2] = ""; }
+  tv.exp = "tv.clickedSaveNum = " + tv.saveNum + ";";
   ---
   ;textbutton {
     lay:    "&tv.save.btnLay",
@@ -95,7 +95,7 @@ tv.page = 0;
     height: 150,
     bgcolors: ["0xFFFFFF", "0xFFFFFF", "0xFFFFFF"],
     bgalphas: [0.75, 0.85, 0.9],
-    exp:    "alert('onClickTextButton')",
+    exp:    "&tv.exp",
     jump:   true,
     label:  "on_click_save_button"
   }
@@ -137,22 +137,70 @@ tv.page = 0;
 }
 
 # ページ送りボタン
-;mesopt fontsize: 24, lineheight: 24, color: 0xFFFFFF
-;locate x: 300, y: 20
+---
+tv.pageButtonX = 700;
+tv.pageButtonY = 20;
+---
+;mesopt {
+  fontsize: 24, lineheight: 24, color: 0xFFFFFF,
+  margint: 0, marginr: 0, marginb: 0, marginl: 0
+}
+;locate x: "&tv.pageButtonX", y: "&tv.pageButtonY"
 ;nowait
 PAGE:
+;for loops: 10, indexvar: "i"
+  ---
+  tv.x = tv.pageButtonX + 80 + (tv.i * 40);
+  tv.y = tv.pageButtonY;
+  tv.exp = "tv.clickedPageNum = " + tv.i + ";";
+  if (tv.i == tv.savePageNum) {
+    tv.bgalphas = [1, 1, 1];
+  } else {
+    tv.bgalphas = [0.50, 0.85, 0.9];
+  }
+  console.log("@@@@", tv.bgalphas);
+  ---
+  ;textbutton {
+    lay:    "&tv.save.btnLay",
+    text:   "&'' + (tv.i + 1)",
+    x:      "&tv.x",
+    y:      "&tv.y",
+    width:  30,
+    height: 30,
+    bgcolors: ["0xFFFFFF", "0xFFFFFF", "0xFFFFFF"],
+    bgalphas: "&tv.bgalphas",
+    exp:    "&tv.exp",
+    jump:   true,
+    label:  "on_click_page_button"
+  }
+;endfor
 ;endnowait
 
 
 # トランジションで表示
 ;trans method: "crossfade", time: "&tv.transTime"
 ;waittrans canskip: false
-- tv.transTime = 1;
 
+*stop
 # セーブのボタンのロックを解除
 ;unlockbuttons lay: "&tv.save.btnLay"
 # 右クリックで画面を終了
 ;rclick jump: true, label: "exit", enable: true
+;s
+
+
+
+#=========================================================================================
+# ページ切り替え
+#=========================================================================================
+*on_click_page_button
+-tv.transTime = 100;
+;if exp: "tv.savePageNum == tv.clickedPageNum"
+  ;jump label: "stop"
+;else
+  -tv.savePageNum = tv.clickedPageNum;
+  ;jump label: "draw"
+;end
 ;s
 
 
@@ -161,8 +209,12 @@ PAGE:
 #=========================================================================================
 *on_click_save_button
 
+---
+alert(tv.clickedSaveNum);
+---
+;save num: "&tv.clickedSaveNum"
 
-
+-tv.transTime = 100;
 ;jump label: "draw"
 ;s
 
@@ -177,5 +229,6 @@ PAGE:
 # ;unlocksystembuttons
 ;tempload num: 0, sound: false, toback: true
 ;trans method: "crossfade", time: 200
+;historyopt enabled: true
 ;return
 
