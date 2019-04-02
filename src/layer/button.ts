@@ -111,6 +111,10 @@ export class Button extends BaseLayer {
 
   public onMouseMove(e: PonMouseEvent): boolean {
     // if (!super.onMouseLeave(e)) { return false; }
+    if (this.buttonStatus !== "disabled") {
+      this.setButtonStatus("over");
+    }
+    this.insideFlag = true;
     return false;
   }
 

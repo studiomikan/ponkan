@@ -1052,6 +1052,7 @@ export class Ponkan3 extends PonGame {
     const comment: string = this.latestSaveData.comment;
     if (this.systemVar.saveDataInfo == null) { this.systemVar.saveDataInfo = []; }
     this.systemVar.saveDataInfo[num] = {
+      isEmpty: false,
       date: this.getNowDateStr(),
       name: this.latestSaveData.name,
       comment: this.latestSaveData.comment,
@@ -1253,6 +1254,7 @@ export class Ponkan3 extends PonGame {
 
   public get emptySaveData(): any {
     return  {
+      isEmpty: true,
       date: "----/--/-- --:--:--.---",
       name: "",
       comment: "NO DATA",
@@ -1263,7 +1265,7 @@ export class Ponkan3 extends PonGame {
   }
 
   public deleteSaveData(num: number): void {
-    this.systemVar.saveDataInfo[num] = this.emptySaveData;
+    delete this.systemVar.saveDataInfo[num];
     this.resource.storeToLocalStorage(this.getSaveDataName(num), "");
     this.resource.saveSystemData(this.saveDataPrefix);
   }

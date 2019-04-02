@@ -3,6 +3,7 @@
 ;tempsave num: 0
 ;historyopt enabled: false
 ;screenshot
+;backlay
 
 ---
 tv.save = {
@@ -13,6 +14,8 @@ tv.save = {
   btnLay: tv.layer.save + 1,
   // テキスト用レイヤ
   textLay: tv.layer.save + 2,
+  // ダイアログ用レイヤ
+  dialogLay: tv.layer.save+ 3,
 };
 tv.transTime = 200;
 tv.savePageNum = 0;
@@ -23,7 +26,7 @@ tv.savePageNum = 0;
 #=========================================================================================
 *draw
 
-;preparetrans
+;currentpage page: "back"
 
 # 背景の設定
 ;image {
@@ -72,8 +75,6 @@ tv.savePageNum = 0;
   ];
   tv.x = tv.pos[tv.i][0];
   tv.y = tv.pos[tv.i][1];
-  tv.imageOffsetX = 10;
-  tv.imageOffsetY = 10;
   tv.saveNum = (tv.savePageNum * 6) + tv.i;
   tv.saveInfo = ponkan.getSaveDataInfo(tv.saveNum);
   tv.text = tv.saveInfo.text.replace(/\n/, "");
@@ -103,8 +104,8 @@ tv.savePageNum = 0;
   ;childimage {
     lay:  "&tv.save.btnLay",
     file: "&tv.saveInfo.screenShot",
-    x:    "&tv.x + tv.imageOffsetX",
-    y:    "&tv.y + tv.imageOffsetY",
+    x:    "&tv.x + 10",
+    y:    "&tv.y + 10",
     alpha: 1
   }
   ;mesopt fontsize: 14, lineheight: 14, color: 0x000000
@@ -121,15 +122,17 @@ tv.savePageNum = 0;
   = tv.lineList[1]
   ;locate x: "&tv.x + 251", y: "&tv.y + 78 + 22 + 22"
   = tv.lineList[2]
-  ;imagebutton {
-    lay:       "&tv.save.btnLay",
-    imagefile: "image/close_button_small.png",
-    x:         "&tv.x + (550 - 25)",
-    y:         "&tv.y + 10",
-    exp:       "&tv.deleteExp",
-    jump:      true,
-    label:     "on_click_delete_button"
-  }
+  ;if exp: "ponkan.existSaveData(tv.saveNum)"
+    ;imagebutton {
+      lay:       "&tv.save.btnLay",
+      imagefile: "image/close_button_small.png",
+      x:         "&tv.x + (550 - 25)",
+      y:         "&tv.y + 10",
+      exp:       "&tv.deleteExp",
+      jump:      true,
+      label:     "on_click_delete_button"
+    }
+  ;endif
 ;endfor
 ;endnowait
 
@@ -188,7 +191,7 @@ PAGE:
 ;trans method: "crossfade", time: "&tv.transTime"
 ;waittrans canskip: false
 
-*stop
+*unlock_save_buttons
 # セーブのボタンのロックを解除
 ;unlockbuttons lay: "&tv.save.btnLay"
 # 右クリックで画面を終了
@@ -215,9 +218,15 @@ PAGE:
 # セーブする
 #=========================================================================================
 *on_click_save_button
-;save num: "&tv.clickedSaveNum"
--tv.transTime = 100;
-;jump label: "draw"
+-tv.dialogMessage = "No." + (tv.clickedSaveNum + 1) + " にセーブしますか？";
+;call label: "show_dialog"
+;if exp: "tv.dialogResult"
+  ;save num: "&tv.clickedSaveNum"
+  -tv.transTime = 100;
+  ;jump label: "draw"
+;else
+  ;jump label: "unlock_save_buttons"
+;end
 ;s
 
 
@@ -225,13 +234,79 @@ PAGE:
 # 削除する
 #=========================================================================================
 *on_click_delete_button
----
-alert("TODO ダイアログ");
-alert(tv.clickedDeleteNum);
----
-;deletesavedata num: "&tv.clickedDeleteNum"
--tv.transTime = 100;
-;jump label: "draw"
+-tv.dialogMessage = "No." + (tv.clickedDeleteNum + 1) + " のセーブデータを削除しますか？";
+;call label: "show_dialog"
+;if exp: "tv.dialogResult"
+  ;deletesavedata num: "&tv.clickedDeleteNum"
+  -tv.transTime = 100;
+  ;jump label: "draw"
+;else
+  ;jump label: "unlock_save_buttons"
+;end
+;s
+
+
+#=========================================================================================
+# ダイアログを表示する
+#=========================================================================================
+*show_dialog
+;lockbuttons lay: "&tv.save.btnLay", page: "fore"
+;clear lay: "&tv.save.dialogLay"
+;clearbuttons lay: "&tv.save.dialogLay"
+;image {
+  lay:      "&tv.save.dialogLay",
+  file:     "image/dialog.png",
+  x:        (1280 - 500) / 2,
+  y:        (720 - 250) / 2,
+}
+;mesopt {
+  lay:      "&tv.save.dialogLay",
+  color:    0x000000,
+  align: "center",
+  fontsize: 24
+}
+;textbutton {
+  lay:      "&tv.save.dialogLay",
+  text:     "OK",
+  width:    250,
+  height:   50,
+  x:        0,
+  y:        200,
+  bgcolors: [0, 0, 0],
+  bgalphas: [0.1, 0, 0],
+  margint:  10,
+  exp:      "tv.dialogResult = true",
+  jump:     true,
+  label:    "dialog_return",
+}
+;textbutton {
+  lay:      "&tv.save.dialogLay",
+  text:     "キャンセル",
+  width:    250,
+  height:   50,
+  x:        250,
+  y:        200,
+  bgcolors: [0, 0, 0],
+  bgalphas: [0.1, 0, 0],
+  margint:  10,
+  exp:      "tv.dialogResult = false",
+  jump:     true,
+  label:    "dialog_return",
+}
+;nowait
+;locate lay: "&tv.save.dialogLay", y: 70
+;ch lay: "&tv.save.dialogLay", text: "&tv.dialogMessage"
+;endnowait
+;layopt lay: "&tv.save.dialogLay", visible: true
+;unlockbuttons lay: "&tv.save.dialogLay"
+;s
+
+*dialog_return
+;lockbuttons lay: "&tv.save.dialogLay"
+;unlockbuttons lay: "&tv.save.btnLay"
+;layopt lay: "&tv.save.dialogLay", visible: false
+;return
+# ;jump label: "&tv.dialogReturnLabel"
 ;s
 
 
@@ -239,9 +314,6 @@ alert(tv.clickedDeleteNum);
 # セーブ画面を終わる
 #=========================================================================================
 *exit
-# ;layopt { lay: "&tv.layer.save", blocklclick: true, visible: false }
-# ;rclick jump: false, call: false
-# ;unlocksystembuttons
 ;tempload num: 0, sound: false, toback: true
 ;trans method: "crossfade", time: 200
 ;historyopt enabled: true

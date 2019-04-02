@@ -166,7 +166,9 @@ export class PonGame implements IConductorEvent {
     label: string | null = null,
     countPage: boolean = false
   ): AsyncCallbacks {
-
+    if (filePath == null) {
+      filePath = this.conductor.script.filePath;
+    }
     let subConductor = new Conductor(
       this.resource, `Sub Conductor ${this.conductorStack.length}`, this);
     this.conductorStack.push(subConductor);
