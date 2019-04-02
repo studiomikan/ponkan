@@ -589,14 +589,16 @@ export class HistoryLayer extends BaseLayer {
   }
   public onMouseUp(e: PonMouseEvent): boolean  {
     super.onMouseUp(e);
-    if (!e.isLeft) { return true; }
-    let sb = this.scrollBar;
-    if (sb.dragging) {
-      // スクロール操作中ははみ出ても操作できるようにする
-      let e2 = new PonMouseEvent(e.x - sb.x, e.y - sb.y, e.button);
-      this.scrollBar.onMouseUp(e2);
-      this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
-    } else if (e.isRight) {
+    if (e.isLeft) {
+      let sb = this.scrollBar;
+      if (sb.dragging) {
+        // スクロール操作中ははみ出ても操作できるようにする
+        let e2 = new PonMouseEvent(e.x - sb.x, e.y - sb.y, e.button);
+        this.scrollBar.onMouseUp(e2);
+        this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
+      }
+    }
+    if (e.isRight) {
       // 右クリックで閉じる
       this.hide();
     }

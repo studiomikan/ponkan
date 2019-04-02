@@ -209,8 +209,7 @@ export class Ponkan3 extends PonGame {
   // =========================================================
 
   protected get eventReceivesLayer(): BaseLayer {
-    return this.historyLayer.visible ?
-      this.historyLayer : this.forePrimaryLayer;
+    return this.historyLayer.visible ? this.historyLayer : this.forePrimaryLayer;
   }
 
   public onMouseEnter(e: PonMouseEvent): boolean  {
