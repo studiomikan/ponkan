@@ -210,7 +210,7 @@ PAGE:
 *on_click_page_button
 -tv.save.transTime = 100;
 ;if exp: "tv.save.savePageNum == tv.clickedPageNum"
-  ;jump label: "stop"
+  ;jump label: "unlock_save_buttons"
 ;else
   -tv.save.savePageNum = tv.clickedPageNum;
   ;jump label: "draw"

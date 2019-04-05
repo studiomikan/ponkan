@@ -300,8 +300,9 @@ export class Ponkan3 extends PonGame {
 
     if (this.rightClickJump) {
       // ジャンプさせる
-      this.conductor.jump(this.rightClickFilePath, this.rightClickLabel, false);
-      this.conductor.start();
+      this.conductor.jump(this.rightClickFilePath, this.rightClickLabel, false).done(() => {
+        this.conductor.start();
+      });
     } else if (this.rightClickCall) {
       // 右クリックサブルーチン呼び出し
       this.callSubroutine(this.rightClickFilePath, this.rightClickLabel, false);
