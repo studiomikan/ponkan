@@ -15,6 +15,7 @@ import { TransManager } from "./trans-manager";
 import { ScreenShot } from "./screen-shot";
 
 export class PonGame implements IConductorEvent {
+  public config: any = {};
   public isLocked: boolean = false;
 
   public readonly resource: Resource;
@@ -45,6 +46,7 @@ export class PonGame implements IConductorEvent {
     if (elm == null) {
       throw new Error(`Not found HTMLElement: ${parentId}`);
     }
+    this.config = config;
     if (config.width == null || config.height == null) {
       config.width = 800;
       config.height = 450;

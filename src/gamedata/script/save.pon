@@ -3,6 +3,7 @@
 ;tempsave num: 0
 ;historyopt enabled: false
 ;screenshot
+;rclick enabled: false
 ;backlay
 
 ---
@@ -16,9 +17,13 @@ tv.save = {
   textLay: tv.layer.save + 2,
   // ダイアログ用レイヤ
   dialogLay: tv.layer.save+ 3,
+
+  // トランジションの時間
+  transTime: 200,
+
+  // [内部処理用] セーブ番号
+  savePageNum: 0,
 };
-tv.transTime = 200;
-tv.savePageNum = 0;
 ---
 
 #=========================================================================================
@@ -75,7 +80,7 @@ tv.savePageNum = 0;
   ];
   tv.x = tv.pos[tv.i][0];
   tv.y = tv.pos[tv.i][1];
-  tv.saveNum = (tv.savePageNum * 6) + tv.i;
+  tv.saveNum = (tv.save.savePageNum * 6) + tv.i;
   tv.saveInfo = ponkan.getSaveDataInfo(tv.saveNum);
   tv.text = tv.saveInfo.text.replace(/\n/, "");
   if (tv.text.length > 42) {
@@ -153,12 +158,11 @@ PAGE:
   tv.x = tv.pageButtonX + 80 + (tv.i * 40);
   tv.y = tv.pageButtonY;
   tv.exp = "tv.clickedPageNum = " + tv.i + ";";
-  if (tv.i == tv.savePageNum) {
+  if (tv.i == tv.save.savePageNum) {
     tv.bgalphas = [1, 1, 1];
   } else {
     tv.bgalphas = [0.50, 0.85, 0.9];
   }
-  console.log("@@@@", tv.bgalphas);
   ---
   ;textbutton {
     lay:    "&tv.save.btnLay",
@@ -188,14 +192,14 @@ PAGE:
 
 
 # トランジションで表示
-;trans method: "crossfade", time: "&tv.transTime"
+;trans method: "crossfade", time: "&tv.save.transTime"
 ;waittrans canskip: false
 
 *unlock_save_buttons
 # セーブのボタンのロックを解除
 ;unlockbuttons lay: "&tv.save.btnLay"
 # 右クリックで画面を終了
-;rclick jump: true, label: "exit", enable: true
+;rclick jump: true, label: "exit", enabled: true
 ;s
 
 
@@ -204,11 +208,11 @@ PAGE:
 # ページ切り替え
 #=========================================================================================
 *on_click_page_button
--tv.transTime = 100;
-;if exp: "tv.savePageNum == tv.clickedPageNum"
+-tv.save.transTime = 100;
+;if exp: "tv.save.savePageNum == tv.clickedPageNum"
   ;jump label: "stop"
 ;else
-  -tv.savePageNum = tv.clickedPageNum;
+  -tv.save.savePageNum = tv.clickedPageNum;
   ;jump label: "draw"
 ;end
 ;s
@@ -218,11 +222,13 @@ PAGE:
 # セーブする
 #=========================================================================================
 *on_click_save_button
+# -tv.dialogMessage = "No." + (tv.clickedSaveNum + 1) + " にセーブしますか？";
+# ;call label: "show_dialog"
 -tv.dialogMessage = "No." + (tv.clickedSaveNum + 1) + " にセーブしますか？";
-;call label: "show_dialog"
+;call file: "script/confirm_dialog.pon", label: "show_dialog"
 ;if exp: "tv.dialogResult"
   ;save num: "&tv.clickedSaveNum"
-  -tv.transTime = 100;
+  -tv.save.transTime = 100;
   ;jump label: "draw"
 ;else
   ;jump label: "unlock_save_buttons"
@@ -235,78 +241,14 @@ PAGE:
 #=========================================================================================
 *on_click_delete_button
 -tv.dialogMessage = "No." + (tv.clickedDeleteNum + 1) + " のセーブデータを削除しますか？";
-;call label: "show_dialog"
+;call file: "script/confirm_dialog.pon", label: "show_dialog"
 ;if exp: "tv.dialogResult"
   ;deletesavedata num: "&tv.clickedDeleteNum"
-  -tv.transTime = 100;
+  -tv.save.transTime = 100;
   ;jump label: "draw"
 ;else
   ;jump label: "unlock_save_buttons"
 ;end
-;s
-
-
-#=========================================================================================
-# ダイアログを表示する
-#=========================================================================================
-*show_dialog
-;lockbuttons lay: "&tv.save.btnLay", page: "fore"
-;clear lay: "&tv.save.dialogLay"
-;clearbuttons lay: "&tv.save.dialogLay"
-;image {
-  lay:      "&tv.save.dialogLay",
-  file:     "image/dialog.png",
-  x:        (1280 - 500) / 2,
-  y:        (720 - 250) / 2,
-}
-;mesopt {
-  lay:      "&tv.save.dialogLay",
-  color:    0x000000,
-  align: "center",
-  fontsize: 24
-}
-;textbutton {
-  lay:      "&tv.save.dialogLay",
-  text:     "OK",
-  width:    250,
-  height:   50,
-  x:        0,
-  y:        200,
-  bgcolors: [0, 0, 0],
-  bgalphas: [0.1, 0, 0],
-  margint:  10,
-  exp:      "tv.dialogResult = true",
-  jump:     true,
-  label:    "dialog_return",
-}
-;textbutton {
-  lay:      "&tv.save.dialogLay",
-  text:     "キャンセル",
-  width:    250,
-  height:   50,
-  x:        250,
-  y:        200,
-  bgcolors: [0, 0, 0],
-  bgalphas: [0.1, 0, 0],
-  margint:  10,
-  exp:      "tv.dialogResult = false",
-  jump:     true,
-  label:    "dialog_return",
-}
-;nowait
-;locate lay: "&tv.save.dialogLay", y: 70
-;ch lay: "&tv.save.dialogLay", text: "&tv.dialogMessage"
-;endnowait
-;layopt lay: "&tv.save.dialogLay", visible: true
-;unlockbuttons lay: "&tv.save.dialogLay"
-;s
-
-*dialog_return
-;lockbuttons lay: "&tv.save.dialogLay"
-;unlockbuttons lay: "&tv.save.btnLay"
-;layopt lay: "&tv.save.dialogLay", visible: false
-;return
-# ;jump label: "&tv.dialogReturnLabel"
 ;s
 
 
