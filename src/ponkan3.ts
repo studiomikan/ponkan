@@ -1277,6 +1277,13 @@ export class Ponkan3 extends PonGame {
       if (data.screenShot == null || data.screenShot == "") {
         data.screenShot = this.screenShot.nodata;
       }
+      const empty = this.emptySaveData;
+      if (data.date == null) { data.date = empty.date; }
+      if (data.name == null) { data.name = empty.name; }
+      if (data.comment == null) { data.comment = empty.comment; }
+      if (data.message == null) { data.message = empty.message; }
+      if (data.text == null) { data.text = empty.text; }
+      if (data.screenShot == null) { data.screenShot = empty.screenShot; }
       return data;
     } else {
       return this.emptySaveData;
