@@ -20,8 +20,8 @@ tv.systembutton = {
     },
     {
       text:  "Load",
-      file:  "script/system_button.pon",
-      label: "act_load",
+      file:  "script/load.pon",
+      label: "load_start",
       exp:   ""
     },
     {

@@ -49,6 +49,7 @@
 }
 # ;layopt "lay": 4, "x": 100, "y": 50, "visible": true
 # ;image lay: 4, file: "image/okayu.jpg"
+;childimage lay: 1, file: "image/okayu.jpg", x: 100, y: 100
 ;unlockbuttons
 ;unlocksystembuttons
 
@@ -77,6 +78,7 @@
 # ;waitsoundfade buf:0, canskip: true
 # ;lb
 
+|
 ;mesopt fontsize: 36, lineheight: 36
 BIG
 ;mesopt fontsize: 12, lineheight: 36
