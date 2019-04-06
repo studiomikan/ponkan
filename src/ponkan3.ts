@@ -68,7 +68,8 @@ export class Ponkan3 extends PonGame {
   protected quakeIntervalFrame: number = 4;
 
   // メッセージ関係
-  protected currentTextSpeed: number = 100;
+  public unreadTextSpeed: number = 100;
+  public readTextSpeed: number = 100;
   public clickSkipEnabled: boolean = true;
   public nowaitModeFlag: boolean = false;
   public addCharWithBackFlag: boolean = false;
@@ -829,13 +830,11 @@ export class Ponkan3 extends PonGame {
   public get textSpeed(): number {
     if (this.nowaitModeFlag) {
       return 0;
+    } else if (this.conductor.isPassedLatestSaveMark()) {
+      return this.readTextSpeed;
     } else {
-      return this.currentTextSpeed;
+      return this.unreadTextSpeed;
     }
-  }
-
-  public set textSpeed(textSpeed: number) {
-    this.currentTextSpeed = textSpeed;
   }
 
   /**
@@ -1087,7 +1086,8 @@ export class Ponkan3 extends PonGame {
     "autoModeInterval",
     "layerCount",
     "currentPage",
-    "currentTextSpeed",
+    "unreadTextSpeed",
+    "readTextSpeed",
     "nowaitModeFlag",
     "addCharWithBackFlag",
     "messageLayerNum",

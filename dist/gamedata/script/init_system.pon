@@ -81,7 +81,7 @@ tv.layer = {
   "marginl": 10
 }
 ;fillcolor "lay": "mes", "color": "0x4286f4", "alpha": 0.7
-;textspeed "time": 50
+;textspeed "unread": 20, "read": 20
 
 
 
