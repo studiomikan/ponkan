@@ -222,6 +222,8 @@ PAGE:
 # セーブする
 #=========================================================================================
 *on_click_save_button
+# -tv.dialogMessage = "No." + (tv.clickedSaveNum + 1) + " にセーブしますか？";
+# ;call label: "show_dialog"
 -tv.dialogMessage = "No." + (tv.clickedSaveNum + 1) + " にセーブしますか？";
 ;call file: "script/confirm_dialog.pon", label: "show_dialog"
 ;if exp: "tv.dialogResult"
@@ -238,7 +240,7 @@ PAGE:
 # 削除する
 #=========================================================================================
 *on_click_delete_button
--tv.dialogMessage = "No." + (tv.clickedDeleteNum + 1) + " のデータを削除しますか？";
+-tv.dialogMessage = "No." + (tv.clickedDeleteNum + 1) + " のセーブデータを削除しますか？";
 ;call file: "script/confirm_dialog.pon", label: "show_dialog"
 ;if exp: "tv.dialogResult"
   ;deletesavedata num: "&tv.clickedDeleteNum"
