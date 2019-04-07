@@ -15,8 +15,6 @@ tv.save = {
   btnLay: tv.layer.save + 1,
   // テキスト用レイヤ
   textLay: tv.layer.save + 2,
-  // ダイアログ用レイヤ
-  dialogLay: tv.layer.save+ 3,
 
   // トランジションの時間
   transTime: 200,
@@ -46,6 +44,7 @@ tv.save = {
 # ボタン用レイヤの設定
 ;layopt lay: "&tv.save.btnLay", x: 0, y: 0, width: 1280, height: 720, visible: true
 ;mesopt lay: "&tv.save.btnLay", color: 0x000000
+;clear lay: "&tv.save.btnLay"
 ;clearbuttons lay: "&tv.save.btnLay"
 
 # テキスト用レイヤの設定

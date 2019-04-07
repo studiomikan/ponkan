@@ -15,8 +15,6 @@ tv.load = {
   btnLay: tv.layer.load + 1,
   // テキスト用レイヤ
   textLay: tv.layer.load + 2,
-  // ダイアログ用レイヤ
-  dialogLay: tv.layer.load + 3,
 
   // トランジションの時間
   transTime: 200,
@@ -46,6 +44,7 @@ tv.load = {
 # ボタン用レイヤの設定
 ;layopt lay: "&tv.load.btnLay", x: 0, y: 0, width: 1280, height: 720, visible: true
 ;mesopt lay: "&tv.load.btnLay", color: 0x000000
+;clear lay: "&tv.load.btnLay"
 ;clearbuttons lay: "&tv.load.btnLay"
 
 # テキスト用レイヤの設定

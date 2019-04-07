@@ -44,8 +44,8 @@ tv.systembutton = {
     },
     {
       text:  "Config",
-      file:  "script/system_button.pon",
-      label: "act_config",
+      file:  "script/config.pon",
+      label: "config_start",
       exp:   ""
     },
     {

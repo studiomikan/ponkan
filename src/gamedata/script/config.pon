@@ -1,0 +1,155 @@
+# コンフィグ画面
+*config_start
+;tempsave num: 0
+;historyopt enabled: false
+;screenshot
+;rclick enabled: false
+;backlay
+
+---
+tv.config = {
+  // 背景画像
+  bg: "image/config.png",
+
+  // ボタン用レイヤ
+  btnLay: tv.layer.config + 1,
+  // テキスト用レイヤ
+  textLay: tv.layer.config + 2,
+
+  // トランジションの時間
+  transTime: 200,
+
+  // [内部処理用] 
+  selected: {
+    unreadTextSpeed: 4,
+    readTextSpeed: 5,
+    automodeSpeed: 6,
+  },
+};
+---
+
+#=========================================================================================
+# 描画処理
+#=========================================================================================
+*draw
+
+;currentpage page: "back"
+
+# 背景の設定
+;image {
+  lay: "&tv.layer.config",
+  file: "&tv.config.bg",
+  visible: false,
+  x: 0,
+  y: 0
+}
+;layopt lay: "&tv.layer.config", visible: true
+
+# ボタン用レイヤの設定
+;layopt lay: "&tv.config.btnLay", x: 0, y: 0, width: 1280, height: 720, visible: true
+;mesopt lay: "&tv.config.btnLay", color: 0x000000
+;clear lay: "&tv.config.btnLay"
+;clearbuttons lay: "&tv.config.btnLay"
+
+# テキスト用レイヤの設定
+;layopt lay: "&tv.config.textLay", x:0, y: 0, width: 1280, height: 720, visible: true
+;meslay lay: "&tv.config.textLay"
+;clear lay: "&tv.config.textLay"
+;mesopt {
+  fontfamily: ["mplus-1p-regular", "monospace"],
+  fontsize: 18,
+  lineheight: 18,
+  align: "left",
+  color: 0x000000,
+  autoreturn: false,
+  margint: 0, marginr: 0, marginb: 0, marginl: 0
+}
+
+# ボタンをロック
+;lockbuttons page: "fore"
+;lockbuttons page: "back"
+# システムボタンをロック
+;locksystembuttons page: "fore"
+;locksystembuttons page: "back"
+
+# ボタンの設置
+-tv.startX = 423;
+
+# 未読スピード
+-tv.y = 170; tv.varName = "unreadTextSpeed";
+;call label: "draw_value_buttons"
+
+
+# コンフィグ画面の閉じるボタン
+;imagebutton {
+  lay:       "&tv.config.btnLay",
+  imagefile: "image/close_button.png",
+  x:         "&1280 - 30 - 24",
+  y:         23,
+  jump:      true,
+  label:     "exit"
+}
+
+# トランジションで表示
+;trans method: "crossfade", time: "&tv.config.transTime"
+;waittrans canskip: false
+
+*unlock_config_buttons
+# ボタンのロックを解除
+;unlockbuttons lay: "&tv.config.btnLay"
+# 右クリックで画面を終了
+;rclick jump: true, label: "exit", enabled: true
+;s
+
+
+#=========================================================================================
+# 値設定のボタンを設置する
+# 事前設定値：tv.startX, tv.varName
+#=========================================================================================
+*draw_value_buttons
+;nowait
+---
+tv.x = tv.startX;
+---
+;for loops: 20, indexvar: "i"
+  ---
+  tv.exp = `tv.config.selected["${tv.varName}"] = ${tv.i};`;
+  if (tv.config.selected[tv.varName] == tv.i) {
+    tv.bgalphas = [1, 1, 1];
+    tv.jump = false;
+    tv.label = null;
+  } else {
+    tv.bgalphas = [0.5, 0.7, 0.9];
+    tv.jump = true;
+    tv.label = "draw";
+  }
+  console.log("exp", tv.exp);
+  ---
+  ;textbutton {
+    lay:    "&tv.config.btnLay",
+    x:      "&tv.x",
+    y:      "&tv.y",
+    width:  24,
+    height: 24,
+    bgcolors: ["0xFFFFFF", "0xFFFFFF", "0xFFFFFF"],
+    bgalphas: "&tv.bgalphas",
+    exp:    "&tv.exp",
+    jump:   "&tv.jump",
+    label:  "&tv.label",
+  }
+  -tv.x += 34;
+;endfor
+;endnowait
+;return
+;s
+
+
+#=========================================================================================
+# コンフィグ画面を終わる
+#=========================================================================================
+*exit
+;tempload num: 0, sound: false, toback: true
+;trans method: "crossfade", time: 200
+;historyopt enabled: true
+;return
+
