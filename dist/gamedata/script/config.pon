@@ -33,6 +33,20 @@ tv.config = {
 };
 ---
 
+# 初期値設定
+---
+tv.config.selected = {
+  unreadTextSpeed: 19 - Math.floor(19 * ponkan.unreadTextSpeed / 380),
+  readTextSpeed: 19 - Math.floor(19 * ponkan.readTextSpeed / 380),
+  automodeSpeed: 6,
+  skipMode: 0,
+  bgmVolume: 7,
+  seVolume: 8,
+  systemVolume: 9,
+  scaling: 1,
+}
+---
+
 #=========================================================================================
 # 描画処理
 #=========================================================================================
