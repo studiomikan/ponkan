@@ -7,6 +7,7 @@ export class ScriptParser {
   private scriptText: string;
   private lines: string[] = [];
   private currentLineNum: number = 0;
+  private saveMarkCount: number = 0;
   private _tags: Tag[] = [];
 
   public get tags(): Tag[] { return this._tags; }
@@ -15,6 +16,7 @@ export class ScriptParser {
     this.resource = resource;
     this.scriptText = scriptText;
     this.currentLineNum = 0;
+    this.saveMarkCount = 0;
     this.lines = this.scriptText.split(/\n/g);
     this.parse();
   }
@@ -140,12 +142,13 @@ export class ScriptParser {
       let comment: string = body.substring(p + 1);
       this.addTag("__save_mark__", { __body__: body, name: name, comment: comment });
     } else if (body.length > 0) {
-      let name: string = `__save_mark_${this.currentLineNum}__`;
+      let name: string = `__save_mark_${this.saveMarkCount}__`;
       this.addTag("__save_mark__", { __body__: body, name: name, comment: body });
     } else {
-      let name: string = `__save_mark_${this.currentLineNum}__`;
+      let name: string = `__save_mark_${this.saveMarkCount}__`;
       this.addTag("__save_mark__", { __body__: body, name: name, comment: "" });
     }
+    this.saveMarkCount++;
   }
 
   private parseJs(body: string): void {

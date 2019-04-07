@@ -158,29 +158,30 @@ end.
 これがセーブにテキストとして残
 これがセーブにテキストとして残
 |
+;pb
 ;clear
-;save "num": 0
+# ;save "num": 0
+#
+# SAVE.
+# ;pb
+# del
+# ;clearcolor "lay": "message"
+# ;freeimage "lay": 0
+# ;freeimage "lay": 1
+# ;freeimage "lay": 1
+# ;cleartextbutton "lay": 3
+# ;clearimagebutton "lay": 3
+# ;cleartogglebutton "lay": 3
+#
+# # ;stopsound "buf": 0
+# ;pb
+#
+# LOAD.
+# ;pb
+# ;load "num": 0
+# ;s
 
-SAVE.
-;pb
-del
-;clearcolor "lay": "message"
-;freeimage "lay": 0
-;freeimage "lay": 1
-;freeimage "lay": 1
-;cleartextbutton "lay": 3
-;clearimagebutton "lay": 3
-;cleartogglebutton "lay": 3
-
-# ;stopsound "buf": 0
-;pb
-
-LOAD.
-;pb
-;load "num": 0
 ;s
-
-
 
 
 *text-button-jump-target
