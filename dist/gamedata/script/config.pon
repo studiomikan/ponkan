@@ -19,7 +19,7 @@ tv.config = {
   // トランジションの時間
   transTime: 200,
 
-  // [内部処理用] 
+  // [内部処理用]
   selected: {
     unreadTextSpeed: 4,
     readTextSpeed: 5,
@@ -36,10 +36,10 @@ tv.config = {
 # 初期値設定
 ---
 tv.config.selected = {
-  unreadTextSpeed: 19 - Math.floor(19 * ponkan.unreadTextSpeed / 380),
-  readTextSpeed: 19 - Math.floor(19 * ponkan.readTextSpeed / 380),
-  automodeSpeed: 6,
-  skipMode: 0,
+  unreadTextSpeed: 20 - Math.floor(20 * ponkan.unreadTextSpeed / 400),
+  readTextSpeed: 20 - Math.floor(20 * ponkan.readTextSpeed / 400),
+  automodeSpeed: 20 - Math.floor(20 * ponkan.autoModeInterval / 10000),
+  skipMode: ponkan.canSkipUnreadPart ? 1 : 0,
   bgmVolume: 7,
   seVolume: 8,
   systemVolume: 9,
@@ -193,7 +193,7 @@ tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
 ---
 tv.x = tv.startX;
 ---
-;for loops: 20, indexvar: "i"
+;for loops: 21, indexvar: "i"
   ---
   tv.exp = `tv.config.selected["${tv.varName}"] = ${tv.i};`;
   if (tv.config.selected[tv.varName] == tv.i) {
@@ -218,7 +218,7 @@ tv.x = tv.startX;
     jump:   "&tv.jump",
     label:  "&tv.label",
   }
-  -tv.x += 34;
+  -tv.x += 32;
 ;endfor
 ;endnowait
 ;return
@@ -229,6 +229,12 @@ tv.x = tv.startX;
 # コンフィグ画面を終わる
 #=========================================================================================
 *exit
+
+# 値を適用
+---
+// TODO
+---
+
 ;tempload num: 0, sound: false, toback: true
 ;trans method: "crossfade", time: 200
 ;historyopt enabled: true
