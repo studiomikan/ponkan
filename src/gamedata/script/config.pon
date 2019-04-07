@@ -24,6 +24,11 @@ tv.config = {
     unreadTextSpeed: 4,
     readTextSpeed: 5,
     automodeSpeed: 6,
+    skipMode: 0,
+    bgmVolume: 7,
+    seVolume: 8,
+    systemVolume: 9,
+    scaling: 1,
   },
 };
 ---
@@ -47,7 +52,7 @@ tv.config = {
 
 # ボタン用レイヤの設定
 ;layopt lay: "&tv.config.btnLay", x: 0, y: 0, width: 1280, height: 720, visible: true
-;mesopt lay: "&tv.config.btnLay", color: 0x000000
+;mesopt lay: "&tv.config.btnLay", color: 0x000000, fontsize: 20, lineheight: 20, color: 0x000000
 ;clear lay: "&tv.config.btnLay"
 ;clearbuttons lay: "&tv.config.btnLay"
 
@@ -78,6 +83,69 @@ tv.config = {
 # 未読スピード
 -tv.y = 170; tv.varName = "unreadTextSpeed";
 ;call label: "draw_value_buttons"
+# 既読スピード
+-tv.y = 210; tv.varName = "readTextSpeed";
+;call label: "draw_value_buttons"
+# オートモードスピード
+-tv.y = 250; tv.varName = "automodeSpeed";
+;call label: "draw_value_buttons"
+# スキップ
+---
+tv.jump = !(tv.config.selected.skipMode == 0);
+tv.label = tv.jump ? "draw" : "unlock_config_buttons";
+tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
+---
+;textbutton {
+  lay: "&tv.config.btnLay",
+  text: "既読のみ", x: "&tv.startX", y: 290,
+  width: 120, height: 24, bgcolors: ["0xFFFFFF", "0xFFFFFF", "0xFFFFFF"], bgalphas: "&tv.bgalphas",
+  exp:"tv.config.selected.skipMode = 0", jump: "&tv.jump", label: "&tv.label",
+}
+---
+tv.jump = !(tv.config.selected.skipMode == 1);
+tv.label = tv.jump ? "draw" : "unlock_config_buttons";
+tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
+---
+;textbutton {
+  lay: "&tv.config.btnLay",
+  text: "すべて", x: "&tv.startX + 130", y: 290,
+  width: 120, height: 24, bgcolors: ["0xFFFFFF", "0xFFFFFF", "0xFFFFFF"], bgalphas: "&tv.bgalphas",
+  exp:"tv.config.selected.skipMode = 1", jump: "&tv.jump", label: "&tv.label",
+}
+
+# BGM
+-tv.y = 415; tv.varName = "bgmVolume";
+;call label: "draw_value_buttons"
+# SE
+-tv.y = 455; tv.varName = "seVolume";
+;call label: "draw_value_buttons"
+# システム
+-tv.y = 495; tv.varName = "systemVolume";
+;call label: "draw_value_buttons"
+
+# スケーリング
+---
+tv.jump = !(tv.config.selected.scaling == 0);
+tv.label = tv.jump ? "draw" : "unlock_config_buttons";
+tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
+---
+;textbutton {
+  lay: "&tv.config.btnLay",
+  text: "標準", x: "&tv.startX", y: 608,
+  width: 120, height: 24, bgcolors: ["0xFFFFFF", "0xFFFFFF", "0xFFFFFF"], bgalphas: "&tv.bgalphas",
+  exp:"tv.config.selected.scaling = 0", jump: "&tv.jump", label: "&tv.label",
+}
+---
+tv.jump = !(tv.config.selected.scaling == 1);
+tv.label = tv.jump ? "draw" : "unlock_config_buttons";
+tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
+---
+;textbutton {
+  lay: "&tv.config.btnLay",
+  text: "拡大", x: "&tv.startX + 130", y: 608,
+  width: 120, height: 24, bgcolors: ["0xFFFFFF", "0xFFFFFF", "0xFFFFFF"], bgalphas: "&tv.bgalphas",
+  exp:"tv.config.selected.scaling = 1", jump: "&tv.jump", label: "&tv.label",
+}
 
 
 # コンフィグ画面の閉じるボタン
@@ -123,7 +191,6 @@ tv.x = tv.startX;
     tv.jump = true;
     tv.label = "draw";
   }
-  console.log("exp", tv.exp);
   ---
   ;textbutton {
     lay:    "&tv.config.btnLay",
