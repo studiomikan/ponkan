@@ -15,13 +15,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
     <script src="./ponkan3.js"></script>
     <script>
+      Ponkan3.Logger.level = Ponkan3.Logger.LEVEL_DEBUG;
       var width = 1280;
       var height = 720;
       var ponkan = new Ponkan3("game", {
         gameDataDir: "./gamedata",
         saveDataPrefix: "ponkan-sample",
-        width: 1280,
-        height: 720,
+        width: width,
+        height: height,
         soundBufferCount: 5,
 
         screenShot: {

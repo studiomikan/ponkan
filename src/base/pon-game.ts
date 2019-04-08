@@ -15,6 +15,7 @@ import { TransManager } from "./trans-manager";
 import { ScreenShot } from "./screen-shot";
 
 export class PonGame implements IConductorEvent {
+  public static readonly Logger = Logger;
   public config: any = {};
   public isLocked: boolean = false;
 
