@@ -5,7 +5,6 @@ import { Logger } from "./logger";
 import { PonGame } from "./pon-game";
 import { Macro } from "./macro";
 import { Script } from "./script";
-import { Sound, ISoundCallbacks } from "./sound";
 
 export class Resource {
   private ponGame: PonGame;
@@ -205,10 +204,9 @@ export class Resource {
     return cb;
   }
 
-  public loadSound(
+  public loadSoundHowler(
     filePath: string,
     bufferNum: number,
-    callbacks: ISoundCallbacks
   ): AsyncCallbacks {
     const cb = new AsyncCallbacks();
 
@@ -218,7 +216,7 @@ export class Resource {
       volume: 1,
       autoplay: false,
       onload: () => {
-        cb.callDone(new Sound(filePath, h, bufferNum, callbacks));
+        cb.callDone(h);
       },
       onloaderror: () => {
         cb.callFail(filePath);

@@ -8,7 +8,7 @@ import { PonGame } from "./base/pon-game";
 import { PonKeyEvent } from "./base/pon-key-event";
 import { PonMouseEvent } from "./base/pon-mouse-event";
 import { PonWheelEvent } from "./base/pon-wheel-event";
-import { ISoundCallbacks, Sound, SoundBuffer } from "./base/sound";
+import { ISoundBufferCallbacks, SoundBuffer } from "./base/sound";
 import { Tag } from "./base/tag";
 import * as Util from "./base/util";
 import { HistoryLayer } from "./layer/history-layer";
@@ -141,7 +141,7 @@ export class Ponkan3 extends PonGame {
     this.historyLayer.visible = false;
     this.historyLayer.init(config, this.initialAsyncTask);
 
-    this.initSounds(config);
+    this.initSoundBuffers(config);
   }
 
   public destroy() {
@@ -543,12 +543,12 @@ export class Ponkan3 extends PonGame {
   // サウンド
   // =========================================================
 
-  private initSounds(config: any) {
+  private initSoundBuffers(config: any) {
     if (config.soundBufferCount != null) {
       this.soundBufferCount = +config.soundBufferCount;
     }
 
-    const callbacks: ISoundCallbacks = {
+    const callbacks: ISoundBufferCallbacks = {
       onStop: (bufferNum: number) => {
         this.onSoundStop(bufferNum);
       },
@@ -570,14 +570,14 @@ export class Ponkan3 extends PonGame {
     }
   }
 
-  public getSound(num: number): Sound {
-    const sound: Sound | null = this.soundBuffers[num].sound;
-    if (sound == null) {
-      throw new Error(`音声バッファ${num}は音声がロードされていません`);
-    } else {
-      return sound;
-    }
-  }
+  // public getSound(num: number): Sound {
+  //   const sound: Sound | null = this.soundBuffers[num].sound;
+  //   if (sound == null) {
+  //     throw new Error(`音声バッファ${num}は音声がロードされていません`);
+  //   } else {
+  //     return sound;
+  //   }
+  // }
 
   public onSoundStop(bufferNum: number) {
     this.conductor.trigger("soundstop");
@@ -587,25 +587,25 @@ export class Ponkan3 extends PonGame {
     this.conductor.trigger("soundfade");
   }
 
-  public waitSoundCompleteCallback(sound: Sound): void {
+  public waitSoundCompleteCallback(sb: SoundBuffer): void {
     this.conductor.clearEventHandlerByName("click");
     this.conductor.start();
   }
 
-  public waitSoundStopClickCallback(sound: Sound): void {
+  public waitSoundStopClickCallback(sb: SoundBuffer): void {
     this.conductor.clearEventHandlerByName("soundstop");
-    sound.stop();
+    sb.stop();
     this.conductor.start();
   }
 
-  public waitSoundFadeCompleteCallback(sound: Sound): void {
+  public waitSoundFadeCompleteCallback(sb: SoundBuffer): void {
     this.conductor.clearEventHandlerByName("click");
     this.conductor.start();
   }
 
-  public waitSoundFadeClickCallback(sound: Sound): void {
+  public waitSoundFadeClickCallback(sb: SoundBuffer): void {
     this.conductor.clearEventHandlerByName("soundfade");
-    sound.endFade();
+    sb.endFade();
     this.conductor.start();
   }
 
@@ -1173,7 +1173,7 @@ export class Ponkan3 extends PonGame {
 
     // sound
     this.soundBuffers.forEach((sb) => {
-      if (sb.sound != null) { sb.sound.stop(); }
+      sb.stop();
     });
     for (let i = 0; i < data.soundBuffers.length; i++) {
       if (this.soundBuffers[i] != null) {
@@ -1234,7 +1234,7 @@ export class Ponkan3 extends PonGame {
     // sound
     if (sound) {
       this.soundBuffers.forEach((sb) => {
-        if (sb.sound != null) { sb.sound.stop(); }
+        sb.stop();
       });
       for (let i = 0; i < data.soundBuffers.length; i++) {
         if (this.soundBuffers[i] != null) {

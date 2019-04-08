@@ -4,7 +4,7 @@ import { BaseLayer } from "./base/base-layer";
 import { Logger } from "./base/logger";
 import { PonEventHandler} from "./base/pon-event-handler";
 import { Resource } from "./base/resource";
-import { Sound } from "./base/sound";
+import { SoundBuffer } from "./base/sound";
 import { Tag } from "./base/tag";
 import { PonLayer } from "./layer/pon-layer";
 import { Ponkan3 } from "./ponkan3";
@@ -1039,7 +1039,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     new TagAction(
-      ["freeimage", "free"],
+      ["freeimage", "free", "unloadimage"],
       "レイヤー操作",
       "レイヤーの画像を開放する",
       [
@@ -1479,7 +1479,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        p.getSoundBuffer(values.buf).loadSound(values.file).done((sound) => {
+        p.getSoundBuffer(values.buf).loadSound(values.file).done((sb) => {
           p.conductor.start();
         }).fail(() => {
           throw new Error(`音声のロードに失敗しました(${values.file})`);
@@ -1496,7 +1496,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        p.getSoundBuffer(values.buf).unloadSound();
+        p.getSoundBuffer(values.buf).freeSound();
         return "continue";
       },
     ),
@@ -1513,11 +1513,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        const s: Sound = p.getSound(values.buf);
-        if (values.volume != null) { s.volume = values.volume; }
-        if (values.volume2 != null) { s.volume2 = values.volume2; }
-        if (values.seek != null) { s.seek = values.seek; }
-        if (values.loop != null) { s.loop = values.loop; }
+        const sb: SoundBuffer = p.getSoundBuffer(values.buf);
+        if (values.volume != null) { sb.volume = values.volume; }
+        if (values.volume2 != null) { sb.volume2 = values.volume2; }
+        if (values.seek != null) { sb.seek = values.seek; }
+        if (values.loop != null) { sb.loop = values.loop; }
         return "continue";
       },
     ),
@@ -1530,7 +1530,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        p.getSound(values.buf).play();
+        p.getSoundBuffer(values.buf).play();
         return "continue";
       },
     ),
@@ -1543,7 +1543,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        p.getSound(values.buf).stop();
+        p.getSoundBuffer(values.buf).stop();
         return "continue";
       },
     ),
@@ -1559,7 +1559,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        p.getSound(values.buf).fade(values.volume, values.time, values.autostop);
+        p.getSoundBuffer(values.buf).fade(values.volume, values.time, values.autostop);
         return "continue";
       },
     ),
@@ -1574,7 +1574,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        p.getSound(values.buf).fadeout(values.time, values.autostop);
+        p.getSoundBuffer(values.buf).fadeout(values.time, values.autostop);
         return "continue";
       },
     ),
@@ -1589,7 +1589,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        p.getSound(values.buf).fadein(values.volume, values.time);
+        p.getSoundBuffer(values.buf).fadein(values.volume, values.time);
         return "continue";
       },
     ),
@@ -1603,7 +1603,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        let s: Sound = p.getSound(values.buf);
+        let s: SoundBuffer = p.getSoundBuffer(values.buf);
         if (!s.playing || s.loop) {
           return "continue";
         }
@@ -1633,7 +1633,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        let s: Sound = p.getSound(values.buf);
+        let s: SoundBuffer = p.getSoundBuffer(values.buf);
         if (!s.fading) {
           return "continue";
         }
@@ -1662,7 +1662,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        p.getSound(values.buf).endFade();
+        p.getSoundBuffer(values.buf).endFade();
         return "continue";
       },
     ),

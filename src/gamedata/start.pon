@@ -14,7 +14,7 @@
 ;frameanim "lay": 2, "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.pageBreakFrames"
 ;startframeanim "lay": 2
 # ;loadsound "buf": 0, "file": "sound/ohka_japan.mp3"
-# ;soundopt "buf": 0, "volume": 0.2
+# ;soundopt "buf": 0, "volume": 0.1
 # ;playsound "buf": 0
 
 ;layopt "lay": 3, "x": 300, "y": 100, "visible": true, "width": 300, "height": 300
@@ -85,8 +85,8 @@ BIG
 small
 ;mesopt fontsize: 24
 Normal
-
 ;pb
+;freesound buf: 0
 
 ;move {
   lay: 1,
