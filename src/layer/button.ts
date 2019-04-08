@@ -65,7 +65,6 @@ export class Button extends BaseLayer {
     if (this.isSystemButton) {
       this.systemButtonLocked = true;
       this.setButtonStatus("disabled");
-      console.log("call lockSystemButton", this.name);
     }
   }
 

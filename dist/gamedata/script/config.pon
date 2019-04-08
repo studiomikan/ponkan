@@ -20,16 +20,7 @@ tv.config = {
   transTime: 200,
 
   // [内部処理用]
-  selected: {
-    unreadTextSpeed: 4,
-    readTextSpeed: 5,
-    automodeSpeed: 6,
-    skipMode: 0,
-    bgmVolume: 7,
-    seVolume: 8,
-    systemVolume: 9,
-    scaling: 1,
-  },
+  selected: {},
 };
 ---
 
@@ -38,11 +29,11 @@ tv.config = {
 tv.config.selected = {
   unreadTextSpeed: 20 - Math.floor(20 * ponkan.unreadTextSpeed / 400),
   readTextSpeed: 20 - Math.floor(20 * ponkan.readTextSpeed / 400),
-  automodeSpeed: 20 - Math.floor(20 * ponkan.autoModeInterval / 10000),
+  autoModeSpeed: 20 - Math.floor(20 * ponkan.autoModeInterval / 10000),
   skipMode: ponkan.canSkipUnreadPart ? 1 : 0,
-  bgmVolume: 7,
-  seVolume: 8,
-  systemVolume: 9,
+  bgmVolume: Math.floor(20 * ponkan.getSoundBuffer(0).volume / 1),
+  seVolume: Math.floor(20 * ponkan.getSoundBuffer(2).volume / 1),
+  systemVolume: Math.floor(20 * ponkan.getSoundBuffer(1).volume / 1),
   scaling: 1,
 }
 ---
@@ -101,7 +92,7 @@ tv.config.selected = {
 -tv.y = 210; tv.varName = "readTextSpeed";
 ;call label: "draw_value_buttons"
 # オートモードスピード
--tv.y = 250; tv.varName = "automodeSpeed";
+-tv.y = 250; tv.varName = "autoModeSpeed";
 ;call label: "draw_value_buttons"
 # スキップ
 ---
@@ -161,7 +152,6 @@ tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
   exp:"tv.config.selected.scaling = 1", jump: "&tv.jump", label: "&tv.label",
 }
 
-
 # コンフィグ画面の閉じるボタン
 ;imagebutton {
   lay:       "&tv.config.btnLay",
@@ -175,6 +165,8 @@ tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
 # トランジションで表示
 ;trans method: "crossfade", time: "&tv.config.transTime"
 ;waittrans canskip: false
+# 二回目移行のトランジションは瞬時
+-tv.config.transTime = 0;
 
 *unlock_config_buttons
 # ボタンのロックを解除
@@ -229,13 +221,21 @@ tv.x = tv.startX;
 # コンフィグ画面を終わる
 #=========================================================================================
 *exit
+;tempload num: 0, sound: false, toback: true
 
 # 値を適用
 ---
-// TODO
+var s = tv.config.selected;
+ponkan.unreadTextSpeed = 400 - s.unreadTextSpeed * 20;
+ponkan.readTextSpeed = 400 - s.readTextSpeed * 20;
+ponkan.autoModeInterval = 10000 - s.autoModeSpeed * 500;
+ponkan.canSkipUnreadPart = (s.skipMode == 1);
+ponkan.getSoundBuffer(0).volume = s.bgmVolume / 20;
+ponkan.getSoundBuffer(1).volume = s.systemVolume / 20;
+for (var i = 2; i < ponkan.soundBuffers.length; i++) {
+  ponkan.soundBuffers[i].volume = s.seVolume / 20;
+}
 ---
-
-;tempload num: 0, sound: false, toback: true
 ;trans method: "crossfade", time: 200
 ;historyopt enabled: true
 ;return
