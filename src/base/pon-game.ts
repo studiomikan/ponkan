@@ -54,6 +54,19 @@ export class PonGame implements IConductorEvent {
     }
     this.foreRenderer = new PonRenderer(elm, config.width, config.height);
     this.backRenderer = new PonRenderer(elm, config.width, config.height);
+
+    elm.style.position = "relative";
+    elm.style.display = "block";
+    elm.style.padding = "0";
+    elm.style.width = config.width + "px";
+    elm.style.height = config.height + "px";
+    [this.foreRenderer.canvasElm, this.backRenderer.canvasElm].forEach((canvas: HTMLCanvasElement) => {
+      canvas.style.display = "block";
+      canvas.style.position = "absolute";
+      canvas.style.top = "0";
+      canvas.style.left = "0";
+    });
+    this.foreRenderer.canvasElm.style.display = "block";
     this.backRenderer.canvasElm.style.display = "none";
 
     this.resource = new Resource(this, config.gameDataDir);
@@ -62,7 +75,8 @@ export class PonGame implements IConductorEvent {
     this.screenShot = new ScreenShot(config);
 
     this.initWindowEvent();
-    this.initMouseEventOnCanvas();
+    this.initMouseEventOnCanvas(this.foreRenderer.canvasElm);
+    // this.initMouseEventOnCanvas(this.backRenderer.canvasElm);
     this.initKeyboardEvent();
 
     let mainConductor: Conductor = new Conductor(this.resource, "Main Conductor", this);
@@ -274,32 +288,21 @@ export class PonGame implements IConductorEvent {
     this.backRenderer.removeContainer(layer.container);
   }
 
+  public flip(): void {
+    this.flipPrimaryLayers();
+    this.resetPrimaryLayersRenderer();
+  }
+
   /**
    * レイヤの表と裏を入れ替える。
-   * レンダラーの入れ替えも行うため、裏レイヤーで描画されるようになる。
-   * トランジションが終わったらresetPrimaryLayersRendererを呼ぶこと。
+   * レンダラーの入れ替えは実施しないため、これまで裏レイヤーだったものが画面に表示される状態となる。
+   * トランジションが終わったらresetPrimaryLayersRendererを呼び、
+   * レンダラーとの紐付けを正しい状態に戻すこと。
    */
   public flipPrimaryLayers(): void {
-    // 入れ替え
-    let tmp1 = this.forePrimaryLayers;
+    let tmp = this.forePrimaryLayers;
     this.forePrimaryLayers = this.backPrimaryLayers;
-    this.backPrimaryLayers = tmp1;
-    // レンダラーとの紐付けを解除
-    this.forePrimaryLayers.forEach((fore) => {
-      this.foreRenderer.removeContainer(fore.container);
-      this.backRenderer.removeContainer(fore.container);
-    });
-    this.backPrimaryLayers.forEach((back) => {
-      this.backRenderer.removeContainer(back.container);
-      this.foreRenderer.removeContainer(back.container);
-    });
-       // レンダラーに紐付ける
-    this.forePrimaryLayers.forEach((fore) => {
-      this.backRenderer.addContainer(fore.container);
-    });
-    this.backPrimaryLayers.forEach((back) => {
-      this.foreRenderer.addContainer(back.container);
-    });
+    this.backPrimaryLayers = tmp;
   }
 
   /**
@@ -352,8 +355,7 @@ export class PonGame implements IConductorEvent {
 
   public onWindowClose(): boolean { return true; };
 
-  private initMouseEventOnCanvas(): void {
-    const canvas = this.foreRenderer.canvasElm;
+  private initMouseEventOnCanvas(canvas: HTMLCanvasElement): void {
     canvas.addEventListener("mouseenter", (e) => {
       try { if (this.isLocked) { return } this.onMouseEnter(new PonMouseEvent(e)); }
       catch (ex) { this.error(ex); }

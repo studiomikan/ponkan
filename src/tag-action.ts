@@ -1735,16 +1735,24 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        if (values.method === "univ") {
-          p.transManager.initUnivTrans(values.time, values.rule, values.vague).done(() => {
-            p.transManager.start();
-            p.conductor.start();
-          });
-          return p.conductor.stop();
+        if (values.time <= 0) {
+          p.flip();
+          p.onCompleteTrans();
+          return "break";
         } else {
-          p.transManager.initTrans(values.time, values.method);
-          p.transManager.start();
-          return "continue";
+          if (values.method === "univ") {
+            p.transManager.initUnivTrans(values.time, values.rule, values.vague).done(() => {
+              p.transManager.start();
+              p.conductor.start();
+            });
+            return p.conductor.stop();
+          } else {
+            p.transManager.initTrans(values.time, values.method).done(() => {
+              p.transManager.start();
+              p.conductor.start();
+            });
+            return p.conductor.stop();
+          }
         }
       },
     ),

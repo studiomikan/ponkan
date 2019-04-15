@@ -139,7 +139,8 @@ export class TransManager {
             "scroll-to-bottom" |
             "univ" |
             "crossfade"
-  ) {
+  ): AsyncCallbacks {
+    let cb = new AsyncCallbacks();
     if (this.isRunning) {
       this.stop();
     }
@@ -152,13 +153,19 @@ export class TransManager {
     if (this.filters[this.method] === undefined) {
       throw new Error(`存在しないmethodです(${this.method})`);
     }
+
+    window.setTimeout(() => {
+      cb.callDone();
+    }, 0);
+
+    return cb;
   }
 
   public initUnivTrans (
     time: number,
     ruleFilePath: string,
     vague: number = 0.25,
-  ) {
+  ): AsyncCallbacks {
 
     this.initTrans(time, "univ");
     this.ruleFilePath = ruleFilePath;
@@ -218,19 +225,20 @@ export class TransManager {
     this.status = "run";
     // 開始時に、表と裏は入れ替えておく
     this.game.flipPrimaryLayers();
+    // フィルター関連の初期化
+    this.filter = this.filters[this.method];
+    if (this.filter === null) {
+      // フィルターが無い場合は普通に描画する
+      this.game.foreRenderer.setOtherRenderer(this.game.backRenderer);
+    } else {
+      // フィルターを利用して合成する
+      this.game.foreRenderer.container.filters = [this.filter];
+    }
   }
 
   public draw(tick: number): void {
     if (this.startTick === -1) {
       this.startTick = tick;
-      this.filter = this.filters[this.method];
-      if (this.filter === null) {
-        // フィルターが無い場合は普通に描画する
-        this.game.foreRenderer.setOtherRenderer(this.game.backRenderer);
-      } else {
-        // フィルターを利用して合成する
-        this.game.foreRenderer.container.filters = [this.filter];
-      }
     }
 
     // 終了判定
