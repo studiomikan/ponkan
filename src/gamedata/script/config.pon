@@ -201,6 +201,7 @@ tv.resolutions = [
 ;nowait
 ---
 tv.x = tv.startX;
+tv.starttime = Date.now();
 ---
 ;for loops: 21, indexvar: "i"
   ---
@@ -229,6 +230,7 @@ tv.x = tv.startX;
   }
   -tv.x += 32;
 ;endfor
+-console.log("####", (Date.now() - tv.starttime));
 ;endnowait
 ;return
 ;s

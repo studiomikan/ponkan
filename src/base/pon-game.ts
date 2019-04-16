@@ -36,7 +36,7 @@ export class PonGame implements IConductorEvent {
   public readonly foreRenderer: PonRenderer;
   public readonly backRenderer: PonRenderer;
 
-  private _scaleMode: ScaleMode = ScaleMode.FIXED;
+  private _scaleMode: ScaleMode = ScaleMode.FIT;
   public _fixedScaleWidth: number = 800;
   public _fixedScaleHeight: number = 450;
 
@@ -164,12 +164,16 @@ export class PonGame implements IConductorEvent {
         scaleY = this.fixedScaleHeight / this.config.height;
         break;
       case ScaleMode.FIT:
-        scaleX = scaleY = Math.min(
-          this.parentElm.clientWidth / this.config.width,
-          this.parentElm.clientHeight / this.config.height);
+        scaleX = scaleY = this.getFitScale();
         break;
     }
     this.setCanvasScale(scaleX, scaleY);
+  }
+
+  private getFitScale(): number {
+    return Math.min(
+      this.parentElm.clientWidth / this.config.width,
+      this.parentElm.clientHeight / this.config.height);
   }
 
   public setCanvasScale(scaleX: number, scaleY: number): void {
@@ -428,35 +432,52 @@ export class PonGame implements IConductorEvent {
   public onWindowClose(): boolean { return true; };
 
   private initMouseEventOnCanvas(canvas: HTMLCanvasElement): void {
-    canvas.addEventListener("mouseenter", (e) => {
+    // let move = "ontouchmove" in canvas ? "touchmove" : "mousemove";
+    // let down = "ontouchstart" in canvas ? "touchstart" : "mousedown";
+    // let up = "ontouchend" in canvas ? "touchend" : "mouseup";
+
+    canvas.addEventListener("mouseenter", (e: MouseEvent) => {
       try { if (this.isLocked) { return } this.onMouseEnter(new PonMouseEvent(e)); }
       catch (ex) { this.error(ex); }
     });
-    canvas.addEventListener("mouseleave", (e) => {
+    canvas.addEventListener("mouseleave", (e: MouseEvent) => {
       try { if (this.isLocked) { return } this.onMouseLeave(new PonMouseEvent(e)); }
       catch (ex) { this.error(ex); }
     });
-    canvas.addEventListener("mousemove", (e) => {
-      try { if (this.isLocked) { return } this.onMouseMove(new PonMouseEvent(e)); }
-      catch (ex) { this.error(ex); }
-    });
-    canvas.addEventListener("mousedown", (e) => {
-      try { if (this.isLocked) { return } this.onMouseDown(new PonMouseEvent(e)); }
-      catch (ex) { this.error(ex); }
-    });
-    canvas.addEventListener("mouseup", (e) => {
-      try { if (this.isLocked) { return } this.onMouseUp(new PonMouseEvent(e)); }
-      catch (ex) { this.error(ex); }
-    });
-    canvas.addEventListener("mousewheel", (e) => {
+    canvas.addEventListener("mousewheel", (e: Event) => {
       try { if (this.isLocked) { return } this.onMouseWheel(new PonWheelEvent(e as WheelEvent)); }
       catch (ex) { this.error(ex); }
     });
-    canvas.addEventListener("contextmenu", (e) => {
-      e.stopPropagation();
-      e.preventDefault ();
-      return false;
+    canvas.addEventListener("mousemove", (e: MouseEvent) => {
+      try { if (this.isLocked) { return } this.onMouseMove(new PonMouseEvent(e)); }
+      catch (ex) { this.error(ex); }
     });
+    canvas.addEventListener("mousedown", (e: MouseEvent) => {
+      try { if (this.isLocked) { return } this.onMouseDown(new PonMouseEvent(e)); }
+      catch (ex) { this.error(ex); }
+    });
+
+    if ("ontouchend" in canvas) {
+      (canvas as HTMLCanvasElement).addEventListener("touchend", (e: TouchEvent) => {
+        let touch = e.changedTouches[e.changedTouches.length - 1]
+        let x = touch.pageX - (touch.target as HTMLElement).offsetLeft;
+        let y = touch.pageY - (touch.target as HTMLElement).offsetTop;
+        let button = 0;
+        // touchイベントの場合は拡大縮小を考慮
+        if (this.scaleMode === ScaleMode.FIT) {
+          let scale = this.getFitScale();
+          x /= scale;
+          y /= scale;
+        }
+        try { if (this.isLocked) { return } this.onMouseUp(new PonMouseEvent(x, y, button)); }
+        catch (ex) { this.error(ex); }
+      });
+    } else  {
+      (canvas as HTMLCanvasElement).addEventListener("mouseup", (e: MouseEvent) => {
+        try { if (this.isLocked) { return } this.onMouseUp(new PonMouseEvent(e)); }
+        catch (ex) { this.error(ex); }
+      });
+    }
   }
 
   public onMouseEnter(e: PonMouseEvent): boolean { return true; }

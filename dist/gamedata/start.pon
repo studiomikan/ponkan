@@ -88,6 +88,9 @@ Normal
 ;pb
 ;freesound buf: 0
 
+-tv.start = Date.now();
+-console.log("###@@@@@@@@@@", (Date.now() - tv.start));
+
 ;move {
   lay: 1,
   time: 1000,
