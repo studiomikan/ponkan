@@ -163,7 +163,8 @@ tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
 }
 
 # トランジションで表示
-;trans method: "crossfade", time: "&tv.config.transTime"
+# ;trans method: "crossfade", time: "&tv.config.transTime"
+;trans method: "crossfade", time: 0
 ;waittrans canskip: false
 # 二回目移行のトランジションは瞬時
 -tv.config.transTime = 0;

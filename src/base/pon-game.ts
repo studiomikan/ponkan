@@ -14,8 +14,16 @@ import { Resource } from "./resource";
 import { TransManager } from "./trans-manager";
 import { ScreenShot } from "./screen-shot";
 
+export enum ScaleMode {
+  FIXED = 0,
+  FIT,
+}
+
 export class PonGame implements IConductorEvent {
+  public static ScaleMode = ScaleMode;
+
   public static readonly Logger = Logger;
+  public readonly parentElm: HTMLElement;
   public config: any = {};
   public isLocked: boolean = false;
 
@@ -27,6 +35,10 @@ export class PonGame implements IConductorEvent {
   private fps: number = 0;
   public readonly foreRenderer: PonRenderer;
   public readonly backRenderer: PonRenderer;
+
+  private _scaleMode: ScaleMode = ScaleMode.FIXED;
+  public _fixedScaleWidth: number = 800;
+  public _fixedScaleHeight: number = 450;
 
   // コンダクタ
   protected conductorStack: Conductor[] = [];
@@ -47,6 +59,7 @@ export class PonGame implements IConductorEvent {
     if (elm == null) {
       throw new Error(`Not found HTMLElement: ${parentId}`);
     }
+    this.parentElm = elm;
     this.config = config;
     if (config.width == null || config.height == null) {
       config.width = 800;
@@ -58,14 +71,14 @@ export class PonGame implements IConductorEvent {
     elm.style.position = "relative";
     elm.style.display = "block";
     elm.style.padding = "0";
-    elm.style.width = config.width + "px";
-    elm.style.height = config.height + "px";
-    [this.foreRenderer.canvasElm, this.backRenderer.canvasElm].forEach((canvas: HTMLCanvasElement) => {
-      canvas.style.display = "block";
-      canvas.style.position = "absolute";
-      canvas.style.top = "0";
-      canvas.style.left = "0";
-    });
+    // elm.style.width = config.width + "px";
+    // elm.style.height = config.height + "px";
+    // [this.foreRenderer.canvasElm, this.backRenderer.canvasElm].forEach((canvas: HTMLCanvasElement) => {
+    //   canvas.style.display = "block";
+    //   // // canvas.style.position = "absolute";
+    //   // canvas.style.top = "0";
+    //   // canvas.style.left = "0";
+    // });
     this.foreRenderer.canvasElm.style.display = "block";
     this.backRenderer.canvasElm.style.display = "none";
 
@@ -74,6 +87,7 @@ export class PonGame implements IConductorEvent {
     this.transManager = new TransManager(this, this.resource);
     this.screenShot = new ScreenShot(config);
 
+    this.initWindowScale();
     this.initWindowEvent();
     this.initMouseEventOnCanvas(this.foreRenderer.canvasElm);
     // this.initMouseEventOnCanvas(this.backRenderer.canvasElm);
@@ -110,6 +124,64 @@ export class PonGame implements IConductorEvent {
 
   public unlock(): void {
     this.isLocked = false;
+  }
+
+  //============================================================
+  // スケーリング
+  //============================================================
+
+  // private windowResizeTimer: number = -1;
+  private initWindowScale(): void {
+    this._fixedScaleWidth = this.config.width;
+    this._fixedScaleHeight = this.config.height;
+    window.addEventListener("resize", () => {
+      this.onWindowResize();
+    });
+    this.onWindowResize();
+  }
+
+  public get scaleMode(): ScaleMode { return this._scaleMode; }
+  public set scaleMode(scaleMode: ScaleMode) {
+    this._scaleMode = scaleMode;
+    this.onWindowResize();
+  }
+
+  public get fixedScaleWidth(): number { return this._fixedScaleWidth; }
+  public get fixedScaleHeight(): number { return this._fixedScaleHeight; }
+
+  public setFixedScaleSize(width: number, height: number): void {
+    this._fixedScaleWidth = width;
+    this._fixedScaleHeight = height;
+    this.scaleMode = ScaleMode.FIXED;
+  }
+
+  public onWindowResize(): void {
+    let scaleX: number = 1.0;
+    let scaleY: number = 1.0;
+    switch (this.scaleMode) {
+      case ScaleMode.FIXED:
+        scaleX = this.fixedScaleWidth / this.config.width;
+        scaleY = this.fixedScaleHeight / this.config.height;
+        break;
+      case ScaleMode.FIT:
+        scaleX = scaleY = Math.min(
+          this.parentElm.clientWidth / this.config.width,
+          this.parentElm.clientHeight / this.config.height);
+        break;
+    }
+    this.setCanvasScale(scaleX, scaleY);
+  }
+
+  public setCanvasScale(scaleX: number, scaleY: number): void {
+    let width = this.config.width * scaleX;
+    let height = this.config.height * scaleY;
+    let left = ((this.parentElm.clientWidth - width) / 2) + "px";
+    let top = ((this.parentElm.clientHeight - height) / 2) + "px";
+    [this.foreRenderer.canvasElm, this.backRenderer.canvasElm].forEach((canvas: HTMLCanvasElement) => {
+      canvas.style.transform = `scale(${scaleX},${scaleY})`;
+      canvas.style.left = left;
+      canvas.style.top = top;
+    });
   }
 
   //============================================================
@@ -345,10 +417,10 @@ export class PonGame implements IConductorEvent {
   //============================================================
 
   private initWindowEvent(): void {
-    window.addEventListener('unload', () => {
+    window.addEventListener("unload", () => {
       this.onWindowClose()
     })
-    window.addEventListener('beforeunload', () => {
+    window.addEventListener("beforeunload", () => {
       this.onWindowClose()
     })
   }

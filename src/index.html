@@ -8,10 +8,30 @@
         font-family: 'mplus-1p-regular';
         src: url('./fonts/mplus-1m-regular.woff') format('woff')
       }
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .ponkan-game-wrapper {
+        position: relative;
+        display: block;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .ponkan-game-wrapper canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: auto auto;
+        transform-origin: 0 0;
+      }
     </style>
   </head>
   <body>
-    <div id="game" style="border: solid 1px red"></div>
+    <div id="game" class="ponkan-game-wrapper"></div>
     <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
     <script src="./ponkan3.js"></script>
     <script>
