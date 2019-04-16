@@ -130,27 +130,44 @@ tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
 
 # スケーリング
 ---
-tv.jump = !(tv.config.selected.scaling == 0);
+tv.jump = !(ponkan.scaleMode === Ponkan3.ScaleMode.FIT);
 tv.label = tv.jump ? "draw" : "unlock_config_buttons";
 tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
+tv.exp = "ponkan.scaleMode = Ponkan3.ScaleMode.FIT";
 ---
 ;textbutton {
   lay: "&tv.config.btnLay",
-  text: "標準", x: "&tv.startX", y: 608,
-  width: 120, height: 24, bgcolors: ["0xFFFFFF", "0xFFFFFF", "0xFFFFFF"], bgalphas: "&tv.bgalphas",
-  exp:"tv.config.selected.scaling = 0", jump: "&tv.jump", label: "&tv.label",
+  text: "ウィンドウサイズ", x: "&tv.startX", y: 608,
+  width: 190, height: 24, bgcolors: ["0xFFFFFF", "0xFFFFFF", "0xFFFFFF"], bgalphas: "&tv.bgalphas",
+  exp: "&tv.exp", jump: "&tv.jump", label: "&tv.label",
 }
+
 ---
-tv.jump = !(tv.config.selected.scaling == 1);
-tv.label = tv.jump ? "draw" : "unlock_config_buttons";
-tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
+tv.resolutions = [
+  [800, 450],
+  [1280, 720],
+  [1920, 1080]
+];
 ---
-;textbutton {
-  lay: "&tv.config.btnLay",
-  text: "拡大", x: "&tv.startX + 130", y: 608,
-  width: 120, height: 24, bgcolors: ["0xFFFFFF", "0xFFFFFF", "0xFFFFFF"], bgalphas: "&tv.bgalphas",
-  exp:"tv.config.selected.scaling = 1", jump: "&tv.jump", label: "&tv.label",
-}
+;for loops: "&tv.resolutions.length", indexvar: "i"
+  ---
+  tv.x = tv.startX + 200 + (130 * tv.i);
+  tv.width = tv.resolutions[tv.i][0];
+  tv.height = tv.resolutions[tv.i][1];
+  tv.text = `${tv.width}x${tv.height}`;
+  tv.jump = !(ponkan.fixedScaleWidth === tv.width && ponkan.scaleMode === Ponkan3.ScaleMode.FIXED);
+  tv.label = tv.jump ? "draw" : "unlock_config_buttons";
+  tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
+  tv.exp = `ponkan.setFixedScaleSize(${tv.width}, ${tv.height});`;
+  ---
+  ;textbutton {
+    lay: "&tv.config.btnLay",
+    text: "&tv.text", x: "&tv.x", y: 608,
+    width: 120, height: 24, bgcolors: ["0xFFFFFF", "0xFFFFFF", "0xFFFFFF"], bgalphas: "&tv.bgalphas",
+    exp: "&tv.exp", jump: "&tv.jump", label: "&tv.label",
+  }
+;endfor
+
 
 # コンフィグ画面の閉じるボタン
 ;imagebutton {
@@ -163,8 +180,7 @@ tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
 }
 
 # トランジションで表示
-# ;trans method: "crossfade", time: "&tv.config.transTime"
-;trans method: "crossfade", time: 0
+;trans method: "crossfade", time: "&tv.config.transTime"
 ;waittrans canskip: false
 # 二回目移行のトランジションは瞬時
 -tv.config.transTime = 0;
