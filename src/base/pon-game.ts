@@ -158,10 +158,16 @@ export class PonGame implements IConductorEvent {
   public onWindowResize(): void {
     let scaleX: number = 1.0;
     let scaleY: number = 1.0;
+    let bodyWidth = document.body.clientWidth;
+    let bodyHeight = document.body.clientHeight;
     switch (this.scaleMode) {
       case ScaleMode.FIXED:
-        scaleX = this.fixedScaleWidth / this.config.width;
-        scaleY = this.fixedScaleHeight / this.config.height;
+        if (bodyWidth >= this.fixedScaleWidth && bodyHeight >= this.fixedScaleHeight) {
+          scaleX = this.fixedScaleWidth / this.config.width;
+          scaleY = this.fixedScaleHeight / this.config.height;
+        } else {
+          scaleX = scaleY = this.getFitScale();
+        }
         break;
       case ScaleMode.FIT:
         scaleX = scaleY = this.getFitScale();

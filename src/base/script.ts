@@ -323,7 +323,7 @@ export class Script {
     }
 
     if (++loopInfo.count < loopInfo.loops) {
-      this.resource.evalJs(`tv["${loopInfo.indexVarName}"] = ${loopInfo.count};`);
+      this.resource.tmpVar[loopInfo.indexVarName] = loopInfo.count;
       this.goTo(loopInfo.startTagPoint);
     } else {
       this.forLoopStack.pop();

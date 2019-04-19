@@ -408,7 +408,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
        indexvarで指定した名前の一時変数にループ回数が格納されます。
        ループ回数は0から始まるため、、0 〜 loops-1 の値をとります。`,
       (values, tick) => {
-        (window as any).start = Date.now();
         p.conductor.script.startForLoop(values.loops, values.indexvar);
         return "continue";
       },
@@ -421,7 +420,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       `TODO タグの説明文`,
       (values, tick) => {
         p.conductor.script.endForLoop();
-        console.log("#####@@@@", (Date.now() - (window as any).start));
         return "continue";
       },
     ),

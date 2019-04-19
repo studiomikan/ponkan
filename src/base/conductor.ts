@@ -165,8 +165,10 @@ export class Conductor {
   private applyJsEntity(values: any): void {
     for (const key in values) {
       if (values.hasOwnProperty(key)) {
-        const value: string = "" + values[key] as string;
-        if (value.indexOf("&") === 0 && value.length >= 2) {
+        const v: any = values[key];
+        if (typeof v !== "string") { continue; }
+        const value: string = "" + v as string;
+        if (value.length >= 2 && values.charAt(0) === "&") {
           const js: string = value.substring(1);
           values[key] = this.resource.evalJs(js);
         }
@@ -186,13 +188,13 @@ export class Conductor {
     this.sleepTime = -1;
     this.sleepStartTick = -1;
     this.sleepSender = "";
-    Logger.debug(`Conductor start. (${this.name})`);
+    // Logger.debug(`Conductor start. (${this.name})`);
     return "continue"
   }
 
   public stop(): "continue" | "break" {
     this._status = ConductorState.Stop;
-    Logger.debug(`Conductor stop. (${this.name})`);
+    // Logger.debug(`Conductor stop. (${this.name})`);
     return "break"
   }
 
@@ -201,7 +203,7 @@ export class Conductor {
     this.sleepStartTick = tick;
     this.sleepTime = sleepTime;
     this.sleepSender = sender;
-    Logger.debug(`Conductor sleep. (${this.name})`, sleepTime, sender);
+    // Logger.debug(`Conductor sleep. (${this.name})`, sleepTime, sender);
     return "break"
   }
 
@@ -236,7 +238,7 @@ export class Conductor {
     if (handlers == null) { return false; }
     this.clearEventHandlerByName(eventName);
     handlers.forEach((h) => {
-      Logger.debug("FIRE! ", eventName, h);
+      // Logger.debug("FIRE! ", eventName, h);
       h.fire();
     });
     return true;

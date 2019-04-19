@@ -21,6 +21,9 @@ tv.config = {
 
   // [内部処理用]
   selected: {},
+
+  reservedScaleMode: null,
+  reservedScaleSize: null,
 };
 ---
 
@@ -34,7 +37,9 @@ tv.config.selected = {
   bgmVolume: Math.floor(20 * ponkan.getSoundBuffer(0).volume / 1),
   seVolume: Math.floor(20 * ponkan.getSoundBuffer(2).volume / 1),
   systemVolume: Math.floor(20 * ponkan.getSoundBuffer(1).volume / 1),
-  scaling: 1,
+  scaleMode: ponkan.scaleMode,
+  fixediScaleWidth: ponkan.fixedScaleWidth,
+  fixediScaleHeight: ponkan.fixedScaleHeight,
 }
 ---
 
@@ -130,10 +135,11 @@ tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
 
 # スケーリング
 ---
-tv.jump = !(ponkan.scaleMode === Ponkan3.ScaleMode.FIT);
+tv.jump = !(tv.config.selected.scaleMode === Ponkan3.ScaleMode.FIT);
 tv.label = tv.jump ? "draw" : "unlock_config_buttons";
 tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
-tv.exp = "ponkan.scaleMode = Ponkan3.ScaleMode.FIT";
+//tv.exp = "ponkan.scaleMode = Ponkan3.ScaleMode.FIT";
+tv.exp = "tv.config.selected.scaleMode = Ponkan3.ScaleMode.FIT";
 ---
 ;textbutton {
   lay: "&tv.config.btnLay",
@@ -155,10 +161,14 @@ tv.resolutions = [
   tv.width = tv.resolutions[tv.i][0];
   tv.height = tv.resolutions[tv.i][1];
   tv.text = `${tv.width}x${tv.height}`;
-  tv.jump = !(ponkan.fixedScaleWidth === tv.width && ponkan.scaleMode === Ponkan3.ScaleMode.FIXED);
+  tv.jump = !(tv.config.selected.fixedScaleWidth === tv.width &&
+              tv.config.selected.scaleMode === Ponkan3.ScaleMode.FIXED);
   tv.label = tv.jump ? "draw" : "unlock_config_buttons";
   tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
-  tv.exp = `ponkan.setFixedScaleSize(${tv.width}, ${tv.height});`;
+  //tv.exp = `ponkan.setFixedScaleSize(${tv.width}, ${tv.height});`;
+  tv.exp = `tv.config.selected.scaleMode = Ponkan3.ScaleMode.FIXED;
+            tv.config.selected.fixedScaleWidth = ${tv.width};
+            tv.config.selected.fixedScaleHeight = ${tv.height};`;
   ---
   ;textbutton {
     lay: "&tv.config.btnLay",
@@ -190,6 +200,15 @@ tv.resolutions = [
 ;unlockbuttons lay: "&tv.config.btnLay"
 # 右クリックで画面を終了
 ;rclick jump: true, label: "exit", enabled: true
+
+# 解像度の変更はボタン押下直後に反映せず、このタイミングまで遅延させて変更する
+---
+ponkan.scaleMode = tv.config.selected.scaleMode;
+if (ponkan.scaleMode === Ponkan3.ScaleMode.FIXED) {
+  ponkan.setFixedScaleSize(tv.config.selected.fixedScaleWidth,
+                           tv.config.selected.fixedScaleHeight);
+}
+---
 ;s
 
 
@@ -201,7 +220,6 @@ tv.resolutions = [
 ;nowait
 ---
 tv.x = tv.startX;
-tv.starttime = Date.now();
 ---
 ;for loops: 21, indexvar: "i"
   ---
@@ -230,7 +248,6 @@ tv.starttime = Date.now();
   }
   -tv.x += 32;
 ;endfor
--console.log("####", (Date.now() - tv.starttime));
 ;endnowait
 ;return
 ;s

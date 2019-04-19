@@ -402,7 +402,7 @@ export class Ponkan3 extends PonGame {
   }
 
   public onTag(tag: Tag, line: number, tick: number): "continue" | "break" {
-    Logger.debug("onTag: ", tag.name, tag.values, tag);
+    // Logger.debug("onTag: ", tag.name, tag.values, tag);
     const tagAction: TagAction = this.tagActions[tag.name];
     if (tagAction === null || tagAction === undefined) {
       // Logger.debug("Unknown Tag: ", tag.name, tag);
@@ -425,17 +425,16 @@ export class Ponkan3 extends PonGame {
         }
       }
     });
-
     return tagAction.action(tag.values, tick);
   }
 
   public onLabel(labelName: string, line: number, tick: number): "continue" | "break" {
-    Logger.debug("onLabel: ", labelName);
+    // Logger.debug("onLabel: ", labelName);
     return "continue";
   }
 
   public onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): "continue" | "break" {
-    Logger.debug("onSaveMark: ", saveMarkName, comment);
+    // Logger.debug("onSaveMark: ", saveMarkName, comment);
 
     // 未読の場合はスキップを停止する
     if (!this.conductor.isPassed(saveMarkName)) {
@@ -458,7 +457,7 @@ export class Ponkan3 extends PonGame {
   }
 
   public onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break" {
-    Logger.debug("onJs: ", js);
+    // Logger.debug("onJs: ", js);
     const text = this.resource.evalJs(js);
     if (printFlag) {
       const tag = new Tag("ch", { text: "" + text }, line);
