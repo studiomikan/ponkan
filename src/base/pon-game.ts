@@ -17,6 +17,7 @@ import { ScreenShot } from "./screen-shot";
 export enum ScaleMode {
   FIXED = 0,
   FIT,
+  FULLSCREEN,
 }
 
 export class PonGame implements IConductorEvent {
@@ -36,6 +37,7 @@ export class PonGame implements IConductorEvent {
   public readonly foreRenderer: PonRenderer;
   public readonly backRenderer: PonRenderer;
 
+  private _scaleModeBuffer: ScaleMode = ScaleMode.FIT;
   private _scaleMode: ScaleMode = ScaleMode.FIT;
   public _fixedScaleWidth: number = 800;
   public _fixedScaleHeight: number = 450;
@@ -138,12 +140,63 @@ export class PonGame implements IConductorEvent {
       this.onWindowResize();
     });
     this.onWindowResize();
+
+    window.addEventListener("fullscreenchange", () => {
+      this.onFullscreenChange();
+    });
+    window.addEventListener("fullscreenerror", () => {
+      this.onFullscreenChange();
+    });
   }
 
   public get scaleMode(): ScaleMode { return this._scaleMode; }
   public set scaleMode(scaleMode: ScaleMode) {
+    this._scaleModeBuffer = this._scaleMode;
     this._scaleMode = scaleMode;
+
+    if (this._scaleMode === ScaleMode.FULLSCREEN) {
+      if (!this.isFullscreen) { this.requestFullscreen(); }
+    } else {
+      if (this.isFullscreen) { this.cancelFullscreen(); }
+    }
     this.onWindowResize();
+  }
+
+	private get isFullscreen(): boolean {
+		let doc: any = window.document;
+		return doc.fullscreenElement ||
+           doc.mozFullScreenElement ||
+           doc.webkitFullscreenElement ||
+           doc.msFullscreenElement;
+	}
+
+  private requestFullscreen(): void {
+		let elm: any = window.document.documentElement;
+		let requestFullscreen = elm.requestFullscreen ||
+			                      elm.mozRequestFullScreen ||
+			                      elm.webkitRequestFullScreen ||
+			                      elm.msRequestFullscreen;
+
+    if (requestFullscreen) { requestFullscreen.call(elm); }
+  }
+
+  private cancelFullscreen(): void {
+		let doc: any = window.document;
+		let cancelFullscreen = doc.exitFullscreen ||
+                           doc.mozCancelFullScreen ||
+                           doc.webkitExitFullscreen ||
+                           doc.msExitFullscreen;
+    if (cancelFullscreen) { cancelFullscreen.call(doc); }
+  }
+
+  public onFullscreenChange(): void {
+    // フルスクリーンの状態が変化したときの動作
+    // scaleMode との整合性を取る
+    if (this.isFullscreen && this.scaleMode !== ScaleMode.FULLSCREEN) {
+      this.scaleMode = ScaleMode.FULLSCREEN;
+    } else if (!this.isFullscreen && this.scaleMode === ScaleMode.FULLSCREEN) {
+      this.scaleMode = this._scaleModeBuffer;
+    }
   }
 
   public get fixedScaleWidth(): number { return this._fixedScaleWidth; }
@@ -170,6 +223,7 @@ export class PonGame implements IConductorEvent {
         }
         break;
       case ScaleMode.FIT:
+      case ScaleMode.FULLSCREEN:
         scaleX = scaleY = this.getFitScale();
         break;
     }

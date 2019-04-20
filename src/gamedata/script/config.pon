@@ -38,8 +38,8 @@ tv.config.selected = {
   seVolume: Math.floor(20 * ponkan.getSoundBuffer(2).volume / 1),
   systemVolume: Math.floor(20 * ponkan.getSoundBuffer(1).volume / 1),
   scaleMode: ponkan.scaleMode,
-  fixediScaleWidth: ponkan.fixedScaleWidth,
-  fixediScaleHeight: ponkan.fixedScaleHeight,
+  fixedScaleWidth: ponkan.fixedScaleWidth,
+  fixedScaleHeight: ponkan.fixedScaleHeight,
 }
 ---
 
@@ -135,29 +135,39 @@ tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
 
 # スケーリング
 ---
+tv.jump = !(tv.config.selected.scaleMode === Ponkan3.ScaleMode.FULLSCREEN);
+tv.label = tv.jump ? "draw" : "unlock_config_buttons";
+tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
+tv.exp = "tv.config.selected.scaleMode = Ponkan3.ScaleMode.FULLSCREEN";
+---
+;textbutton {
+  lay: "&tv.config.btnLay",
+  text: "フルスクリーン", x: "&tv.startX", y: 608,
+  width: 170, height: 24, bgcolors: ["0xFFFFFF", "0xFFFFFF", "0xFFFFFF"], bgalphas: "&tv.bgalphas",
+  exp: "&tv.exp", jump: "&tv.jump", label: "&tv.label",
+}
+---
 tv.jump = !(tv.config.selected.scaleMode === Ponkan3.ScaleMode.FIT);
 tv.label = tv.jump ? "draw" : "unlock_config_buttons";
 tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
-//tv.exp = "ponkan.scaleMode = Ponkan3.ScaleMode.FIT";
 tv.exp = "tv.config.selected.scaleMode = Ponkan3.ScaleMode.FIT";
 ---
 ;textbutton {
   lay: "&tv.config.btnLay",
-  text: "ウィンドウサイズ", x: "&tv.startX", y: 608,
+  text: "ウィンドウサイズ", x: "&tv.startX + 180", y: 608,
   width: 190, height: 24, bgcolors: ["0xFFFFFF", "0xFFFFFF", "0xFFFFFF"], bgalphas: "&tv.bgalphas",
   exp: "&tv.exp", jump: "&tv.jump", label: "&tv.label",
 }
 
 ---
 tv.resolutions = [
-  [800, 450],
   [1280, 720],
   [1920, 1080]
 ];
 ---
 ;for loops: "&tv.resolutions.length", indexvar: "i"
   ---
-  tv.x = tv.startX + 200 + (130 * tv.i);
+  tv.x = tv.startX + 380 + (130 * tv.i);
   tv.width = tv.resolutions[tv.i][0];
   tv.height = tv.resolutions[tv.i][1];
   tv.text = `${tv.width}x${tv.height}`;
@@ -165,7 +175,6 @@ tv.resolutions = [
               tv.config.selected.scaleMode === Ponkan3.ScaleMode.FIXED);
   tv.label = tv.jump ? "draw" : "unlock_config_buttons";
   tv.bgalphas = tv.jump ? [0.5, 0.7, 0.9] : [1, 1, 1];
-  //tv.exp = `ponkan.setFixedScaleSize(${tv.width}, ${tv.height});`;
   tv.exp = `tv.config.selected.scaleMode = Ponkan3.ScaleMode.FIXED;
             tv.config.selected.fixedScaleWidth = ${tv.width};
             tv.config.selected.fixedScaleHeight = ${tv.height};`;
