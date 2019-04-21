@@ -164,10 +164,10 @@ export class PonGame implements IConductorEvent {
 
 	private get isFullscreen(): boolean {
 		let doc: any = window.document;
-		return doc.fullscreenElement ||
-           doc.mozFullScreenElement ||
-           doc.webkitFullscreenElement ||
-           doc.msFullscreenElement;
+		return (doc.fullscreenElement ||
+            doc.mozFullScreenElement ||
+            doc.webkitFullscreenElement ||
+            doc.msFullscreenElement) != null;
 	}
 
   private requestFullscreen(): void {

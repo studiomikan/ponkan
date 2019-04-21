@@ -27,10 +27,14 @@ export class Script {
 
   protected macroStack: Macro[] = [];
 
-  public constructor(resource: Resource, filePath: string, scriptText: string) {
+  public constructor(resource: Resource, filePath: string, scriptText: string | null) {
     this.resource = resource;
     this._filePath = filePath;
-    this.parser = new ScriptParser(this.resource, scriptText);
+    if (scriptText != null) {
+      this.parser = new ScriptParser(this.resource, scriptText);
+    } else {
+      this.parser = new ScriptParser(this.resource, "");
+    }
   }
 
   public debugPrint(): void {
@@ -38,6 +42,12 @@ export class Script {
     this.parser.debugPrint();
     Logger.debug("Script current point: ", this.tagPoint);
     Logger.debug("============================================");
+  }
+
+  public clone(): Script {
+    let script: Script = new Script(this.resource, this.filePath, null);
+    script.parser = this.parser;
+    return script;
   }
 
   public goToStart(): void {

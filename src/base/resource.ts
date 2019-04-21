@@ -13,6 +13,9 @@ export class Resource {
   public gameVar: any = {};
   public systemVar: any = { saveDataInfo: [] };
 
+  public enabledScriptCache: boolean = true;
+  private scriptCache: any = {};
+
   public cursor: any = {
     "disabled": "auto",
     "normal": "auto",
@@ -158,17 +161,30 @@ export class Resource {
    */
   public loadScript(filePath: string): AsyncCallbacks {
     const cb = new AsyncCallbacks();
-    this.loadText(filePath).done((text) => {
-      try {
-        const script: Script = new Script(this, filePath, text);
-        cb.callDone(script);
-      } catch (e) {
-        Logger.error(e);
-        cb.callFail(e);
-      }
-    }).fail(() => {
-      cb.callFail();
-    });
+    if (this.enabledScriptCache && this.scriptCache[filePath] != null) {
+      // キャッシュから
+      window.setTimeout(() => {
+        cb.callDone(this.scriptCache[filePath].clone());
+      }, 0);
+    } else {
+      // 新規読み込み
+      this.loadText(filePath).done((text) => {
+        try {
+          const script: Script = new Script(this, filePath, text);
+          if (this.enabledScriptCache) {
+            this.scriptCache[filePath] = script;
+            cb.callDone(script.clone());
+          } else {
+            cb.callDone(script);
+          }
+        } catch (e) {
+          Logger.error(e);
+          cb.callFail(e);
+        }
+      }).fail(() => {
+        cb.callFail();
+      });
+    }
     return cb;
   }
 
