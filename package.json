@@ -33,7 +33,7 @@
     "pixi.js": "=4.8.5",
     "ts-loader": "^5.3.3",
     "tslint": "^5.13.1",
-    "typedoc": "^0.13.0",
+    "typedoc": "^0.14.2",
     "typescript": "^3.3.3333",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
