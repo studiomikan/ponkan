@@ -7,7 +7,8 @@
 ;backlay
 
 ---
-tv.save = {
+if (tv.system == null) tv.system = {};
+tv.system.save = {
   // 背景画像
   bg: "image/save.png",
 
@@ -34,7 +35,7 @@ tv.save = {
 # 背景の設定
 ;image {
   lay: "&tv.layer.save",
-  file: "&tv.save.bg",
+  file: "&tv.system.save.bg",
   visible: false,
   x: 0,
   y: 0
@@ -42,15 +43,15 @@ tv.save = {
 ;layopt lay: "&tv.layer.save", visible: true
 
 # ボタン用レイヤの設定
-;layopt lay: "&tv.save.btnLay", x: 0, y: 0, width: 1280, height: 720, visible: true
-;mesopt lay: "&tv.save.btnLay", color: 0x000000
-;clear lay: "&tv.save.btnLay"
-;clearbuttons lay: "&tv.save.btnLay"
+;layopt lay: "&tv.system.save.btnLay", x: 0, y: 0, width: 1280, height: 720, visible: true
+;mesopt lay: "&tv.system.save.btnLay", color: 0x000000
+;clear lay: "&tv.system.save.btnLay"
+;clearbuttons lay: "&tv.system.save.btnLay"
 
 # テキスト用レイヤの設定
-;layopt lay: "&tv.save.textLay", x:0, y: 0, width: 1280, height: 720, visible: true
-;meslay lay: "&tv.save.textLay"
-;clear lay: "&tv.save.textLay"
+;layopt lay: "&tv.system.save.textLay", x:0, y: 0, width: 1280, height: 720, visible: true
+;meslay lay: "&tv.system.save.textLay"
+;clear lay: "&tv.system.save.textLay"
 ;mesopt {
   fontfamily: ["mplus-1p-regular", "monospace"],
   fontsize: 18,
@@ -79,7 +80,7 @@ tv.save = {
   ];
   tv.x = tv.pos[tv.i][0];
   tv.y = tv.pos[tv.i][1];
-  tv.saveNum = (tv.save.savePageNum * 6) + tv.i;
+  tv.saveNum = (tv.system.save.savePageNum * 6) + tv.i;
   tv.saveInfo = ponkan.getSaveDataInfo(tv.saveNum);
   tv.text = tv.saveInfo.text.replace(/\n/, "");
   if (tv.text.length > 42) {
@@ -93,7 +94,7 @@ tv.save = {
   tv.deleteExp = "tv.clickedDeleteNum = " + tv.saveNum + ";";
   ---
   ;textbutton {
-    lay:    "&tv.save.btnLay",
+    lay:    "&tv.system.save.btnLay",
     text:   "",
     x:      "&tv.x",
     y:      "&tv.y",
@@ -106,7 +107,7 @@ tv.save = {
     label:  "on_click_save_button"
   }
   ;childimage {
-    lay:  "&tv.save.btnLay",
+    lay:  "&tv.system.save.btnLay",
     file: "&tv.saveInfo.screenShot",
     x:    "&tv.x + 10",
     y:    "&tv.y + 10",
@@ -128,7 +129,7 @@ tv.save = {
   = tv.lineList[2]
   ;if exp: "ponkan.existSaveData(tv.saveNum)"
     ;imagebutton {
-      lay:       "&tv.save.btnLay",
+      lay:       "&tv.system.save.btnLay",
       imagefile: "image/close_button_small.png",
       x:         "&tv.x + (550 - 25)",
       y:         "&tv.y + 10",
@@ -157,14 +158,14 @@ PAGE:
   tv.x = tv.pageButtonX + 80 + (tv.i * 40);
   tv.y = tv.pageButtonY;
   tv.exp = "tv.clickedPageNum = " + tv.i + ";";
-  if (tv.i == tv.save.savePageNum) {
+  if (tv.i == tv.system.save.savePageNum) {
     tv.bgalphas = [1, 1, 1];
   } else {
     tv.bgalphas = [0.50, 0.85, 0.9];
   }
   ---
   ;textbutton {
-    lay:    "&tv.save.btnLay",
+    lay:    "&tv.system.save.btnLay",
     text:   "&'' + (tv.i + 1)",
     x:      "&tv.x",
     y:      "&tv.y",
@@ -181,7 +182,7 @@ PAGE:
 
 # セーブ画面の閉じるボタン
 ;imagebutton {
-  lay:       "&tv.save.btnLay",
+  lay:       "&tv.system.save.btnLay",
   imagefile: "image/close_button.png",
   x:         "&1280 - 30 - 24",
   y:         23,
@@ -191,12 +192,12 @@ PAGE:
 
 
 # トランジションで表示
-;trans method: "crossfade", time: "&tv.save.transTime"
+;trans method: "crossfade", time: "&tv.system.save.transTime"
 ;waittrans canskip: false
 
 *unlock_save_buttons
 # セーブのボタンのロックを解除
-;unlockbuttons lay: "&tv.save.btnLay"
+;unlockbuttons lay: "&tv.system.save.btnLay"
 # 右クリックで画面を終了
 ;rclick jump: true, label: "exit", enabled: true
 ;s
@@ -207,11 +208,11 @@ PAGE:
 # ページ切り替え
 #=========================================================================================
 *on_click_page_button
--tv.save.transTime = 100;
-;if exp: "tv.save.savePageNum == tv.clickedPageNum"
+-tv.system.save.transTime = 100;
+;if exp: "tv.system.save.savePageNum == tv.clickedPageNum"
   ;jump label: "unlock_save_buttons"
 ;else
-  -tv.save.savePageNum = tv.clickedPageNum;
+  -tv.system.save.savePageNum = tv.clickedPageNum;
   ;jump label: "draw"
 ;end
 ;s
@@ -225,7 +226,7 @@ PAGE:
 ;call file: "script/confirm_dialog.pon", label: "show_dialog"
 ;if exp: "tv.dialogResult"
   ;save num: "&tv.clickedSaveNum"
-  -tv.save.transTime = 100;
+  -tv.system.save.transTime = 100;
   ;jump label: "draw"
 ;else
   ;jump label: "unlock_save_buttons"
@@ -241,7 +242,7 @@ PAGE:
 ;call file: "script/confirm_dialog.pon", label: "show_dialog"
 ;if exp: "tv.dialogResult"
   ;deletesavedata num: "&tv.clickedDeleteNum"
-  -tv.save.transTime = 100;
+  -tv.system.save.transTime = 100;
   ;jump label: "draw"
 ;else
   ;jump label: "unlock_save_buttons"

@@ -7,7 +7,8 @@
 ;backlay
 
 ---
-tv.load = {
+if (tv.system == null) tv.system = {};
+tv.system.load = {
   // 背景画像
   bg: "image/load.png",
 
@@ -34,7 +35,7 @@ tv.load = {
 # 背景の設定
 ;image {
   lay: "&tv.layer.load",
-  file: "&tv.load.bg",
+  file: "&tv.system.load.bg",
   visible: false,
   x: 0,
   y: 0
@@ -42,15 +43,15 @@ tv.load = {
 ;layopt lay: "&tv.layer.load", visible: true
 
 # ボタン用レイヤの設定
-;layopt lay: "&tv.load.btnLay", x: 0, y: 0, width: 1280, height: 720, visible: true
-;mesopt lay: "&tv.load.btnLay", color: 0x000000
-;clear lay: "&tv.load.btnLay"
-;clearbuttons lay: "&tv.load.btnLay"
+;layopt lay: "&tv.system.load.btnLay", x: 0, y: 0, width: 1280, height: 720, visible: true
+;mesopt lay: "&tv.system.load.btnLay", color: 0x000000
+;clear lay: "&tv.system.load.btnLay"
+;clearbuttons lay: "&tv.system.load.btnLay"
 
 # テキスト用レイヤの設定
-;layopt lay: "&tv.load.textLay", x:0, y: 0, width: 1280, height: 720, visible: true
-;meslay lay: "&tv.load.textLay"
-;clear lay: "&tv.load.textLay"
+;layopt lay: "&tv.system.load.textLay", x:0, y: 0, width: 1280, height: 720, visible: true
+;meslay lay: "&tv.system.load.textLay"
+;clear lay: "&tv.system.load.textLay"
 ;mesopt {
   fontfamily: ["mplus-1p-regular", "monospace"],
   fontsize: 18,
@@ -79,7 +80,7 @@ tv.load = {
   ];
   tv.x = tv.pos[tv.i][0];
   tv.y = tv.pos[tv.i][1];
-  tv.loadNum = (tv.load.loadPageNum * 6) + tv.i;
+  tv.loadNum = (tv.system.load.loadPageNum * 6) + tv.i;
   tv.loadInfo = ponkan.getSaveDataInfo(tv.loadNum);
   tv.text = tv.loadInfo.text.replace(/\n/, "");
   if (tv.text.length > 42) {
@@ -94,7 +95,7 @@ tv.load = {
   ---
     ;if exp: "ponkan.existSaveData(tv.loadNum)"
     ;textbutton {
-      lay:    "&tv.load.btnLay",
+      lay:    "&tv.system.load.btnLay",
       text:   "",
       x:      "&tv.x",
       y:      "&tv.y",
@@ -108,7 +109,7 @@ tv.load = {
     }
   ;else
     ;textbutton {
-      lay:    "&tv.load.btnLay",
+      lay:    "&tv.system.load.btnLay",
       text:   "",
       x:      "&tv.x",
       y:      "&tv.y",
@@ -121,7 +122,7 @@ tv.load = {
     }
   ;endif
   ;childimage {
-    lay:  "&tv.load.btnLay",
+    lay:  "&tv.system.load.btnLay",
     file: "&tv.loadInfo.screenShot",
     x:    "&tv.x + 10",
     y:    "&tv.y + 10",
@@ -143,7 +144,7 @@ tv.load = {
   = tv.lineList[2]
   ;if exp: "ponkan.existSaveData(tv.loadNum)"
     ;imagebutton {
-      lay:       "&tv.load.btnLay",
+      lay:       "&tv.system.load.btnLay",
       imagefile: "image/close_button_small.png",
       x:         "&tv.x + (550 - 25)",
       y:         "&tv.y + 10",
@@ -172,14 +173,14 @@ PAGE:
   tv.x = tv.pageButtonX + 80 + (tv.i * 40);
   tv.y = tv.pageButtonY;
   tv.exp = "tv.clickedPageNum = " + tv.i + ";";
-  if (tv.i == tv.load.loadPageNum) {
+  if (tv.i == tv.system.load.loadPageNum) {
     tv.bgalphas = [1, 1, 1];
   } else {
     tv.bgalphas = [0.50, 0.85, 0.9];
   }
   ---
   ;textbutton {
-    lay:    "&tv.load.btnLay",
+    lay:    "&tv.system.load.btnLay",
     text:   "&'' + (tv.i + 1)",
     x:      "&tv.x",
     y:      "&tv.y",
@@ -196,7 +197,7 @@ PAGE:
 
 # ロード画面の閉じるボタン
 ;imagebutton {
-  lay:       "&tv.load.btnLay",
+  lay:       "&tv.system.load.btnLay",
   imagefile: "image/close_button.png",
   x:         "&1280 - 30 - 24",
   y:         23,
@@ -206,12 +207,12 @@ PAGE:
 
 
 # トランジションで表示
-;trans method: "crossfade", time: "&tv.load.transTime"
+;trans method: "crossfade", time: "&tv.system.load.transTime"
 ;waittrans canskip: false
 
 *unlock_load_buttons
 # ロードのボタンのロックを解除
-;unlockbuttons lay: "&tv.load.btnLay"
+;unlockbuttons lay: "&tv.system.load.btnLay"
 # 右クリックで画面を終了
 ;rclick jump: true, label: "exit", enabled: true
 ;s
@@ -222,11 +223,11 @@ PAGE:
 # ページ切り替え
 #=========================================================================================
 *on_click_page_button
--tv.load.transTime = 100;
-;if exp: "tv.load.loadPageNum == tv.clickedPageNum"
+-tv.system.load.transTime = 100;
+;if exp: "tv.system.load.loadPageNum == tv.clickedPageNum"
   ;jump label: "unlock_load_buttons"
 ;else
-  -tv.load.loadPageNum = tv.clickedPageNum;
+  -tv.system.load.loadPageNum = tv.clickedPageNum;
   ;jump label: "draw"
 ;end
 ;s
@@ -240,7 +241,7 @@ PAGE:
 ;call file: "script/confirm_dialog.pon", label: "show_dialog"
 ;if exp: "tv.dialogResult"
   ;load num: "&tv.clickedloadNum"
-  -tv.load.transTime = 100;
+  -tv.system.load.transTime = 100;
   ;jump label: "draw"
 ;else
   ;jump label: "unlock_load_buttons"
@@ -256,7 +257,7 @@ PAGE:
 ;call file: "script/confirm_dialog.pon", label: "show_dialog"
 ;if exp: "tv.dialogResult"
   ;deleteloaddata num: "&tv.clickedDeleteNum"
-  -tv.load.transTime = 100;
+  -tv.system.load.transTime = 100;
   ;jump label: "draw"
 ;else
   ;jump label: "unlock_load_buttons"
