@@ -7,7 +7,7 @@
     "clean": "rm -rf ./dist",
     "clear": "rm -rf ./dist",
     "build": "webpack --mode=development",
-    "start": "webpack-dev-server --mode=development",
+    "start": "npm run clean; webpack-dev-server --mode=development",
     "doc": "typedoc --out ./doc ./src",
     "lint": "tslint ./src/**/*.ts ./src/*.ts",
     "lint-fix": "tslint --fix ./src/*.ts ./src/*.ts",
