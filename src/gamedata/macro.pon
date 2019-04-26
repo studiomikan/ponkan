@@ -1,4 +1,4 @@
-- console.log("macro.pon");
+# マクロ定義
 
 ;macro name: "macro_depth1"
   = mp.p
