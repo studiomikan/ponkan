@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { ScriptParser2 } from "../../src/base/script-parser2";
+import { ScriptParser2 } from "../../src/ts/base/script-parser2";
 
 let testScript_01 = `#コメント行
 [layopt "width"="100" 'height'='200' visible=true]

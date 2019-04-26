@@ -1,6 +1,6 @@
 import { assert } from "chai";
-import { Ponkan3 } from "../src/ponkan3";
-import { PonLayer } from "../src/layer/pon-layer";
+import { Ponkan3 } from "../src/ts/ponkan3";
+import { PonLayer } from "../src/ts/layer/pon-layer";
 import { ScriptParserTest } from "./base/script-parser.test";
 import { ScriptParser2Test } from "./base/script-parser2.test";
 

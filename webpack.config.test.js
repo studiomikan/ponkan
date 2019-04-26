@@ -3,9 +3,10 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const WriteFilePlugin = require('write-file-webpack-plugin');
 
 module.exports = {
+  mode: "development",
   entry: {
     test: './test/ponkan3.test.ts'
-  },  
+  },
   output: {
     path: path.join(__dirname, 'dist'),
     publicPath: '/assets',

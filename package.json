@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "clean": "rm -rf ./dist",
-    "clear": "rm -rf ./dist",
-    "build": "webpack --mode=development",
-    "start": "npm run clean; webpack-dev-server --mode=development",
+    "clean": "rm -rf ./dist; rm -rf ./dist_dev",
+    "clear": "npm run clean",
+    "release": "rm -rf ./dist; webpack --config webpack.config.prod.js",
+    "build": "rm -rf ./dist_dev; webpack --config webpack.config.dev.js",
+    "start": "rm -rf ./dist_dev; webpack-dev-server --config webpack.config.dev.js",
     "doc": "typedoc --out ./doc ./src",
     "lint": "tslint ./src/**/*.ts ./src/*.ts",
     "lint-fix": "tslint --fix ./src/*.ts ./src/*.ts",
@@ -38,6 +39,7 @@
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.2.1",
+    "webpack-merge": "^4.2.1",
     "write-file-webpack-plugin": "^4.5.0"
   }
 }

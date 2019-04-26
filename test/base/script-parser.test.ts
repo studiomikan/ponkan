@@ -1,6 +1,6 @@
 import { assert } from "chai";
-import { ScriptParser } from "../../src/base/script-parser";
-import { Ponkan3 } from "../../src/ponkan3";
+import { ScriptParser } from "../../src/ts/base/script-parser";
+import { Ponkan3 } from "../../src/ts/ponkan3";
 
 let testScript_01 = `#コメント行
 ;layopt { "width":100, "height":200, "visible":true }

@@ -1,0 +1,80 @@
+#=========================================================================================
+# 確認ダイアログ
+#
+# 使い方：
+#   - 呼び出す前に tv.dialogMessage に表示したいメッセージを格納する。
+#   - ;call file: "script/confirm_dialog.pon" で呼び出す
+#   - クリック結果は tv.dialogResult に入っている。
+#     - 「はい」が true、「いいえ」が false
+#=========================================================================================
+*show_dialog
+;rclick enabled: false
+
+---
+tv.dialog = {
+  bg: "image/dialog.png",
+  baseLay: tv.layer.dialog,
+}
+---
+
+;lockbuttons lay: "all", page: "fore"
+;clear lay: "&tv.dialog.baseLay"
+;clearbuttons lay: "&tv.dialog.baseLay"
+
+;image {
+  lay:      "&tv.dialog.baseLay",
+  file:     "&tv.dialog.bg",
+  x:        (ponkan.config.width - 500) / 2,
+  y:        (ponkan.config.height - 250) / 2,
+}
+;mesopt {
+  lay:      "&tv.dialog.baseLay",
+  color:    0x000000,
+  align: "center",
+  fontsize: 24
+}
+;textbutton {
+  lay:      "&tv.dialog.baseLay",
+  text:     "OK",
+  width:    250,
+  height:   50,
+  x:        0,
+  y:        200,
+  bgcolors: [0, 0, 0],
+  bgalphas: [0.1, 0, 0],
+  margint:  10,
+  exp:      "tv.dialogResult = true",
+  jump:     true,
+  label:    "dialog_return",
+}
+;textbutton {
+  lay:      "&tv.dialog.baseLay",
+  text:     "キャンセル",
+  width:    250,
+  height:   50,
+  x:        250,
+  y:        200,
+  bgcolors: [0, 0, 0],
+  bgalphas: [0.1, 0, 0],
+  margint:  10,
+  exp:      "tv.dialogResult = false",
+  jump:     true,
+  label:    "dialog_return",
+}
+
+;nowait
+;locate lay: "&tv.dialog.baseLay", y: 70
+;ch lay: "&tv.dialog.baseLay", text: "&tv.dialogMessage"
+;endnowait
+;layopt lay: "&tv.dialog.baseLay", visible: true
+;unlockbuttons lay: "&tv.dialog.baseLay"
+;s
+
+*dialog_return
+;lockbuttons lay: "&tv.dialog.baseLay"
+# ;unlockbuttons lay: "&tv.btnLay"
+;layopt lay: "&tv.dialog.baseLay", visible: false
+-tv.dialogMessage = "";
+;rclick enabled: true
+;return
+
