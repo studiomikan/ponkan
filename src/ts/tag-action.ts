@@ -1110,6 +1110,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
             values.marginr,
             values.marginb,
             values.marginl,
+            values.align,
           );
         });
         return "continue";

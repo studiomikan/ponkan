@@ -34,7 +34,8 @@
   height: 32,
   bgcolors: ["0xFF0000", "0x00FF00", "0x0000FF"],
   exp:    "alert('onClickTextButton')",
-  calllabel:  "button-action-call"
+  calllabel:  "button-action-call",
+  align: "left",
 }
 ;togglebutton {
   "lay": 3,
