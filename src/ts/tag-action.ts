@@ -1411,6 +1411,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("lay", "string", true, null, "対象レイヤー"),
         new TagValue("page", "string", false, "current", "対象ページ"),
         new TagValue("time", "number", true, null, "自動移動させる時間"),
+        new TagValue("delay", "number", false, 0, "開始までの遅延時間(ms)"),
         new TagValue("path", "array", true, null, "自動移動させる位置を指定"),
         new TagValue("type", "string", false, "linear", `自動移動のタイプ。"linear" | "bezier2" | "bezier3" | "catmullrom"`),
         new TagValue("ease", "string", false, "none", `自動移動の入り・抜きの指定。"none" | "in" | "out" | "both" `),
@@ -1418,7 +1419,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
-          layer.startMove(tick, values.time, values.path, values.type, values.ease);
+          layer.startMove(tick, values.time, values.delay, values.path, values.type, values.ease);
         });
         return "continue";
       },

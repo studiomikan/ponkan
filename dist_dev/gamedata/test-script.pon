@@ -93,6 +93,7 @@ Normal
 ;move {
   lay: 1,
   time: 1000,
+  delay: 2000,
   type: "catmullrom",
   path: [{x: 400, y: 0, alpha: 0.1},
          {x: 400, y: 400, alpha: 1.0},

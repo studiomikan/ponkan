@@ -21,8 +21,10 @@ export class MovableLayer extends ToggleButtonLayer {
   protected movePosList: IMovePos[] = [];
   protected movePoint: number = 0;
   protected moveTime: number = 0;
+  protected moveDelay: number = 0;
   protected moveTotalTime: number = 0;
   protected moveStartTick: number = -1;
+  protected moveDelayStartTick: number = -1;
 
   public constructor(name: string, resource: Resource, owner: Ponkan3) {
     super(name, resource, owner);
@@ -31,6 +33,7 @@ export class MovableLayer extends ToggleButtonLayer {
   public startMove(
     tick: number,
     time: number,
+    delay: number,
     path: IMovePos[],
     type: "linear" | "bezier2" | "bezier3" | "catmullrom",
     ease: "none" | "in" | "out" | "both",
@@ -54,6 +57,7 @@ export class MovableLayer extends ToggleButtonLayer {
     this.movePosList = path;
     this.movePoint = 0;
     this.moveTime = time;
+    this.moveDelay = delay;
     this.moveTotalTime = time * (path.length - 1);
     this.moveStartTick = -1; // この時点では-1としておき、初めてのupdate時に設定する
 
@@ -79,10 +83,12 @@ export class MovableLayer extends ToggleButtonLayer {
   public update(tick: number): void {
     super.update(tick)
     if (this._isMoving) {
+      if (this.moveDelayStartTick === -1) { this.moveDelayStartTick = tick; }
+      if (tick - this.moveDelayStartTick < this.moveDelay) { return; }
+
       if (this.moveStartTick === -1) {
         this.moveStartTick = tick;
       }
-
       let phase: number = (tick - this.moveStartTick) / this.moveTime;
 
       // easeの処理
