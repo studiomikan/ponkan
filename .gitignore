@@ -4,5 +4,6 @@ npm-debug.log*
 node_modules/
 doc/
 dist_test/
+manual/scripts/tmp
 tags
 

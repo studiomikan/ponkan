@@ -14,6 +14,8 @@
     "lint-fix": "tslint --fix ./src/*.ts ./src/*.ts",
     "build-test": "webpack --config webpack.config.test.js --mode=development",
     "start-test": "webpack-dev-server --config webpack.config.test.js --mode=development",
+    "gen-command-ref-md": "webpack --config webpack.config.manual.js",
+    "gen-command-ref-md-watch": "watch 'npm run gen-command-ref-md' ./src_manual",
     "test": "npm run start-test"
   },
   "author": "",
@@ -34,6 +36,7 @@
     "tslint": "^5.13.1",
     "typedoc": "^0.14.2",
     "typescript": "^3.3.3333",
+    "watch": "^1.0.2",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.2.1",
