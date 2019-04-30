@@ -1,6 +1,5 @@
 import { applyJsEntity, castTagValues, generateTagActions, TagAction, TagValue } from "../../src/ts/tag-action";
 let tagActions = (generateTagActions as any)({});
-// console.log(tagActions);
 
 // グループごとに分ける
 let grouped: any = {};
@@ -11,26 +10,65 @@ tagActions.forEach((ta: TagAction) => {
   grouped[ta.group].push(ta);
 });
 let groupNames: string[] = Object.keys(grouped);
-console.log(groupNames);
 
-let md = "# コマンドリファレンス";
+let md = "# コマンドリファレンス\n";
+md += `
+Ponkan3 のスクリプトで使用できる全てのコマンドの解説です。
+
+コマンドの中には、長いコマンドをタイプする手間を省くため、別名が設けられているものがあります。
+たとえば \`startautomode\` と \`startauto\` と \`auto\` は名前は異なりますが全て同じ動作をします。
+
+
+`;
 
 // 一覧表
-let tableMD = `## コマンド一覧`
+md += `## コマンド一覧\n`
 groupNames.forEach((groupName: string) => {
-  tableMD += `\n### ${groupName}\n\n`;
-  tableMD += `| コマンド名 | 内容 |\n`;
-  tableMD += `|------------|------|\n`;
+  md += `\n### ${groupName}\n\n`;
+  md += `| コマンド名 | 内容 |\n`;
+  md += `|------------|------|\n`;
 
   let actions: TagAction[] = grouped[groupName];
   actions.forEach((action) => {
-    tableMD += `| ${action.names.join(', ')} | ${action.comment} |\n`;
+    md += `| ${action.names.join(', ')} | ${action.comment} |\n`;
   });
 });
-md += tableMD;
+md += "\n";
 
+// コマンド詳細
+groupNames.forEach((groupName: string) => {
+  md += `## ${groupName}\n\n`;
 
+  let actions: TagAction[] = grouped[groupName];
+  actions.forEach((action) => {
+    md += `### ${action.names.join(', ')} ( ${action.comment} )\n\n`;
 
+    if (action.values.length > 0) {
+      md += `| パラメータ名 | 値の種類 | 必須 | デフォルト値 | 説明 |\n`;
+      md += `|--------------|----------|------|--------------|------|\n`;
+      action.values.forEach((value: TagValue) => {
+        let required: string = value.required ? "○" : "";
+        let defaultValue: string;
+        if (value.defaultValue == null) {
+          defaultValue = "";
+        } else {
+          defaultValue = value.defaultValue;
+          if (typeof defaultValue === "string") {
+            defaultValue = `"${defaultValue}"`;
+          }
+        }
+        let comment : string = value.comment.split("\n").map(s => s.trim()).join("\n").replace(/\|/g, "\\|");
+        md += `| ${value.name} | ${value.type} | ${required} | ${defaultValue} | ${comment} |\n`;
+      });
+      md += "\n";
+    }
+
+    let description: string = action.description;
+    md += description.split("\n").map(s => s.trim()).join("\n");
+    md += "\n";
+  });
+});
+md += "\n\n";
 
 
 console.log(md);

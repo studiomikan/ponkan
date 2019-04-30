@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>Ponkan3 コマンドリファレンス - My Docs</title>
+        <title>Command ref - Ponkan3 マニュアル</title>
         <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../css/font-awesome.min.css" rel="stylesheet">
         <link href="../css/base.css" rel="stylesheet">
@@ -39,7 +39,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="..">My Docs</a>
+                    <a class="navbar-brand" href="..">Ponkan3 マニュアル</a>
                 </div>
 
                 <!-- Expanded navigation -->
@@ -47,10 +47,10 @@
                         <!-- Main navigation -->
                         <ul class="nav navbar-nav">
                             <li >
-                                <a href="..">Welcome to MkDocs</a>
+                                <a href="..">Ponkan3 マニュアル</a>
                             </li>
                             <li class="active">
-                                <a href="./">Ponkan3 コマンドリファレンス</a>
+                                <a href="./">Command ref</a>
                             </li>
                         </ul>
 
@@ -78,12 +78,556 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#ponkan3">Ponkan3 コマンドリファレンス</a></li>
+        <li class="main active"><a href="#_1">コマンドリファレンス## コマンド一覧</a></li>
+            <li><a href="#_2">その他</a></li>
+            <li><a href="#_3">スクリプト制御</a></li>
+            <li><a href="#_4">マクロ</a></li>
+            <li><a href="#_5">メッセージ</a></li>
+            <li><a href="#_6">メッセージ操作</a></li>
+            <li><a href="#_7">レイヤー操作</a></li>
+            <li><a href="#_8">ボタン</a></li>
+            <li><a href="#_9">アニメーション</a></li>
+            <li><a href="#_10">サウンド</a></li>
+            <li><a href="#_11">トランジション</a></li>
+            <li><a href="#_12">メッセージ履歴</a></li>
+            <li><a href="#_13">セーブ／ロード</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="ponkan3">Ponkan3 コマンドリファレンス</h1></div>
+<p>[ 'その他',
+  'スクリプト制御',
+  'マクロ',
+  'メッセージ',
+  'メッセージ操作',
+  'レイヤー操作',
+  'ボタン',
+  'アニメーション',
+  'サウンド',
+  'トランジション',
+  'メッセージ履歴',
+  'セーブ／ロード' ]</p>
+<h1 id="_1">コマンドリファレンス## コマンド一覧</h1>
+<h3 id="_2">その他</h3>
+<table>
+<thead>
+<tr>
+<th>コマンド名</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>laycount</td>
+<td>レイヤーの数を変更する</td>
+</tr>
+<tr>
+<td>raiseerror</td>
+<td>エラーを発生させるかどうかの設定</td>
+</tr>
+<tr>
+<td>clearsysvar</td>
+<td>システム変数をクリア</td>
+</tr>
+<tr>
+<td>cleargamevar</td>
+<td>ゲーム変数をクリア</td>
+</tr>
+<tr>
+<td>cleartmpvar</td>
+<td>一時変数をクリア</td>
+</tr>
+<tr>
+<td>clickskipopt, clickskip</td>
+<td>クリックスキップの設定</td>
+</tr>
+<tr>
+<td>quake</td>
+<td>画面揺れ効果の開始</td>
+</tr>
+<tr>
+<td>stopquake</td>
+<td>画面揺れ効果の停止</td>
+</tr>
+<tr>
+<td>waitquake</td>
+<td>画面揺れ効果の終了待ち</td>
+</tr>
+<tr>
+<td>rightclick, rclick</td>
+<td>右クリック時の動作を設定する</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_3">スクリプト制御</h3>
+<table>
+<thead>
+<tr>
+<th>コマンド名</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>s</td>
+<td>スクリプトの実行を停止する</td>
+</tr>
+<tr>
+<td>jump</td>
+<td>スクリプトファイルを移動する</td>
+</tr>
+<tr>
+<td>call</td>
+<td>サブルーチンを呼び出す</td>
+</tr>
+<tr>
+<td>return</td>
+<td>サブルーチンをから戻る</td>
+</tr>
+<tr>
+<td>if</td>
+<td>条件によって分岐する</td>
+</tr>
+<tr>
+<td>elseif, elsif</td>
+<td>条件によって分岐する</td>
+</tr>
+<tr>
+<td>else</td>
+<td>条件によって分岐する</td>
+</tr>
+<tr>
+<td>endif</td>
+<td>条件分岐の終了</td>
+</tr>
+<tr>
+<td>for</td>
+<td>指定回数繰り返す</td>
+</tr>
+<tr>
+<td>endfor</td>
+<td>forループの終端</td>
+</tr>
+<tr>
+<td>breakfor</td>
+<td>forループから抜ける</td>
+</tr>
+<tr>
+<td>startskip, skip</td>
+<td>スキップを開始する</td>
+</tr>
+<tr>
+<td>stopskip</td>
+<td>スキップを停止する</td>
+</tr>
+<tr>
+<td>startautomode, startauto, auto</td>
+<td>オートモードを開始する</td>
+</tr>
+<tr>
+<td>stopautomode, stopauto</td>
+<td>オートモードを停止する</td>
+</tr>
+<tr>
+<td>automodeopt, autoopt</td>
+<td>オートモードの設定</td>
+</tr>
+<tr>
+<td>wait</td>
+<td>指定時間を待つ</td>
+</tr>
+<tr>
+<td>waitclick</td>
+<td>クリック待ちで停止する</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_4">マクロ</h3>
+<table>
+<thead>
+<tr>
+<th>コマンド名</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>macro</td>
+<td>マクロを定義する</td>
+</tr>
+<tr>
+<td>endmacro</td>
+<td>マクロ定義の終わり</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_5">メッセージ</h3>
+<table>
+<thead>
+<tr>
+<th>コマンド名</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>messageopt, mesopt</td>
+<td>テキストの設定</td>
+</tr>
+<tr>
+<td>ch</td>
+<td>文字を出力する</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">メッセージ操作</h3>
+<table>
+<thead>
+<tr>
+<th>コマンド名</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>br</td>
+<td>改行する</td>
+</tr>
+<tr>
+<td>clear, c</td>
+<td>テキストをクリアする</td>
+</tr>
+<tr>
+<td>textspeed</td>
+<td>文字出力のインターバルを設定</td>
+</tr>
+<tr>
+<td>nowait</td>
+<td>一時的に文字出力インターバルを0にする</td>
+</tr>
+<tr>
+<td>endnowait</td>
+<td>nowaitを終了する</td>
+</tr>
+<tr>
+<td>textlocate, locate</td>
+<td>文字表示位置を指定する</td>
+</tr>
+<tr>
+<td>indent</td>
+<td>インデント位置を設定する</td>
+</tr>
+<tr>
+<td>endindent</td>
+<td>インデント位置をクリアする</td>
+</tr>
+<tr>
+<td>linebreak, lb, l</td>
+<td>行末クリック待ちで停止する</td>
+</tr>
+<tr>
+<td>pagebreak, pb, p</td>
+<td>行末クリック待ちで停止する</td>
+</tr>
+<tr>
+<td>hidemessages</td>
+<td>メッセージレイヤを一時的に隠す</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_7">レイヤー操作</h3>
+<table>
+<thead>
+<tr>
+<th>コマンド名</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>messagelayer, messagelay, meslay, meslay</td>
+<td>メッセージレイヤーを指定する</td>
+</tr>
+<tr>
+<td>linebreakglyph, lbglyph</td>
+<td>行末グリフに関して設定する</td>
+</tr>
+<tr>
+<td>pagebreakglyph, pbglyph</td>
+<td>ページ末グリフに関して設定する</td>
+</tr>
+<tr>
+<td>fillcolor, fill</td>
+<td>レイヤーを塗りつぶす</td>
+</tr>
+<tr>
+<td>clearcolor</td>
+<td>レイヤー塗りつぶしをクリアする</td>
+</tr>
+<tr>
+<td>layopt</td>
+<td>レイヤーの設定</td>
+</tr>
+<tr>
+<td>loadimage, image</td>
+<td>レイヤーに画像を読み込む</td>
+</tr>
+<tr>
+<td>loadchildimage, childimage,</td>
+<td>レイヤーに追加で画像を読み込む</td>
+</tr>
+<tr>
+<td>freeimage, free, unloadimage</td>
+<td>レイヤーの画像を開放する</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">ボタン</h3>
+<table>
+<thead>
+<tr>
+<th>コマンド名</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>textbutton, txtbtn</td>
+<td>レイヤーにテキストボタンを配置する</td>
+</tr>
+<tr>
+<td>clearbuttons, clearbutton, clearbtn</td>
+<td>すべてのボタンをクリアする</td>
+</tr>
+<tr>
+<td>cleartextbuttons, cleartextbutton, cleartxtbtn</td>
+<td>テキストボタンをクリアする</td>
+</tr>
+<tr>
+<td>imagebutton, imgbtn</td>
+<td>レイヤーに画像ボタンを配置する</td>
+</tr>
+<tr>
+<td>clearimagebuttons, clearimagebutton, clearimgbtn</td>
+<td>画像ボタンをクリアする</td>
+</tr>
+<tr>
+<td>togglebutton, tglbtn</td>
+<td>レイヤーにトグルボタンを配置する</td>
+</tr>
+<tr>
+<td>cleartogglebuttons, cleartogglebutton, cleartglbtn</td>
+<td>トグルボタンをクリアする</td>
+</tr>
+<tr>
+<td>lockbuttons, lockbutton, lock</td>
+<td>ボタンをロックする</td>
+</tr>
+<tr>
+<td>unlockbuttons, unlockbutton, unlock</td>
+<td>ボタンをアンロックする</td>
+</tr>
+<tr>
+<td>locksystembuttons, locksystembutton, locksystem</td>
+<td>システムボタンをロックする</td>
+</tr>
+<tr>
+<td>unlocksystembuttons, unlocksystembutton, unlocksystem</td>
+<td>システムボタンをアンロックする</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">アニメーション</h3>
+<table>
+<thead>
+<tr>
+<th>コマンド名</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>frameanim, fanim</td>
+<td>フレームアニメーションを設定する</td>
+</tr>
+<tr>
+<td>startframeanim, startfanim</td>
+<td>フレームアニメーションを開始する</td>
+</tr>
+<tr>
+<td>stopframeanim, stopfanim</td>
+<td>フレームアニメーションを停止する</td>
+</tr>
+<tr>
+<td>waitframeanim, waitfanim</td>
+<td>フレームアニメーションの終了を待つ</td>
+</tr>
+<tr>
+<td>startmove, move</td>
+<td>自動移動を開始する</td>
+</tr>
+<tr>
+<td>stopmove</td>
+<td>自動移動を停止する</td>
+</tr>
+<tr>
+<td>waitmove, wm</td>
+<td>自動移動の終了を待つ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_10">サウンド</h3>
+<table>
+<thead>
+<tr>
+<th>コマンド名</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>loadsound, sound</td>
+<td>音声をロードする</td>
+</tr>
+<tr>
+<td>freesound, unloadsound</td>
+<td>音声を開放する</td>
+</tr>
+<tr>
+<td>soundopt</td>
+<td>音声の設定</td>
+</tr>
+<tr>
+<td>playsound</td>
+<td>音声を再生する</td>
+</tr>
+<tr>
+<td>stopsound</td>
+<td>音声を停止する</td>
+</tr>
+<tr>
+<td>fadesound</td>
+<td>音声をフェードする</td>
+</tr>
+<tr>
+<td>fadeoutsound, fadeout</td>
+<td>音声をフェードアウトして再生停止する</td>
+</tr>
+<tr>
+<td>fadeinsound, fadein</td>
+<td>音声をフェードインで再生開始する</td>
+</tr>
+<tr>
+<td>waitsoundstop, waitsound</td>
+<td>音声の再生終了を待つ</td>
+</tr>
+<tr>
+<td>waitsoundfade, waitfade</td>
+<td>音声のフェード終了を待つ</td>
+</tr>
+<tr>
+<td>endfadesound, endfade</td>
+<td>音声のフェードを終了する</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_11">トランジション</h3>
+<table>
+<thead>
+<tr>
+<th>コマンド名</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>backlay</td>
+<td>表レイヤを裏レイヤにコピーする</td>
+</tr>
+<tr>
+<td>copylay</td>
+<td>レイヤ情報をコピーする</td>
+</tr>
+<tr>
+<td>currentpage</td>
+<td>操作対象ページを変更する</td>
+</tr>
+<tr>
+<td>preparetrans, pretrans</td>
+<td>トランジションの前準備</td>
+</tr>
+<tr>
+<td>trans</td>
+<td>トランジションを実行する</td>
+</tr>
+<tr>
+<td>stoptrans</td>
+<td>トランジションを停止する</td>
+</tr>
+<tr>
+<td>waittrans, wt</td>
+<td>トランジションの終了を待つ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_12">メッセージ履歴</h3>
+<table>
+<thead>
+<tr>
+<th>コマンド名</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>historyopt</td>
+<td>メッセージ履歴を設定する</td>
+</tr>
+<tr>
+<td>showhistory, history</td>
+<td>メッセージ履歴を表示する</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_13">セーブ／ロード</h3>
+<table>
+<thead>
+<tr>
+<th>コマンド名</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>save</td>
+<td>最新状態をセーブする</td>
+</tr>
+<tr>
+<td>load</td>
+<td>セーブデータから復元する</td>
+</tr>
+<tr>
+<td>tempsave</td>
+<td>一時セーブする</td>
+</tr>
+<tr>
+<td>tempload</td>
+<td>一時セーブデータから復元する</td>
+</tr>
+<tr>
+<td>screenshot</td>
+<td>現在の画面のスクリーンショットを取る</td>
+</tr>
+<tr>
+<td>copysavedata, copysave</td>
+<td>セーブデータをコピーする</td>
+</tr>
+<tr>
+<td>deletesavedata, delsavedata, delsave</td>
+<td>セーブデータを削除する</td>
+</tr>
+</tbody>
+</table></div>
         </div>
 
         <footer class="col-md-12">

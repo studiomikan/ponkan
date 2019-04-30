@@ -6,7 +6,7 @@ module.exports = {
     gen_command_ref_md: path.join(__dirname, 'manual/scripts/gen_command_ref_md.ts')
   },
   output: {
-    path: path.join(__dirname, 'manual/scripts/tmp'),
+    path: path.join(__dirname, 'manual/scripts_tmp'),
     filename: '[name].js'
   },
   module: {
