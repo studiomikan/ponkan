@@ -4,7 +4,8 @@
 |save-mark-0001:セーブコメント01
 |セーブコメント02
 
-;image "lay": 0, "page": "fore", "file": "image/bg0.png", "visible": true, "x": 0, "y": 0
+;layalias name: "base", lay: "0"
+;image "lay": "base", "page": "fore", "file": "image/bg0.png", "visible": true, "x": 0, "y": 0
 ;childimage lay: "0", file: "image/okayu.jpg", x: 100, y: 500
 ;image "lay": 1, "page": "fore", "file": "image/okayu.jpg", "visible": true, "x": 0, "y": 0
 ;image "lay": 2, "file": "image/pagebreak.png", "visible": true, "x": 0, "y": 0

@@ -52,7 +52,7 @@ export class Ponkan3 extends PonGame {
 
   // レイヤ関係
   protected _layerCount: number = DEFAULT_LAYER_COUNT;
-  // public set layerCount(layerCount: number) { this._layerCount = layerCount; }
+  public layerAlias: any = {};
   public forePrimaryLayer: PonLayer;
   public backPrimaryLayer: PonLayer;
   public get foreLayers(): PonLayer[] { return this.forePrimaryLayer.children as PonLayer[]; }
@@ -702,6 +702,8 @@ export class Ponkan3 extends PonGame {
       targetLayers.push(pageLayers[this.pageBreakGlyphLayerNum]);
     } else if (lay === "auto" || lay === "automode") {
       targetLayers.push(pageLayers[this.autoModeLayerNum]);
+    } else if (this.layerAlias[lay] != null) {
+      return this.getTargetLayers(pageLayers, this.layerAlias[lay]);
     } else {
       const layerNum: number = parseInt(lay, 10);
       if (layerNum < 0 || this.layerCount <= layerNum) {

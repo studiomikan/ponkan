@@ -840,6 +840,43 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // レイヤー関係
     // ======================================================================
     new TagAction(
+      ["layalias"],
+      "レイヤー操作",
+      "レイヤー名エイリアスを作成する",
+      [
+        new TagValue("name", "string", true, null, "エイリアス名"),
+        new TagValue("lay", "string", true, null, "対象レイヤー"),
+      ],
+      `レイヤー名のエイリアス（別名）を作成します。
+       エイリアスを作成すると、レイヤーを指定するコマンドでレイヤー番号のかわりにエイリアス名を使用することができるようになります。
+       たとえば以下のように、背景画像を表示するレイヤーに base というようなエイリアスを作成することで、
+       スクリプト作成時の可読性が向上します。
+       \`\`\`
+       # 背景画像はレイヤー 0 に作成するので、エイリアスを作成する
+       ;layalias name: "base", lay: "0"
+       # 以後、背景画像は以下のように読み込める
+       ;image lay: "base", file: "image/bg0.png", x: 0, y: 0
+       \`\`\`
+       `,
+      (values, tick) => {
+        p.layerAlias[values.name] = values.lay;
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["dellayalias"],
+      "レイヤー操作",
+      "レイヤー名エイリアスを削除する",
+      [
+        new TagValue("name", "string", true, null, "エイリアス名"),
+      ],
+      ``,
+      (values, tick) => {
+        delete p.layerAlias[values.name];
+        return "continue";
+      },
+    ),
+    new TagAction(
       ["messagelayer", "messagelay", "meslay", "meslay"],
       "レイヤー操作",
       "メッセージレイヤーを指定する",
@@ -853,7 +890,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           throw new Error("メッセージレイヤーの指定が範囲外です");
         }
         p.messageLayerNum = lay;
-        // TODO メッセージレイヤーの初期化
         return "continue";
       },
     ),
