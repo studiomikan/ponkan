@@ -3,6 +3,7 @@ logs
 npm-debug.log*
 node_modules/
 doc/
+dist_dev/
 dist_test/
 manual/scripts/tmp
 manual/scripts_tmp
