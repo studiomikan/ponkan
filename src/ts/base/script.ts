@@ -145,7 +145,6 @@ export class Script {
           this.callMacro(tag);
           return this.getNextTag();
         } else {
-          console.log(macro.params);
           this.resource.setMacroParams(macro.params);
           return tag;
         }
@@ -181,7 +180,7 @@ export class Script {
   public defineMacro(name: string): Macro {
     let tags: Tag[] = [];
     while (true) {
-      let tag: Tag | null = this.getNextTag();
+      let tag: Tag | null = this.getNextTagForDefineMacro();
       if (tag === null) {
         throw new Error("マクロ定義エラー。macroとendmacroの対応が取れていません");
       } else if (tag.name === "__label__") {
@@ -198,6 +197,18 @@ export class Script {
       throw new Error(`マクロ定義の中身が空です`);
     }
     return new Macro(name, tags);
+  }
+
+  /**
+   * 次のタグを取得する。マクロの呼び出しを行わない。
+   */
+  protected getNextTagForDefineMacro(): Tag | null {
+    const tags = this.parser.tags;
+    if (tags.length <= this.tagPoint) {
+      return null;
+    } else {
+      return tags[this.tagPoint++];
+    }
   }
 
   /**

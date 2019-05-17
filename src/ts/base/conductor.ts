@@ -84,14 +84,14 @@ export class Conductor {
         if (label != null) {
           this.script.goToLabel(label);
         }
-        cb.callDone({filePath: filePath, label: label});
+        cb.callDone({filePath, label});
       }).fail(() => {
-        cb.callFail({filePath: filePath, label: label});
+        cb.callFail({filePath, label});
       });
     } else if (label != null) {
       window.setTimeout(() => {
         this.script.goToLabel(label);
-        cb.callDone({filePath: filePath, label: label});
+        cb.callDone({filePath, label});
       }, 0);
     }
     return cb;
