@@ -189,7 +189,7 @@ export class Button extends BaseLayer {
       me[param] = data[param];
     });
     this.insideFlag = false;
-    this.setButtonStatus("normal");
+    this.setButtonStatus(data.buttonStatus);
   }
 
   public copyTo(dest: Button): void {
