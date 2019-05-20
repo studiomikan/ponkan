@@ -85,7 +85,9 @@ export class SoundBuffer {
         throw new Error(`音声の再生に失敗しました(${this.filePath})`);
       });
       this.howl.off("end").on("end", () => {
-        this.stop();
+        if (!this.loop) {
+          this.stop();
+        }
       });
       this.howl.off("fade").on("fade", () => {
         this.onFade();
@@ -129,6 +131,7 @@ export class SoundBuffer {
 
   public get loop(): boolean { return this._loop; }
   public set loop(loop: boolean) {
+    this._loop = loop;
     if (this.howl != null) {
       this.howl.loop(loop);
     }
@@ -153,6 +156,7 @@ export class SoundBuffer {
     }
     // this.seek = 0;
     this.setHowlerEvent();
+    this.setHowlerOptions();
     this.howl.play();
     this._state = SoundState.Play;
   }
@@ -189,6 +193,7 @@ export class SoundBuffer {
     this.fadeTime = time;
     this.stopAfterFade = autoStop;
     this.setHowlerEvent();
+    this.setHowlerOptions();
     this.howl.fade(this.fadeStartVolume * this.volume2,
                    this.fadeTargetVolume * this.volume2, time);
     this._state = SoundState.Fade;
