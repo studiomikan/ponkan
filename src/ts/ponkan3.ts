@@ -105,6 +105,7 @@ export class Ponkan3 extends PonGame {
   public enabledHistory: boolean = true;
 
   // サウンド関係
+  public soundBufferAlias: any = {};
   public soundBufferCount: number = DEFAULT_SOUND_BUFFER_COUNT;
   public readonly soundBuffers: SoundBuffer[] = [];
 
@@ -562,10 +563,13 @@ export class Ponkan3 extends PonGame {
     }
   }
 
-  public getSoundBuffer(num: number): SoundBuffer {
-    const soundBuffer: SoundBuffer | null = this.soundBuffers[num];
+  public getSoundBuffer(num: string): SoundBuffer {
+    if (this.soundBufferAlias[num] != null) {
+      return this.getSoundBuffer(this.soundBufferAlias[num]);
+    }
+    const soundBuffer: SoundBuffer | null = this.soundBuffers[+num];
     if (soundBuffer == null) {
-      throw new Error(`音声バッファ${num}番は範囲外です`);
+      throw new Error(`音声バッファ${num}は範囲外です`);
     } else {
       return soundBuffer;
     }

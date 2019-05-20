@@ -1023,6 +1023,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("visible", "boolean", false, null, "表示非表示"),
         new TagValue("x", "number", false, null, "x座標(px)"),
         new TagValue("y", "number", false, null, "y座標(px)"),
+        new TagValue("alpha", "number", false, 1.0, "レイヤーのAlpha(0.0〜1.0)"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
@@ -1032,6 +1033,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
             if (values.x != null) { layer.x = values.x; }
             if (values.y != null) { layer.y = values.y; }
             if (values.visible != null) { layer.visible = values.visible; }
+            if (values.alpha != null) { layer.alpha = values.alpha; }
             return layer.loadImage(values.file);
           });
         });
@@ -1505,11 +1507,48 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // サウンド関係
     // ======================================================================
     new TagAction(
+      ["bufalias"],
+      "サウンド",
+      "バッファ番号エイリアスを作成する",
+      [
+        new TagValue("name", "string", true, null, "エイリアス名"),
+        new TagValue("buf", "string", true, null, "対象レイヤー"),
+      ],
+      `バッファのエイリアス（別名）を作成します。
+       エイリアスを作成すると、バッファ番号を指定するコマンドでバッファ番号のかわりにエイリアス名を使用することができるようになります。
+       たとえば以下のように、効果音を再生するバッファに se というようなエイリアスを作成することで、
+       スクリプト作成時の可読性が向上します。
+       \`\`\`
+       # 背景画像はレイヤー 0 に作成するので、エイリアスを作成する
+       ;bufalias name: "se", buf: "0"
+       # 以後、効果音は以下のように読み込める
+       ;loadsound "buf": "se", "file": "sound/pekowave1.wav"
+       \`\`\`
+       `,
+      (values, tick) => {
+        p.soundBufferAlias[values.name] = values.buf;
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["delbufalias"],
+      "サウンド",
+      "バッファ番号エイリアスを削除する",
+      [
+        new TagValue("name", "string", true, null, "エイリアス名"),
+      ],
+      ``,
+      (values, tick) => {
+        delete p.soundBufferAlias[values.name];
+        return "continue";
+      },
+    ),
+    new TagAction(
       ["loadsound", "sound"],
       "サウンド",
       "音声をロードする",
       [
-        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
         new TagValue("file", "string", true, null, "読み込む音声ファイルパス"),
       ],
       `TODO タグの説明文`,
@@ -1527,7 +1566,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "サウンド",
       "音声を開放する",
       [
-        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
@@ -1540,7 +1579,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "サウンド",
       "音声の設定",
       [
-        new TagValue("buf", "number", true, null, "バッファ番号"),
+        new TagValue("buf", "string", true, null, "バッファ番号"),
         new TagValue("volume", "number", false, null, "音量(0.0〜1.0)"),
         new TagValue("volume2", "number", false, null, "音量2(0.0〜1.0)"),
         new TagValue("seek", "number", false, null, "シーク位置(ms)"),
@@ -1561,7 +1600,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "サウンド",
       "音声を再生する",
       [
-        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
@@ -1574,7 +1613,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "サウンド",
       "音声を停止する",
       [
-        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
@@ -1587,7 +1626,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "サウンド",
       "音声をフェードする",
       [
-        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
         new TagValue("volume", "number", true, null, "フェード後の音量(0.0〜1.0)"),
         new TagValue("time", "number", true, null, "フェード時間(ms)"),
         new TagValue("autostop", "boolean", false, false, "フェード終了後に再生停止するか"),
@@ -1603,7 +1642,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "サウンド",
       "音声をフェードアウトして再生停止する",
       [
-        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
         new TagValue("time", "number", true, null, "フェード時間(ms)"),
         new TagValue("autostop", "boolean", false, false, "フェード終了後に再生停止するか"),
       ],
@@ -1618,7 +1657,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "サウンド",
       "音声をフェードインで再生開始する",
       [
-        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
         new TagValue("volume", "number", true, null, "フェード後の音量(0.0〜1.0)"),
         new TagValue("time", "number", true, null, "フェード時間(ms)"),
       ],
@@ -1633,7 +1672,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "サウンド",
       "音声の再生終了を待つ",
       [
-        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
         new TagValue("canskip", "boolean", false, true, "スキップ可能かどうか"),
       ],
       `TODO タグの説明文`,
@@ -1663,7 +1702,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "サウンド",
       "音声のフェード終了を待つ",
       [
-        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
         new TagValue("canskip", "boolean", false, true, "スキップ可能かどうか"),
       ],
       `TODO タグの説明文`,
@@ -1693,7 +1732,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "サウンド",
       "音声のフェードを終了する",
       [
-        new TagValue("buf", "number", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {

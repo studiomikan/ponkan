@@ -1,5 +1,10 @@
 # テスト用スクリプト
 
+;bufalias name: "se", buf: 0
+;loadsound "buf": "se", "file": "sound/pekowave1.wav"
+;soundopt buf: "se", loop: false, volume: 0.1
+;playsound buf:"se"
+
 - gv.memo = "テストスクリプトです";
 |save-mark-0001:セーブコメント01
 |セーブコメント02
