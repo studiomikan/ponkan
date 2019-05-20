@@ -102,7 +102,7 @@ export class ScriptParser {
       let tagName: string;
       let valuesStr: string;
       let values: any;
-      let reg = /[{ ]/.exec(body);
+      const reg = /[{ ]/.exec(body);
       if (reg == null) {
         tagName = body.substring(0).trim();
         values = {};
@@ -111,11 +111,11 @@ export class ScriptParser {
         valuesStr = body.substring(reg.index).trim();
         if (valuesStr.indexOf("{") !== 0) {
           // { を省略しているとき
-          valuesStr = `{${valuesStr}}`
+          valuesStr = `{${valuesStr}}`;
         } else {
           // { を省略していないとき
           while (valuesStr.charAt(valuesStr.length - 1) !== "}") {
-            let line: string | null = this.getLine();
+            const line: string | null = this.getLine();
             if (line === null) { break; }
             valuesStr += " " + line.trim();
           }
@@ -136,17 +136,17 @@ export class ScriptParser {
   }
 
   private parseSaveMark(body: string): void {
-    let p: number = body.indexOf(":");
+    const p: number = body.indexOf(":");
     if (p !== -1) {
-      let name: string = body.substring(0, p);
-      let comment: string = body.substring(p + 1);
-      this.addTag("__save_mark__", { __body__: body, name: name, comment: comment });
+      const name: string = body.substring(0, p);
+      const comment: string = body.substring(p + 1);
+      this.addTag("__save_mark__", { __body__: body, name, comment });
     } else if (body.length > 0) {
-      let name: string = `__save_mark_${this.saveMarkCount}__`;
-      this.addTag("__save_mark__", { __body__: body, name: name, comment: body });
+      const name: string = `__save_mark_${this.saveMarkCount}__`;
+      this.addTag("__save_mark__", { __body__: body, name, comment: body });
     } else {
-      let name: string = `__save_mark_${this.saveMarkCount}__`;
-      this.addTag("__save_mark__", { __body__: body, name: name, comment: "" });
+      const name: string = `__save_mark_${this.saveMarkCount}__`;
+      this.addTag("__save_mark__", { __body__: body, name, comment: "" });
     }
     this.saveMarkCount++;
   }

@@ -1,11 +1,11 @@
-import { Logger } from "../base/logger";
 import { AsyncTask } from "../base/async-task";
-import { Resource } from "../base/resource";
 import { BaseLayer } from "../base/base-layer";
-import { PonMouseEvent } from "../base/pon-mouse-event";
-import { PonWheelEvent } from "../base/pon-wheel-event";
+import { Logger } from "../base/logger";
 import { PonEventHandler } from "../base/pon-event-handler";
 import { PonGame } from "../base/pon-game";
+import { PonMouseEvent } from "../base/pon-mouse-event";
+import { PonWheelEvent } from "../base/pon-wheel-event";
+import { Resource } from "../base/resource";
 import * as Util from "../base/util";
 import { Ponkan3 } from "../ponkan3";
 import { Button } from "./button";
@@ -14,15 +14,25 @@ class SimpleButton extends BaseLayer {
   protected bgColors: number[] = [0xFF0000, 0x00FF00, 0x0000FF];
   protected bgAlphas: number[] = [1.0, 1.0, 1.0];
   protected status: "normal" | "over" | "on" = "normal";
-  public mouseEnter: (sender: SimpleButton) => void = function(){};
-  public mouseLeave: (sender: SimpleButton) => void = function(){};
-  public mouseMove: (sender: SimpleButton) => void = function(){};
-  public mouseDown: (sender: SimpleButton) => void = function(){};
-  public mouseUp: (sender: SimpleButton) => void = function(){};
+  public mouseEnter: (sender: SimpleButton) => void = () => {
+    return;
+  }
+  public mouseLeave: (sender: SimpleButton) => void = () => {
+    return;
+  }
+  public mouseMove: (sender: SimpleButton) => void = () => {
+    return;
+  }
+  public mouseDown: (sender: SimpleButton) => void = () => {
+    return;
+  }
+  public mouseUp: (sender: SimpleButton) => void = () => {
+    return;
+  }
 
   public initButton(
     bgColors: number[],
-    bgAlphas: number[]
+    bgAlphas: number[],
   ) {
     this.bgColors = bgColors;
     this.bgAlphas = bgAlphas;
@@ -33,7 +43,7 @@ class SimpleButton extends BaseLayer {
 
   public setStatus(status: "normal" | "over" | "on") {
     this.status = status;
-    const c = { normal: 0, over: 1, on: 2, }[status];
+    const c = { normal: 0, over: 1, on: 2 }[status];
     this.setBackgroundColor(this.bgColors[c], this.bgAlphas[c]);
     this.resource.getForeCanvasElm().style.cursor = this.resource.cursor[status];
   }
@@ -104,7 +114,9 @@ class ScrollBar extends BaseLayer {
 
   protected minHeight: number = 16;
   protected bar: ScrollBarButton;
-  public onChangeCallback: (sender: ScrollBar) => void = function(){};
+  public onChangeCallback: (sender: ScrollBar) => void = () => {
+    return;
+  }
 
   public constructor(name: string, resource: Resource, owner: PonGame) {
     super(name, resource, owner);
@@ -134,7 +146,7 @@ class ScrollBar extends BaseLayer {
     currentPoint: number,
     maxPoint: number,
     linesCount: number,
-    screenLineCount: number
+    screenLineCount: number,
   ) {
     if (linesCount <= screenLineCount) {
       this.bar.visible = false;
@@ -192,20 +204,20 @@ class ScrollBar extends BaseLayer {
     this.setBarY(e.y - (this.bar.height / 2));
     this.onChangeCallback(this);
     // FIXME eの中身がおかしいが、現状使ってないのでこのまま
-    this.bar.onMouseUp(new PonMouseEvent(0,0,0));
+    this.bar.onMouseUp(new PonMouseEvent(0, 0, 0));
     return false;
   }
 
   protected setBarY(y: number): void {
-    let maxY: number = this.height - this.bar.height;
+    const maxY: number = this.height - this.bar.height;
     if (y < 0) { y = 0; }
     if (y > maxY) { y = maxY; }
     this.bar.y = y;
   }
 
   public getBarPoint(): number {
-    let y: number = this.bar.y;
-    let maxY: number = this.height - this.bar.height;
+    const y: number = this.bar.y;
+    const maxY: number = this.height - this.bar.height;
     if (y === 0) {
       return 0.0;
     } else if (y === maxY) {
@@ -294,9 +306,9 @@ class HistoryTextLayer extends BaseLayer {
   public redraw(): void {
     this.clearText();
 
-    let max = this.point + this.screenLineCount;
+    const max = this.point + this.screenLineCount;
     for (let i = this.point; i < max && i < this.lines.length; i++) {
-      this.lines[i].forEach(ch => this.addChar(ch));
+      this.lines[i].forEach((ch) => this.addChar(ch));
       this.addTextReturn();
     }
   }
@@ -315,13 +327,13 @@ class HistoryTextLayer extends BaseLayer {
   }
 
   public get screenLineCount(): number {
-    let lineHeight = (this.textLineHeight + this.textLinePitch);
-    let areaHeight = this.height- this.textMarginTop - this.textMarginBottom + this.textLinePitch;
-    return Math.floor(areaHeight / lineHeight)
+    const lineHeight = (this.textLineHeight + this.textLinePitch);
+    const areaHeight = this.height - this.textMarginTop - this.textMarginBottom + this.textLinePitch;
+    return Math.floor(areaHeight / lineHeight);
   }
 
   public get maxPoint(): number {
-    let max = this.lines.length - 1 - this.screenLineCount;
+    const max = this.lines.length - 1 - this.screenLineCount;
     if (max < 0) {
       return 0;
     } else {
@@ -396,18 +408,18 @@ export class HistoryLayer extends BaseLayer {
     // 閉じるボタン
     this.initCloseButton(config);
 
-    let hc: any = config.history != null ? config.history : {};
+    const hc: any = config.history != null ? config.history : {};
   }
 
   protected initScrollButtons(config: any): void {
     // TODO サイズ等を設定できるように
-    const init = (button: SimpleButton, config: any) => {
-      if (config.bgColors == null) { config.bgColors = [0x4286f4, 0x4286f4, 0x4286f4]; };
-      if (config.bgAlphas == null) { config.bgAlphas = [0.7, 0.8, 0.9]; };
+    const init = (button: SimpleButton, conf: any) => {
+      if (conf.bgColors == null) { conf.bgColors = [0x4286f4, 0x4286f4, 0x4286f4]; }
+      if (conf.bgAlphas == null) { conf.bgAlphas = [0.7, 0.8, 0.9]; }
       button.visible = true;
       button.width = 32;
       button.height = 32;
-      button.initButton(config.bgColors, config.bgAlphas);
+      button.initButton(conf.bgColors, conf.bgAlphas);
       button.textColor = 0xFFFFFF;
       button.textFontFamily = ["mplus-1p-regular", "monospace"];
       button.textFontSize = 16;
@@ -418,7 +430,7 @@ export class HistoryLayer extends BaseLayer {
       button.textAlign = "center";
       this.addChild(button);
     };
-    init(this.upButton, config.history.upButton) // ;
+    init(this.upButton, config.history.upButton); // ;
     init(this.downButton, config.history.downButton);
 
     this.upButton.x = config.width - 32 - 20;
@@ -442,7 +454,7 @@ export class HistoryLayer extends BaseLayer {
       x: config.width - 32 - 20,
       y: 20 + 32,
       width: 32,
-      height: config.height - (32+20)*2,
+      height: config.height - (32 + 20) * 2,
       backgroundColor: 0x4286f4,
       backgroundAlpha: 0.1,
       bgColors: [0x4286f4, 0x4286f4, 0x4286f4],
@@ -450,16 +462,16 @@ export class HistoryLayer extends BaseLayer {
       minHeight: 16,
     }, c);
 
-    let sb = this.scrollBar;
+    const sb = this.scrollBar;
     sb.initScrollBar(
       c,
       c.bgColors,
       c.bgAlphas,
-      c.minHeight
+      c.minHeight,
     );
 
     sb.onChangeCallback = () => {
-      let p: number = Math.floor(this.textLayer.maxPoint * sb.getBarPoint());
+      const p: number = Math.floor(this.textLayer.maxPoint * sb.getBarPoint());
       if (this.textLayer.currentPoint !== p) {
         this.textLayer.goTo(p);
         this.textLayer.redrawLazy();
@@ -468,7 +480,6 @@ export class HistoryLayer extends BaseLayer {
 
     this.addChild(sb);
   }
-
 
   protected initCloseButton(config: any): void {
     let c: any = Util.objClone(config.history.closeButton);
@@ -576,9 +587,9 @@ export class HistoryLayer extends BaseLayer {
   public onMouseMove(e: PonMouseEvent): boolean  {
     super.onMouseMove(e);
     // スクロール操作中ははみ出ても操作できるようにする
-    let sb = this.scrollBar;
+    const sb = this.scrollBar;
     if (sb.dragging) {
-      let e2 = new PonMouseEvent(e.x - sb.x, e.y - sb.y, e.button);
+      const e2 = new PonMouseEvent(e.x - sb.x, e.y - sb.y, e.button);
       this.scrollBar.onMouseMove(e2);
     }
     return false;
@@ -590,10 +601,10 @@ export class HistoryLayer extends BaseLayer {
   public onMouseUp(e: PonMouseEvent): boolean  {
     super.onMouseUp(e);
     if (e.isLeft) {
-      let sb = this.scrollBar;
+      const sb = this.scrollBar;
       if (sb.dragging) {
         // スクロール操作中ははみ出ても操作できるようにする
-        let e2 = new PonMouseEvent(e.x - sb.x, e.y - sb.y, e.button);
+        const e2 = new PonMouseEvent(e.x - sb.x, e.y - sb.y, e.button);
         this.scrollBar.onMouseUp(e2);
         this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
       }

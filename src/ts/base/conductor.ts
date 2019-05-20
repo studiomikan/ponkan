@@ -1,16 +1,16 @@
-import { AsyncTask } from "./async-task";
 import { AsyncCallbacks } from "./async-callbacks";
+import { AsyncTask } from "./async-task";
 import { Logger } from "./logger";
+import { Macro } from "./macro";
+import { PonEventHandler } from "./pon-event-handler";
+import { ReadUnread } from "./read-unread";
 import { Resource } from "./resource";
 import { Script } from "./script";
 import { Tag } from "./tag";
-import { Macro } from "./macro";
-import { ReadUnread } from "./read-unread";
-import { PonEventHandler } from "./pon-event-handler";
 
 export interface IConductorEvent {
   onLabel(labelName: string, line: number, tick: number): "continue" | "break";
-  onSaveMark(saveMarkName:string, comment: string, line: number, tick: number): "continue" | "break";
+  onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): "continue" | "break";
   onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break";
   onTag(tag: Tag, line: number, tick: number): "continue" | "break";
   onChangeStable(isStable: boolean): void;
@@ -39,7 +39,7 @@ export class Conductor {
   protected stableBuffer: boolean = false;
 
   protected eventHandlers: any = {};
-  protected eventHandlersStack: Array<any> = [];
+  protected eventHandlersStack: any[] = [];
 
   public latestSaveMarkName: string = "";
   public readUnread: ReadUnread;
@@ -79,7 +79,7 @@ export class Conductor {
       this.passLatestSaveMark();
       this.latestSaveMarkName = "";
     }
-    if (filePath != null && filePath != "") {
+    if (filePath != null && filePath !== "") {
       this.loadScript(filePath).done(() => {
         if (label != null) {
           this.script.goToLabel(label);
@@ -189,13 +189,13 @@ export class Conductor {
     this.sleepStartTick = -1;
     this.sleepSender = "";
     // Logger.debug(`Conductor start. (${this.name})`);
-    return "continue"
+    return "continue";
   }
 
   public stop(): "continue" | "break" {
     this._status = ConductorState.Stop;
     // Logger.debug(`Conductor stop. (${this.name})`);
-    return "break"
+    return "break";
   }
 
   public sleep(tick: number, sleepTime: number, sender: string): "continue" | "break"  {
@@ -204,7 +204,7 @@ export class Conductor {
     this.sleepTime = sleepTime;
     this.sleepSender = sender;
     // Logger.debug(`Conductor sleep. (${this.name})`, sleepTime, sender);
-    return "break"
+    return "break";
   }
 
   public get isStable(): boolean {
@@ -217,7 +217,7 @@ export class Conductor {
   }
 
   public addEventHandler(handler: PonEventHandler): void {
-    let eventName: string = handler.eventName;
+    const eventName: string = handler.eventName;
     if (this.eventHandlers[eventName] == null) {
       this.eventHandlers[eventName] = [];
     }
@@ -234,7 +234,7 @@ export class Conductor {
    * @return イベントハンドラが1つ以上実行されればtrue
    */
   public trigger(eventName: string): boolean {
-    let handlers: PonEventHandler[] = this.eventHandlers[eventName];
+    const handlers: PonEventHandler[] = this.eventHandlers[eventName];
     if (handlers == null) { return false; }
     this.clearEventHandlerByName(eventName);
     handlers.forEach((h) => {
@@ -250,8 +250,8 @@ export class Conductor {
 
   public clearEventHandler(eventHandler: PonEventHandler): void {
     Object.keys(this.eventHandlers).forEach((eventName) => {
-      this.eventHandlers[eventName].forEach((eventHandler: PonEventHandler, index: number) => {
-        if (eventHandler === eventHandler) {
+      this.eventHandlers[eventName].forEach((eh: PonEventHandler, index: number) => {
+        if (eh === eventHandler) {
           this.eventHandlers[eventName].splice(index, 1);
           return;
         }
@@ -283,8 +283,8 @@ export class Conductor {
   ];
 
   public store(saveMarkName: string, tick: number): any {
-    let data: any = {};
-    let me: any = <any> this;
+    const data: any = {};
+    const me: any = this as any;
 
     Conductor.conductorStoreParams.forEach((param: string) => {
       data[param] = me[param];
@@ -313,14 +313,14 @@ export class Conductor {
    * 復元。ステータスの値は復元されるが、再スタートなどはしないので注意。
    */
   public restore(asyncTask: AsyncTask, data: any, tick: number): void {
-    let me: any = this as any;
+    const me: any = this as any;
     Conductor.conductorStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
 
     // script
     asyncTask.add((params: any, index: number): AsyncCallbacks => {
-      let cb = this.loadScript(data.scriptFilePath);
+      const cb = this.loadScript(data.scriptFilePath);
       cb.done(() => {
         this.script.goToSaveMark(data.saveMarkName);
       });

@@ -1,11 +1,11 @@
-import { Logger } from "../base/logger";
-import { AsyncTask } from "../base/async-task";
 import { AsyncCallbacks } from "../base/async-callbacks";
-import { Resource } from "../base/resource";
+import { AsyncTask } from "../base/async-task";
+import { Logger } from "../base/logger";
 import { PonMouseEvent } from "../base/pon-mouse-event";
+import { Resource } from "../base/resource";
+import { Ponkan3 } from "../ponkan3";
 import { Button } from "./button";
 import { TextButtonLayer } from "./text-button-layer";
-import { Ponkan3 } from "../ponkan3";
 
 export class ImageButton extends Button {
   protected direction: "horizontal" | "vertical" = "horizontal";
@@ -21,7 +21,7 @@ export class ImageButton extends Button {
     file: string,
     direction: "horizontal" | "vertical",
   ): AsyncCallbacks {
-    let cb = new AsyncCallbacks();
+    const cb = new AsyncCallbacks();
 
     this.resetButton();
     this.freeImage();
@@ -87,8 +87,8 @@ export class ImageButton extends Button {
   ];
 
   public store(tick: number): any {
-    let data: any = super.store(tick);
-    let me: any = this as any;
+    const data: any = super.store(tick);
+    const me: any = this as any;
     ImageButton.imageButtonStoreParams.forEach((param: string) => {
       data[param] = me[param];
     });
@@ -100,7 +100,7 @@ export class ImageButton extends Button {
   }
 
   public restoreAfterLoadImage(data: any, tick: number): void {
-    let me: any = this as any;
+    const me: any = this as any;
     ImageButton.imageButtonStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
@@ -110,8 +110,8 @@ export class ImageButton extends Button {
   public copyTo(dest: ImageButton): void {
     super.copyTo(dest);
 
-    let me: any = this as any;
-    let you: any = dest as any;
+    const me: any = this as any;
+    const you: any = dest as any;
     ImageButton.imageButtonStoreParams.forEach((param: string) => {
       you[param] = me[param];
     });
@@ -135,8 +135,8 @@ export class ImageButtonLayer extends TextButtonLayer {
     direction: "horizontal" | "vertical",
     isSystemButton: boolean,
   ): AsyncCallbacks {
-    let name = `ImageButton ${this.imageButtons.length}`;
-    let btn = new ImageButton(name, this.resource, this.owner);
+    const name = `ImageButton ${this.imageButtons.length}`;
+    const btn = new ImageButton(name, this.resource, this.owner);
     this.addChild(btn);
     this.imageButtons.push(btn);
 
@@ -193,10 +193,10 @@ export class ImageButtonLayer extends TextButtonLayer {
   }
 
   public store(tick: number): any {
-    let data: any = super.store(tick);
-    let me: any = this as any;
+    const data: any = super.store(tick);
+    const me: any = this as any;
 
-    data.imageButtons = this.imageButtons.map(imageButton => imageButton.store(tick));
+    data.imageButtons = this.imageButtons.map((imageButton) => imageButton.store(tick));
 
     return data;
   }
@@ -212,7 +212,7 @@ export class ImageButtonLayer extends TextButtonLayer {
         // 数が合わない場合は一度破棄して作り直す
         this.clearImageButtons();
         data.imageButtons.forEach((imageButtonData: any) => {
-          let btn = new ImageButton(imageButtonData.name, this.resource, this.owner);
+          const btn = new ImageButton(imageButtonData.name, this.resource, this.owner);
           this.addChild(btn);
           this.imageButtons.push(btn);
           btn.restore(asyncTask, imageButtonData, tick, clear);
@@ -238,7 +238,7 @@ export class ImageButtonLayer extends TextButtonLayer {
 
     dest.clearImageButtons();
     this.imageButtons.forEach((srcBtn) => {
-      let destBtn = new ImageButton(srcBtn.name, dest.resource, dest.owner);
+      const destBtn = new ImageButton(srcBtn.name, dest.resource, dest.owner);
       dest.addChild(destBtn);
       dest.imageButtons.push(destBtn);
       srcBtn.copyTo(destBtn);
@@ -246,4 +246,3 @@ export class ImageButtonLayer extends TextButtonLayer {
   }
 
 }
-

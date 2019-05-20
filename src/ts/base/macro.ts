@@ -14,7 +14,7 @@ export class Macro {
   }
 
   public clone(): Macro {
-    let newTags: Tag[] = [];
+    const newTags: Tag[] = [];
     this.tags.forEach((tag) => {
       newTags.push(tag.clone());
     });

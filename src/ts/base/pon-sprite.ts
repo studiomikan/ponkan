@@ -79,7 +79,7 @@ export class PonSprite {
   }
 
   /** テキスト */
-  public get text(): string | null { 
+  public get text(): string | null {
     if (this.pixiSprite !== null && this.textStyle !== null) {
       return (this.pixiSprite as PIXI.Text).text;
     } else {

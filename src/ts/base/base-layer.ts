@@ -1,11 +1,11 @@
 import * as PIXI from "pixi.js";
-import { PonGame } from "./pon-game";
-import { PonMouseEvent } from "./pon-mouse-event";
-import { PonWheelEvent } from "./pon-wheel-event";
 import { AsyncCallbacks } from "./async-callbacks";
 import { AsyncTask } from "./async-task";
 import { Logger } from "./logger";
+import { PonGame } from "./pon-game";
+import { PonMouseEvent } from "./pon-mouse-event";
 import { IPonSpriteCallbacks, PonSprite } from "./pon-sprite";
+import { PonWheelEvent } from "./pon-wheel-event";
 import { Resource } from "./resource";
 
 /**
@@ -95,7 +95,7 @@ export class BaseLayer {
     if (typeof this.textStyle.fill === "number") {
       return this.textStyle.fill;
     } else {
-      return <string> this.textStyle.fill;
+      return this.textStyle.fill as string;
     }
   }
   public set textShadowVisible(visible: boolean) { this.textStyle.dropShadow = visible; }
@@ -111,7 +111,7 @@ export class BaseLayer {
     if (typeof this.textStyle.dropShadowColor === "number") {
       return this.textStyle.dropShadowColor;
     } else {
-      return <string> this.textStyle.dropShadowColor;
+      return this.textStyle.dropShadowColor as string;
     }
   }
   public set textShadowDistance(distance: number) { this.textStyle.dropShadowDistance = distance; }
@@ -122,7 +122,7 @@ export class BaseLayer {
     if (typeof this.textStyle.stroke === "number") {
       return this.textStyle.stroke;
     } else {
-      return <string> this.textStyle.stroke;
+      return this.textStyle.stroke as string;
     }
   }
   public set textEdgeWidth(width: number) { this.textStyle.strokeThickness = width; }
@@ -199,7 +199,7 @@ export class BaseLayer {
       },
       pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
         this.imageContainer.removeChild(child);
-      }
+      },
     };
 
     this.backgroundSprite = new PonSprite(this.imageSpriteCallbacks);
@@ -212,7 +212,7 @@ export class BaseLayer {
       },
       pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
         this.textContainer.removeChild(child);
-      }
+      },
     };
 
     this.childContainer = new PIXI.Container();
@@ -223,7 +223,7 @@ export class BaseLayer {
       },
       pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
         this.childContainer.removeChild(child);
-      }
+      },
     };
 
     this.visible = false;
@@ -293,21 +293,21 @@ export class BaseLayer {
    * 座標が、指定の子レイヤーの内側かどうかを調査する
    */
   protected isInsideOfChildLayer(child: BaseLayer, x: number, y: number): boolean {
-    let top: number = child.y;
-    let right: number = child.x + child.width;
-    let bottom: number = child.y + child.height;
-    let left: number = child.x;
+    const top: number = child.y;
+    const right: number = child.x + child.width;
+    const bottom: number = child.y + child.height;
+    const left: number = child.x;
     return left <= x && x <= right && top <= y && y <= bottom;
   }
 
   protected isBlockedEvent(e: PonMouseEvent | PonWheelEvent, eventName: string): boolean {
     if (e instanceof PonMouseEvent) {
-      if (eventName == "down" || eventName == "up") {
+      if (eventName === "down" || eventName === "up") {
         if (this.blockLeftClickFlag && e.isLeft) { return true; }
         if (this.blockRightClickFlag && e.isRight) { return true; }
         if (this.blockCenterClickFlag && e.isCenter) { return true; }
       }
-      if (eventName == "move") {
+      if (eventName === "move") {
         if (this.blockMouseMove) { return true; }
       }
     } else {
@@ -338,11 +338,11 @@ export class BaseLayer {
 
     // mousemove
     for (let i = this.children.length - 1; i >= 0; i--) {
-      let child: BaseLayer = this.children[i];
+      const child: BaseLayer = this.children[i];
       if (!child.visible) { continue; }
-      let isInside = this.isInsideOfChildLayer(child, e.x, e.y)
+      const isInside = this.isInsideOfChildLayer(child, e.x, e.y);
       if (isInside) {
-        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
+        const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
         if (!child.onMouseMove(e2)) { return false; }
       }
       child.isInsideBuffer = isInside;
@@ -354,12 +354,12 @@ export class BaseLayer {
   // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる
   private callChildrenMouseEnterLeave(e: PonMouseEvent): boolean {
     for (let i = this.children.length - 1; i >= 0; i--) {
-      let child: BaseLayer = this.children[i];
+      const child: BaseLayer = this.children[i];
       if (!child.visible) { continue; }
-      let isInside = this.isInsideOfChildLayer(child, e.x, e.y)
+      const isInside = this.isInsideOfChildLayer(child, e.x, e.y);
       let result: boolean = true;
-      if (isInside != child.isInsideBuffer) {
-        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
+      if (isInside !== child.isInsideBuffer) {
+        const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
         result = isInside ? child.onMouseEnter(e2) : child.onMouseLeave(e2);
       }
       child.isInsideBuffer = isInside;
@@ -373,10 +373,10 @@ export class BaseLayer {
 
   public onMouseDown(e: PonMouseEvent): boolean {
     for (let i = this.children.length - 1; i >= 0; i--) {
-      let child: BaseLayer = this.children[i];
+      const child: BaseLayer = this.children[i];
       if (!child.visible) { continue; }
       if (this.isInsideOfChildLayer(child, e.x, e.y)) {
-        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
+        const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
         if (!child.onMouseDown(e2)) { return false; }
       }
     }
@@ -387,10 +387,10 @@ export class BaseLayer {
 
   public onMouseUp(e: PonMouseEvent): boolean {
     for (let i = this.children.length - 1; i >= 0; i--) {
-      let child: BaseLayer = this.children[i];
+      const child: BaseLayer = this.children[i];
       if (!child.visible) { continue; }
       if (this.isInsideOfChildLayer(child, e.x, e.y)) {
-        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
+        const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
         if (!child.onMouseUp(e2)) { return false; }
       }
     }
@@ -407,7 +407,7 @@ export class BaseLayer {
 
   public onMouseWheel(e: PonWheelEvent): boolean {
     for (let i = this.children.length - 1; i >= 0; i--) {
-      let child: BaseLayer = this.children[i];
+      const child: BaseLayer = this.children[i];
       if (!child.visible) { continue; }
       if (!child.onMouseWheel(e)) { return false; }
     }
@@ -486,7 +486,7 @@ export class BaseLayer {
     const fontSize: number = +this.textStyle.fontSize;
     sp.createText(ch, this.textStyle);
 
-    let pos = this.getNextTextPos(sp.width);
+    const pos = this.getNextTextPos(sp.width);
     sp.x = pos.x;
     sp.y = pos.y;
     this.currentTextLine.push(sp);
@@ -495,7 +495,7 @@ export class BaseLayer {
   }
 
   public getCurrentLineWidth() {
-    let line = this.currentTextLine;
+    const line = this.currentTextLine;
     if (line.length === 0) {
       return 0;
     }
@@ -513,9 +513,9 @@ export class BaseLayer {
    */
   public getNextTextPos(chWidth: number, chHeight: number = this.textFontSize): {x: number, y: number} {
     // 自動改行の判定
-    let lineWidth = this.getCurrentLineWidth();
+    const lineWidth = this.getCurrentLineWidth();
     let totalMargin = this.textMarginLeft + this.textMarginRight;
-    let indentOrLocate: number = 0;
+    const indentOrLocate: number = 0;
     if (this.textLocatePoint !== 0) {
       switch (this.textAlign) {
         case "left": case "center":
@@ -540,7 +540,7 @@ export class BaseLayer {
     }
 
     // 追加する1文字に合わせて、既存の文字の位置を調整＆次の文字位置の算出
-    let newLineWidth = this.getCurrentLineWidth() + chWidth;
+    const newLineWidth = this.getCurrentLineWidth() + chWidth;
     let leftMargin: number = 0;
     let startX: number = 0;
     switch (this.textAlign) {
@@ -550,7 +550,7 @@ export class BaseLayer {
         break;
       case "center":
         leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft + this.textLocatePoint;
-        let center = leftMargin + (this.width - leftMargin - this.textMarginRight) / 2;
+        const center = leftMargin + (this.width - leftMargin - this.textMarginRight) / 2;
         startX = center - (newLineWidth / 2);
         break;
       case "right":
@@ -566,15 +566,15 @@ export class BaseLayer {
         break;
     }
     let x = startX;
-    let list: number[] = [];
+    const list: number[] = [];
     this.currentTextLine.forEach((sp) => {
       list.push(x);
       sp.x = x;
       x += sp.width;
     });
 
-    let y = this.textY + this.textLineHeight - chHeight;
-    return {x: x, y: y};
+    const y = this.textY + this.textLineHeight - chHeight;
+    return {x, y};
   }
 
   /**
@@ -597,10 +597,10 @@ export class BaseLayer {
    * @param y y座標
    */
   public setCharLocate(x: number | null, y: number | null): void {
-    let line = this.currentTextLine;
-    let tmpY: number = this.textY;
-    let tmpX: number = line.length === 0 ? 0 : line[line.length - 1].x;
-    let tmpX2: number = line.length === 0 ? 0 : line[0].x;
+    const line = this.currentTextLine;
+    const tmpY: number = this.textY;
+    const tmpX: number = line.length === 0 ? 0 : line[line.length - 1].x;
+    const tmpX2: number = line.length === 0 ? 0 : line[0].x;
 
     this.addTextReturn();
     if (x != null) {
@@ -625,14 +625,15 @@ export class BaseLayer {
   public setIndentPoint(): void {
     switch (this.textAlign) {
       case "left":
-        let leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft + this.textLocatePoint;
+        const leftMargin = this.textIndentPoint !== 0 ?
+          this.textIndentPoint : this.textMarginLeft + this.textLocatePoint;
         this.reservedTextIndentPoint = leftMargin + this.getCurrentLineWidth();
         break;
       case "center":
         this.reservedTextIndentPoint = this.textX;
         break;
       case "right":
-        let rightMargin: number = 0;
+        const rightMargin: number = 0;
         if (this.textLocatePoint !== 0) {
           this.reservedTextIndentPoint = this.textLocatePoint - this.getCurrentLineWidth();
         } else if (this.textIndentPoint !== 0) {
@@ -679,7 +680,7 @@ export class BaseLayer {
     let message: string = "";
     this.textLines.forEach((textLine: PonSprite[], index: number) => {
       if (index > 0 ) {
-        message += "\n"
+        message += "\n";
       }
       textLine.forEach((sp) => {
         message += sp.text;
@@ -702,7 +703,7 @@ export class BaseLayer {
     const height = this.height;
     this.resource.loadImage(filePath).done((image) => {
       // Logger.debug("BaseLayer.loadImage success: ", image);
-      this.image = <HTMLImageElement> image;
+      this.image = image as HTMLImageElement;
       this.imageFilePath = filePath;
       this.imageSprite = new PonSprite(this.imageSpriteCallbacks);
       this.imageSprite.setImage(image);
@@ -783,9 +784,9 @@ export class BaseLayer {
    * 子レイヤーの状態は保存されないことに注意が必要。
    */
   public store(tick: number): any {
-    let data: any = {};
-    let me: any = this as any;
-    BaseLayer.baseLayerStoreParams.forEach(p => data[p] = me[p]);
+    const data: any = {};
+    const me: any = this as any;
+    BaseLayer.baseLayerStoreParams.forEach((p) => data[p] = me[p]);
     return data;
   }
 
@@ -795,11 +796,11 @@ export class BaseLayer {
    * 継承先で子レイヤーを使用している場合は、継承先で独自に復元処理を実装する
    */
   public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
-    let storeParams = () => {
-      let me: any = this as any;
-      let restoreParams = BaseLayer.baseLayerStoreParams.filter(
-        param => BaseLayer.baseLayerIgnoreParams.indexOf(param) == -1);
-      restoreParams.forEach(p => me[p] = data[p]);
+    const storeParams = () => {
+      const me: any = this as any;
+      const restoreParams = BaseLayer.baseLayerStoreParams.filter(
+        (param) => BaseLayer.baseLayerIgnoreParams.indexOf(param) === -1);
+      restoreParams.forEach((p) => me[p] = data[p]);
     };
 
     // テキストはクリアする
@@ -819,7 +820,7 @@ export class BaseLayer {
         data.imageFilePath !== this.imageFilePath) {
       this.freeImage();
       asyncTask.add((params: any, index: number): AsyncCallbacks => {
-        let cb = this.loadImage(data.imageFilePath);
+        const cb = this.loadImage(data.imageFilePath);
         cb.done(() => {
           storeParams();
           this.restoreAfterLoadImage(data, tick);
@@ -843,14 +844,14 @@ export class BaseLayer {
       if (dest.textLines.length !== 0) {
         dest.textLines.push([]);
       }
-      let destTextLine: PonSprite[] = dest.textLines[dest.textLines.length - 1];
-      textLine.forEach((srcSp: PonSprite, index: number) => {
-        let ch: string | null = srcSp.text;
-        let style: PIXI.TextStyle | null = srcSp.textStyle;
+      const destTextLine: PonSprite[] = dest.textLines[dest.textLines.length - 1];
+      textLine.forEach((srcSp: PonSprite) => {
+        const ch: string | null = srcSp.text;
+        const style: PIXI.TextStyle | null = srcSp.textStyle;
         if (ch === null || style === null) {
           return;
         }
-        let destSp: PonSprite = new PonSprite(dest.textSpriteCallbacks);
+        const destSp: PonSprite = new PonSprite(dest.textSpriteCallbacks);
         destSp.createText(ch, style);
         destSp.x = srcSp.x;
         destSp.y = srcSp.y;
@@ -873,11 +874,11 @@ export class BaseLayer {
     }
 
     // その他のパラメータのコピー
-    let me: any = this as any;
-    let you: any = dest as any;
-    let params = BaseLayer.baseLayerStoreParams.filter(
-      param => BaseLayer.baseLayerIgnoreParams.indexOf(param) == -1);
-    params.forEach(p => you[p] = me[p]);
+    const me: any = this as any;
+    const you: any = dest as any;
+    const params = BaseLayer.baseLayerStoreParams.filter(
+      (param) => BaseLayer.baseLayerIgnoreParams.indexOf(param) === -1);
+    params.forEach((p) => you[p] = me[p]);
   }
 
   /**
@@ -887,7 +888,7 @@ export class BaseLayer {
    */
   public applyConfig(config: any): void {
     if (config != null) {
-      let me = (this as any);
+      const me = (this as any);
       Object.keys(config).forEach((key) => {
         me[key] = config[key];
       });

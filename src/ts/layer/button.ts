@@ -1,16 +1,16 @@
-import { Logger } from "../base/logger";
 import { AsyncTask } from "../base/async-task";
-import { Resource } from "../base/resource";
 import { BaseLayer } from "../base/base-layer";
-import { PonMouseEvent } from "../base/pon-mouse-event";
+import { Logger } from "../base/logger";
 import { PonEventHandler } from "../base/pon-event-handler";
+import { PonMouseEvent } from "../base/pon-mouse-event";
+import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
 
 /**
  * TextButton、ImageButtonなどの基礎となるボタン機能
  */
 export class Button extends BaseLayer {
-  protected insideFlag : boolean = false;
+  protected insideFlag: boolean = false;
   protected buttonStatus: "normal" | "over" | "on" | "disabled" = "disabled";
   protected jump: boolean = true;
   protected call: boolean = false;
@@ -52,7 +52,7 @@ export class Button extends BaseLayer {
   }
 
   public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
-    let cursor: string = "auto";
+    const cursor: string = "auto";
     if (this.isSystemButton && this.systemButtonLocked) {
       this.buttonStatus = "disabled";
     } else {
@@ -128,7 +128,7 @@ export class Button extends BaseLayer {
   public onMouseUp(e: PonMouseEvent): boolean {
     if (!e.isLeft) { return true; }
     if (this.buttonStatus !== "disabled") {
-      let p: Ponkan3 = this.owner as Ponkan3;
+      const p: Ponkan3 = this.owner as Ponkan3;
       if (this.exp !== null && this.exp !== "") {
         this.resource.evalJs(this.exp);
       }
@@ -165,12 +165,12 @@ export class Button extends BaseLayer {
     "label",
     "isSystemButton",
     "systemButtonLocked",
-    "exp"
+    "exp",
   ];
 
   public store(tick: number): any {
-    let data: any = super.store(tick);
-    let me: any = this as any;
+    const data: any = super.store(tick);
+    const me: any = this as any;
     Button.buttonStoreParams.forEach((param: string) => {
       data[param] = me[param];
     });
@@ -184,7 +184,7 @@ export class Button extends BaseLayer {
 
   public restoreAfterLoadImage(data: any, tick: number): void {
     super.restoreAfterLoadImage(data, tick);
-    let me: any = this as any;
+    const me: any = this as any;
     Button.buttonStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
@@ -195,8 +195,8 @@ export class Button extends BaseLayer {
   public copyTo(dest: Button): void {
     super.copyTo(dest);
 
-    let me: any = this as any;
-    let you: any = dest as any;
+    const me: any = this as any;
+    const you: any = dest as any;
     Button.buttonStoreParams.forEach((param: string) => {
       you[param] = me[param];
     });

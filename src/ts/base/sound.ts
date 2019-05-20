@@ -1,8 +1,8 @@
-import { Howl, Howler } from 'howler';
-import { Logger } from './logger';
-import { Resource } from './resource';
-import { AsyncCallbacks } from './async-callbacks';
+import { Howl, Howler } from "howler";
+import { AsyncCallbacks } from "./async-callbacks";
 import { AsyncTask } from "./async-task";
+import { Logger } from "./logger";
+import { Resource } from "./resource";
 
 export interface ISoundBufferCallbacks {
   onStop(bufferNum: number): void;
@@ -15,7 +15,7 @@ export enum SoundState {
   Pause,
   Fade,
   Fadein,
-  Fadeout
+  Fadeout,
 }
 
 export class SoundBuffer {
@@ -33,7 +33,7 @@ export class SoundBuffer {
   protected _loop: boolean = true;
   protected fadeStartVolume: number = 0;
   protected fadeTargetVolume: number = 0;
-  protected fadeTime : number = 0;
+  protected fadeTime: number = 0;
   protected stopAfterFade: boolean = false;
 
   public constructor(resource: Resource, bufferNum: number, callback: ISoundBufferCallbacks) {
@@ -96,7 +96,7 @@ export class SoundBuffer {
   protected setHowlerOptions(): void {
     if (this.howl != null) {
       this.volume = this.volume;
-      this.volume2 =this.volume2;
+      this.volume2 = this.volume2;
       this.seek = this.seek;
       this.loop = this.loop;
     }
@@ -133,10 +133,6 @@ export class SoundBuffer {
       this.howl.loop(loop);
     }
   }
-
-
-
-
 
   public get playing(): boolean {
     return this._state === SoundState.Play ||
@@ -263,8 +259,8 @@ export class SoundBuffer {
   ];
 
   public store(tick: number): any {
-    let data: any = {};
-    let me: any = <any> this;
+    const data: any = {};
+    const me: any = this as any;
 
     SoundBuffer.soundBufferStoreParams.forEach((param: string) => {
       data[param] = me[param];
@@ -274,12 +270,12 @@ export class SoundBuffer {
   }
 
   public restore(asyncTask: AsyncTask, data: any, tick: number): void {
-    let me: any = this as any;
-    let ignore: string[] = [
+    const me: any = this as any;
+    const ignore: string[] = [
       "hasSound",
       "state",
     ];
-    let restoreParams = SoundBuffer.soundBufferStoreParams.filter(param => ignore.indexOf(param) == -1);
+    const restoreParams = SoundBuffer.soundBufferStoreParams.filter((param) => ignore.indexOf(param) === -1);
     restoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
@@ -288,7 +284,7 @@ export class SoundBuffer {
 
     if (data.hasSound) {
       asyncTask.add((params: any, index: number): AsyncCallbacks => {
-        let cb = this.loadSound(data.filePath);
+        const cb = this.loadSound(data.filePath);
         cb.done((sound) => {
           this.restoreAfterLoad(data, tick);
         });
@@ -313,4 +309,3 @@ export class SoundBuffer {
   }
 
 }
-

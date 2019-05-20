@@ -6,7 +6,7 @@ export class PonEventHandler {
   public constructor(
     eventName: string,
     callback: () => void,
-    info: string
+    info: string,
   ) {
     this.eventName = eventName;
     this.callback = callback;

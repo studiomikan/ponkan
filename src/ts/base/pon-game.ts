@@ -1,18 +1,18 @@
 import * as PIXI from "pixi.js";
-import { AsyncTask } from "./async-task";
 import { AsyncCallbacks } from "./async-callbacks";
+import { AsyncTask } from "./async-task";
 import { BaseLayer } from "./base-layer";
-import { Logger } from "./logger";
 import { Conductor, ConductorState, IConductorEvent } from "./conductor";
-import { Tag } from "./tag";
-import { PonMouseEvent } from "./pon-mouse-event";
-import { PonWheelEvent } from "./pon-wheel-event";
-import { PonKeyEvent } from "./pon-key-event";
-import { PonRenderer } from "./pon-renderer";
+import { Logger } from "./logger";
 import { PonEventHandler } from "./pon-event-handler";
+import { PonKeyEvent } from "./pon-key-event";
+import { PonMouseEvent } from "./pon-mouse-event";
+import { PonRenderer } from "./pon-renderer";
+import { PonWheelEvent } from "./pon-wheel-event";
 import { Resource } from "./resource";
-import { TransManager } from "./trans-manager";
 import { ScreenShot } from "./screen-shot";
+import { Tag } from "./tag";
+import { TransManager } from "./trans-manager";
 
 export enum ScaleMode {
   FIXED = 0,
@@ -95,7 +95,7 @@ export class PonGame implements IConductorEvent {
     // this.initMouseEventOnCanvas(this.backRenderer.canvasElm);
     this.initKeyboardEvent();
 
-    let mainConductor: Conductor = new Conductor(this.resource, "Main Conductor", this);
+    const mainConductor: Conductor = new Conductor(this.resource, "Main Conductor", this);
     this.conductorStack.push(mainConductor);
   }
 
@@ -128,9 +128,9 @@ export class PonGame implements IConductorEvent {
     this.isLocked = false;
   }
 
-  //============================================================
+  // ============================================================
   // スケーリング
-  //============================================================
+  // ============================================================
 
   // private windowResizeTimer: number = -1;
   private initWindowScale(): void {
@@ -162,27 +162,27 @@ export class PonGame implements IConductorEvent {
     this.onWindowResize();
   }
 
-	private get isFullscreen(): boolean {
-		let doc: any = window.document;
-		return (doc.fullscreenElement ||
+  private get isFullscreen(): boolean {
+    const doc: any = window.document;
+    return (doc.fullscreenElement ||
             doc.mozFullScreenElement ||
             doc.webkitFullscreenElement ||
             doc.msFullscreenElement) != null;
-	}
+  }
 
   private requestFullscreen(): void {
-		let elm: any = window.document.documentElement;
-		let requestFullscreen = elm.requestFullscreen ||
-			                      elm.mozRequestFullScreen ||
-			                      elm.webkitRequestFullScreen ||
-			                      elm.msRequestFullscreen;
+    const elm: any = window.document.documentElement;
+    const requestFullscreen = elm.requestFullscreen ||
+                            elm.mozRequestFullScreen ||
+                            elm.webkitRequestFullScreen ||
+                            elm.msRequestFullscreen;
 
     if (requestFullscreen) { requestFullscreen.call(elm); }
   }
 
   private cancelFullscreen(): void {
-		let doc: any = window.document;
-		let cancelFullscreen = doc.exitFullscreen ||
+    const doc: any = window.document;
+    const cancelFullscreen = doc.exitFullscreen ||
                            doc.mozCancelFullScreen ||
                            doc.webkitExitFullscreen ||
                            doc.msExitFullscreen;
@@ -211,8 +211,8 @@ export class PonGame implements IConductorEvent {
   public onWindowResize(): void {
     let scaleX: number = 1.0;
     let scaleY: number = 1.0;
-    let bodyWidth = document.body.clientWidth;
-    let bodyHeight = document.body.clientHeight;
+    const bodyWidth = document.body.clientWidth;
+    const bodyHeight = document.body.clientHeight;
     switch (this.scaleMode) {
       case ScaleMode.FIXED:
         if (bodyWidth >= this.fixedScaleWidth && bodyHeight >= this.fixedScaleHeight) {
@@ -237,10 +237,10 @@ export class PonGame implements IConductorEvent {
   }
 
   public setCanvasScale(scaleX: number, scaleY: number): void {
-    let width = this.config.width * scaleX;
-    let height = this.config.height * scaleY;
-    let left = ((this.parentElm.clientWidth - width) / 2) + "px";
-    let top = ((this.parentElm.clientHeight - height) / 2) + "px";
+    const width = this.config.width * scaleX;
+    const height = this.config.height * scaleY;
+    const left = ((this.parentElm.clientWidth - width) / 2) + "px";
+    const top = ((this.parentElm.clientHeight - height) / 2) + "px";
     [this.foreRenderer.canvasElm, this.backRenderer.canvasElm].forEach((canvas: HTMLCanvasElement) => {
       canvas.style.transform = `scale(${scaleX},${scaleY})`;
       canvas.style.left = left;
@@ -248,9 +248,9 @@ export class PonGame implements IConductorEvent {
     });
   }
 
-  //============================================================
+  // ============================================================
   // 描画・更新ループ等のゲーム基礎部分
-  //============================================================
+  // ============================================================
 
   private loop(): void {
     try {
@@ -297,9 +297,9 @@ export class PonGame implements IConductorEvent {
     alert(e.message);
   }
 
-  //============================================================
+  // ============================================================
   // コンダクタ関係
-  //============================================================
+  // ============================================================
 
   public get conductor(): Conductor {
     return this.conductorStack[this.conductorStack.length - 1];
@@ -317,12 +317,12 @@ export class PonGame implements IConductorEvent {
   public callSubroutine(
     filePath: string | null,
     label: string | null = null,
-    countPage: boolean = false
+    countPage: boolean = false,
   ): AsyncCallbacks {
     if (filePath == null) {
       filePath = this.conductor.script.filePath;
     }
-    let subConductor = new Conductor(
+    const subConductor = new Conductor(
       this.resource, `Sub Conductor ${this.conductorStack.length}`, this);
     this.conductorStack.push(subConductor);
     return this.conductor.jump(filePath, label, countPage);
@@ -357,6 +357,7 @@ export class PonGame implements IConductorEvent {
   }
 
   public onLoadNewScript(labelName: string | null, countPage: boolean): void {
+    return;
   }
 
   public onTag(tag: Tag, line: number, tick: number): "continue" | "break" {
@@ -376,18 +377,20 @@ export class PonGame implements IConductorEvent {
   }
 
   public onChangeStable(isStable: boolean): void {
+    return;
   }
 
   public onReturnSubroutin(forceStart: boolean = false): void {
+    return;
   }
 
   public onError(e: Error): void {
     this.error(e);
   }
 
-  //============================================================
+  // ============================================================
   // レイヤー関係
-  //============================================================
+  // ============================================================
 
   public clearLayer(): void {
     this.forePrimaryLayers.forEach((layer) => {
@@ -415,12 +418,12 @@ export class PonGame implements IConductorEvent {
   }
 
   public removeForePrimaryLayer(layer: BaseLayer): void {
-    this.forePrimaryLayers = this.forePrimaryLayers.filter(a => a != layer);
+    this.forePrimaryLayers = this.forePrimaryLayers.filter((a) => a !== layer);
     this.foreRenderer.removeContainer(layer.container);
   }
 
   public removeBackPrimaryLayer(layer: BaseLayer): void {
-    this.backPrimaryLayers = this.backPrimaryLayers.filter(a => a != layer);
+    this.backPrimaryLayers = this.backPrimaryLayers.filter((a) => a !== layer);
     this.backRenderer.removeContainer(layer.container);
   }
 
@@ -436,7 +439,7 @@ export class PonGame implements IConductorEvent {
    * レンダラーとの紐付けを正しい状態に戻すこと。
    */
   public flipPrimaryLayers(): void {
-    let tmp = this.forePrimaryLayers;
+    const tmp = this.forePrimaryLayers;
     this.forePrimaryLayers = this.backPrimaryLayers;
     this.backPrimaryLayers = tmp;
   }
@@ -476,20 +479,20 @@ export class PonGame implements IConductorEvent {
     return true;
   }
 
-  //============================================================
+  // ============================================================
   // ブラウザイベント関係
-  //============================================================
+  // ============================================================
 
   private initWindowEvent(): void {
     window.addEventListener("unload", () => {
-      this.onWindowClose()
-    })
+      this.onWindowClose();
+    });
     window.addEventListener("beforeunload", () => {
-      this.onWindowClose()
-    })
+      this.onWindowClose();
+    });
   }
 
-  public onWindowClose(): boolean { return true; };
+  public onWindowClose(): boolean { return true; }
 
   private initMouseEventOnCanvas(canvas: HTMLCanvasElement): void {
     // let move = "ontouchmove" in canvas ? "touchmove" : "mousemove";
@@ -497,45 +500,66 @@ export class PonGame implements IConductorEvent {
     // let up = "ontouchend" in canvas ? "touchend" : "mouseup";
 
     canvas.addEventListener("mouseenter", (e: MouseEvent) => {
-      try { if (this.isLocked) { return } this.onMouseEnter(new PonMouseEvent(e)); }
-      catch (ex) { this.error(ex); }
+      try {
+        if (this.isLocked) { return; } this.onMouseEnter(new PonMouseEvent(e));
+      } catch (ex) {
+        this.error(ex);
+      }
     });
     canvas.addEventListener("mouseleave", (e: MouseEvent) => {
-      try { if (this.isLocked) { return } this.onMouseLeave(new PonMouseEvent(e)); }
-      catch (ex) { this.error(ex); }
+      try {
+        if (this.isLocked) { return; } this.onMouseLeave(new PonMouseEvent(e));
+      } catch (ex) {
+        this.error(ex);
+      }
     });
     canvas.addEventListener("mousewheel", (e: Event) => {
-      try { if (this.isLocked) { return } this.onMouseWheel(new PonWheelEvent(e as WheelEvent)); }
-      catch (ex) { this.error(ex); }
+      try {
+        if (this.isLocked) { return; } this.onMouseWheel(new PonWheelEvent(e as WheelEvent));
+      } catch (ex) {
+        this.error(ex);
+      }
     });
     canvas.addEventListener("mousemove", (e: MouseEvent) => {
-      try { if (this.isLocked) { return } this.onMouseMove(new PonMouseEvent(e)); }
-      catch (ex) { this.error(ex); }
+      try {
+        if (this.isLocked) { return; } this.onMouseMove(new PonMouseEvent(e));
+      } catch (ex) {
+        this.error(ex);
+      }
     });
     canvas.addEventListener("mousedown", (e: MouseEvent) => {
-      try { if (this.isLocked) { return } this.onMouseDown(new PonMouseEvent(e)); }
-      catch (ex) { this.error(ex); }
+      try {
+        if (this.isLocked) { return; } this.onMouseDown(new PonMouseEvent(e));
+      } catch (ex) {
+        this.error(ex);
+      }
     });
 
     if ("ontouchend" in canvas) {
       (canvas as HTMLCanvasElement).addEventListener("touchend", (e: TouchEvent) => {
-        let touch = e.changedTouches[e.changedTouches.length - 1]
+        const touch = e.changedTouches[e.changedTouches.length - 1];
         let x = touch.pageX - (touch.target as HTMLElement).offsetLeft;
         let y = touch.pageY - (touch.target as HTMLElement).offsetTop;
-        let button = 0;
+        const button = 0;
         // touchイベントの場合は拡大縮小を考慮
         if (this.scaleMode === ScaleMode.FIT) {
-          let scale = this.getFitScale();
+          const scale = this.getFitScale();
           x /= scale;
           y /= scale;
         }
-        try { if (this.isLocked) { return } this.onMouseUp(new PonMouseEvent(x, y, button)); }
-        catch (ex) { this.error(ex); }
+        try {
+          if (this.isLocked) { return; } this.onMouseUp(new PonMouseEvent(x, y, button));
+        } catch (ex) {
+          this.error(ex);
+        }
       });
     } else  {
       (canvas as HTMLCanvasElement).addEventListener("mouseup", (e: MouseEvent) => {
-        try { if (this.isLocked) { return } this.onMouseUp(new PonMouseEvent(e)); }
-        catch (ex) { this.error(ex); }
+        try {
+          if (this.isLocked) { return; } this.onMouseUp(new PonMouseEvent(e));
+        } catch (ex) {
+          this.error(ex);
+        }
       });
     }
   }
@@ -549,12 +573,10 @@ export class PonGame implements IConductorEvent {
 
   private initKeyboardEvent(): void {
     window.addEventListener("keydown", (e: KeyboardEvent) => {
-      try { if (this.isLocked) { return } this.onKeyDown(new PonKeyEvent(e)); }
-      catch (ex) { this.error(ex); }
+      try { if (this.isLocked) { return; } this.onKeyDown(new PonKeyEvent(e)); } catch (ex) { this.error(ex); }
     });
     window.addEventListener("keyup", (e: KeyboardEvent) => {
-      try { if (this.isLocked) { return } this.onKeyUp(new PonKeyEvent(e)); }
-      catch (ex) { this.error(ex); }
+      try { if (this.isLocked) { return; } this.onKeyUp(new PonKeyEvent(e)); } catch (ex) { this.error(ex); }
     });
   }
 

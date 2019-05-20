@@ -1,11 +1,11 @@
-import { Logger } from "../base/logger";
 import { AsyncTask } from "../base/async-task";
-import { Resource } from "../base/resource";
-import { PonMouseEvent } from "../base/pon-mouse-event";
-import { Button } from "./button";
 import { BaseLayer } from "../base/base-layer";
-import { FrameAnimLayer } from "./frame-anim-layer";
+import { Logger } from "../base/logger";
+import { PonMouseEvent } from "../base/pon-mouse-event";
+import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
+import { Button } from "./button";
+import { FrameAnimLayer } from "./frame-anim-layer";
 
 /**
  * テキストと背景色を指定できるボタン
@@ -102,8 +102,8 @@ export class TextButton extends Button {
   ];
 
   public store(tick: number): any {
-    let data: any = super.store(tick);
-    let me: any = this as any;
+    const data: any = super.store(tick);
+    const me: any = this as any;
     TextButton.textButtonStoreParams.forEach((param: string) => {
       data[param] = me[param];
     });
@@ -116,7 +116,7 @@ export class TextButton extends Button {
 
   public restoreAfterLoadImage(data: any, tick: number): void {
     super.restoreAfterLoadImage(data, tick);
-    let me: any = this as any;
+    const me: any = this as any;
     TextButton.textButtonStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
@@ -128,14 +128,13 @@ export class TextButton extends Button {
   public copyTo(dest: TextButton): void {
     super.copyTo(dest);
 
-    let me: any = this as any;
-    let you: any = dest as any;
+    const me: any = this as any;
+    const you: any = dest as any;
     TextButton.textButtonStoreParams.forEach((param: string) => {
       you[param] = me[param];
     });
   }
 }
-
 
 /**
  * テキストボタンを配置できるレイヤー
@@ -166,17 +165,17 @@ export class TextButtonLayer extends FrameAnimLayer {
     textAlign: "left" | "center" | "right" = "center",
   ): void {
 
-    let name = `TextButton ${this.textButtons.length}`;
-    let btn = new TextButton(name, this.resource, this.owner);
+    const name = `TextButton ${this.textButtons.length}`;
+    const btn = new TextButton(name, this.resource, this.owner);
     this.addChild(btn);
     this.textButtons.push(btn);
 
-    let normal: number = +backgroundColors[0];
-    let over: number = backgroundColors[1] != null ? +backgroundColors[1] : normal;
-    let on: number = backgroundColors[2] != null ? +backgroundColors[2] : normal;
-    let normalAlpha: number = +backgroundAlphas[0];
-    let overAlpha: number = backgroundAlphas[1] != null ? +backgroundAlphas[1] : normalAlpha;
-    let onAlpha: number = backgroundAlphas[2] != null ? +backgroundAlphas[2] : normalAlpha;
+    const normal: number = +backgroundColors[0];
+    const over: number = backgroundColors[1] != null ? +backgroundColors[1] : normal;
+    const on: number = backgroundColors[2] != null ? +backgroundColors[2] : normal;
+    const normalAlpha: number = +backgroundAlphas[0];
+    const overAlpha: number = backgroundAlphas[1] != null ? +backgroundAlphas[1] : normalAlpha;
+    const onAlpha: number = backgroundAlphas[2] != null ? +backgroundAlphas[2] : normalAlpha;
 
     this.copyTextParams(btn);
     btn.x = x;
@@ -207,8 +206,8 @@ export class TextButtonLayer extends FrameAnimLayer {
   }
 
   public copyTextParams(destLayer: BaseLayer): void {
-    let dest: any = destLayer as any;
-    let me: any = this as any;
+    const dest: any = destLayer as any;
+    const me: any = this as any;
     [
       "textFontFamily",
       "textFontSize",
@@ -273,10 +272,10 @@ export class TextButtonLayer extends FrameAnimLayer {
   }
 
   public store(tick: number): any {
-    let data: any = super.store(tick);
-    let me: any = this as any;
+    const data: any = super.store(tick);
+    const me: any = this as any;
 
-    data.textButtons = this.textButtons.map(textButton => textButton.store(tick));
+    data.textButtons = this.textButtons.map((textButton) => textButton.store(tick));
 
     return data;
   }
@@ -285,7 +284,7 @@ export class TextButtonLayer extends FrameAnimLayer {
     this.clearTextButtons();
     if (data.textButtons != null && data.textButtons.length > 0) {
       data.textButtons.forEach((textButtonData: any) => {
-        let btn = new TextButton(textButtonData.name, this.resource, this.owner);
+        const btn = new TextButton(textButtonData.name, this.resource, this.owner);
         this.addChild(btn);
         this.textButtons.push(btn);
         btn.restore(asyncTask, textButtonData, tick, clear);
@@ -308,7 +307,7 @@ export class TextButtonLayer extends FrameAnimLayer {
 
     dest.clearTextButtons();
     this.textButtons.forEach((srcBtn) => {
-      let destBtn = new TextButton(name, dest.resource, dest.owner);
+      const destBtn = new TextButton(name, dest.resource, dest.owner);
       dest.addChild(destBtn);
       dest.textButtons.push(destBtn);
       srcBtn.copyTo(destBtn);
@@ -316,4 +315,3 @@ export class TextButtonLayer extends FrameAnimLayer {
   }
 
 }
-

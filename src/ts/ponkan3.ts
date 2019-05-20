@@ -119,7 +119,6 @@ export class Ponkan3 extends PonGame {
   public get gameVar(): any { return this.resource.gameVar; }
   public get systemVar(): any { return this.resource.systemVar; }
 
-
   // プラグイン
   protected plugins: PonPlugin[] = [];
 
@@ -399,7 +398,7 @@ export class Ponkan3 extends PonGame {
   // コンダクタ
   // =========================================================
   public onLoadNewScript(labelName: string | null, countPage: boolean): void {
-    if (labelName == null || labelName == "") {
+    if (labelName == null || labelName === "") {
       labelName = "__start__";
     }
   }
@@ -738,14 +737,14 @@ export class Ponkan3 extends PonGame {
   }
 
   public get hasMovingLayer(): boolean {
-    return this.foreLayers.filter(layer => layer.isMoving).length > 0 ||
-           this.backLayers.filter(layer => layer.isMoving).length > 0;
+    return this.foreLayers.filter((layer) => layer.isMoving).length > 0 ||
+           this.backLayers.filter((layer) => layer.isMoving).length > 0;
   }
 
   public waitMoveClickCallback() {
     this.conductor.clearEventHandlerByName("move");
-    this.foreLayers.forEach(layer => layer.stopMove());
-    this.backLayers.forEach(layer => layer.stopMove());
+    this.foreLayers.forEach((layer) => layer.stopMove());
+    this.backLayers.forEach((layer) => layer.stopMove());
     this.conductor.start();
   }
 
@@ -763,7 +762,7 @@ export class Ponkan3 extends PonGame {
   }
 
   public waitFrameAnimCompleteCallback(layers: PonLayer[]) {
-    if (layers.filter(l => l.frameAnimRunning).length === 0) {
+    if (layers.filter((l) => l.frameAnimRunning).length === 0) {
       this.conductor.clearEventHandlerByName("click");
       this.conductor.start();
     }
@@ -804,7 +803,7 @@ export class Ponkan3 extends PonGame {
     if (this.quakeFrameCount++ % this.quakeIntervalFrame !== 0) {
       return;
     }
-    let elapsed: number = tick - this.quakeStartTick;
+    const elapsed: number = tick - this.quakeStartTick;
     if (elapsed > this.quakeTime) {
       this.stopQuake();
       return;
@@ -1064,7 +1063,7 @@ export class Ponkan3 extends PonGame {
       name: this.latestSaveData.name,
       comment: this.latestSaveData.comment,
       text: this.latestSaveData.text,
-      screenShot: this.screenShot.getDataUrl()
+      screenShot: this.screenShot.getDataUrl(),
     };
     Logger.debug(this.systemVar.saveDataInfo[num]);
 
@@ -1201,7 +1200,7 @@ export class Ponkan3 extends PonGame {
       window.setTimeout(() => {
         this.stopSkip();
         this.stopAutoMode();
-        cb.callDone()
+        cb.callDone();
       }, 0);
       return cb;
     });
@@ -1280,8 +1279,8 @@ export class Ponkan3 extends PonGame {
 
   public getSaveDataInfo(num: number): any {
     if (this.existSaveData(num)) {
-      let data = this.systemVar.saveDataInfo[num];
-      if (data.screenShot == null || data.screenShot == "") {
+      const data = this.systemVar.saveDataInfo[num];
+      if (data.screenShot == null || data.screenShot === "") {
         data.screenShot = this.screenShot.nodata;
       }
       const empty = this.emptySaveData;
@@ -1308,7 +1307,7 @@ export class Ponkan3 extends PonGame {
   }
 
   public splitStrByLength(str: string, length: number): string[] {
-    let splitedAry: string[] = [];
+    const splitedAry: string[] = [];
     if (str == null || length == null || length < 1) {
       return splitedAry;
     }
@@ -1323,7 +1322,6 @@ export class Ponkan3 extends PonGame {
     }
     return splitedAry;
   }
-
 
 }
 

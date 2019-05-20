@@ -13,19 +13,17 @@ export class ScreenShot {
   public constructor(config: any) {
     this.canvas = document.createElement("canvas");
 
-    if (config == null) { config = {} }
+    if (config == null) { config = {}; }
     if (config.screenShot == null) { config.screenShot = {}; }
 
-    let cfg = config.screenShot;
-    if (cfg.width != null) { this.canvas.width = cfg.width; }
-    else { this.canvas.width = 320; }
-    if (cfg.height != null) { this.canvas.height = cfg.height; }
-    else { this.canvas.height = 180; }
+    const cfg = config.screenShot;
+    if (cfg.width != null) { this.canvas.width = cfg.width; } else { this.canvas.width = 320; }
+    if (cfg.height != null) { this.canvas.height = cfg.height; } else { this.canvas.height = 180; }
     if (cfg.dataType != null) { this.dataType = cfg.dataType; }
     if (cfg.quality != null) { this.quality = cfg.quality; }
     if (cfg.nodata != null) { this.nodata = cfg.nodata; }
 
-    let context: CanvasRenderingContext2D | null = this.canvas.getContext("2d");
+    const context: CanvasRenderingContext2D | null = this.canvas.getContext("2d");
     if (context == null) { throw new Error("Canvasの初期化に失敗しました"); }
     this.context = context;
 
@@ -52,4 +50,3 @@ export class ScreenShot {
   }
 
 }
-

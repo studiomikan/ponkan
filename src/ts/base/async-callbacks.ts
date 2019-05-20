@@ -1,7 +1,7 @@
 export class AsyncCallbacks {
-  private doneFuncs: ((data: any) => void)[] = [];
-  private failFuncs: ((data: any) => void)[] = [];
-  private alwaysFuncs: ((data: any) => void)[] = [];
+  private doneFuncs: Array<(data: any) => void> = [];
+  private failFuncs: Array<(data: any) => void> = [];
+  private alwaysFuncs: Array<(data: any) => void> = [];
 
   public done(func: (data: any) => void): AsyncCallbacks {
     this.doneFuncs.push(func);

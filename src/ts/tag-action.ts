@@ -1418,7 +1418,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        let layers = p.getLayers(values).filter(l => l.frameAnimRunning && !l.frameAnimLoop);
+        const layers = p.getLayers(values).filter((l) => l.frameAnimRunning && !l.frameAnimLoop);
         if (layers.length === 0) {
           return "continue";
         }
@@ -1677,7 +1677,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        let s: SoundBuffer = p.getSoundBuffer(values.buf);
+        const s: SoundBuffer = p.getSoundBuffer(values.buf);
         if (!s.playing || s.loop) {
           return "continue";
         }
@@ -1707,7 +1707,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       `TODO タグの説明文`,
       (values, tick) => {
-        let s: SoundBuffer = p.getSoundBuffer(values.buf);
+        const s: SoundBuffer = p.getSoundBuffer(values.buf);
         if (!s.fading) {
           return "continue";
         }

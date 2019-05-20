@@ -24,7 +24,7 @@ export class PonRenderer {
     this._height = height;
     this.parentElm = parentElm;
 
-    let renderer = PIXI.autoDetectRenderer(this._width, this._height, {
+    const renderer = PIXI.autoDetectRenderer(this._width, this._height, {
       backgroundColor: 0xFF000000,
       // transparent: true,
     });
@@ -42,7 +42,7 @@ export class PonRenderer {
 
     this._container = new PIXI.Container();
 
-    let maskSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
+    const maskSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
     maskSprite.width = width;
     maskSprite.height = height;
     this._container.addChild(maskSprite);
