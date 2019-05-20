@@ -963,6 +963,10 @@ export class Ponkan3 extends PonGame {
     this.historyLayer.hide();
   }
 
+  public historyTextReturn(): void {
+    this.historyLayer.addHistoryTextReturn();
+  }
+
   // =========================================================
   // トランジション
   // =========================================================

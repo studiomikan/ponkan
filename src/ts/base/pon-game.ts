@@ -501,38 +501,56 @@ export class PonGame implements IConductorEvent {
 
     canvas.addEventListener("mouseenter", (e: MouseEvent) => {
       try {
-        if (this.isLocked) { return; } this.onMouseEnter(new PonMouseEvent(e));
+        e.preventDefault();
+        if (this.isLocked) { return true; }
+        return this.onMouseEnter(new PonMouseEvent(e));
       } catch (ex) {
         this.error(ex);
       }
     });
     canvas.addEventListener("mouseleave", (e: MouseEvent) => {
       try {
-        if (this.isLocked) { return; } this.onMouseLeave(new PonMouseEvent(e));
+        e.preventDefault();
+        if (this.isLocked) { return true; }
+        return this.onMouseLeave(new PonMouseEvent(e));
       } catch (ex) {
         this.error(ex);
       }
     });
     canvas.addEventListener("mousewheel", (e: Event) => {
       try {
-        if (this.isLocked) { return; } this.onMouseWheel(new PonWheelEvent(e as WheelEvent));
+        e.preventDefault();
+        if (this.isLocked) { return true; }
+        return this.onMouseWheel(new PonWheelEvent(e as WheelEvent));
       } catch (ex) {
         this.error(ex);
       }
     });
     canvas.addEventListener("mousemove", (e: MouseEvent) => {
       try {
-        if (this.isLocked) { return; } this.onMouseMove(new PonMouseEvent(e));
+        e.preventDefault();
+        if (this.isLocked) { return true; }
+        return this.onMouseMove(new PonMouseEvent(e));
       } catch (ex) {
         this.error(ex);
       }
     });
     canvas.addEventListener("mousedown", (e: MouseEvent) => {
       try {
-        if (this.isLocked) { return; } this.onMouseDown(new PonMouseEvent(e));
+        e.preventDefault();
+        if (this.isLocked) { return true; }
+        return this.onMouseDown(new PonMouseEvent(e));
       } catch (ex) {
         this.error(ex);
       }
+    });
+    canvas.addEventListener("click", (e: MouseEvent) => {
+      e.preventDefault();
+      return true;
+    });
+    canvas.addEventListener("contextmenu", (e: MouseEvent) => {
+      e.preventDefault();
+      return true;
     });
 
     if ("ontouchend" in canvas) {
@@ -547,16 +565,20 @@ export class PonGame implements IConductorEvent {
           x /= scale;
           y /= scale;
         }
+        e.preventDefault();
         try {
-          if (this.isLocked) { return; } this.onMouseUp(new PonMouseEvent(x, y, button));
+          if (this.isLocked) { return true; }
+          return this.onMouseUp(new PonMouseEvent(x, y, button));
         } catch (ex) {
           this.error(ex);
         }
       });
     } else  {
       (canvas as HTMLCanvasElement).addEventListener("mouseup", (e: MouseEvent) => {
+        e.preventDefault();
         try {
-          if (this.isLocked) { return; } this.onMouseUp(new PonMouseEvent(e));
+          if (this.isLocked) { return true; }
+          return this.onMouseUp(new PonMouseEvent(e));
         } catch (ex) {
           this.error(ex);
         }

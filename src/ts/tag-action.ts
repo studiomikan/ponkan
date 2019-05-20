@@ -804,6 +804,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       `TODO タグの説明文`,
       (values, tick) => {
         p.stopUntilClickSkip(); // クリック待ちまでのスキップを停止
+        p.historyTextReturn();
         if (p.isSkipping) {
           // UNTIL_CLICK_WAITが終わってもなおスキップ中なら、クリック待ちはしない
           // ただし改行条件等を通常と揃えるために一度グリフを表示して、すぐに非表示にする
@@ -1899,6 +1900,17 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       `TODO タグの説明文`,
       (values, tick) => {
         p.showHistoryLayer();
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["hbr"],
+      "メッセージ履歴",
+      "メッセージ履歴を改行する",
+      [],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        p.historyTextReturn();
         return "continue";
       },
     ),
