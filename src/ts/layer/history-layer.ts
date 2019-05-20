@@ -421,7 +421,7 @@ export class HistoryLayer extends BaseLayer {
       button.height = 32;
       button.initButton(conf.bgColors, conf.bgAlphas);
       button.textColor = 0xFFFFFF;
-      button.textFontFamily = ["mplus-1p-regular", "monospace"];
+      button.textFontFamily = ["mplus-1m-regular", "monospace"];
       button.textFontSize = 16;
       button.textLineHeight = 16;
       button.textMarginLeft = 0;
@@ -488,7 +488,7 @@ export class HistoryLayer extends BaseLayer {
       y: 15,
       width: 40,
       height: 40,
-      textFontFamily: ["mplus-1p-regular", "monospace"],
+      textFontFamily: ["mplus-1m-regular", "monospace"],
       textFontSize: 36,
       textLineHeight: 36,
       textAlign: "center",

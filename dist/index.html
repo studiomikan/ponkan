@@ -5,7 +5,7 @@
     <title>Ponkan3 Sample</title>
     <style>
       @font-face {
-        font-family: 'mplus-1p-regular';
+        font-family: 'mplus-1m-regular';
         src: url('./fonts/mplus-1m-regular.woff') format('woff')
       }
       html, body {
@@ -65,7 +65,7 @@
             y: 130,
             width: 900,
             height: 500,
-            textFontFamily: ["mplus-1p-regular"],
+            textFontFamily: ["mplus-1m-regular"],
             textFontSize: 26,
             textLineHeight: 26,
             textLinePitch: 7,
@@ -118,7 +118,7 @@
       });
       WebFont.load({
         classes: false,
-        custom: { families: ["mplus-1p-regular"] },
+        custom: { families: ["mplus-1m-regular"] },
         active: function() {
           console.log("WebFont: ", "active.");
           ponkan.start();

@@ -61,7 +61,7 @@ export class BaseLayer {
   // 文字関係
   protected textLines: PonSprite[][] = [[]];
   public textStyle: PIXI.TextStyle = new PIXI.TextStyle({
-    fontFamily: ["mplus-1p-regular", "monospace"],
+    fontFamily: ["mplus-1m-regular", "monospace"],
     fontSize: 24,
     fontWeight: "normal",
     fill: 0xffffff,

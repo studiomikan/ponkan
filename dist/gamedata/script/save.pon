@@ -53,7 +53,7 @@ tv.system.save = {
 ;meslay lay: "&tv.system.save.textLay"
 ;clear lay: "&tv.system.save.textLay"
 ;mesopt {
-  fontfamily: ["mplus-1p-regular", "monospace"],
+  fontfamily: ["mplus-1m-regular", "monospace"],
   fontsize: 18,
   lineheight: 18,
   align: "left",
