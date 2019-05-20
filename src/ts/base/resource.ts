@@ -191,7 +191,7 @@ export class Resource {
           cb.callFail(e);
         }
       }).fail(() => {
-        cb.callFail();
+        cb.callFail(new Error(`ファイルが読み込めませんでした(${filePath})`));
       });
     }
     return cb;
