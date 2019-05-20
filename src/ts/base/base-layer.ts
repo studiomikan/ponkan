@@ -144,6 +144,13 @@ export class BaseLayer {
   public reservedTextIndentPoint: number = 0;
   public textAlign: "left" | "center" | "right" = "left";
 
+  /** 禁則文字（行頭禁則文字） */
+  public static headProhibitionChar: string =
+    "%),:;]}｡｣ﾞﾟ。，、．：；゛゜ヽヾゝ\"ゞ々’”）〕］｝〉》」』】°′″℃￠％‰" +
+    "!.?､･ｧｨｩｪｫｬｭｮｯｰ・？！ーぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ";
+  /** 禁則文字（行末禁則文字） */
+  public static tailProhibitionChar: string = "\\$([{｢‘“（〔［｛〈《「『【￥＄￡";
+
   public get children(): BaseLayer[] { return this._children; }
   public get x(): number { return this.container.x; }
   public set x(x) { this.container.x = x; }
@@ -486,7 +493,7 @@ export class BaseLayer {
     const fontSize: number = +this.textStyle.fontSize;
     sp.createText(ch, this.textStyle);
 
-    const pos = this.getNextTextPos(sp.width);
+    const pos = this.getNextTextPos(ch, sp.width);
     sp.x = pos.x;
     sp.y = pos.y;
     this.currentTextLine.push(sp);
@@ -508,10 +515,11 @@ export class BaseLayer {
 
   /**
    * 次の文字の表示位置を取得する
+   * @param ch 追加しようとしている文字
    * @param chWidth 追加しようとしている文字の横幅
    * @return 表示位置
    */
-  public getNextTextPos(chWidth: number, chHeight: number = this.textFontSize): {x: number, y: number} {
+  public getNextTextPos(ch: string, chWidth: number, chHeight: number = this.textFontSize): {x: number, y: number} {
     // 自動改行の判定
     const lineWidth = this.getCurrentLineWidth();
     let totalMargin = this.textMarginLeft + this.textMarginRight;
@@ -535,8 +543,18 @@ export class BaseLayer {
           break;
       }
     }
-    if (this.textAutoReturn && (lineWidth + chWidth + totalMargin) > this.width) {
-      this.addTextReturn();
+    // 自動改行
+    if (this.textAutoReturn) {
+      if (BaseLayer.headProhibitionChar.indexOf(ch) === -1 &&
+         (lineWidth + chWidth + totalMargin) > this.width) {
+        this.addTextReturn();
+      } else {
+        // 文字が行末禁則文字かつ、行末になってしまいそうなら改行
+        if (BaseLayer.tailProhibitionChar.indexOf(ch) !== -1 &&
+          (lineWidth + chWidth + chWidth + totalMargin) > this.width) {
+          this.addTextReturn();
+        }
+      }
     }
 
     // 追加する1文字に合わせて、既存の文字の位置を調整＆次の文字位置の算出

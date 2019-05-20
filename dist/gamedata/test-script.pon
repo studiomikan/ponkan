@@ -58,7 +58,7 @@
 ;clear
 ;layopt {
   lay: "message",
-  width: 1280 / 2,
+  width: 1280 / 2 - 20,
   height: 720,
   x: 1280 / 2,
   y: 0
@@ -81,6 +81,13 @@
 #;loadsound "buf": "se", "file": "sound/pekowave1.wav"
 #;soundopt buf: "se", loop: true, volume: 1
 #;playsound buf:"se"
+
+
+
+#あああああああああああああああああああああああ」
+あああああああああああああああああああああ「
+いいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
 
 |
 ;mesopt fontsize: 36, lineheight: 36
