@@ -1,7 +1,6 @@
 import { AsyncCallbacks } from "./async-callbacks";
 import { AsyncTask } from "./async-task";
 import { Logger } from "./logger";
-import { Macro } from "./macro";
 import { PonEventHandler } from "./pon-event-handler";
 import { ReadUnread } from "./read-unread";
 import { Resource } from "./resource";

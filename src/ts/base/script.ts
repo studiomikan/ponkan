@@ -159,6 +159,7 @@ export class Script {
   protected callMacro(tag: Tag): void {
     const macro: Macro = this.resource.getMacro(tag.name).clone();
     macro.resetTagPoint();
+    applyJsEntity(this.resource, tag.values);
     macro.params = Util.objClone(tag.values);
     this.macroStack.push(macro);
   }
