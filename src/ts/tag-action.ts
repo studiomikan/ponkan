@@ -761,7 +761,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ["endindent"],
       "メッセージ操作",
       "インデント位置をクリアする",
-      [],
+      [
+        new TagValue("lay", "string", false, "message", "対象レイヤー"),
+        new TagValue("page", "string", false, "current", "対象ページ"),
+      ],
       `[indent] で設定したインデント位置をクリアします。`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
