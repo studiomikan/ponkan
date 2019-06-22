@@ -576,6 +576,10 @@ export class HistoryLayer extends BaseLayer {
     );
   }
 
+  public goToEnd(): void {
+    this.textLayer.goToEnd();
+  }
+
   public onMouseEnter(e: PonMouseEvent): boolean  {
     super.onMouseEnter(e);
     return false;

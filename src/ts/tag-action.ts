@@ -657,7 +657,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "メッセージ",
       "文字を出力する",
       [
-        new TagValue("lay", "string", false, "message", "出力する文字"),
+        new TagValue("lay", "string", false, "message", "出力する先のレイヤ"),
         new TagValue("page", "string", false, "current", "対象ページ"),
         new TagValue("text", "string", true, null, "出力する文字"),
       ],
@@ -1930,6 +1930,19 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       `TODO タグの説明文`,
       (values, tick) => {
         p.showHistoryLayer();
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["historych", "hch"],
+      "メッセージ履歴",
+      "メッセージ履歴にテキストを出力する",
+      [
+        new TagValue("text", "string", true, null, "出力する文字"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        p.addTextToHistory(values.text);
         return "continue";
       },
     ),

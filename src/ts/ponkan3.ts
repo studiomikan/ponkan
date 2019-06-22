@@ -974,6 +974,7 @@ export class Ponkan3 extends PonGame {
   }
 
   public showHistoryLayer(): void {
+    this.historyLayer.goToEnd();
     this.historyLayer.show();
   }
 
@@ -983,6 +984,12 @@ export class Ponkan3 extends PonGame {
 
   public historyTextReturn(): void {
     this.historyLayer.addHistoryTextReturn();
+  }
+
+  public addTextToHistory(text: string): void {
+    for (let i = 0; i < text.length; i++) {
+      this.historyLayer.addHistoryChar(text[i]);
+    }
   }
 
   // =========================================================
