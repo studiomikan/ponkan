@@ -49,18 +49,17 @@ export class MovableLayer extends ToggleButtonLayer {
       throw new Error("catmullromではpathを2点以上指定する必要があります。");
     }
 
-    path.unshift({ x: this.x, y: this.y, alpha: this.alpha });
-
     this._isMoving = true;
     this.moveType = type;
     this.moveEase = ease;
-    this.movePosList = path;
+    this.movePosList = this.clonePath(path);
     this.movePoint = 0;
     this.moveTime = time;
     this.moveDelay = delay;
     this.moveTotalTime = time * (path.length - 1);
     this.moveStartTick = -1; // この時点では-1としておき、初めてのupdate時に設定する
 
+    this.movePosList.unshift({ x: this.x, y: this.y, alpha: this.alpha });
     // bezier2、bezier3のときはmoveTime == moveTotalTimeとする
     if (type === "bezier2" || type === "bezier3") {
       this.moveTime = this.moveTotalTime;
@@ -77,6 +76,14 @@ export class MovableLayer extends ToggleButtonLayer {
       this.movePosList = [];
       this.owner.conductor.trigger("move");
     }
+  }
+
+  private clonePath(orgPath: IMovePos[]): IMovePos[] {
+    const path: IMovePos[] = [];
+    orgPath.forEach((p) => {
+      path.push({ x: p.x, y: p.y, alpha: p.alpha, });
+    });
+    return path;
   }
 
   // [override]
