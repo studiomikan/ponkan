@@ -43,6 +43,8 @@ export class Conductor {
   public latestSaveMarkName: string = "";
   public readUnread: ReadUnread;
 
+  public commandShortcut: any = {};
+
   public constructor(resource: Resource, name: string, eventCallbacks: IConductorEvent) {
     this.resource = resource;
     this.name = name;
@@ -149,6 +151,13 @@ export class Conductor {
           break;
         case "__js__":
           tagReturnValue = this.eventCallbacks.onJs(tag.values.__body__, tag.values.print, tag.line, tick);
+          break;
+        case "ch":
+          // コマンドショートカットの反映
+          if (this.commandShortcut[tag.values.text] != null) {
+            tag = this.script.callCommandShortcut(tag, this.commandShortcut[tag.values.text]);
+          }
+          tagReturnValue = this.eventCallbacks.onTag(tag, tag.line, tick);
           break;
         default:
           tagReturnValue = this.eventCallbacks.onTag(tag, tag.line, tick);

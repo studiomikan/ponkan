@@ -270,6 +270,33 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
+    new TagAction(
+      ["commandshortcut", "cmdsc"],
+      "その他",
+      "コマンドショートカットを設定する",
+      [
+        new TagValue("ch", "string", true, null, "ショートカットの文字"),
+        new TagValue("command", "string", true, null, "コマンドの名前"),
+      ],
+      `コマンドショートカットを設定します。`,
+      (values, tick) => {
+        p.addCommandShortcut(values.ch, values.command);
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["delcommandshortcut", "delcmdsc"],
+      "その他",
+      "コマンドショートカットを削除する",
+      [
+        new TagValue("ch", "string", true, null, "ショートカットの文字"),
+      ],
+      `コマンドショートカットを削除します。`,
+      (values, tick) => {
+        p.delCommandShortcut(values.ch);
+        return "continue";
+      },
+    ),
     // ======================================================================
     // スクリプト制御
     // ======================================================================

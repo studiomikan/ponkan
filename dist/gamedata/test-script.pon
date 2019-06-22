@@ -82,7 +82,17 @@
 #;soundopt buf: "se", loop: true, volume: 1
 #;playsound buf:"se"
 
+;macro name: "speak"
+  ;ch text: "「"
+  ;indent
+;endmacro
 
+;cmdsc ch: "「", command: "speak"
+
+「あいうえお$
+かきくけこ
+さしすせそ」
+;pb
 
 #あああああああああああああああああああああああ」
 あああああああああああああああああああああ「

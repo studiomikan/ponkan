@@ -168,6 +168,20 @@ export class Script {
     return this.macroStack.length !== 0;
   }
 
+  public callCommandShortcut(orgTag: Tag, commandName: string): Tag {
+    const tag: Tag = new Tag(commandName, {}, orgTag.line);
+    if (this.resource.hasMacro(tag.name)) {
+      this.callMacro(tag);
+      const nextTag: Tag | null = this.getNextTag();
+      if (nextTag == null) {
+        throw new Error("コマンドショートカットの呼び出しに失敗しました");
+      }
+      return nextTag;
+    } else {
+      return tag;
+    }
+  }
+
   /**
    * 最後に取得されたタグを返す。
    */

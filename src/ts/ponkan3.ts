@@ -394,6 +394,17 @@ export class Ponkan3 extends PonGame {
     // Logger.debug("TagActionMap: ", this.tagActions);
   }
 
+  public addCommandShortcut(ch: string, command: string) {
+    if (ch.length !== 1) {
+      throw new Error("コマンドショートカットには1文字しか指定できません");
+    }
+    this.conductor.commandShortcut[ch] = command;
+  }
+
+  public delCommandShortcut(ch: string) {
+    delete this.conductor.commandShortcut[ch];
+  }
+
   // =========================================================
   // コンダクタ
   // =========================================================
