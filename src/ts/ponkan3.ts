@@ -178,8 +178,8 @@ export class Ponkan3 extends PonGame {
     if (this.autoModeFlag && this.autoModeStartTick >= 0) {
       const elapsed = tick - this.autoModeStartTick;
       if (elapsed >= this.autoModeInterval) {
-        this.onPrimaryClick();
         this.autoModeStartTick = -1;
+        this.onPrimaryClick();
         // onPrimaryClickで解除されてしまうのでもう一回
         this.startAutoMode();
       }
@@ -299,6 +299,13 @@ export class Ponkan3 extends PonGame {
     }
     if (!this.conductor.isStable) {
       return false;
+    }
+
+    if (this.autoModeFlag) {
+      this.stopAutoMode();
+    }
+    if (this.isSkipping) {
+      this.stopSkip();
     }
 
     if (this.rightClickJump) {
