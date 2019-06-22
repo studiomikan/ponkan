@@ -8,6 +8,9 @@ module.exports = merge(common, {
   output: {
     path: path.join(__dirname, 'dist')
   },
+  optimization: {
+    minimizer: [new UglifyJsPlugin()],
+  },
   plugins: [
     new UglifyJsPlugin(),
   ],
