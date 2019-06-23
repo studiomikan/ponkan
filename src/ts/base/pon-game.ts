@@ -30,7 +30,6 @@ export class PonGame implements IConductorEvent {
 
   public readonly resource: Resource;
   private loopFlag: boolean = false;
-  private loopCount: number = 0;
   private fpsPreTick: number = 0;
   private fpsCount: number = 0;
   private fps: number = 0;
@@ -73,14 +72,6 @@ export class PonGame implements IConductorEvent {
     elm.style.position = "relative";
     elm.style.display = "block";
     elm.style.padding = "0";
-    // elm.style.width = config.width + "px";
-    // elm.style.height = config.height + "px";
-    // [this.foreRenderer.canvasElm, this.backRenderer.canvasElm].forEach((canvas: HTMLCanvasElement) => {
-    //   canvas.style.display = "block";
-    //   // // canvas.style.position = "absolute";
-    //   // canvas.style.top = "0";
-    //   // canvas.style.left = "0";
-    // });
     this.foreRenderer.canvasElm.style.display = "block";
     this.backRenderer.canvasElm.style.display = "none";
 
@@ -109,12 +100,12 @@ export class PonGame implements IConductorEvent {
     this.stop();
     this.loopFlag = true;
     this.fpsPreTick = Date.now();
-    window.setTimeout(() => { this.loop(); }, 60);
+    window.setTimeout(() => { this.updateLoop(); }, 0);
+    window.setTimeout(() => { this.drawLoop(); }, 60);
   }
 
   public stop(): void {
     this.loopFlag = false;
-    this.loopCount = 0;
     this.fpsPreTick = 0;
     this.fpsCount = 0;
     this.fps = 0;
@@ -132,7 +123,6 @@ export class PonGame implements IConductorEvent {
   // スケーリング
   // ============================================================
 
-  // private windowResizeTimer: number = -1;
   private initWindowScale(): void {
     this._fixedScaleWidth = this.config.width;
     this._fixedScaleHeight = this.config.height;
@@ -252,7 +242,19 @@ export class PonGame implements IConductorEvent {
   // 描画・更新ループ等のゲーム基礎部分
   // ============================================================
 
-  private loop(): void {
+  private updateLoop(): void {
+    try {
+      if (!this.loopFlag) { return; }
+      const tick: number = Date.now();
+      this.update(tick);
+      window.setTimeout(() => this.updateLoop(), 1);
+    } catch (e) {
+      console.error(e);
+      this.error(e);
+    }
+  }
+
+  private drawLoop(): void {
     try {
       if (!this.loopFlag) { return; }
       const tick: number = Date.now();
@@ -261,15 +263,12 @@ export class PonGame implements IConductorEvent {
         this.fps = this.fpsCount;
         this.fpsPreTick = tick;
         this.fpsCount = 0;
-        // console.log(this.fps);
       }
-
-      this.update(tick);
 
       if (this.transManager.isRunning) {
         this.transManager.draw(tick);
       } else {
-        this.backRenderer.draw(tick); // TODO 本来はここのback不要
+        // this.backRenderer.draw(tick); // TODO 本来はここのback不要
         this.foreRenderer.draw(tick);
       }
 
@@ -278,9 +277,8 @@ export class PonGame implements IConductorEvent {
         this.reserveScreenShotFlag = false;
       }
 
-      this.loopCount++;
       this.fpsCount++;
-      window.requestAnimationFrame(() => this.loop());
+      window.requestAnimationFrame(() => this.drawLoop());
     } catch (e) {
       console.error(e);
       this.error(e);

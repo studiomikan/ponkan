@@ -82,17 +82,23 @@
 #;soundopt buf: "se", loop: true, volume: 1
 #;playsound buf:"se"
 
+;hch text: "てｋｄかｊｆｓｋｌ；だｆｋｌ；ｊｆ"
+;hbr
+;hbr
+
 ;macro name: "speak"
   ;ch text: "「"
   ;indent
 ;endmacro
-
 ;cmdsc ch: "「", command: "speak"
+;textspeed read: 1, unread: 1
 
 「あいうえお$
 かきくけこ
 さしすせそ」
 ;pb
+
+
 
 #あああああああああああああああああああああああ」
 あああああああああああああああああああああ「
