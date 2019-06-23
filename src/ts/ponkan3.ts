@@ -189,10 +189,13 @@ export class Ponkan3 extends PonGame {
     this.forePrimaryLayer.update(tick);
     this.backPrimaryLayer.update(tick);
     this.historyLayer.update(tick);
-    this.quake(tick);
 
     // オートモード中は強制的に状態を表示
     this.autoModeLayer.visible = this.autoModeFlag;
+  }
+
+  protected beforeDraw(tick: number): void  {
+    this.quake(tick);
   }
 
   public error(e: Error): void {

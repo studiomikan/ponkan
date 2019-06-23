@@ -265,6 +265,7 @@ export class PonGame implements IConductorEvent {
         this.fpsCount = 0;
       }
 
+      this.beforeDraw(tick);
       if (this.transManager.isRunning) {
         this.transManager.draw(tick);
       } else {
@@ -287,7 +288,10 @@ export class PonGame implements IConductorEvent {
 
   protected update(tick: number): void {
     // should to override
-    // this.conductor.conduct(tick);
+  }
+
+  protected beforeDraw(tick: number): void {
+    // should to override
   }
 
   public error(e: Error): void {
