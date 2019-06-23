@@ -169,8 +169,6 @@ export class Ponkan3 extends PonGame {
 
   public stop(): void {
     super.stop();
-    this.plugins.forEach((p) => p.onSaveSystemVariables());
-    // this.resource.saveSystemData(this.saveDataPrefix);
   }
 
   protected update(tick: number): void {
@@ -1065,9 +1063,12 @@ export class Ponkan3 extends PonGame {
   // =========================================================
 
   public onWindowClose(): boolean {
-    this.plugins.forEach((p) => p.onSaveSystemVariables());
-    this.resource.saveSystemData(this.saveDataPrefix);
+    this.saveSystemData();
     return true;
+  }
+
+  public saveSystemData(): void {
+    this.resource.saveSystemData(this.saveDataPrefix);
   }
 
   protected getSaveDataName(num: number): string {
@@ -1103,8 +1104,7 @@ export class Ponkan3 extends PonGame {
     };
     Logger.debug(this.systemVar.saveDataInfo[num]);
 
-    this.plugins.forEach((p) => p.onSaveSystemVariables());
-    this.resource.saveSystemData(this.saveDataPrefix);
+    this.saveSystemData();
     Logger.debug("===================================================");
   }
 
@@ -1310,7 +1310,7 @@ export class Ponkan3 extends PonGame {
   public deleteSaveData(num: number): void {
     delete this.systemVar.saveDataInfo[num];
     this.resource.storeToLocalStorage(this.getSaveDataName(num), "");
-    this.resource.saveSystemData(this.saveDataPrefix);
+    this.saveSystemData();
   }
 
   public getSaveDataInfo(num: number): any {

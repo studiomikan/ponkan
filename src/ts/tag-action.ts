@@ -178,6 +178,17 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     new TagAction(
+      ["savesysvar"],
+      "その他",
+      "システム変数を保存する",
+      [],
+      ``,
+      (values, tick) => {
+        p.saveSystemData();
+        return "continue";
+      },
+    ),
+    new TagAction(
       ["clickskipopt", "clickskip"],
       "その他",
       "クリックスキップの設定",
