@@ -625,6 +625,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("marginr", "number", false, null, "テキスト描画のマージン　右"),
         new TagValue("marginb", "number", false, null, "テキスト描画のマージン　下"),
         new TagValue("marginl", "number", false, null, "テキスト描画のマージン　左"),
+        new TagValue("pitch", "number", false, null, "テキストの文字間(px)"),
         new TagValue("lineheight", "number", false, null, "テキストの行の高さ(px)"),
         new TagValue("linepitch", "number", false, null, "テキストの行間(px)"),
         new TagValue("align", "string", false, null, `テキスト寄せの方向。"left" | "center" | "right"`),
@@ -648,6 +649,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           if (values.marginr != null) { layer.textMarginRight = values.marginr; }
           if (values.marginb != null) { layer.textMarginBottom = values.marginb; }
           if (values.marginl != null) { layer.textMarginLeft = values.marginl; }
+          if (values.pitch != null) { layer.textPitch = values.pitch; }
           if (values.lineheight != null) { layer.textLineHeight = values.lineheight; }
           if (values.linepitch != null) { layer.textLinePitch = values.linepitch; }
           if (values.align != null) { layer.textAlign = values.align; }

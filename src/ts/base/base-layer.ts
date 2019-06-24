@@ -74,6 +74,7 @@ export class BaseLayer {
     dropShadowDistance: 2,
     stroke: 0x000000,
     strokeThickness: 0,
+    trim: false,
   });
   public set textFontFamily(fontFamily: string[]) { this.textStyle.fontFamily = fontFamily; }
   public get textFontFamily(): string[] {
@@ -136,8 +137,9 @@ export class BaseLayer {
   public textX: number = NaN;
   /** 次の文字を描画する予定の位置。予定であって、自動改行等が発生した場合は次の行になるため注意。 */
   public textY: number = NaN;
-  public textLineHeight: number  = 24;
-  public textLinePitch: number  = 5;
+  public textPitch: number = 0;
+  public textLineHeight: number = 24;
+  public textLinePitch: number = 5;
   public textAutoReturn: boolean = true;
   public textLocatePoint: number = 0;
   public textIndentPoint: number = 0;
@@ -491,14 +493,13 @@ export class BaseLayer {
     }
     const sp: PonSprite = new PonSprite(this.textSpriteCallbacks);
     const fontSize: number = +this.textStyle.fontSize;
-    sp.createText(ch, this.textStyle);
+    sp.createText(ch, this.textStyle, this.textPitch);
 
-    const pos = this.getNextTextPos(ch, sp.width);
+    const pos = this.getNextTextPos(ch, sp.textWidth);
     sp.x = pos.x;
     sp.y = pos.y;
     this.currentTextLine.push(sp);
-    this.textX = pos.x + sp.width;
-    // this.textY = pos.y;
+    this.textX = pos.x + sp.textWidth;
   }
 
   public getCurrentLineWidth() {
@@ -508,7 +509,7 @@ export class BaseLayer {
     }
     let width: number = 0;
     line.forEach((sp) => {
-      width += sp.width;
+      width += sp.textWidth;
     });
     return width;
   }
@@ -551,7 +552,7 @@ export class BaseLayer {
       } else {
         // 文字が行末禁則文字かつ、行末になってしまいそうなら改行
         if (BaseLayer.tailProhibitionChar.indexOf(ch) !== -1 &&
-          (lineWidth + chWidth + chWidth + totalMargin) > this.width) {
+          (lineWidth + (chWidth * 2) + totalMargin) > this.width) {
           this.addTextReturn();
         }
       }
@@ -585,10 +586,11 @@ export class BaseLayer {
     }
     let x = startX;
     const list: number[] = [];
-    this.currentTextLine.forEach((sp) => {
+    const currentTextLine = this.currentTextLine;
+    currentTextLine.forEach((sp) => {
       list.push(x);
       sp.x = x;
-      x += sp.width;
+      x += sp.textWidth;
     });
 
     const y = this.textY + this.textLineHeight - chHeight;
@@ -782,6 +784,7 @@ export class BaseLayer {
     "textMarginLeft",
     "textX",
     "textY",
+    "textPitch",
     "textLineHeight",
     "textLinePitch",
     "textAutoReturn",
@@ -866,11 +869,12 @@ export class BaseLayer {
       textLine.forEach((srcSp: PonSprite) => {
         const ch: string | null = srcSp.text;
         const style: PIXI.TextStyle | null = srcSp.textStyle;
+        const pitch: number = srcSp.textPitch;
         if (ch === null || style === null) {
           return;
         }
         const destSp: PonSprite = new PonSprite(dest.textSpriteCallbacks);
-        destSp.createText(ch, style);
+        destSp.createText(ch, style, pitch);
         destSp.x = srcSp.x;
         destSp.y = srcSp.y;
         destTextLine.push(destSp);

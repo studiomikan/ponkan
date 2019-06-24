@@ -36,6 +36,7 @@ export class PonSprite {
   private _height: number = DEFAULT_HEIGHT;
   private _visible: boolean = true;
   private _textStyle: PIXI.TextStyle | null = null;
+  private _textPitch: number = 0;
   /** PIXIのスプライト */
   private pixiSprite: PIXI.Text | PIXI.Sprite | PIXI.Graphics | null = null;
 
@@ -88,6 +89,10 @@ export class PonSprite {
   }
   /** テキストスタイル */
   public get textStyle(): PIXI.TextStyle | null { return this._textStyle; }
+  /** テキストの文字間 */
+  public get textPitch(): number { return this._textPitch; }
+  /** テキストの横幅 */
+  public get textWidth(): number { return this._width + this._textPitch; }
 
   /**
    * @param callbacks コールバック
@@ -155,9 +160,10 @@ export class PonSprite {
    * @param text 文字
    * @param style 描画スタイル
    */
-  public createText(text: string, style: PIXI.TextStyle): void {
+  public createText(text: string, style: PIXI.TextStyle, pitch: number): void {
     this.clear();
     this._textStyle = style.clone();
+    this._textPitch = pitch;
 
     this.pixiSprite = new PIXI.Text(text, this._textStyle);
     this.pixiSprite.x = this.x;
