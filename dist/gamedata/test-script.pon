@@ -82,15 +82,22 @@
 #;soundopt buf: "se", loop: true, volume: 1
 #;playsound buf:"se"
 
+;hch text: "てｋｄかｊｆｓｋｌ；だｆｋｌ；ｊｆ"
+;hbr
+;hbr
+
+
 ;macro name: "speak"
   ;ch text: "「"
   ;indent
 ;endmacro
-
 ;cmdsc ch: "「", command: "speak"
+;textspeed read: 1, unread: 1
 
 「あいうえお$
 かきくけこ
+;endindent
+;br
 さしすせそ」
 ;pb
 
@@ -101,6 +108,7 @@
 いいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
 ;pb
 ;br
+;clear
 
 ロック,
 ;lockbutton
@@ -154,7 +162,6 @@ Normal
 かきくけこさしすせそたちつてとなにぬねの
 # ;hidemessages
 ;lb
-;screenshot
 ;quake time: 2000, x: 10, y: 30
 ;waitquake canskip: true
 はひふへほまみむめもやいゆ
