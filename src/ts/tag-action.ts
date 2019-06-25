@@ -787,6 +787,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [
         new TagValue("lay", "string", false, "message", "対象レイヤー"),
         new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("history", "boolean", false, true, "メッセージ履歴もインデントするかどうか"),
       ],
       `現在の文字描画位置でインデントするように設定します。
        インデント位置は [endindent] または [clear] でクリアされます。`,
@@ -794,6 +795,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         p.getLayers(values).forEach((layer) => {
           layer.setIndentPoint();
         });
+        if (values.history) {
+          p.historyLayer.setHistoryIndentPoint();
+        }
         return "continue";
       },
     ),
@@ -804,12 +808,16 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [
         new TagValue("lay", "string", false, "message", "対象レイヤー"),
         new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("history", "boolean", false, true, "メッセージ履歴もインデント解除するか"),
       ],
       `[indent] で設定したインデント位置をクリアします。`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.clearIndentPoint();
         });
+        if (values.history) {
+          p.historyLayer.clearIndentPoint();
+        }
         return "continue";
       },
     ),

@@ -236,6 +236,8 @@ class ScrollBar extends BaseLayer {
 class HistoryTextLayer extends BaseLayer {
 
   protected lines: string[][] = [[]];
+  protected indentPoints: number[] = [-1];
+  protected clearIndentPoints: number[] = [-1];
   public get currentLine(): string[] { return this.lines[this.lines.length - 1]; }
   public scrollOffLines: number = 3;
   protected point: number = 0;
@@ -261,6 +263,7 @@ class HistoryTextLayer extends BaseLayer {
 
   public clear(): void {
     this.lines = [[]];
+    this.indentPoints = [-1];
   }
 
   public add(ch: string): void {
@@ -269,6 +272,15 @@ class HistoryTextLayer extends BaseLayer {
 
   public textReturn(): void {
     this.lines.push([]);
+    this.indentPoints.push(-1);
+  }
+
+  public setHistoryIndentPoint(): void {
+    this.indentPoints[this.indentPoints.length - 1] = this.currentLine.length;
+  }
+
+  public clearHistoryIndentPoint(): void {
+    this.clearIndentPoints[this.clearIndentPoints.length - 1] = this.currentLine.length;
   }
 
   public scrollUp(count: number = 1): void {
@@ -308,8 +320,19 @@ class HistoryTextLayer extends BaseLayer {
 
     const max = this.point + this.screenLineCount;
     for (let i = this.point; i < max && i < this.lines.length; i++) {
-      this.lines[i].forEach((ch) => this.addChar(ch));
+      const indentPoint = this.indentPoints[i];
+      const clearIndentPoint = this.clearIndentPoints[i];
+      this.lines[i].forEach((ch, index) => {
+        if (index === indentPoint) {
+          this.setIndentPoint();
+        }
+        if (index === clearIndentPoint) {
+          this.clearIndentPoint();
+        }
+        this.addChar(ch);
+      });
       this.addTextReturn();
+      this.clearIndentPoint();
     }
   }
 
@@ -574,6 +597,10 @@ export class HistoryLayer extends BaseLayer {
       this.textLayer.linesCount,
       this.textLayer.screenLineCount,
     );
+  }
+
+  public setHistoryIndentPoint(): void {
+    this.textLayer.setHistoryIndentPoint();
   }
 
   public goToEnd(): void {

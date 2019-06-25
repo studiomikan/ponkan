@@ -144,6 +144,7 @@ export class BaseLayer {
   public textLocatePoint: number = 0;
   public textIndentPoint: number = 0;
   public reservedTextIndentPoint: number = 0;
+  public reservedTextIndentClear: boolean = false;
   public textAlign: "left" | "center" | "right" = "left";
 
   /** 禁則文字（行頭禁則文字） */
@@ -606,6 +607,9 @@ export class BaseLayer {
     this.textLocatePoint = 0;
     if (this.reservedTextIndentPoint !== 0) {
       this.textIndentPoint = this.reservedTextIndentPoint;
+    } else if (this.reservedTextIndentClear ) {
+      this.textIndentPoint = 0;
+      this.reservedTextIndentClear = false;
     }
   }
 
@@ -669,8 +673,8 @@ export class BaseLayer {
    * インデント位置をクリアする
    */
   public clearIndentPoint(): void {
-    this.textIndentPoint = 0;
     this.reservedTextIndentPoint = 0;
+    this.reservedTextIndentClear = true;
   }
 
   /**
@@ -689,7 +693,9 @@ export class BaseLayer {
     this.textX = this.textMarginLeft;
     this.textY = this.textMarginTop;
     this.textLocatePoint = 0;
-    this.clearIndentPoint();
+    this.textIndentPoint = 0;
+    this.reservedTextIndentPoint = 0;
+    this.reservedTextIndentClear = false;
   }
 
   /**
