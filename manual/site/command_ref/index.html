@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>Command ref - Ponkan3 マニュアル</title>
+        <title>コマンドリファレンス - Ponkan3 マニュアル</title>
         <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../css/font-awesome.min.css" rel="stylesheet">
         <link href="../css/base.css" rel="stylesheet">
@@ -32,27 +32,11 @@
 
                 <!-- Collapsed navigation -->
                 <div class="navbar-header">
-                    <!-- Expander button -->
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
                     <a class="navbar-brand" href="..">Ponkan3 マニュアル</a>
                 </div>
 
                 <!-- Expanded navigation -->
                 <div class="navbar-collapse collapse">
-                        <!-- Main navigation -->
-                        <ul class="nav navbar-nav">
-                            <li >
-                                <a href="..">Ponkan3 マニュアル</a>
-                            </li>
-                            <li class="active">
-                                <a href="./">Command ref</a>
-                            </li>
-                        </ul>
 
                     <ul class="nav navbar-nav navbar-right">
                         <li>
@@ -60,16 +44,6 @@
                                 <i class="fa fa-search"></i> Search
                             </a>
                         </li>
-                            <li >
-                                <a rel="next" href="..">
-                                    <i class="fa fa-arrow-left"></i> Previous
-                                </a>
-                            </li>
-                            <li class="disabled">
-                                <a rel="prev" >
-                                    Next <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </li>
                     </ul>
                 </div>
             </div>
@@ -78,37 +52,30 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#_1">コマンドリファレンス## コマンド一覧</a></li>
-            <li><a href="#_2">その他</a></li>
-            <li><a href="#_3">スクリプト制御</a></li>
-            <li><a href="#_4">マクロ</a></li>
-            <li><a href="#_5">メッセージ</a></li>
-            <li><a href="#_6">メッセージ操作</a></li>
-            <li><a href="#_7">レイヤー操作</a></li>
-            <li><a href="#_8">ボタン</a></li>
-            <li><a href="#_9">アニメーション</a></li>
-            <li><a href="#_10">サウンド</a></li>
-            <li><a href="#_11">トランジション</a></li>
-            <li><a href="#_12">メッセージ履歴</a></li>
-            <li><a href="#_13">セーブ／ロード</a></li>
+        <li class="main active"><a href="#_1">コマンドリファレンス</a></li>
+            <li><a href="#_2">コマンド一覧</a></li>
+            <li><a href="#_15">その他</a></li>
+            <li><a href="#_16">スクリプト制御</a></li>
+            <li><a href="#_17">マクロ</a></li>
+            <li><a href="#_18">メッセージ</a></li>
+            <li><a href="#_19">メッセージ操作</a></li>
+            <li><a href="#_20">レイヤー操作</a></li>
+            <li><a href="#_21">ボタン</a></li>
+            <li><a href="#_22">アニメーション</a></li>
+            <li><a href="#_23">サウンド</a></li>
+            <li><a href="#_24">トランジション</a></li>
+            <li><a href="#_25">メッセージ履歴</a></li>
+            <li><a href="#_26">セーブ／ロード</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<p>[ 'その他',
-  'スクリプト制御',
-  'マクロ',
-  'メッセージ',
-  'メッセージ操作',
-  'レイヤー操作',
-  'ボタン',
-  'アニメーション',
-  'サウンド',
-  'トランジション',
-  'メッセージ履歴',
-  'セーブ／ロード' ]</p>
-<h1 id="_1">コマンドリファレンス## コマンド一覧</h1>
-<h3 id="_2">その他</h3>
+<h1 id="_1">コマンドリファレンス</h1>
+<p>Ponkan3 のスクリプトで使用できる全てのコマンドの解説です。</p>
+<p>コマンドの中には、長いコマンドをタイプする手間を省くため、別名が設けられているものがあります。
+たとえば <code>startautomode</code> と <code>startauto</code> と <code>auto</code> は名前は異なりますが全て同じ動作をします。</p>
+<h2 id="_2">コマンド一覧</h2>
+<h3 id="_3">その他</h3>
 <table>
 <thead>
 <tr>
@@ -118,48 +85,60 @@
 </thead>
 <tbody>
 <tr>
-<td>laycount</td>
+<td><a href="#laycount">laycount</a></td>
 <td>レイヤーの数を変更する</td>
 </tr>
 <tr>
-<td>raiseerror</td>
+<td><a href="#raiseerror">raiseerror</a></td>
 <td>エラーを発生させるかどうかの設定</td>
 </tr>
 <tr>
-<td>clearsysvar</td>
+<td><a href="#clearsysvar">clearsysvar</a></td>
 <td>システム変数をクリア</td>
 </tr>
 <tr>
-<td>cleargamevar</td>
+<td><a href="#cleargamevar">cleargamevar</a></td>
 <td>ゲーム変数をクリア</td>
 </tr>
 <tr>
-<td>cleartmpvar</td>
+<td><a href="#cleartmpvar">cleartmpvar</a></td>
 <td>一時変数をクリア</td>
 </tr>
 <tr>
-<td>clickskipopt, clickskip</td>
+<td><a href="#savesysvar">savesysvar</a></td>
+<td>システム変数を保存する</td>
+</tr>
+<tr>
+<td><a href="#clickskipopt-clickskip">clickskipopt, clickskip</a></td>
 <td>クリックスキップの設定</td>
 </tr>
 <tr>
-<td>quake</td>
+<td><a href="#quake">quake</a></td>
 <td>画面揺れ効果の開始</td>
 </tr>
 <tr>
-<td>stopquake</td>
+<td><a href="#stopquake">stopquake</a></td>
 <td>画面揺れ効果の停止</td>
 </tr>
 <tr>
-<td>waitquake</td>
+<td><a href="#waitquake">waitquake</a></td>
 <td>画面揺れ効果の終了待ち</td>
 </tr>
 <tr>
-<td>rightclick, rclick</td>
+<td><a href="#rightclick-rclick">rightclick, rclick</a></td>
 <td>右クリック時の動作を設定する</td>
+</tr>
+<tr>
+<td><a href="#commandshortcut-cmdsc">commandshortcut, cmdsc</a></td>
+<td>コマンドショートカットを設定する</td>
+</tr>
+<tr>
+<td><a href="#delcommandshortcut-delcmdsc">delcommandshortcut, delcmdsc</a></td>
+<td>コマンドショートカットを削除する</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_3">スクリプト制御</h3>
+<h3 id="_4">スクリプト制御</h3>
 <table>
 <thead>
 <tr>
@@ -169,80 +148,80 @@
 </thead>
 <tbody>
 <tr>
-<td>s</td>
+<td><a href="#s">s</a></td>
 <td>スクリプトの実行を停止する</td>
 </tr>
 <tr>
-<td>jump</td>
+<td><a href="#jump">jump</a></td>
 <td>スクリプトファイルを移動する</td>
 </tr>
 <tr>
-<td>call</td>
+<td><a href="#call">call</a></td>
 <td>サブルーチンを呼び出す</td>
 </tr>
 <tr>
-<td>return</td>
+<td><a href="#return">return</a></td>
 <td>サブルーチンをから戻る</td>
 </tr>
 <tr>
-<td>if</td>
+<td><a href="#if">if</a></td>
 <td>条件によって分岐する</td>
 </tr>
 <tr>
-<td>elseif, elsif</td>
+<td><a href="#elseif-elsif">elseif, elsif</a></td>
 <td>条件によって分岐する</td>
 </tr>
 <tr>
-<td>else</td>
+<td><a href="#else">else</a></td>
 <td>条件によって分岐する</td>
 </tr>
 <tr>
-<td>endif</td>
+<td><a href="#endif">endif</a></td>
 <td>条件分岐の終了</td>
 </tr>
 <tr>
-<td>for</td>
+<td><a href="#for">for</a></td>
 <td>指定回数繰り返す</td>
 </tr>
 <tr>
-<td>endfor</td>
+<td><a href="#endfor">endfor</a></td>
 <td>forループの終端</td>
 </tr>
 <tr>
-<td>breakfor</td>
+<td><a href="#breakfor">breakfor</a></td>
 <td>forループから抜ける</td>
 </tr>
 <tr>
-<td>startskip, skip</td>
+<td><a href="#startskip-skip">startskip, skip</a></td>
 <td>スキップを開始する</td>
 </tr>
 <tr>
-<td>stopskip</td>
+<td><a href="#stopskip">stopskip</a></td>
 <td>スキップを停止する</td>
 </tr>
 <tr>
-<td>startautomode, startauto, auto</td>
+<td><a href="#startautomode-startauto-auto">startautomode, startauto, auto</a></td>
 <td>オートモードを開始する</td>
 </tr>
 <tr>
-<td>stopautomode, stopauto</td>
+<td><a href="#stopautomode-stopauto">stopautomode, stopauto</a></td>
 <td>オートモードを停止する</td>
 </tr>
 <tr>
-<td>automodeopt, autoopt</td>
+<td><a href="#automodeopt-autoopt">automodeopt, autoopt</a></td>
 <td>オートモードの設定</td>
 </tr>
 <tr>
-<td>wait</td>
+<td><a href="#wait">wait</a></td>
 <td>指定時間を待つ</td>
 </tr>
 <tr>
-<td>waitclick</td>
+<td><a href="#waitclick">waitclick</a></td>
 <td>クリック待ちで停止する</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_4">マクロ</h3>
+<h3 id="_5">マクロ</h3>
 <table>
 <thead>
 <tr>
@@ -252,16 +231,16 @@
 </thead>
 <tbody>
 <tr>
-<td>macro</td>
+<td><a href="#macro">macro</a></td>
 <td>マクロを定義する</td>
 </tr>
 <tr>
-<td>endmacro</td>
+<td><a href="#endmacro">endmacro</a></td>
 <td>マクロ定義の終わり</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_5">メッセージ</h3>
+<h3 id="_6">メッセージ</h3>
 <table>
 <thead>
 <tr>
@@ -271,16 +250,16 @@
 </thead>
 <tbody>
 <tr>
-<td>messageopt, mesopt</td>
+<td><a href="#messageopt-mesopt">messageopt, mesopt</a></td>
 <td>テキストの設定</td>
 </tr>
 <tr>
-<td>ch</td>
+<td><a href="#ch">ch</a></td>
 <td>文字を出力する</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_6">メッセージ操作</h3>
+<h3 id="_7">メッセージ操作</h3>
 <table>
 <thead>
 <tr>
@@ -290,52 +269,52 @@
 </thead>
 <tbody>
 <tr>
-<td>br</td>
+<td><a href="#br">br</a></td>
 <td>改行する</td>
 </tr>
 <tr>
-<td>clear, c</td>
+<td><a href="#clear-c">clear, c</a></td>
 <td>テキストをクリアする</td>
 </tr>
 <tr>
-<td>textspeed</td>
+<td><a href="#textspeed">textspeed</a></td>
 <td>文字出力のインターバルを設定</td>
 </tr>
 <tr>
-<td>nowait</td>
+<td><a href="#nowait">nowait</a></td>
 <td>一時的に文字出力インターバルを0にする</td>
 </tr>
 <tr>
-<td>endnowait</td>
+<td><a href="#endnowait">endnowait</a></td>
 <td>nowaitを終了する</td>
 </tr>
 <tr>
-<td>textlocate, locate</td>
+<td><a href="#textlocate-locate">textlocate, locate</a></td>
 <td>文字表示位置を指定する</td>
 </tr>
 <tr>
-<td>indent</td>
+<td><a href="#indent">indent</a></td>
 <td>インデント位置を設定する</td>
 </tr>
 <tr>
-<td>endindent</td>
+<td><a href="#endindent">endindent</a></td>
 <td>インデント位置をクリアする</td>
 </tr>
 <tr>
-<td>linebreak, lb, l</td>
+<td><a href="#linebreak-lb-l">linebreak, lb, l</a></td>
 <td>行末クリック待ちで停止する</td>
 </tr>
 <tr>
-<td>pagebreak, pb, p</td>
+<td><a href="#pagebreak-pb-p">pagebreak, pb, p</a></td>
 <td>行末クリック待ちで停止する</td>
 </tr>
 <tr>
-<td>hidemessages</td>
+<td><a href="#hidemessages">hidemessages</a></td>
 <td>メッセージレイヤを一時的に隠す</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_7">レイヤー操作</h3>
+<h3 id="_8">レイヤー操作</h3>
 <table>
 <thead>
 <tr>
@@ -345,44 +324,52 @@
 </thead>
 <tbody>
 <tr>
-<td>messagelayer, messagelay, meslay, meslay</td>
+<td><a href="#layalias">layalias</a></td>
+<td>レイヤー名エイリアスを作成する</td>
+</tr>
+<tr>
+<td><a href="#dellayalias">dellayalias</a></td>
+<td>レイヤー名エイリアスを削除する</td>
+</tr>
+<tr>
+<td><a href="#messagelayer-messagelay-meslay-meslay">messagelayer, messagelay, meslay, meslay</a></td>
 <td>メッセージレイヤーを指定する</td>
 </tr>
 <tr>
-<td>linebreakglyph, lbglyph</td>
+<td><a href="#linebreakglyph-lbglyph">linebreakglyph, lbglyph</a></td>
 <td>行末グリフに関して設定する</td>
 </tr>
 <tr>
-<td>pagebreakglyph, pbglyph</td>
+<td><a href="#pagebreakglyph-pbglyph">pagebreakglyph, pbglyph</a></td>
 <td>ページ末グリフに関して設定する</td>
 </tr>
 <tr>
-<td>fillcolor, fill</td>
+<td><a href="#fillcolor-fill">fillcolor, fill</a></td>
 <td>レイヤーを塗りつぶす</td>
 </tr>
 <tr>
-<td>clearcolor</td>
+<td><a href="#clearcolor">clearcolor</a></td>
 <td>レイヤー塗りつぶしをクリアする</td>
 </tr>
 <tr>
-<td>layopt</td>
+<td><a href="#layopt">layopt</a></td>
 <td>レイヤーの設定</td>
 </tr>
 <tr>
-<td>loadimage, image</td>
+<td><a href="#loadimage-image">loadimage, image</a></td>
 <td>レイヤーに画像を読み込む</td>
 </tr>
 <tr>
-<td>loadchildimage, childimage,</td>
+<td><a href="#loadchildimage-childimage-">loadchildimage, childimage, </a></td>
 <td>レイヤーに追加で画像を読み込む</td>
 </tr>
 <tr>
-<td>freeimage, free, unloadimage</td>
+<td><a href="#freeimage-free-unloadimage">freeimage, free, unloadimage</a></td>
 <td>レイヤーの画像を開放する</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_8">ボタン</h3>
+<h3 id="_9">ボタン</h3>
 <table>
 <thead>
 <tr>
@@ -392,52 +379,52 @@
 </thead>
 <tbody>
 <tr>
-<td>textbutton, txtbtn</td>
+<td><a href="#textbutton-txtbtn">textbutton, txtbtn</a></td>
 <td>レイヤーにテキストボタンを配置する</td>
 </tr>
 <tr>
-<td>clearbuttons, clearbutton, clearbtn</td>
+<td><a href="#clearbuttons-clearbutton-clearbtn">clearbuttons, clearbutton, clearbtn</a></td>
 <td>すべてのボタンをクリアする</td>
 </tr>
 <tr>
-<td>cleartextbuttons, cleartextbutton, cleartxtbtn</td>
+<td><a href="#cleartextbuttons-cleartextbutton-cleartxtbtn">cleartextbuttons, cleartextbutton, cleartxtbtn</a></td>
 <td>テキストボタンをクリアする</td>
 </tr>
 <tr>
-<td>imagebutton, imgbtn</td>
+<td><a href="#imagebutton-imgbtn">imagebutton, imgbtn</a></td>
 <td>レイヤーに画像ボタンを配置する</td>
 </tr>
 <tr>
-<td>clearimagebuttons, clearimagebutton, clearimgbtn</td>
+<td><a href="#clearimagebuttons-clearimagebutton-clearimgbtn">clearimagebuttons, clearimagebutton, clearimgbtn</a></td>
 <td>画像ボタンをクリアする</td>
 </tr>
 <tr>
-<td>togglebutton, tglbtn</td>
+<td><a href="#togglebutton-tglbtn">togglebutton, tglbtn</a></td>
 <td>レイヤーにトグルボタンを配置する</td>
 </tr>
 <tr>
-<td>cleartogglebuttons, cleartogglebutton, cleartglbtn</td>
+<td><a href="#cleartogglebuttons-cleartogglebutton-cleartglbtn">cleartogglebuttons, cleartogglebutton, cleartglbtn</a></td>
 <td>トグルボタンをクリアする</td>
 </tr>
 <tr>
-<td>lockbuttons, lockbutton, lock</td>
+<td><a href="#lockbuttons-lockbutton-lock">lockbuttons, lockbutton, lock</a></td>
 <td>ボタンをロックする</td>
 </tr>
 <tr>
-<td>unlockbuttons, unlockbutton, unlock</td>
+<td><a href="#unlockbuttons-unlockbutton-unlock">unlockbuttons, unlockbutton, unlock</a></td>
 <td>ボタンをアンロックする</td>
 </tr>
 <tr>
-<td>locksystembuttons, locksystembutton, locksystem</td>
+<td><a href="#locksystembuttons-locksystembutton-locksystem">locksystembuttons, locksystembutton, locksystem</a></td>
 <td>システムボタンをロックする</td>
 </tr>
 <tr>
-<td>unlocksystembuttons, unlocksystembutton, unlocksystem</td>
+<td><a href="#unlocksystembuttons-unlocksystembutton-unlocksystem">unlocksystembuttons, unlocksystembutton, unlocksystem</a></td>
 <td>システムボタンをアンロックする</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_9">アニメーション</h3>
+<h3 id="_10">アニメーション</h3>
 <table>
 <thead>
 <tr>
@@ -447,36 +434,36 @@
 </thead>
 <tbody>
 <tr>
-<td>frameanim, fanim</td>
+<td><a href="#frameanim-fanim">frameanim, fanim</a></td>
 <td>フレームアニメーションを設定する</td>
 </tr>
 <tr>
-<td>startframeanim, startfanim</td>
+<td><a href="#startframeanim-startfanim">startframeanim, startfanim</a></td>
 <td>フレームアニメーションを開始する</td>
 </tr>
 <tr>
-<td>stopframeanim, stopfanim</td>
+<td><a href="#stopframeanim-stopfanim">stopframeanim, stopfanim</a></td>
 <td>フレームアニメーションを停止する</td>
 </tr>
 <tr>
-<td>waitframeanim, waitfanim</td>
+<td><a href="#waitframeanim-waitfanim">waitframeanim, waitfanim</a></td>
 <td>フレームアニメーションの終了を待つ</td>
 </tr>
 <tr>
-<td>startmove, move</td>
+<td><a href="#startmove-move">startmove, move</a></td>
 <td>自動移動を開始する</td>
 </tr>
 <tr>
-<td>stopmove</td>
+<td><a href="#stopmove">stopmove</a></td>
 <td>自動移動を停止する</td>
 </tr>
 <tr>
-<td>waitmove, wm</td>
+<td><a href="#waitmove-wm">waitmove, wm</a></td>
 <td>自動移動の終了を待つ</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_10">サウンド</h3>
+<h3 id="_11">サウンド</h3>
 <table>
 <thead>
 <tr>
@@ -486,52 +473,60 @@
 </thead>
 <tbody>
 <tr>
-<td>loadsound, sound</td>
+<td><a href="#bufalias">bufalias</a></td>
+<td>バッファ番号エイリアスを作成する</td>
+</tr>
+<tr>
+<td><a href="#delbufalias">delbufalias</a></td>
+<td>バッファ番号エイリアスを削除する</td>
+</tr>
+<tr>
+<td><a href="#loadsound-sound">loadsound, sound</a></td>
 <td>音声をロードする</td>
 </tr>
 <tr>
-<td>freesound, unloadsound</td>
+<td><a href="#freesound-unloadsound">freesound, unloadsound</a></td>
 <td>音声を開放する</td>
 </tr>
 <tr>
-<td>soundopt</td>
+<td><a href="#soundopt">soundopt</a></td>
 <td>音声の設定</td>
 </tr>
 <tr>
-<td>playsound</td>
+<td><a href="#playsound">playsound</a></td>
 <td>音声を再生する</td>
 </tr>
 <tr>
-<td>stopsound</td>
+<td><a href="#stopsound">stopsound</a></td>
 <td>音声を停止する</td>
 </tr>
 <tr>
-<td>fadesound</td>
+<td><a href="#fadesound">fadesound</a></td>
 <td>音声をフェードする</td>
 </tr>
 <tr>
-<td>fadeoutsound, fadeout</td>
+<td><a href="#fadeoutsound-fadeout">fadeoutsound, fadeout</a></td>
 <td>音声をフェードアウトして再生停止する</td>
 </tr>
 <tr>
-<td>fadeinsound, fadein</td>
+<td><a href="#fadeinsound-fadein">fadeinsound, fadein</a></td>
 <td>音声をフェードインで再生開始する</td>
 </tr>
 <tr>
-<td>waitsoundstop, waitsound</td>
+<td><a href="#waitsoundstop-waitsound">waitsoundstop, waitsound</a></td>
 <td>音声の再生終了を待つ</td>
 </tr>
 <tr>
-<td>waitsoundfade, waitfade</td>
+<td><a href="#waitsoundfade-waitfade">waitsoundfade, waitfade</a></td>
 <td>音声のフェード終了を待つ</td>
 </tr>
 <tr>
-<td>endfadesound, endfade</td>
+<td><a href="#endfadesound-endfade">endfadesound, endfade</a></td>
 <td>音声のフェードを終了する</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_11">トランジション</h3>
+<h3 id="_12">トランジション</h3>
 <table>
 <thead>
 <tr>
@@ -541,36 +536,36 @@
 </thead>
 <tbody>
 <tr>
-<td>backlay</td>
+<td><a href="#backlay">backlay</a></td>
 <td>表レイヤを裏レイヤにコピーする</td>
 </tr>
 <tr>
-<td>copylay</td>
+<td><a href="#copylay">copylay</a></td>
 <td>レイヤ情報をコピーする</td>
 </tr>
 <tr>
-<td>currentpage</td>
+<td><a href="#currentpage">currentpage</a></td>
 <td>操作対象ページを変更する</td>
 </tr>
 <tr>
-<td>preparetrans, pretrans</td>
+<td><a href="#preparetrans-pretrans">preparetrans, pretrans</a></td>
 <td>トランジションの前準備</td>
 </tr>
 <tr>
-<td>trans</td>
+<td><a href="#trans">trans</a></td>
 <td>トランジションを実行する</td>
 </tr>
 <tr>
-<td>stoptrans</td>
+<td><a href="#stoptrans">stoptrans</a></td>
 <td>トランジションを停止する</td>
 </tr>
 <tr>
-<td>waittrans, wt</td>
+<td><a href="#waittrans-wt">waittrans, wt</a></td>
 <td>トランジションの終了を待つ</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_12">メッセージ履歴</h3>
+<h3 id="_13">メッセージ履歴</h3>
 <table>
 <thead>
 <tr>
@@ -580,16 +575,24 @@
 </thead>
 <tbody>
 <tr>
-<td>historyopt</td>
+<td><a href="#historyopt">historyopt</a></td>
 <td>メッセージ履歴を設定する</td>
 </tr>
 <tr>
-<td>showhistory, history</td>
+<td><a href="#showhistory-history">showhistory, history</a></td>
 <td>メッセージ履歴を表示する</td>
+</tr>
+<tr>
+<td><a href="#historych-hch">historych, hch</a></td>
+<td>メッセージ履歴にテキストを出力する</td>
+</tr>
+<tr>
+<td><a href="#hbr">hbr</a></td>
+<td>メッセージ履歴を改行する</td>
 </tr>
 </tbody>
 </table>
-<h3 id="_13">セーブ／ロード</h3>
+<h3 id="_14">セーブ／ロード</h3>
 <table>
 <thead>
 <tr>
@@ -599,35 +602,3210 @@
 </thead>
 <tbody>
 <tr>
-<td>save</td>
+<td><a href="#save">save</a></td>
 <td>最新状態をセーブする</td>
 </tr>
 <tr>
-<td>load</td>
+<td><a href="#load">load</a></td>
 <td>セーブデータから復元する</td>
 </tr>
 <tr>
-<td>tempsave</td>
+<td><a href="#tempsave">tempsave</a></td>
 <td>一時セーブする</td>
 </tr>
 <tr>
-<td>tempload</td>
+<td><a href="#tempload">tempload</a></td>
 <td>一時セーブデータから復元する</td>
 </tr>
 <tr>
-<td>screenshot</td>
+<td><a href="#screenshot">screenshot</a></td>
 <td>現在の画面のスクリーンショットを取る</td>
 </tr>
 <tr>
-<td>copysavedata, copysave</td>
+<td><a href="#copysavedata-copysave">copysavedata, copysave</a></td>
 <td>セーブデータをコピーする</td>
 </tr>
 <tr>
-<td>deletesavedata, delsavedata, delsave</td>
+<td><a href="#deletesavedata-delsavedata-delsave">deletesavedata, delsavedata, delsave</a></td>
 <td>セーブデータを削除する</td>
 </tr>
 </tbody>
-</table></div>
+</table>
+<h2 id="_15">その他</h2>
+<h3 id="laycount">laycount</h3>
+<p>レイヤーの数を変更する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>count</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>レイヤー数</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="raiseerror">raiseerror</h3>
+<p>エラーを発生させるかどうかの設定</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>unknowntag</td>
+<td>boolean</td>
+<td></td>
+<td></td>
+<td>存在しないタグを実行したときにエラーにする</td>
+</tr>
+</tbody>
+</table>
+<h3 id="clearsysvar">clearsysvar</h3>
+<p>システム変数をクリア</p>
+<h3 id="cleargamevar">cleargamevar</h3>
+<p>ゲーム変数をクリア</p>
+<h3 id="cleartmpvar">cleartmpvar</h3>
+<p>一時変数をクリア</p>
+<h3 id="savesysvar">savesysvar</h3>
+<p>システム変数を保存する</p>
+<h3 id="clickskipopt-clickskip">clickskipopt, clickskip</h3>
+<p>クリックスキップの設定</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>enabled</td>
+<td>boolean</td>
+<td>○</td>
+<td></td>
+<td>有効ならtrue、無効ならfalseを指定</td>
+</tr>
+</tbody>
+</table>
+<p>クリックスキップの有効無効を設定します。
+（クリックスキップとは、テキスト表示途中にクリックすると行末・ページ末までスキップする機能のことです。）</p>
+<h3 id="quake">quake</h3>
+<p>画面揺れ効果の開始</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>time</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>画面揺れの時間</td>
+</tr>
+<tr>
+<td>x</td>
+<td>number</td>
+<td></td>
+<td>20</td>
+<td>横方向の揺れの最大値</td>
+</tr>
+<tr>
+<td>y</td>
+<td>number</td>
+<td></td>
+<td>20</td>
+<td>縦方向の揺れの最大値</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="stopquake">stopquake</h3>
+<p>画面揺れ効果の停止</p>
+<p>TODO タグの説明文</p>
+<h3 id="waitquake">waitquake</h3>
+<p>画面揺れ効果の終了待ち</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>canskip</td>
+<td>boolean</td>
+<td></td>
+<td>true</td>
+<td>スキップ可能かどうか</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="rightclick-rclick">rightclick, rclick</h3>
+<p>右クリック時の動作を設定する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>jump</td>
+<td>boolean</td>
+<td></td>
+<td></td>
+<td>右クリック時にjumpする場合はtrue</td>
+</tr>
+<tr>
+<td>call</td>
+<td>boolean</td>
+<td></td>
+<td></td>
+<td>右クリック時にcallする場合はtrue</td>
+</tr>
+<tr>
+<td>file</td>
+<td>string</td>
+<td></td>
+<td></td>
+<td>jumpまたはcallするスクリプトファイル名</td>
+</tr>
+<tr>
+<td>label</td>
+<td>string</td>
+<td></td>
+<td></td>
+<td>jumpまたはcallするラベル名</td>
+</tr>
+<tr>
+<td>enabled</td>
+<td>boolean</td>
+<td></td>
+<td></td>
+<td>右クリックの有効無効</td>
+</tr>
+</tbody>
+</table>
+<p>右クリックまたは ESC キーを押下時の動作を設定します。
+jump と call の両方を false に設定した場合、デフォルトの動作（メッセージレイヤーを隠す）になります。
+jump を true に設定した場合、file と label で指定した場所へジャンプします。
+call を true に設定した場合、file と label で指定した場所でサブルーチンを呼び出します。</p>
+<h3 id="commandshortcut-cmdsc">commandshortcut, cmdsc</h3>
+<p>コマンドショートカットを設定する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ch</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>ショートカットの文字</td>
+</tr>
+<tr>
+<td>command</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>コマンドの名前</td>
+</tr>
+</tbody>
+</table>
+<p>コマンドショートカットを設定します。</p>
+<h3 id="delcommandshortcut-delcmdsc">delcommandshortcut, delcmdsc</h3>
+<p>コマンドショートカットを削除する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ch</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>ショートカットの文字</td>
+</tr>
+</tbody>
+</table>
+<p>コマンドショートカットを削除します。</p>
+<h2 id="_16">スクリプト制御</h2>
+<h3 id="s">s</h3>
+<p>スクリプトの実行を停止する</p>
+<p>TODO タグの説明文</p>
+<h3 id="jump">jump</h3>
+<p>スクリプトファイルを移動する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>file</td>
+<td>string</td>
+<td></td>
+<td></td>
+<td>移動先のスクリプトファイル名。省略時は現在のファイル内で移動する</td>
+</tr>
+<tr>
+<td>label</td>
+<td>string</td>
+<td></td>
+<td></td>
+<td>移動先のラベル名。省略時はファイルの先頭</td>
+</tr>
+<tr>
+<td>countpage</td>
+<td>boolean</td>
+<td></td>
+<td>true</td>
+<td>現在の位置を既読にするかどうか</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="call">call</h3>
+<p>サブルーチンを呼び出す</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>file</td>
+<td>string</td>
+<td></td>
+<td></td>
+<td>移動先のスクリプトファイル名。省略時は現在のファイル内で移動する</td>
+</tr>
+<tr>
+<td>label</td>
+<td>string</td>
+<td></td>
+<td></td>
+<td>移動先のラベル名。省略時はファイルの先頭</td>
+</tr>
+<tr>
+<td>countpage</td>
+<td>boolean</td>
+<td></td>
+<td>false</td>
+<td>現在の位置を既読にするかどうか</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="return">return</h3>
+<p>サブルーチンをから戻る</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>file</td>
+<td>string</td>
+<td></td>
+<td></td>
+<td>移動先のスクリプトファイル名。省略時は現在のファイル内で移動する</td>
+</tr>
+<tr>
+<td>label</td>
+<td>string</td>
+<td></td>
+<td></td>
+<td>移動先のラベル名。省略時はファイルの先頭</td>
+</tr>
+<tr>
+<td>forcestart</td>
+<td>boolean</td>
+<td></td>
+<td>false</td>
+<td>戻った後、強制的にシナリオを再開する</td>
+</tr>
+<tr>
+<td>countpage</td>
+<td>boolean</td>
+<td></td>
+<td>true</td>
+<td>現在の位置を既読にするかどうか</td>
+</tr>
+</tbody>
+</table>
+<p>[call]タグで呼び出したサブルーチンから、呼び出し元に戻ります。</p>
+<p>forcestart属性は、システムボタンを作成する際に指定します。
+システムボタンで呼び出したサブルーチンで[skip]や[auto]を実行しても、通常はサブルーチンから戻るとスクリプトは停止してしまいます。
+forcestart属性をtrueにした時は、呼び出し元へ戻ると同時に、[lb][pb]などで停止していたとしても、強制的に再開されます。
+ただし[s]タグでスクリプトが完全に停止していた場合は停止したままです。</p>
+<h3 id="if">if</h3>
+<p>条件によって分岐する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>exp</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>条件式(JavaScript)</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="elseif-elsif">elseif, elsif</h3>
+<p>条件によって分岐する</p>
+<p>TODO タグの説明文</p>
+<h3 id="else">else</h3>
+<p>条件によって分岐する</p>
+<p>TODO タグの説明文</p>
+<h3 id="endif">endif</h3>
+<p>条件分岐の終了</p>
+<p>TODO タグの説明文</p>
+<h3 id="for">for</h3>
+<p>指定回数繰り返す</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>loops</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>繰り替えし回数</td>
+</tr>
+<tr>
+<td>indexvar</td>
+<td>string</td>
+<td></td>
+<td>"<strong>index</strong>"</td>
+<td>ループ中のインデックスを格納する変数名</td>
+</tr>
+</tbody>
+</table>
+<p>[for]と[endfor]の間を指定回数繰り返します。
+indexvarで指定した名前の一時変数にループ回数が格納されます。
+ループ回数は0から始まるため、、0 〜 loops-1 の値をとります。</p>
+<h3 id="endfor">endfor</h3>
+<p>forループの終端</p>
+<p>TODO タグの説明文</p>
+<h3 id="breakfor">breakfor</h3>
+<p>forループから抜ける</p>
+<p>TODO タグの説明文</p>
+<h3 id="startskip-skip">startskip, skip</h3>
+<p>スキップを開始する</p>
+<p>TODO タグの説明文</p>
+<h3 id="stopskip">stopskip</h3>
+<p>スキップを停止する</p>
+<p>TODO タグの説明文</p>
+<h3 id="startautomode-startauto-auto">startautomode, startauto, auto</h3>
+<p>オートモードを開始する</p>
+<p>TODO タグの説明文</p>
+<h3 id="stopautomode-stopauto">stopautomode, stopauto</h3>
+<p>オートモードを停止する</p>
+<p>TODO タグの説明文</p>
+<h3 id="automodeopt-autoopt">automodeopt, autoopt</h3>
+<p>オートモードの設定</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>オートモード状態表示に使用するレイヤー</td>
+</tr>
+<tr>
+<td>time</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>オートモードのインターバル時間(ms)</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="wait">wait</h3>
+<p>指定時間を待つ</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>time</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>停止時間(ms)</td>
+</tr>
+<tr>
+<td>canskip</td>
+<td>boolean</td>
+<td></td>
+<td>true</td>
+<td>スキップ可能かどうか</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="waitclick">waitclick</h3>
+<p>クリック待ちで停止する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>canskip</td>
+<td>boolean</td>
+<td></td>
+<td>true</td>
+<td>スキップ可能かどうか</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h2 id="_17">マクロ</h2>
+<h3 id="macro">macro</h3>
+<p>マクロを定義する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>マクロの名前</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="endmacro">endmacro</h3>
+<p>マクロ定義の終わり</p>
+<p>TODO タグの説明文</p>
+<h2 id="_18">メッセージ</h2>
+<h3 id="messageopt-mesopt">messageopt, mesopt</h3>
+<p>テキストの設定</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td></td>
+<td>"message"</td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>fontfamily</td>
+<td>array</td>
+<td></td>
+<td></td>
+<td>フォント名の配列</td>
+</tr>
+<tr>
+<td>fontsize</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>フォントサイズ(px)</td>
+</tr>
+<tr>
+<td>fontweight</td>
+<td>string</td>
+<td></td>
+<td></td>
+<td>フォントウェイト。"normal" | "bold"</td>
+</tr>
+<tr>
+<td>color</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>文字色(0xRRGGBB)</td>
+</tr>
+<tr>
+<td>margint</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>テキスト描画のマージン　上</td>
+</tr>
+<tr>
+<td>marginr</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>テキスト描画のマージン　右</td>
+</tr>
+<tr>
+<td>marginb</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>テキスト描画のマージン　下</td>
+</tr>
+<tr>
+<td>marginl</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>テキスト描画のマージン　左</td>
+</tr>
+<tr>
+<td>pitch</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>テキストの文字間(px)</td>
+</tr>
+<tr>
+<td>lineheight</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>テキストの行の高さ(px)</td>
+</tr>
+<tr>
+<td>linepitch</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>テキストの行間(px)</td>
+</tr>
+<tr>
+<td>align</td>
+<td>string</td>
+<td></td>
+<td></td>
+<td>テキスト寄せの方向。"left" | "center" | "right"</td>
+</tr>
+<tr>
+<td>shadow</td>
+<td>boolean</td>
+<td></td>
+<td></td>
+<td>影の表示非表示</td>
+</tr>
+<tr>
+<td>shadowalpha</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>影のAlpha(0.0〜1.0)</td>
+</tr>
+<tr>
+<td>shadowangle</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>影の角度(ラジアン)</td>
+</tr>
+<tr>
+<td>shadowblur</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>影のBlur</td>
+</tr>
+<tr>
+<td>shadowcolor</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>影の色(0xRRGGBB)</td>
+</tr>
+<tr>
+<td>shadowdistance</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>影の距離(px)</td>
+</tr>
+<tr>
+<td>edgewidth</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>縁取りの太さ(px)。0で非表示になる</td>
+</tr>
+<tr>
+<td>edgecolor</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>縁取りの色(0xRRGGBB)</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="ch">ch</h3>
+<p>文字を出力する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td></td>
+<td>"message"</td>
+<td>出力する先のレイヤ</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>text</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>出力する文字</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h2 id="_19">メッセージ操作</h2>
+<h3 id="br">br</h3>
+<p>改行する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td></td>
+<td>"message"</td>
+<td>出力する文字</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="clear-c">clear, c</h3>
+<p>テキストをクリアする</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td></td>
+<td>"message"</td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="textspeed">textspeed</h3>
+<p>文字出力のインターバルを設定</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>unread</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>未読文章のインターバル時間(ms)</td>
+</tr>
+<tr>
+<td>read</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>既読文章のインターバル時間(ms)</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="nowait">nowait</h3>
+<p>一時的に文字出力インターバルを0にする</p>
+<p>TODO タグの説明文</p>
+<h3 id="endnowait">endnowait</h3>
+<p>nowaitを終了する</p>
+<p>TODO タグの説明文</p>
+<h3 id="textlocate-locate">textlocate, locate</h3>
+<p>文字表示位置を指定する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td></td>
+<td>"message"</td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>x</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>x座標</td>
+</tr>
+<tr>
+<td>y</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>x座標</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="indent">indent</h3>
+<p>インデント位置を設定する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td></td>
+<td>"message"</td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>history</td>
+<td>boolean</td>
+<td></td>
+<td>true</td>
+<td>メッセージ履歴もインデントするかどうか</td>
+</tr>
+</tbody>
+</table>
+<p>現在の文字描画位置でインデントするように設定します。
+インデント位置は [endindent] または [clear] でクリアされます。</p>
+<h3 id="endindent">endindent</h3>
+<p>インデント位置をクリアする</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td></td>
+<td>"message"</td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>history</td>
+<td>boolean</td>
+<td></td>
+<td>true</td>
+<td>メッセージ履歴もインデント解除するか</td>
+</tr>
+</tbody>
+</table>
+<p>[indent] で設定したインデント位置をクリアします。</p>
+<h3 id="linebreak-lb-l">linebreak, lb, l</h3>
+<p>行末クリック待ちで停止する</p>
+<p>TODO タグの説明文</p>
+<h3 id="pagebreak-pb-p">pagebreak, pb, p</h3>
+<p>行末クリック待ちで停止する</p>
+<p>TODO タグの説明文</p>
+<h3 id="hidemessages">hidemessages</h3>
+<p>メッセージレイヤを一時的に隠す</p>
+<p>TODO タグの説明文</p>
+<h2 id="_20">レイヤー操作</h2>
+<h3 id="layalias">layalias</h3>
+<p>レイヤー名エイリアスを作成する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>エイリアス名</td>
+</tr>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+</tbody>
+</table>
+<p>レイヤー名のエイリアス（別名）を作成します。
+エイリアスを作成すると、レイヤーを指定するコマンドでレイヤー番号のかわりにエイリアス名を使用することができるようになります。
+たとえば以下のように、背景画像を表示するレイヤーに base というようなエイリアスを作成することで、
+スクリプト作成時の可読性が向上します。</p>
+<pre><code># 背景画像はレイヤー 0 に作成するので、エイリアスを作成する
+;layalias name: &quot;base&quot;, lay: &quot;0&quot;
+# 以後、背景画像は以下のように読み込める
+;image lay: &quot;base&quot;, file: &quot;image/bg0.png&quot;, x: 0, y: 0
+</code></pre>
+
+<h3 id="dellayalias">dellayalias</h3>
+<p>レイヤー名エイリアスを削除する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>エイリアス名</td>
+</tr>
+</tbody>
+</table>
+<h3 id="messagelayer-messagelay-meslay-meslay">messagelayer, messagelay, meslay, meslay</h3>
+<p>メッセージレイヤーを指定する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="linebreakglyph-lbglyph">linebreakglyph, lbglyph</h3>
+<p>行末グリフに関して設定する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>グリフとして使用するレイヤー</td>
+</tr>
+<tr>
+<td>pos</td>
+<td>string</td>
+<td></td>
+<td></td>
+<td>グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。</td>
+</tr>
+<tr>
+<td>"eol"を指定すると文章の末尾に表示。</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>"relative"を指定するとメッセージレイヤーとの相対位置で固定表示。</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>"absolute"を指定すると画面上の絶対位置で固定表示。</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>x</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>グリフの表示位置（メッセージレイヤーからの相対位置）</td>
+</tr>
+<tr>
+<td>y</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>グリフの表示位置（メッセージレイヤーからの相対位置）</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="pagebreakglyph-pbglyph">pagebreakglyph, pbglyph</h3>
+<p>ページ末グリフに関して設定する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>グリフとして使用するレイヤー</td>
+</tr>
+<tr>
+<td>pos</td>
+<td>string</td>
+<td></td>
+<td></td>
+<td>グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。</td>
+</tr>
+<tr>
+<td>"eol"を指定すると文章の末尾に表示。</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>"relative"を指定するとメッセージレイヤーとの相対位置で固定表示。</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>"absolute"を指定すると画面上の絶対位置で固定表示。</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>x</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>グリフの表示位置（メッセージレイヤーからの相対位置）</td>
+</tr>
+<tr>
+<td>y</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>グリフの表示位置（メッセージレイヤーからの相対位置）</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="fillcolor-fill">fillcolor, fill</h3>
+<p>レイヤーを塗りつぶす</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>color</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>塗りつぶし色(0xRRGGBB)</td>
+</tr>
+<tr>
+<td>alpha</td>
+<td>number</td>
+<td></td>
+<td>1</td>
+<td>塗りつぶしのAlpha(0.0〜1.0)</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="clearcolor">clearcolor</h3>
+<p>レイヤー塗りつぶしをクリアする</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="layopt">layopt</h3>
+<p>レイヤーの設定</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>visible</td>
+<td>boolean</td>
+<td></td>
+<td></td>
+<td>表示非表示</td>
+</tr>
+<tr>
+<td>x</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>x座標(px)</td>
+</tr>
+<tr>
+<td>y</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>y座標(px)</td>
+</tr>
+<tr>
+<td>width</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>幅(px)</td>
+</tr>
+<tr>
+<td>height</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>高さ(px)</td>
+</tr>
+<tr>
+<td>alpha</td>
+<td>number</td>
+<td></td>
+<td>1</td>
+<td>レイヤーのAlpha(0.0〜1.0)</td>
+</tr>
+<tr>
+<td>autohide</td>
+<td>boolean</td>
+<td></td>
+<td></td>
+<td>hidemessagesで同時に隠すかどうか</td>
+</tr>
+<tr>
+<td>blocklclick</td>
+<td>boolean</td>
+<td></td>
+<td></td>
+<td>左クリックイベントを遮断するかどうか</td>
+</tr>
+<tr>
+<td>blockrclick</td>
+<td>boolean</td>
+<td></td>
+<td></td>
+<td>右クリックイベントを遮断するかどうか</td>
+</tr>
+<tr>
+<td>blockcclick</td>
+<td>boolean</td>
+<td></td>
+<td></td>
+<td>中クリックイベントを遮断するかどうか</td>
+</tr>
+<tr>
+<td>blockmove</td>
+<td>boolean</td>
+<td></td>
+<td></td>
+<td>マウス移動イベントを遮断するかどうか</td>
+</tr>
+<tr>
+<td>blockwheel</td>
+<td>boolean</td>
+<td></td>
+<td></td>
+<td>マウスホイールイベントを遮断するかどうか</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="loadimage-image">loadimage, image</h3>
+<p>レイヤーに画像を読み込む</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>file</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>読み込む画像ファイルパス</td>
+</tr>
+<tr>
+<td>visible</td>
+<td>boolean</td>
+<td></td>
+<td></td>
+<td>表示非表示</td>
+</tr>
+<tr>
+<td>x</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>x座標(px)</td>
+</tr>
+<tr>
+<td>y</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>y座標(px)</td>
+</tr>
+<tr>
+<td>alpha</td>
+<td>number</td>
+<td></td>
+<td>1</td>
+<td>レイヤーのAlpha(0.0〜1.0)</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="loadchildimage-childimage">loadchildimage, childimage,</h3>
+<p>レイヤーに追加で画像を読み込む</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>file</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>読み込む画像ファイルパス</td>
+</tr>
+<tr>
+<td>x</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>x座標(px)</td>
+</tr>
+<tr>
+<td>y</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>y座標(px)</td>
+</tr>
+<tr>
+<td>alpha</td>
+<td>number</td>
+<td></td>
+<td>1</td>
+<td>表示非表示</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="freeimage-free-unloadimage">freeimage, free, unloadimage</h3>
+<p>レイヤーの画像を開放する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h2 id="_21">ボタン</h2>
+<h3 id="textbutton-txtbtn">textbutton, txtbtn</h3>
+<p>レイヤーにテキストボタンを配置する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>jump</td>
+<td>boolean</td>
+<td></td>
+<td>true</td>
+<td>ボタン押下時にjumpする場合はtrue</td>
+</tr>
+<tr>
+<td>call</td>
+<td>boolean</td>
+<td></td>
+<td></td>
+<td>ボタン押下時にcallする場合はtrue</td>
+</tr>
+<tr>
+<td>file</td>
+<td>string</td>
+<td></td>
+<td></td>
+<td>ボタン押下時にjumpまたはcallするスクリプトファイル名</td>
+</tr>
+<tr>
+<td>label</td>
+<td>string</td>
+<td></td>
+<td></td>
+<td>ボタン押下時にjumpまたはcallするラベル名</td>
+</tr>
+<tr>
+<td>exp</td>
+<td>string</td>
+<td></td>
+<td></td>
+<td>ボタン押下時に実行するJavaScript</td>
+</tr>
+<tr>
+<td>text</td>
+<td>string</td>
+<td></td>
+<td>""</td>
+<td>テキスト</td>
+</tr>
+<tr>
+<td>x</td>
+<td>number</td>
+<td></td>
+<td>0</td>
+<td>x座標(px)</td>
+</tr>
+<tr>
+<td>y</td>
+<td>number</td>
+<td></td>
+<td>0</td>
+<td>y座標(px)</td>
+</tr>
+<tr>
+<td>width</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>幅(px)</td>
+</tr>
+<tr>
+<td>height</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>高さ(px)</td>
+</tr>
+<tr>
+<td>bgcolors</td>
+<td>array</td>
+<td>○</td>
+<td></td>
+<td>背景色の配列(0xRRGGBB)。通常時、マウスオーバー時、マウス押下時の順</td>
+</tr>
+<tr>
+<td>bgalphas</td>
+<td>array</td>
+<td></td>
+<td>1,1,1</td>
+<td>背景色のAlphaの配列(0.0〜1.0)。通常時、マウスオーバー時、マウス押下時の順</td>
+</tr>
+<tr>
+<td>system</td>
+<td>boolean</td>
+<td></td>
+<td>false</td>
+<td>システム用ボタンとする場合はtrue</td>
+</tr>
+<tr>
+<td>margint</td>
+<td>number</td>
+<td></td>
+<td>0</td>
+<td>テキスト描画のマージン　上</td>
+</tr>
+<tr>
+<td>marginr</td>
+<td>number</td>
+<td></td>
+<td>0</td>
+<td>テキスト描画のマージン　右</td>
+</tr>
+<tr>
+<td>marginb</td>
+<td>number</td>
+<td></td>
+<td>0</td>
+<td>テキスト描画のマージン　下</td>
+</tr>
+<tr>
+<td>marginl</td>
+<td>number</td>
+<td></td>
+<td>0</td>
+<td>テキスト描画のマージン　左</td>
+</tr>
+<tr>
+<td>marginl</td>
+<td>number</td>
+<td></td>
+<td>0</td>
+<td>テキスト描画のマージン　左</td>
+</tr>
+<tr>
+<td>align</td>
+<td>string</td>
+<td></td>
+<td>"center"</td>
+<td>テキスト寄せの方向。"left" | "center" | "right"</td>
+</tr>
+<tr>
+<td>countpage</td>
+<td>boolean</td>
+<td></td>
+<td>true</td>
+<td>現在の位置を既読にするかどうか</td>
+</tr>
+</tbody>
+</table>
+<p>指定のレイヤーに、テキストと背景色を用いたボタンを配置します。
+配置直後はボタンはロックされた状態となり、押下することはできません。
+[unlockbuttons]タグでロック状態を解除することで、押下できるようになります。</p>
+<h3 id="clearbuttons-clearbutton-clearbtn">clearbuttons, clearbutton, clearbtn</h3>
+<p>すべてのボタンをクリアする</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="cleartextbuttons-cleartextbutton-cleartxtbtn">cleartextbuttons, cleartextbutton, cleartxtbtn</h3>
+<p>テキストボタンをクリアする</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="imagebutton-imgbtn">imagebutton, imgbtn</h3>
+<p>レイヤーに画像ボタンを配置する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>jump</td>
+<td>boolean</td>
+<td></td>
+<td>true</td>
+<td>ボタン押下時にjumpする場合はtrue</td>
+</tr>
+<tr>
+<td>call</td>
+<td>boolean</td>
+<td></td>
+<td></td>
+<td>ボタン押下時にcallする場合はtrue</td>
+</tr>
+<tr>
+<td>file</td>
+<td>string</td>
+<td></td>
+<td></td>
+<td>ボタン押下時にjumpまたはcallするスクリプトファイル名</td>
+</tr>
+<tr>
+<td>label</td>
+<td>string</td>
+<td></td>
+<td></td>
+<td>ボタン押下時にjumpまたはcallするラベル名</td>
+</tr>
+<tr>
+<td>exp</td>
+<td>string</td>
+<td></td>
+<td></td>
+<td>ボタン押下時に実行するJavaScript</td>
+</tr>
+<tr>
+<td>imagefile</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>ボタンにする画像ファイル</td>
+</tr>
+<tr>
+<td>x</td>
+<td>number</td>
+<td></td>
+<td>0</td>
+<td>x座標(px)</td>
+</tr>
+<tr>
+<td>y</td>
+<td>number</td>
+<td></td>
+<td>0</td>
+<td>y座標(px)</td>
+</tr>
+<tr>
+<td>direction</td>
+<td>string</td>
+<td></td>
+<td>"horizontal"</td>
+<td>ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"</td>
+</tr>
+<tr>
+<td>system</td>
+<td>boolean</td>
+<td></td>
+<td>false</td>
+<td>システム用ボタンとする場合はtrue</td>
+</tr>
+<tr>
+<td>countpage</td>
+<td>boolean</td>
+<td></td>
+<td>true</td>
+<td>現在の位置を既読にするかどうか</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="clearimagebuttons-clearimagebutton-clearimgbtn">clearimagebuttons, clearimagebutton, clearimgbtn</h3>
+<p>画像ボタンをクリアする</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="togglebutton-tglbtn">togglebutton, tglbtn</h3>
+<p>レイヤーにトグルボタンを配置する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>exp</td>
+<td>string</td>
+<td></td>
+<td></td>
+<td>ボタン押下時に実行するJavaScript</td>
+</tr>
+<tr>
+<td>imagefile</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>ボタンにする画像ファイル</td>
+</tr>
+<tr>
+<td>x</td>
+<td>number</td>
+<td></td>
+<td>0</td>
+<td>x座標(px)</td>
+</tr>
+<tr>
+<td>y</td>
+<td>number</td>
+<td></td>
+<td>0</td>
+<td>y座標(px)</td>
+</tr>
+<tr>
+<td>statevar</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>選択状態を格納する一時変数の名前</td>
+</tr>
+<tr>
+<td>direction</td>
+<td>string</td>
+<td></td>
+<td>"horizontal"</td>
+<td>ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"</td>
+</tr>
+<tr>
+<td>system</td>
+<td>boolean</td>
+<td></td>
+<td>false</td>
+<td>システム用ボタンとする場合はtrue</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="cleartogglebuttons-cleartogglebutton-cleartglbtn">cleartogglebuttons, cleartogglebutton, cleartglbtn</h3>
+<p>トグルボタンをクリアする</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="lockbuttons-lockbutton-lock">lockbuttons, lockbutton, lock</h3>
+<p>ボタンをロックする</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td></td>
+<td>"all"</td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="unlockbuttons-unlockbutton-unlock">unlockbuttons, unlockbutton, unlock</h3>
+<p>ボタンをアンロックする</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td></td>
+<td>"all"</td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="locksystembuttons-locksystembutton-locksystem">locksystembuttons, locksystembutton, locksystem</h3>
+<p>システムボタンをロックする</p>
+<p>TODO タグの説明文</p>
+<h3 id="unlocksystembuttons-unlocksystembutton-unlocksystem">unlocksystembuttons, unlocksystembutton, unlocksystem</h3>
+<p>システムボタンをアンロックする</p>
+<p>TODO タグの説明文</p>
+<h2 id="_22">アニメーション</h2>
+<h3 id="frameanim-fanim">frameanim, fanim</h3>
+<p>フレームアニメーションを設定する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>loop</td>
+<td>boolean</td>
+<td></td>
+<td>false</td>
+<td>アニメーションをループさせるかどうか</td>
+</tr>
+<tr>
+<td>time</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>1フレームの時間</td>
+</tr>
+<tr>
+<td>width</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>1フレームの幅</td>
+</tr>
+<tr>
+<td>height</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>1フレームの高さ</td>
+</tr>
+<tr>
+<td>frames</td>
+<td>array</td>
+<td>○</td>
+<td></td>
+<td>フレーム指定</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="startframeanim-startfanim">startframeanim, startfanim</h3>
+<p>フレームアニメーションを開始する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="stopframeanim-stopfanim">stopframeanim, stopfanim</h3>
+<p>フレームアニメーションを停止する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="waitframeanim-waitfanim">waitframeanim, waitfanim</h3>
+<p>フレームアニメーションの終了を待つ</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>canskip</td>
+<td>boolean</td>
+<td></td>
+<td>true</td>
+<td>スキップ可能かどうか</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="startmove-move">startmove, move</h3>
+<p>自動移動を開始する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>time</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>自動移動させる時間</td>
+</tr>
+<tr>
+<td>delay</td>
+<td>number</td>
+<td></td>
+<td>0</td>
+<td>開始までの遅延時間(ms)</td>
+</tr>
+<tr>
+<td>path</td>
+<td>array</td>
+<td>○</td>
+<td></td>
+<td>自動移動させる位置を指定</td>
+</tr>
+<tr>
+<td>type</td>
+<td>string</td>
+<td></td>
+<td>"linear"</td>
+<td>自動移動のタイプ。"linear" | "bezier2" | "bezier3" | "catmullrom"</td>
+</tr>
+<tr>
+<td>ease</td>
+<td>string</td>
+<td></td>
+<td>"none"</td>
+<td>自動移動の入り・抜きの指定。"none" | "in" | "out" | "both"</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="stopmove">stopmove</h3>
+<p>自動移動を停止する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td></td>
+<td>"all"</td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>string</td>
+<td></td>
+<td>"current"</td>
+<td>対象ページ</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="waitmove-wm">waitmove, wm</h3>
+<p>自動移動の終了を待つ</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>canskip</td>
+<td>boolean</td>
+<td></td>
+<td>true</td>
+<td>スキップ可能かどうか</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h2 id="_23">サウンド</h2>
+<h3 id="bufalias">bufalias</h3>
+<p>バッファ番号エイリアスを作成する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>エイリアス名</td>
+</tr>
+<tr>
+<td>buf</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+</tbody>
+</table>
+<p>バッファのエイリアス（別名）を作成します。
+エイリアスを作成すると、バッファ番号を指定するコマンドでバッファ番号のかわりにエイリアス名を使用することができるようになります。
+たとえば以下のように、効果音を再生するバッファに se というようなエイリアスを作成することで、
+スクリプト作成時の可読性が向上します。</p>
+<pre><code># 背景画像はレイヤー 0 に作成するので、エイリアスを作成する
+;bufalias name: &quot;se&quot;, buf: &quot;0&quot;
+# 以後、効果音は以下のように読み込める
+;loadsound &quot;buf&quot;: &quot;se&quot;, &quot;file&quot;: &quot;sound/pekowave1.wav&quot;
+</code></pre>
+
+<h3 id="delbufalias">delbufalias</h3>
+<p>バッファ番号エイリアスを削除する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>エイリアス名</td>
+</tr>
+</tbody>
+</table>
+<h3 id="loadsound-sound">loadsound, sound</h3>
+<p>音声をロードする</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>buf</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>読み込み先バッファ番号</td>
+</tr>
+<tr>
+<td>file</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>読み込む音声ファイルパス</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="freesound-unloadsound">freesound, unloadsound</h3>
+<p>音声を開放する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>buf</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>読み込み先バッファ番号</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="soundopt">soundopt</h3>
+<p>音声の設定</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>buf</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>バッファ番号</td>
+</tr>
+<tr>
+<td>volume</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>音量(0.0〜1.0)</td>
+</tr>
+<tr>
+<td>volume2</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>音量2(0.0〜1.0)</td>
+</tr>
+<tr>
+<td>seek</td>
+<td>number</td>
+<td></td>
+<td></td>
+<td>シーク位置(ms)</td>
+</tr>
+<tr>
+<td>loop</td>
+<td>boolean</td>
+<td></td>
+<td></td>
+<td>ループ再生するかどうか</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="playsound">playsound</h3>
+<p>音声を再生する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>buf</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>読み込み先バッファ番号</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="stopsound">stopsound</h3>
+<p>音声を停止する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>buf</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>読み込み先バッファ番号</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="fadesound">fadesound</h3>
+<p>音声をフェードする</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>buf</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>読み込み先バッファ番号</td>
+</tr>
+<tr>
+<td>volume</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>フェード後の音量(0.0〜1.0)</td>
+</tr>
+<tr>
+<td>time</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>フェード時間(ms)</td>
+</tr>
+<tr>
+<td>autostop</td>
+<td>boolean</td>
+<td></td>
+<td>false</td>
+<td>フェード終了後に再生停止するか</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="fadeoutsound-fadeout">fadeoutsound, fadeout</h3>
+<p>音声をフェードアウトして再生停止する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>buf</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>読み込み先バッファ番号</td>
+</tr>
+<tr>
+<td>time</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>フェード時間(ms)</td>
+</tr>
+<tr>
+<td>autostop</td>
+<td>boolean</td>
+<td></td>
+<td>false</td>
+<td>フェード終了後に再生停止するか</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="fadeinsound-fadein">fadeinsound, fadein</h3>
+<p>音声をフェードインで再生開始する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>buf</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>読み込み先バッファ番号</td>
+</tr>
+<tr>
+<td>volume</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>フェード後の音量(0.0〜1.0)</td>
+</tr>
+<tr>
+<td>time</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>フェード時間(ms)</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="waitsoundstop-waitsound">waitsoundstop, waitsound</h3>
+<p>音声の再生終了を待つ</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>buf</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>読み込み先バッファ番号</td>
+</tr>
+<tr>
+<td>canskip</td>
+<td>boolean</td>
+<td></td>
+<td>true</td>
+<td>スキップ可能かどうか</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="waitsoundfade-waitfade">waitsoundfade, waitfade</h3>
+<p>音声のフェード終了を待つ</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>buf</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>読み込み先バッファ番号</td>
+</tr>
+<tr>
+<td>canskip</td>
+<td>boolean</td>
+<td></td>
+<td>true</td>
+<td>スキップ可能かどうか</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="endfadesound-endfade">endfadesound, endfade</h3>
+<p>音声のフェードを終了する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>buf</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>読み込み先バッファ番号</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h2 id="_24">トランジション</h2>
+<h3 id="backlay">backlay</h3>
+<p>表レイヤを裏レイヤにコピーする</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>string</td>
+<td></td>
+<td>"all"</td>
+<td>対象レイヤー</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="copylay">copylay</h3>
+<p>レイヤ情報をコピーする</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>srclay</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>コピー元レイヤー</td>
+</tr>
+<tr>
+<td>destlay</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>コピー先レイヤー</td>
+</tr>
+<tr>
+<td>srcpage</td>
+<td>string</td>
+<td></td>
+<td>"fore"</td>
+<td>コピー元ページ</td>
+</tr>
+<tr>
+<td>destpage</td>
+<td>string</td>
+<td></td>
+<td>"fore"</td>
+<td>コピー先ページ</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="currentpage">currentpage</h3>
+<p>操作対象ページを変更する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>page</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>操作対象ページを指定</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="preparetrans-pretrans">preparetrans, pretrans</h3>
+<p>トランジションの前準備</p>
+<p>TODO タグの説明文</p>
+<h3 id="trans">trans</h3>
+<p>トランジションを実行する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>time</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>トランジションの時間(ms)</td>
+</tr>
+<tr>
+<td>method</td>
+<td>string</td>
+<td></td>
+<td>"crossfade"</td>
+<td>トランジションの種類</td>
+</tr>
+<tr>
+<td>rule</td>
+<td>string</td>
+<td></td>
+<td>""</td>
+<td>ユニバーサルトランジションのルールファイル名</td>
+</tr>
+<tr>
+<td>vague</td>
+<td>number</td>
+<td></td>
+<td>0.25</td>
+<td>あいまい値</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="stoptrans">stoptrans</h3>
+<p>トランジションを停止する</p>
+<p>TODO タグの説明文</p>
+<h3 id="waittrans-wt">waittrans, wt</h3>
+<p>トランジションの終了を待つ</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>canskip</td>
+<td>boolean</td>
+<td></td>
+<td>true</td>
+<td>スキップ可能かどうか</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h2 id="_25">メッセージ履歴</h2>
+<h3 id="historyopt">historyopt</h3>
+<p>メッセージ履歴を設定する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>output</td>
+<td>boolean</td>
+<td></td>
+<td></td>
+<td>メッセージレイヤに文字を出力するかどうか</td>
+</tr>
+<tr>
+<td>enabled</td>
+<td>boolean</td>
+<td></td>
+<td></td>
+<td>メッセージレイヤを表示できるかどうか</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="showhistory-history">showhistory, history</h3>
+<p>メッセージ履歴を表示する</p>
+<p>TODO タグの説明文</p>
+<h3 id="historych-hch">historych, hch</h3>
+<p>メッセージ履歴にテキストを出力する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>text</td>
+<td>string</td>
+<td>○</td>
+<td></td>
+<td>出力する文字</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="hbr">hbr</h3>
+<p>メッセージ履歴を改行する</p>
+<p>TODO タグの説明文</p>
+<h2 id="_26">セーブ／ロード</h2>
+<h3 id="save">save</h3>
+<p>最新状態をセーブする</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>num</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>セーブ番号</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="load">load</h3>
+<p>セーブデータから復元する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>num</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>セーブ番号</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="tempsave">tempsave</h3>
+<p>一時セーブする</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>num</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>セーブ番号</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="tempload">tempload</h3>
+<p>一時セーブデータから復元する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>num</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>セーブ番号</td>
+</tr>
+<tr>
+<td>sound</td>
+<td>boolean</td>
+<td></td>
+<td>false</td>
+<td>音声もロードするかどうか</td>
+</tr>
+<tr>
+<td>toback</td>
+<td>boolean</td>
+<td></td>
+<td>false</td>
+<td>表レイヤーを裏レイヤーとして復元するかどうか</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="screenshot">screenshot</h3>
+<p>現在の画面のスクリーンショットを取る</p>
+<p>現在の画面の状態でスクリーンショットを取ります。
+取得されたスクリーンショットは [save] で保存されます。</p>
+<h3 id="copysavedata-copysave">copysavedata, copysave</h3>
+<p>セーブデータをコピーする</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>srcnum</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>コピー元のセーブ番号</td>
+</tr>
+<tr>
+<td>destnum</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>コピー先のセーブ番号</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p>
+<h3 id="deletesavedata-delsavedata-delsave">deletesavedata, delsavedata, delsave</h3>
+<p>セーブデータを削除する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>num</td>
+<td>number</td>
+<td>○</td>
+<td></td>
+<td>セーブ番号</td>
+</tr>
+</tbody>
+</table>
+<p>TODO タグの説明文</p></div>
         </div>
 
         <footer class="col-md-12">

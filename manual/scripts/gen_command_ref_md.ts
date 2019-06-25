@@ -18,7 +18,6 @@ Ponkan3 のスクリプトで使用できる全てのコマンドの解説です
 コマンドの中には、長いコマンドをタイプする手間を省くため、別名が設けられているものがあります。
 たとえば \`startautomode\` と \`startauto\` と \`auto\` は名前は異なりますが全て同じ動作をします。
 
-
 `;
 
 // 一覧表
@@ -30,7 +29,8 @@ groupNames.forEach((groupName: string) => {
 
   let actions: TagAction[] = grouped[groupName];
   actions.forEach((action) => {
-    md += `| ${action.names.join(', ')} | ${action.comment} |\n`;
+    // md += `| ${action.names.join(', ')} | ${action.comment} |\n`;
+    md += `| [${action.names.join(', ')}](#${action.names.join('-')}) | ${action.comment} |\n`;
   });
 });
 md += "\n";
@@ -41,7 +41,9 @@ groupNames.forEach((groupName: string) => {
 
   let actions: TagAction[] = grouped[groupName];
   actions.forEach((action) => {
-    md += `### ${action.names.join(', ')} ( ${action.comment} )\n\n`;
+    md += `### ${action.names.join(', ')} \n\n${action.comment}\n\n`;
+    // md += `### ${action.names.join(', ')}\n`;
+    // md += `${action.comment})\n\n`;
 
     if (action.values.length > 0) {
       md += `| パラメータ名 | 値の種類 | 必須 | デフォルト値 | 説明 |\n`;
