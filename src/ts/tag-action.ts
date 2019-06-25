@@ -2044,14 +2044,26 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     new TagAction(
-      ["screenshot"],
+      ["lockscreenshot"],
       "セーブ／ロード",
-      "現在の画面のスクリーンショットを取る",
+      "現在の画面でスクリーンショットを固定する",
       [],
       `現在の画面の状態でスクリーンショットを取ります。
        取得されたスクリーンショットは [save] で保存されます。`,
       (values, tick) => {
-        p.reserveScreenShot();
+        p.lockScreenShot();
+        return "continue";
+      },
+    ),
+    new TagAction(
+      ["unlockscreenshot"],
+      "セーブ／ロード",
+      "スクリーンショットの固定を解除する",
+      [],
+      `現在の画面の状態でスクリーンショットを取ります。
+       取得されたスクリーンショットは [save] で保存されます。`,
+      (values, tick) => {
+        p.unlockScreenShot();
         return "continue";
       },
     ),

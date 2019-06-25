@@ -2,7 +2,7 @@
 *save_start
 ;tempsave num: 0
 ;historyopt enabled: false
-;screenshot
+;lockscreenshot
 ;rclick enabled: false
 ;backlay
 
@@ -256,6 +256,7 @@ PAGE:
 *exit
 ;tempload num: 0, sound: false, toback: true
 ;trans method: "crossfade", time: 200
+;unlockscreenshot
 ;historyopt enabled: true
 ;return
 

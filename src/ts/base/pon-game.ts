@@ -50,7 +50,7 @@ export class PonGame implements IConductorEvent {
 
   public readonly transManager: TransManager;
   public readonly screenShot: ScreenShot;
-  public reserveScreenShotFlag: boolean = false;
+  public updateScreenShotFlag: boolean = true;
 
   public get width(): number { return this.foreRenderer.width; }
   public get height(): number { return this.foreRenderer.height; }
@@ -273,9 +273,8 @@ export class PonGame implements IConductorEvent {
         this.foreRenderer.draw(tick);
       }
 
-      if (this.reserveScreenShotFlag) {
+      if (this.updateScreenShotFlag) {
         this.screenShot.draw(this.foreRenderer.canvasElm);
-        this.reserveScreenShotFlag = false;
       }
 
       this.fpsCount++;
@@ -468,8 +467,12 @@ export class PonGame implements IConductorEvent {
     });
   }
 
-  public reserveScreenShot(): void {
-    this.reserveScreenShotFlag = true;
+  public lockScreenShot(): void {
+    this.updateScreenShotFlag = false;
+  }
+
+  public unlockScreenShot(): void {
+    this.updateScreenShotFlag = true;
   }
 
   /**
