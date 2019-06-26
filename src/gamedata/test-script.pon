@@ -1,5 +1,10 @@
 # テスト用スクリプト
 
+;macro name: "speak"
+  ;ch text: "「"
+  ;indent
+;endmacro
+
 - gv.memo = "テストスクリプトです";
 |save-mark-0001:セーブコメント01
 |セーブコメント02
@@ -64,9 +69,6 @@
   y: 0
 }
 
-# ;macro_depth1 p: 100
-# ;pb
-
 # ;loadsound "buf": 0, "file": "sound/pekowave1.wav"
 # ;soundopt buf: 0, loop: false, volume: 0.1
 # ロード
@@ -87,10 +89,6 @@
 ;hbr
 
 
-;macro name: "speak"
-  ;ch text: "「"
-  ;indent
-;endmacro
 ;cmdsc ch: "「", command: "speak"
 ;textspeed read: 1, unread: 1
 
@@ -101,7 +99,23 @@
 さしすせそ」
 ;pb
 
-
+;layopt lay: 1, x : 100, y: 400
+;move {
+  lay: 1,
+  time: 1000,
+  delay: 0,
+  type: "catmullrom",
+  loop: true,
+  path: [
+    {x: 100, y: 100, alpha: 0.81},
+    {x: 400, y: 100, alpha: 0.82},
+    {x: 400, y: 400, alpha: 0.83},
+  ],
+  ease: "none"
+}
+|move後
+;waitmove canskip: true
+;pb
 
 #あああああああああああああああああああああああ」
 あああああああああああああああああああああ「
@@ -133,20 +147,6 @@ Normal
 -tv.start = Date.now();
 -console.log("###@@@@@@@@@@", (Date.now() - tv.start));
 
-;move {
-  lay: 1,
-  time: 1000,
-  delay: 2000,
-  type: "catmullrom",
-  path: [{x: 400, y: 0, alpha: 0.1},
-         {x: 400, y: 400, alpha: 1.0},
-         {x: 0, y: 400, alpha: 0.5},
-         {x: 0, y: 0, alpha: 1.0},
-         {x: 100, y: 0, alpha: 1.0},
-         ],
-  ease: "none"
-}
-;waitmove canskip: true
 
 ;messageopt "align": "left"
 テキスト1

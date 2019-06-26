@@ -760,8 +760,8 @@ export class Ponkan3 extends PonGame {
   }
 
   public get hasMovingLayer(): boolean {
-    return this.foreLayers.filter((layer) => layer.isMoving).length > 0 ||
-           this.backLayers.filter((layer) => layer.isMoving).length > 0;
+    return this.foreLayers.filter((layer) => layer.isMoving && !layer.isLoopMoving).length > 0 ||
+           this.backLayers.filter((layer) => layer.isMoving && !layer.isLoopMoving).length > 0;
   }
 
   public waitMoveClickCallback() {

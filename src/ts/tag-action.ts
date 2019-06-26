@@ -1502,11 +1502,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("path", "array", true, null, "自動移動させる位置を指定"),
         new TagValue("type", "string", false, "linear", `自動移動のタイプ。"linear" | "bezier2" | "bezier3" | "catmullrom"`),
         new TagValue("ease", "string", false, "none", `自動移動の入り・抜きの指定。"none" | "in" | "out" | "both" `),
+        new TagValue("loop", "boolean", false, null, `自動移動をループさせるかどうか。タイプが "linear" か "catmullrom" の場合のみ有効`),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
-          layer.startMove(tick, values.time, values.delay, values.path, values.type, values.ease);
+          layer.startMove(tick, values.time, values.delay, values.path, values.type, values.ease, values.loop);
         });
         return "continue";
       },
