@@ -431,6 +431,7 @@ export class BaseLayer {
    * @param alpha アルファ値 0.0〜1.0
    */
   public setBackgroundColor(color: number, alpha: number = 1.0): void {
+    this.freeImage();
     this.backgroundSprite.fillColor(color, alpha);
     this._backgroundColor = color;
     this._backgroundAlpha = alpha;
@@ -724,6 +725,7 @@ export class BaseLayer {
     // Logger.debug("BaseLayer.loadImage call: ", filePath);
     const cb = new AsyncCallbacks();
 
+    this.clearBackgroundColor();
     this.freeImage();
     const width = this.width;
     const height = this.height;
