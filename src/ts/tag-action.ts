@@ -730,11 +730,13 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "メッセージ操作",
       "文字出力のインターバルを設定",
       [
+        new TagValue("mode", "string", false, null, `インターバルのモード。"user" | "system"`),
         new TagValue("unread", "number", false, null, "未読文章のインターバル時間(ms)"),
         new TagValue("read", "number", false, null, "既読文章のインターバル時間(ms)"),
       ],
       `TODO タグの説明文`,
       (values, tick) => {
+        if (values.move != null) { p.textSpeedMode = values.mode; }
         if (values.unread != null) { p.unreadTextSpeed = values.unread; }
         if (values.read != null) { p.readTextSpeed = values.read; }
         return "continue";

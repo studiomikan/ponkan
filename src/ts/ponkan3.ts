@@ -68,8 +68,11 @@ export class Ponkan3 extends PonGame {
   protected quakeIntervalFrame: number = 4;
 
   // メッセージ関係
-  public unreadTextSpeed: number = 100;
-  public readTextSpeed: number = 100;
+  public textSpeedMode: "user" | "system" = "user";
+  public unreadTextSpeed: number = 100; // "system" の時の速度
+  public readTextSpeed: number = 100; // "system" の時の速度
+  public userUnreadTextSpeed: number = 100; // "user" の時の速度
+  public userReadTextSpeed: number = 100; // "user" の時の速度
   public clickSkipEnabled: boolean = true;
   public nowaitModeFlag: boolean = false;
   public addCharWithBackFlag: boolean = false;
@@ -860,9 +863,9 @@ export class Ponkan3 extends PonGame {
     if (this.nowaitModeFlag) {
       return 0;
     } else if (this.conductor.isPassedLatestSaveMark()) {
-      return this.readTextSpeed;
+      return this.textSpeedMode === "user" ? this.userReadTextSpeed : this.readTextSpeed;
     } else {
-      return this.unreadTextSpeed;
+      return this.textSpeedMode === "user" ? this.userUnreadTextSpeed : this.unreadTextSpeed;
     }
   }
 
@@ -1067,8 +1070,23 @@ export class Ponkan3 extends PonGame {
     return true;
   }
 
+  protected static ponkanSystemStoreParams: string[] = [
+    "autoModeInterval",
+    "userReadTextSpeed",
+    "userUnreadTextSpeed",
+    "canSkipUnreadPart",
+    "canSkipUnreadPartByCtrl",
+  ];
+
   public saveSystemData(): void {
     const data = this.systemVar;
+    const me = this as any;
+
+    // システム
+    data.system = {};
+    Ponkan3.ponkanSystemStoreParams.forEach((param: string) => {
+      data.system[param] = me[param];
+    });
 
     // サウンド
     data.soundBuffers = [];
@@ -1084,6 +1102,12 @@ export class Ponkan3 extends PonGame {
     // 読み込み
     this.resource.loadSystemData(saveDataPrefix);
     const data = this.systemVar;
+    const me = this as any;
+
+    // システム
+    Ponkan3.ponkanSystemStoreParams.forEach((param: string) => {
+      if (data.system[param] != null) { me[param] = data.system[param]; }
+    });
 
     // サウンド
     if (data.soundBuffers != null) {
@@ -1150,11 +1174,14 @@ export class Ponkan3 extends PonGame {
     // "skipMode",
     // "canStopSkipByTag",
     // "autoModeFlag",
-    "autoModeInterval",
+    // "autoModeInterval",
     "layerCount",
     "currentPage",
+    "textSpeedMode",
     "unreadTextSpeed",
     "readTextSpeed",
+    // "userUnreadTextSpeed",
+    // "userReadTextSpeed",
     "nowaitModeFlag",
     "addCharWithBackFlag",
     "messageLayerNum",

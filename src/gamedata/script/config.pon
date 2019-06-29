@@ -24,8 +24,8 @@ tv.system.config= {
 # 初期値設定
 ---
 tv.system.config.selected = {
-  unreadTextSpeed: 20 - Math.floor(20 * ponkan.unreadTextSpeed / 400),
-  readTextSpeed: 20 - Math.floor(20 * ponkan.readTextSpeed / 400),
+  unreadTextSpeed: 20 - Math.floor(20 * ponkan.userUnreadTextSpeed / 400),
+  readTextSpeed: 20 - Math.floor(20 * ponkan.userReadTextSpeed / 400),
   autoModeSpeed: 20 - Math.floor(20 * ponkan.autoModeInterval / 10000),
   skipMode: ponkan.canSkipUnreadPart ? 1 : 0,
   bgmVolume: Math.floor(20 * ponkan.getSoundBuffer(0).gvolume / 1),
@@ -265,8 +265,8 @@ tv.x = tv.startX;
 # 値を適用
 ---
 var s = tv.system.config.selected;
-ponkan.unreadTextSpeed = 400 - s.unreadTextSpeed * 20;
-ponkan.readTextSpeed = 400 - s.readTextSpeed * 20;
+ponkan.userUnreadTextSpeed = 400 - s.unreadTextSpeed * 20;
+ponkan.userReadTextSpeed = 400 - s.readTextSpeed * 20;
 ponkan.autoModeInterval = 10000 - s.autoModeSpeed * 500;
 ponkan.canSkipUnreadPart = (s.skipMode == 1);
 ponkan.getSoundBuffer(0).gvolume = s.bgmVolume / 20;
