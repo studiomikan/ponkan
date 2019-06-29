@@ -1088,7 +1088,6 @@ export class Ponkan3 extends PonGame {
 
     // サウンド
     if (data.soundBuffers != null) {
-      console.log("@@@@@loadsystem", data.soundBuffers);
       this.soundBuffers.forEach((sound, index) => {
         // data.soundBuffers.push(sound.storeSystem());
         if (data.soundBuffers[index] != null) {
