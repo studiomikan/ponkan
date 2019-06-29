@@ -82,7 +82,7 @@ tv.system.save = {
   tv.y = tv.pos[tv.i][1];
   tv.saveNum = (tv.system.save.savePageNum * 6) + tv.i;
   tv.saveInfo = ponkan.getSaveDataInfo(tv.saveNum);
-  tv.text = tv.saveInfo.text.replace(/\n/, "");
+  tv.text = tv.saveInfo.text.replace(/\n/g, "");
   if (tv.text.length > 42) {
     tv.text = tv.text.substring(0, 42) + "...";
   }

@@ -1071,11 +1071,20 @@ export class Ponkan3 extends PonGame {
   }
 
   protected static ponkanSystemStoreParams: string[] = [
+    "scaleMode",
+    "_fixedScaleWidth",
+    "_fixedScaleHeight",
     "autoModeInterval",
     "userReadTextSpeed",
     "userUnreadTextSpeed",
     "canSkipUnreadPart",
     "canSkipUnreadPartByCtrl",
+  ];
+
+  protected static ponkanSystemStoreIgnoreParams: string[] = [
+    "scaleMode",
+    "_fixedScaleWidth",
+    "_fixedScaleHeight",
   ];
 
   public saveSystemData(): void {
@@ -1105,9 +1114,29 @@ export class Ponkan3 extends PonGame {
     const me = this as any;
 
     // システム
-    Ponkan3.ponkanSystemStoreParams.forEach((param: string) => {
-      if (data.system[param] != null) { me[param] = data.system[param]; }
-    });
+    if (data.system != null) {
+      const restoreParams = Ponkan3.ponkanSystemStoreParams.filter(
+        (param) => Ponkan3.ponkanSystemStoreIgnoreParams.indexOf(param) === -1);
+      restoreParams.forEach((param: string) => {
+        if (data.system[param] != null) { me[param] = data.system[param]; }
+      });
+      if (data.system.scaleMode != null) {
+        switch (data.system.scaleMode) {
+          case Ponkan3.ScaleMode.FULLSCREEN:
+          case Ponkan3.ScaleMode.FIT:
+            this.scaleMode = Ponkan3.ScaleMode.FIT;
+            break;
+          case Ponkan3.ScaleMode.FIXED:
+            if (data.system._fixedScaleWidth != null && data.system._fixedScaleHeight != null) {
+              this.scaleMode = Ponkan3.ScaleMode.FIXED;
+              this.setFixedScaleSize(data.system._fixedScaleWidth, data.system._fixedScaleHeight);
+            } else {
+              this.scaleMode = Ponkan3.ScaleMode.FIT;
+            }
+            break;
+        }
+      }
+    }
 
     // サウンド
     if (data.soundBuffers != null) {
@@ -1350,7 +1379,7 @@ export class Ponkan3 extends PonGame {
   public get emptySaveData(): any {
     return  {
       isEmpty: true,
-      date: "----/--/-- --:--:--.---",
+      date: "----/--/-- --:--:--",
       name: "",
       comment: "NO DATA",
       message: "",
