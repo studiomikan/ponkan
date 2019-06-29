@@ -1,4 +1,8 @@
 version: "3"
+
+volumes:
+  nodejs_node_modules:
+
 services:
   nodejs:
     build:
@@ -7,9 +11,10 @@ services:
     tty: true
     volumes:
       - ./:/home/node/app
+      - nodejs_node_modules:/app/node_modules
     ports:
       - "8080:8080"
-    command: bash /home/node/app/scripts/start_dev_server.sh
+    command: bash /home/node/app/docker/nodejs/start_dev_server.sh
     working_dir: /home/node/app
     environment:
       - WEBPACK_DEV_SERVER_HOST=0.0.0.0

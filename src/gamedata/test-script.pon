@@ -88,9 +88,15 @@
 ;hbr
 ;hbr
 
+;textspeed read: 1, unread: 1
 
 ;cmdsc ch: "「", command: "speak"
-;textspeed read: 1, unread: 1
+;cmdsc ch: "\n", command: "br"
+「セリフ
+セリフ
+セリフ
+セリフ」
+;delcmdsc ch: "\n"
 
 「あいうえお$
 かきくけこ

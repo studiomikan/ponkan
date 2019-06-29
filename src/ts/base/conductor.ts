@@ -152,6 +152,14 @@ export class Conductor {
         case "__js__":
           tagReturnValue = this.eventCallbacks.onJs(tag.values.__body__, tag.values.print, tag.line, tick);
           break;
+        case "__line_break__":
+          if (this.commandShortcut["\n"] != null) {
+            tag = this.script.callCommandShortcut(tag, this.commandShortcut["\n"]);
+            tagReturnValue = this.eventCallbacks.onTag(tag, tag.line, tick);
+          } else {
+            tagReturnValue = "continue";
+          }
+          break;
         case "ch":
           // コマンドショートカットの反映
           if (this.commandShortcut[tag.values.text] != null) {

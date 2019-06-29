@@ -47,7 +47,10 @@ export class ScriptParser {
     while (true) {
       const line: string | null = this.getLine();
       if (line === null) { break; }
-      if (line === "") { continue; }
+      if (line === "") {
+        this.addLinebreak(); // 最後に改行を付与
+        continue;
+      }
 
       const ch0 = line.charAt(0);
       const body = line.substring(1).trim();
@@ -163,13 +166,13 @@ export class ScriptParser {
     for (let i = 0; i < line.length; i++) {
       const ch = line.charAt(i);
       if (ch === "") { continue; }
-
-      if (ch === "$") {
-        this.addTag("br", { __body__: line});
-      } else {
-        this.addTag("ch", { __body__: ch, text: ch});
-      }
+      this.addTag("ch", { __body__: ch, text: ch});
     }
+    this.addLinebreak(); // 最後に改行を付与
+  }
+
+  private addLinebreak(): void {
+    this.addTag("__line_break__", { __body__: "\n" });
   }
 
   private addTag(name: string, values: object) {
