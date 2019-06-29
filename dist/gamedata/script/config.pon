@@ -24,13 +24,13 @@ tv.system.config= {
 # 初期値設定
 ---
 tv.system.config.selected = {
-  unreadTextSpeed: 20 - Math.floor(20 * ponkan.unreadTextSpeed / 400),
-  readTextSpeed: 20 - Math.floor(20 * ponkan.readTextSpeed / 400),
+  unreadTextSpeed: 20 - Math.floor(20 * ponkan.userUnreadTextSpeed / 400),
+  readTextSpeed: 20 - Math.floor(20 * ponkan.userReadTextSpeed / 400),
   autoModeSpeed: 20 - Math.floor(20 * ponkan.autoModeInterval / 10000),
   skipMode: ponkan.canSkipUnreadPart ? 1 : 0,
-  bgmVolume: Math.floor(20 * ponkan.getSoundBuffer(0).volume / 1),
-  seVolume: Math.floor(20 * ponkan.getSoundBuffer(2).volume / 1),
-  systemVolume: Math.floor(20 * ponkan.getSoundBuffer(1).volume / 1),
+  bgmVolume: Math.floor(20 * ponkan.getSoundBuffer(0).gvolume / 1),
+  seVolume: Math.floor(20 * ponkan.getSoundBuffer(2).gvolume / 1),
+  systemVolume: Math.floor(20 * ponkan.getSoundBuffer(1).gvolume / 1),
   scaleMode: ponkan.scaleMode,
   fixedScaleWidth: ponkan.fixedScaleWidth,
   fixedScaleHeight: ponkan.fixedScaleHeight,
@@ -265,14 +265,14 @@ tv.x = tv.startX;
 # 値を適用
 ---
 var s = tv.system.config.selected;
-ponkan.unreadTextSpeed = 400 - s.unreadTextSpeed * 20;
-ponkan.readTextSpeed = 400 - s.readTextSpeed * 20;
+ponkan.userUnreadTextSpeed = 400 - s.unreadTextSpeed * 20;
+ponkan.userReadTextSpeed = 400 - s.readTextSpeed * 20;
 ponkan.autoModeInterval = 10000 - s.autoModeSpeed * 500;
 ponkan.canSkipUnreadPart = (s.skipMode == 1);
-ponkan.getSoundBuffer(0).volume = s.bgmVolume / 20;
-ponkan.getSoundBuffer(1).volume = s.systemVolume / 20;
+ponkan.getSoundBuffer(0).gvolume = s.bgmVolume / 20;
+ponkan.getSoundBuffer(1).gvolume = s.systemVolume / 20;
 for (var i = 2; i < ponkan.soundBuffers.length; i++) {
-  ponkan.soundBuffers[i].volume = s.seVolume / 20;
+  ponkan.soundBuffers[i].gvolume = s.seVolume / 20;
 }
 ---
 ;trans method: "crossfade", time: 200
