@@ -155,7 +155,8 @@ export class Ponkan3 extends PonGame {
   public start(): void {
     super.start();
     if (this.resource.existSystemData(this.saveDataPrefix)) {
-      this.resource.loadSystemData(this.saveDataPrefix);
+      // this.resource.loadSystemData(this.saveDataPrefix);
+      this.loadSystemData(this.saveDataPrefix, this.initialAsyncTask);
     }
     this.initialAsyncTask.run().done(() => {
       this.conductor.loadScript("start.pon").done(() => {
@@ -1068,7 +1069,33 @@ export class Ponkan3 extends PonGame {
   }
 
   public saveSystemData(): void {
+    const data = this.systemVar;
+
+    // サウンド
+    data.soundBuffers = [];
+    this.soundBuffers.forEach((sound) => {
+      data.soundBuffers.push(sound.storeSystem());
+    });
+
+    // 保存
     this.resource.saveSystemData(this.saveDataPrefix);
+  }
+
+  public loadSystemData(saveDataPrefix: string, asyncTask: AsyncTask): void {
+    // 読み込み
+    this.resource.loadSystemData(saveDataPrefix);
+    const data = this.systemVar;
+
+    // サウンド
+    if (data.soundBuffers != null) {
+      console.log("@@@@@loadsystem", data.soundBuffers);
+      this.soundBuffers.forEach((sound, index) => {
+        // data.soundBuffers.push(sound.storeSystem());
+        if (data.soundBuffers[index] != null) {
+          sound.restoreSystem(asyncTask, data.soundBuffers[index]);
+        }
+      });
+    }
   }
 
   protected getSaveDataName(num: number): string {

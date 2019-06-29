@@ -28,7 +28,7 @@ export class SoundBuffer {
 
   protected _state: SoundState = SoundState.Stop;
   protected _volume: number = 1.0;
-  protected _volume2: number = 1.0;
+  protected _gvolume: number = 1.0;
   protected _seek: number = 0;
   protected _loop: boolean = true;
   protected fadeStartVolume: number = 0;
@@ -98,7 +98,7 @@ export class SoundBuffer {
   protected setHowlerOptions(): void {
     if (this.howl != null) {
       this.volume = this.volume;
-      this.volume2 = this.volume2;
+      this.gvolume = this.gvolume;
       this.seek = this.seek;
       this.loop = this.loop;
     }
@@ -110,15 +110,15 @@ export class SoundBuffer {
   public set volume(volume: number) {
     this._volume = volume;
     if (this.howl != null) {
-      this.howl.volume(this.volume * this.volume2);
+      this.howl.volume(this.volume * this.gvolume);
     }
   }
 
-  public get volume2(): number { return this._volume2; }
-  public set volume2(volume2: number) {
-    this._volume2 = volume2;
+  public get gvolume(): number { return this._gvolume; }
+  public set gvolume(gvolume: number) {
+    this._gvolume = gvolume;
     if (this.howl != null) {
-      this.howl.volume(this.volume * this.volume2);
+      this.howl.volume(this.volume * this.gvolume);
     }
   }
 
@@ -194,8 +194,8 @@ export class SoundBuffer {
     this.stopAfterFade = autoStop;
     this.setHowlerEvent();
     this.setHowlerOptions();
-    this.howl.fade(this.fadeStartVolume * this.volume2,
-                   this.fadeTargetVolume * this.volume2, time);
+    this.howl.fade(this.fadeStartVolume * this.gvolume,
+                   this.fadeTargetVolume * this.gvolume, time);
     this._state = SoundState.Fade;
   }
 
@@ -212,8 +212,8 @@ export class SoundBuffer {
     this.howl.once("play", () => {
       this.setHowlerEvent();
       if (this.howl != null) {
-        this.howl.fade(this.fadeStartVolume * this.volume2,
-                       this.fadeTargetVolume * this.volume2, time);
+        this.howl.fade(this.fadeStartVolume * this.gvolume,
+                       this.fadeTargetVolume * this.gvolume, time);
       }
     });
     this.volume = this.fadeStartVolume;
@@ -230,8 +230,8 @@ export class SoundBuffer {
     this.fadeTime = time;
     this.stopAfterFade = autoStop;
     this.setHowlerEvent();
-    this.howl.fade(this.fadeStartVolume * this.volume2,
-                   this.fadeTargetVolume * this.volume2, time);
+    this.howl.fade(this.fadeStartVolume * this.gvolume,
+                   this.fadeTargetVolume * this.gvolume, time);
     this._state = SoundState.Fadein;
   }
 
@@ -256,7 +256,7 @@ export class SoundBuffer {
     "seek",
     "loop",
     "volume",
-    "volume2",
+    // "gvolume",
     "fadeStartVolume",
     "fadeTargetVolume",
     "fadeTime",
@@ -313,4 +313,15 @@ export class SoundBuffer {
     }
   }
 
+  public storeSystem(): any {
+    return {
+      gvolume: this.gvolume,
+    };
+  }
+
+  public restoreSystem(asyncTask: AsyncTask, data: any): any {
+    if (data != null && data.gvolume != null) {
+      this.gvolume = data.gvolume;
+    }
+  }
 }

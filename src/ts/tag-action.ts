@@ -1634,7 +1634,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [
         new TagValue("buf", "string", true, null, "バッファ番号"),
         new TagValue("volume", "number", false, null, "音量(0.0〜1.0)"),
-        new TagValue("volume2", "number", false, null, "音量2(0.0〜1.0)"),
+        new TagValue("gvolume", "number", false, null, "グローバル音量(0.0〜1.0)"),
         new TagValue("seek", "number", false, null, "シーク位置(ms)"),
         new TagValue("loop", "boolean", false, null, "ループ再生するかどうか"),
       ],
@@ -1642,7 +1642,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       (values, tick) => {
         const sb: SoundBuffer = p.getSoundBuffer(values.buf);
         if (values.volume != null) { sb.volume = values.volume; }
-        if (values.volume2 != null) { sb.volume2 = values.volume2; }
+        if (values.gvolume != null) { sb.gvolume = values.gvolume; }
         if (values.seek != null) { sb.seek = values.seek; }
         if (values.loop != null) { sb.loop = values.loop; }
         return "continue";
