@@ -12,7 +12,11 @@
 ;layalias name: "base", lay: "0"
 ;image "lay": "base", "page": "fore", "file": "image/bg0.png", "visible": true, "x": 0, "y": 0
 ;childimage lay: "0", file: "image/okayu.jpg", x: 100, y: 500
+
 ;image "lay": 1, "page": "fore", "file": "image/okayu.jpg", "visible": true, "x": 0, "y": 0
+;layopt lay: 1, scalex: 1.5, scaley: 1.5
+
+
 ;image "lay": 2, "file": "image/pagebreak.png", "visible": true, "x": 0, "y": 0
 ;frameanim "lay": 2, "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.pageBreakFrames"
 ;startframeanim "lay": 2
@@ -87,6 +91,9 @@
 ;hch text: "てｋｄかｊｆｓｋｌ；だｆｋｌ；ｊｆ"
 ;hbr
 ;hbr
+
+;clear
+|testtest
 
 ;textspeed read: 1, unread: 1
 

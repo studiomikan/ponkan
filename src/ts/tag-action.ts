@@ -1041,6 +1041,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("height", "number", false, null, "高さ(px)"),
         new TagValue("alpha", "number", false, 1.0, "レイヤーのAlpha(0.0〜1.0)"),
         new TagValue("autohide", "boolean", false, null, "hidemessagesで同時に隠すかどうか"),
+        new TagValue("scalex", "number", false, null, "x軸方向のスケール。1.0で等倍"),
+        new TagValue("scaley", "number", false, null, "y軸方向のスケール。1.0で等倍"),
         new TagValue("blocklclick", "boolean", false, null, "左クリックイベントを遮断するかどうか"),
         new TagValue("blockrclick", "boolean", false, null, "右クリックイベントを遮断するかどうか"),
         new TagValue("blockcclick", "boolean", false, null, "中クリックイベントを遮断するかどうか"),
@@ -1053,6 +1055,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           if (values.visible != null) { layer.visible = values.visible; }
           if (values.x != null) { layer.x = values.x; }
           if (values.y != null) { layer.y = values.y; }
+          if (values.scalex != null) { layer.scaleX = values.scalex; }
+          if (values.scaley != null) { layer.scaleY = values.scaley; }
           if (values.width != null) { layer.width = values.width; }
           if (values.height != null) { layer.height = values.height; }
           if (values.alpha != null) { layer.alpha = values.alpha; }

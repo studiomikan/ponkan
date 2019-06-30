@@ -185,6 +185,21 @@ export class BaseLayer {
   public set imageX(imageX: number) { if (this.imageSprite !== null) { this.imageSprite.x = imageX; } }
   public get imageY(): number { return this.imageSprite === null ? 0 : this.imageSprite.y; }
   public set imageY(imageY: number) { if (this.imageSprite !== null) { this.imageSprite.y = imageY; } }
+  
+  public get scaleX(): number { return this.imageSprite === null ? 0 : this.imageSprite.scaleX; }
+  public set scaleX(scaleX: number) {
+    if (this.imageSprite !== null) {
+      this.imageSprite.scaleX = scaleX;
+      this.width = this.imageSprite.width;
+    }
+  }
+  public get scaleY(): number { return this.imageSprite === null ? 0 : this.imageSprite.scaleY; }
+  public set scaleY(scaleY: number) {
+    if (this.imageSprite !== null) {
+      this.imageSprite.scaleY = scaleY;
+      this.height = this.imageSprite.height;
+    }
+  }
 
   public constructor(name: string, resource: Resource, owner: PonGame) {
     this.name = name;
@@ -735,8 +750,8 @@ export class BaseLayer {
       this.imageFilePath = filePath;
       this.imageSprite = new PonSprite(this.imageSpriteCallbacks);
       this.imageSprite.setImage(image);
-      this.width = image.width;
-      this.height = image.height;
+      this.width = this.imageSprite.width;
+      this.height = this.imageSprite.height;
       this.imageX = 0;
       this.imageY = 0;
       cb.callDone(this);
@@ -758,12 +773,16 @@ export class BaseLayer {
     this.imageSprite = null;
     this.image = null;
     this.imageFilePath = null;
+    this.scaleX = 0;
+    this.scaleY = 0;
   }
 
   protected static baseLayerStoreParams: string[] = [
     "name",
     "x",
     "y",
+    "scaleX",
+    "scaleY",
     "width",
     "height",
     "visible",
