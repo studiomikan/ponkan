@@ -120,9 +120,9 @@
   type: "catmullrom",
   loop: true,
   path: [
-    {x: 100, y: 100, alpha: 0.81},
-    {x: 400, y: 100, alpha: 0.82},
-    {x: 400, y: 400, alpha: 0.83},
+    {x: 100, y: 100, alpha: 0.81, scalex: 1.0, scaley: 0.5 },
+    {x: 400, y: 100, alpha: 0.82, scalex: 0.5, scaley: 1.0 },
+    {x: 400, y: 400, alpha: 0.83, scalex: 1.0, scaley: 1.5 },
   ],
   ease: "none"
 }

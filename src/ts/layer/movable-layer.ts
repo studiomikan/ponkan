@@ -10,6 +10,8 @@ export interface IMovePos {
   x: number;
   y: number;
   alpha: number;
+  scalex: number;
+  scaley: number;
 }
 
 export class MovableLayer extends ToggleButtonLayer {
@@ -58,7 +60,6 @@ export class MovableLayer extends ToggleButtonLayer {
     this._isMoving = true;
     this.moveType = type;
     this.moveEase = ease;
-    this.movePosList = this.clonePath(path);
     this.movePoint = 0;
     this.moveTime = time;
     this.moveDelay = delay;
@@ -66,7 +67,22 @@ export class MovableLayer extends ToggleButtonLayer {
     this.moveTotalTime = time * (path.length - 1);
     this.moveStartTick = -1; // この時点では-1としておき、初めてのupdate時に設定する
 
-    this.movePosList.unshift({ x: this.x, y: this.y, alpha: this.alpha });
+    // this.movePosList = this.clonePath(path);
+    // this.movePosList.unshift({ x: this.x, y: this.y, alpha: this.alpha });
+    let posList = this.clonePath(path);
+    posList.unshift({ x: this.x, y: this.y, alpha: this.alpha, scalex: this.scaleX, scaley: this.scaleY });
+    for (let i = 1; i < posList.length; i++) {
+      const p0 = posList[i - 1];
+      const p = posList[i];
+      if (p.x == null) { p.x = p0.x; }
+      if (p.y == null) { p.y = p0.y; }
+      if (p.alpha == null) { p.y = p0.y; }
+      if (p.scalex == null) { p.scalex = p0.scalex; }
+      if (p.scaley == null) { p.scaley = p0.scaley; }
+    }
+    this.movePosList = posList;
+
+
     // bezier2、bezier3のときはmoveTime == moveTotalTimeとする
     if (type === "bezier2" || type === "bezier3") {
       this.moveTime = this.moveTotalTime;
@@ -79,6 +95,8 @@ export class MovableLayer extends ToggleButtonLayer {
       this.x = lastPos.x;
       this.y = lastPos.y;
       this.alpha = lastPos.alpha;
+      this.scaleX = lastPos.scalex;
+      this.scaleY = lastPos.scaley;
       this._isMoving = false;
       this.movePosList = [];
       this.moveLoop = false;
@@ -90,8 +108,12 @@ export class MovableLayer extends ToggleButtonLayer {
 
   private clonePath(orgPath: IMovePos[]): IMovePos[] {
     const path: IMovePos[] = [];
-    orgPath.forEach((p) => {
-      path.push({ x: p.x, y: p.y, alpha: p.alpha, });
+    orgPath.forEach((p: any) => {
+      const obj: any = {};
+      Object.keys(p).forEach((key) => {
+        obj[key] = p[key];
+      })
+      path.push(obj);
     });
     return path;
   }
@@ -173,6 +195,8 @@ export class MovableLayer extends ToggleButtonLayer {
     this.x = Math.floor(startPos.x + (endPos.x - startPos.x) * phase);
     this.y = Math.floor(startPos.y + (endPos.y - startPos.y) * phase);
     this.alpha = startPos.alpha + (endPos.alpha - startPos.alpha) * phase;
+    this.scaleX = startPos.scalex + (endPos.scalex - startPos.scalex) * phase;
+    this.scaleY = startPos.scaley + (endPos.scaley - startPos.scaley) * phase;
     // 終了判定
     if (tick - this.moveStartTick >= this.moveTime) {
       this.movePoint++;
@@ -211,6 +235,8 @@ export class MovableLayer extends ToggleButtonLayer {
     this.x = (1 - t) * (1 - t) * p0.x + 2 * (1 - t) * t * p1.x + t * t * p2.x;
     this.y = (1 - t) * (1 - t) * p0.y + 2 * (1 - t) * t * p1.y + t * t * p2.y;
     this.alpha = p0.alpha + (p2.alpha - p0.alpha) * phase;
+    this.scaleX = p0.scalex + (p2.scalex - p0.scalex) * phase;
+    this.scaleY = p0.scaley + (p2.scaley - p0.scaley) * phase;
     // 終了判定
     if (tick - this.moveStartTick >= this.moveTime) {
       this.stopMove();
@@ -234,6 +260,8 @@ export class MovableLayer extends ToggleButtonLayer {
     this.y = (1 - t) * (1 - t) * (1 - t) * p0.y + 3 * (1 - t) * (1 - t) * t * p1.y + 3 * (1 - t) * t * t * p2.y + t * t * t * p3.y;
     // tslint:enable
     this.alpha = p0.alpha + (p3.alpha - p0.alpha) * phase;
+    this.scaleX = p0.scalex + (p3.scalex - p0.scalex) * phase;
+    this.scaleY = p0.scaley + (p3.scaley - p0.scaley) * phase;
     // 終了判定
     if (tick - this.moveStartTick >= this.moveTime) {
       this.stopMove();
@@ -283,6 +311,8 @@ export class MovableLayer extends ToggleButtonLayer {
     this.x = this.catmullRom(p0.x, p1.x, p2.x, p3.x, phase);
     this.y = this.catmullRom(p0.y, p1.y, p2.y, p3.y, phase);
     this.alpha = p1.alpha + (p2.alpha - p1.alpha) * phase;
+    this.scaleX = p1.scalex + (p2.scalex - p1.scalex) * phase;
+    this.scaleY = p1.scaley + (p2.scaley - p1.scaley) * phase;
 
     if (tick - this.moveStartTick >= this.moveTime) {
       this.movePoint++;
