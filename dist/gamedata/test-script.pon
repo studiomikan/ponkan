@@ -12,7 +12,11 @@
 ;layalias name: "base", lay: "0"
 ;image "lay": "base", "page": "fore", "file": "image/bg0.png", "visible": true, "x": 0, "y": 0
 ;childimage lay: "0", file: "image/okayu.jpg", x: 100, y: 500
+
 ;image "lay": 1, "page": "fore", "file": "image/okayu.jpg", "visible": true, "x": 0, "y": 0
+;layopt lay: 1, scalex: 1.5, scaley: 1.5
+
+
 ;image "lay": 2, "file": "image/pagebreak.png", "visible": true, "x": 0, "y": 0
 ;frameanim "lay": 2, "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.pageBreakFrames"
 ;startframeanim "lay": 2
@@ -88,6 +92,9 @@
 ;hbr
 ;hbr
 
+;clear
+|testtest
+
 ;textspeed read: 1, unread: 1
 
 ;cmdsc ch: "「", command: "speak"
@@ -113,9 +120,9 @@
   type: "catmullrom",
   loop: true,
   path: [
-    {x: 100, y: 100, alpha: 0.81},
-    {x: 400, y: 100, alpha: 0.82},
-    {x: 400, y: 400, alpha: 0.83},
+    {x: 100, y: 100, alpha: 0.81, scalex: 1.0, scaley: 0.5 },
+    {x: 400, y: 100, alpha: 0.82, scalex: 0.5, scaley: 1.0 },
+    {x: 400, y: 400, alpha: 0.83, scalex: 1.0, scaley: 1.5 },
   ],
   ease: "none"
 }

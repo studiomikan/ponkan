@@ -130,6 +130,7 @@ export class ScriptParser {
       this.addTag(tagName, values);
     } catch (e) {
       Logger.error(e);
+      console.error(body);
       throw new Error(`コマンド行の文法エラーです(行:${this.currentLineNum})`);
     }
   }
