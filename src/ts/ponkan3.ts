@@ -1,6 +1,6 @@
 import { AsyncCallbacks } from "./base/async-callbacks";
 import { AsyncTask } from "./base/async-task";
-import { BaseLayer } from "./base/base-layer";
+import { BaseLayer, IBaseLayerEventListener } from "./base/base-layer";
 import { Conductor, ConductorState, IConductorEvent } from "./base/conductor";
 import { Logger } from "./base/logger";
 import { PonEventHandler } from "./base/pon-event-handler";
@@ -80,7 +80,19 @@ export class Ponkan3 extends PonGame {
   public hideMessageByRlickFlag: boolean = false;
   protected _messageLayerNum: number = 20;
   public get messageLayerNum(): number { return this._messageLayerNum; }
-  public set messageLayerNum(num: number) { this._messageLayerNum = num; }
+  public set messageLayerNum(num: number) {
+    if (this.messageLayerEventListener != null) {
+      this.messageLayer.delEventListener(this.messageLayerEventListener);
+    }
+    this._messageLayerNum = num;
+    const _this = this;
+    this.messageLayerEventListener = {
+      onChangeX(sender: BaseLayer, x) { _this.onChangeMessageLayerPos(); },
+      onChangeY(sender: BaseLayer, y) { _this.onChangeMessageLayerPos(); }
+    };
+    this.messageLayer.addEventListener(this.messageLayerEventListener);
+  }
+  public messageLayerEventListener: IBaseLayerEventListener | null = null;
 
   protected _lineBreakGlyphLayerNum: number = DEFAULT_LINE_BREAK_LAYER_NUM;
   public get lineBreakGlyphLayerNum(): number { return this._lineBreakGlyphLayerNum; }
@@ -905,6 +917,21 @@ export class Ponkan3 extends PonGame {
     x: number,
     y: number,
   ): void {
+    this.resetBreakGlyphPos(lay, pos, x, y);
+    // }
+    if (lay.hasFrameAnim) {
+      lay.stopFrameAnim();
+      lay.startFrameAnim(tick);
+    }
+    lay.visible = true;
+  }
+
+  private resetBreakGlyphPos(
+    lay: PonLayer,
+    pos: "eol" | "relative" | "absolute" = "eol",
+    x: number,
+    y: number,
+  ): void {
     const mesLay = this.messageLayer;
     if (pos === "eol") {
       const glyphPos = mesLay.getNextTextPos(" ", lay.width, lay.height);
@@ -917,11 +944,6 @@ export class Ponkan3 extends PonGame {
       lay.x = x;
       lay.y = y;
     }
-    if (lay.hasFrameAnim) {
-      lay.stopFrameAnim();
-      lay.startFrameAnim(tick);
-    }
-    lay.visible = true;
   }
 
   public hideBreakGlyph(): void {
@@ -962,6 +984,17 @@ export class Ponkan3 extends PonGame {
     if (this.hideMessageByRlickFlag) {
       this.showMessages();
       this.hideMessageByRlickFlag = false;
+    }
+  }
+
+  private onChangeMessageLayerPos() {
+    if (this.pageBreakGlyphPos === "eol" || this.pageBreakGlyphPos === "relative") {
+      this.resetBreakGlyphPos(this.pageBreakGlyphLayer, this.pageBreakGlyphPos,
+                              this.pageBreakGlyphX, this.pageBreakGlyphY);
+    }
+    if (this.lineBreakGlyphPos === "eol" || this.lineBreakGlyphPos === "relative") {
+      this.resetBreakGlyphPos(this.lineBreakGlyphLayer, this.lineBreakGlyphPos,
+                              this.lineBreakGlyphX, this.lineBreakGlyphY);
     }
   }
 

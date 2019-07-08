@@ -97,6 +97,7 @@
 
 ;textspeed read: 1, unread: 1
 
+;layopt lay: "mes", height: 300
 ;cmdsc ch: "「", command: "speak"
 ;cmdsc ch: "\n", command: "br"
 「セリフ
@@ -112,9 +113,9 @@
 さしすせそ」
 ;pb
 
-;layopt lay: 1, x : 100, y: 400
+;layopt lay: "mes", x : 100, y: 400
 ;move {
-  lay: 1,
+  lay: "mes",
   time: 1000,
   delay: 0,
   type: "catmullrom",
