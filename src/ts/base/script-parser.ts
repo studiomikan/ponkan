@@ -29,7 +29,7 @@ export class ScriptParser {
 
   private getLine(): string | null {
     if (this.currentLineNum < this.lines.length) {
-      return this.lines[this.currentLineNum++].trim();
+      return this.lines[this.currentLineNum++].replace(/^[ \t]+|[ \t]+$/g, "");
     } else {
       return null;
     }

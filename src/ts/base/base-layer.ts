@@ -198,7 +198,7 @@ export class BaseLayer {
   public set imageX(imageX: number) { if (this.imageSprite !== null) { this.imageSprite.x = imageX; } }
   public get imageY(): number { return this.imageSprite === null ? 0 : this.imageSprite.y; }
   public set imageY(imageY: number) { if (this.imageSprite !== null) { this.imageSprite.y = imageY; } }
-  
+
   public get scaleX(): number { return this.imageSprite === null ? 0 : this.imageSprite.scaleX; }
   public set scaleX(scaleX: number) {
     if (this.imageSprite !== null) {
@@ -568,13 +568,32 @@ export class BaseLayer {
     return width;
   }
 
+  public backspace(): void {
+    if (this.textLines.length === 0) { return; }
+    if (this.textLines.length === 1 && this.textLines[0].length === 0) { return; }
+
+    const line: PonSprite[] = this.currentTextLine;
+    if (line.length === 0 || line[0].text === "") {
+      // 改行したばかりなので、この行を削除する。
+      this.textLines.splice(this.textLines.length - 1, 1);
+      this.textY -= this.textLineHeight + this.textLinePitch;
+    } else {
+      // 最後の文字を削除する
+      line[line.length - 1].destroy();
+      line.splice(line.length - 1, 1);
+    }
+  }
+
   /**
    * 次の文字の表示位置を取得する
    * @param ch 追加しようとしている文字
    * @param chWidth 追加しようとしている文字の横幅
    * @return 表示位置
    */
-  public getNextTextPos(ch: string, chWidth: number, chHeight: number = this.textFontSize): {x: number, y: number} {
+  public getNextTextPos(ch: string,
+                        chWidth: number,
+                        chHeight: number = this.textFontSize,
+                        enabledAutoReturn: boolean = true): { x: number, y: number, newLineFlag: boolean } {
     // 自動改行の判定
     const lineWidth = this.getCurrentLineWidth();
     let totalMargin = this.textMarginLeft + this.textMarginRight;
@@ -599,15 +618,18 @@ export class BaseLayer {
       }
     }
     // 自動改行
-    if (this.textAutoReturn) {
+    let newLineFlag: boolean = false;
+    if (this.textAutoReturn && enabledAutoReturn) {
       if (BaseLayer.headProhibitionChar.indexOf(ch) === -1 &&
          (lineWidth + chWidth + totalMargin) > this.width) {
         this.addTextReturn();
+        newLineFlag = true;
       } else {
         // 文字が行末禁則文字かつ、行末になってしまいそうなら改行
         if (BaseLayer.tailProhibitionChar.indexOf(ch) !== -1 &&
           (lineWidth + (chWidth * 2) + totalMargin) > this.width) {
           this.addTextReturn();
+          newLineFlag = true;
         }
       }
     }
@@ -648,7 +670,7 @@ export class BaseLayer {
     });
 
     const y = this.textY + this.textLineHeight - chHeight;
-    return {x, y};
+    return {x, y, newLineFlag};
   }
 
   /**
