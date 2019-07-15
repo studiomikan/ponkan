@@ -1563,6 +1563,32 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     // ======================================================================
+    // レイヤーフィルタ関係
+    // ======================================================================
+    new TagAction(
+      ["blur"],
+      "レイヤーフィルタ",
+      "ぼかしフィルタ",
+      [
+        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("blurx", "number", false, 4, "x軸方向のぼかし"),
+        new TagValue("blury", "number", false, 4, "y軸方向のぼかし"),
+        new TagValue("quality", "number", false, 4, "ぼかしの品質"),
+      ],
+      `TODO タグの説明文`,
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          layer.addFilter("blur", {
+            blurX: values.blurx,
+            blurY: values.blury,
+            quality: values.quality,
+          });
+        });
+        return "continue";
+      },
+    ),
+
+    // ======================================================================
     // サウンド関係
     // ======================================================================
     new TagAction(
