@@ -13,7 +13,7 @@
     "build-test": "webpack --config webpack.config.test.js --mode=development",
     "start-test": "webpack-dev-server --config webpack.config.test.js --mode=development",
     "build-manual-script": "webpack --config webpack.config.manual.js",
-    "gen-command-ref-md": "webpack --config webpack.config.manual.js & node ./manual/scripts_tmp/gen_command_ref_md.js > ./manual/docs/command_ref.md",
+    "gen-command-ref-md": "node ./manual/scripts/gen_command_ref_md.js > ./manual/docs/command_ref.md",
     "gen-command-ref-md-watch": "watch \"npm run gen-command-ref-md\" ./manual/scripts",
     "build-manual": "npm run gen-command-ref-md & cd manual & mkdocs build",
     "test": "npm run start-test"

@@ -1,46 +1,48 @@
-import { applyJsEntity, castTagValues, generateTagActions, TagAction, TagValue } from "../../src/ts/tag-action";
-import * as fs from 'fs';
-import { parse } from "url";
+const fs = require('fs');
 
 class TsFileParser {
-  private fileString: string;
-  private lines: string[];
-
-  private tagInfo: any = {};
-
-  constructor() {
-    this.fileString = fs.readFileSync("./src/ts/tag-action.ts", "utf8");
-    this.lines = this.fileString.split(/\n|\r\n/);
-    this.parseTagAction();
-    // this.parseTagValue();
-    console.log(this.tagInfo);
+  constructor(fileString) {
+    this.lines = fileString.split(/\n|\r\n/);
+    this.tagInfo = {};
+    this.tagNameList = [];
+    this.tagList = [];
   }
 
-  private parseTagValue() {
-    let lines: string[] = this.lines;
+  parse() {
+    this.parseTagAction();
+    this.parseTagValue();
+
+    // tagNameListの順に並べ替える
+    this.tagNameList.forEach((name) => {
+      this.tagList.push(this.tagInfo[name]);
+    });
+  }
+
+  parseTagValue() {
+    let lines = this.lines;
 
     let currentTagName = "";
-    let values: any = {};
-    let value: string = "";
+    let values = [];
+    let value = "";
 
-    lines.forEach((line: string, index: number) => {
+    lines.forEach((line, index) => {
       // タグ名が来たとき
       if (line.match(/new TagAction\(/)) {
         let tagNameStr = lines[index + 1];
         if (tagNameStr.endsWith(",")) {
           tagNameStr = tagNameStr.substring(0, tagNameStr.length - 1);
         }
-        let tagNames: string[] = eval(tagNameStr) as string[];
+        let tagNames = eval(tagNameStr);
         if (currentTagName !== "") {
-          this.tagInfo[currentTagName].paramsInfo = values;
+          this.tagInfo[currentTagName].paramsList = values;
         }
         currentTagName = tagNames[0];
-        values = { hoge: 100 };
+        values = [];
       }
 
-      let paramLineMatch : RegExpMatchArray | null = line.match(/\/\/\/.*@param (.*)/);
-      let paragraphMatch: RegExpMatchArray | null = line.match(/\/\/\/ (.*)/);
-      let tagValueMatch: RegExpMatchArray | null = line.match(/new TagValue\(\"([^"]+)\"/);
+      let paramLineMatch = line.match(/\/\/\/.*@param(.*)/);
+      let paragraphMatch = line.match(/\/\/\/ (.*)/);
+      let tagValueMatch = line.match(/new TagValue\(\"([^"]+)\"/);
       if (paramLineMatch != null) {
         // @paramの開始
         value = paramLineMatch[1].trim();
@@ -53,25 +55,27 @@ class TsFileParser {
       } else if (tagValueMatch != null) {
         // new TagValue
         let valueName = tagValueMatch[1];
-        values[valueName] = "hogehgoe" + value;
+        values.push({ 
+          name: valueName,
+          description: value
+        });
       }
-
     });
   }
 
-  private parseTagAction() {
-    let lines: string[] = this.lines;
+  parseTagAction() {
+    let lines = this.lines;
 
-    let currentParamName: string = "";
-    let values: any = {};
+    let currentParamName = "";
+    let values = {};
 
-    lines.forEach((line: string, index: number) => {
-      let mbody: RegExpMatchArray | null = line.match(/\/\/\/(.+)/);
+    lines.forEach((line, index) => {
+      let mbody  = line.match(/\/\/\/(.+)/);
       if (mbody != null) {
-        let body: string = mbody[1];
-        let p: string = "";
-        let v: string = "";
-        let mparam: RegExpMatchArray | null = body.match(/@([^ ]+)(.*)/);
+        let body = mbody[1];
+        let p = "";
+        let v = "";
+        let mparam = body.match(/@([^ ]+)(.*)/);
         if (mparam != null) {
           p = mparam[1].trim();
           v = mparam[2].trim();
@@ -95,30 +99,88 @@ class TsFileParser {
         if (tagNameStr.endsWith(",")) {
           tagNameStr = tagNameStr.substring(0, tagNameStr.length - 1);
         }
-        let tagNames: string[] = eval(tagNameStr) as string[];
+        let tagNames = eval(tagNameStr);
         // console.log("tagNameStr: ", tagNames, values);
         values.tagNames = tagNames;
-        values.paramsInfo = {};
+        values.paramsList = [];
         this.tagInfo[tagNames[0]] = values;
+        this.tagNameList.push(tagNames[0]);
         values = {};
         currentParamName = "";
       }
     });
   }
+
+  genCategories() {
+    // カテゴリのリストを取得
+    let categories = [];
+    this.tagList.forEach((tag) => {
+      if (!categories.includes(tag.category)) {
+        categories.push(tag.category);
+      }
+    });
+    return categories;
+  }
+
+  printMd() {
+    // カテゴリごとに処理
+    const categories = this.genCategories();
+    console.log(categories);
+    categories.forEach((c) => {
+      this.printMdCategory(c);
+    });
+  }
+
+  printMdCategory(category) {
+    let target = this.tagList.filter(tag => tag.category == category)
+    target.forEach((tag) => {
+      this.printMdTag(tag);
+    });
+  }
+
+  printMdTag(tag) {
+    // console.log(tag);
+
+    let md = "";
+
+    md += `### ${tag.tagNames.join(', ')} | ${tag.description}\n\n`;
+    md += `${tag.details}\n`;
+
+    // md += `| パラメータ名 | 値の種類 | 必須 | デフォルト値 | 説明 |\n`;
+    // md += `|--------------|----------|------|--------------|------|\n`;
+
+    if (tag.paramsList.length > 0) {
+      md += "\n";
+      md += `| パラメータ名 | 説明 |\n`;
+      md += `|--------------|------|\n`;
+      tag.paramsList.forEach((param) => {
+        md += `| ${param.name} | ${param.description} |\n`;
+      })
+    }
+
+    console.log(md);
+  }
+
 }
 
-let tsFileParser = new TsFileParser();
+let fileString = fs.readFileSync("./src/ts/tag-action.ts", "utf8");
+let tsFileParser = new TsFileParser(fileString);
+tsFileParser.parse();
+// console.log(tsFileParser.tagInfo);
+tsFileParser.printMd();
+
+
 // let tagActions = (generateTagActions as any)({});
 
 // // tagActionsの情報をグループごとに分ける
-// let grouped: any = {};
+// let grouped = {};
 // tagActions.forEach((ta: TagAction) => {
 //   if (grouped[ta.group] == null) {
 //     grouped[ta.group] = [];
 //   }
 //   grouped[ta.group].push(ta);
 // });
-// let groupNames: string[] = Object.keys(grouped);
+// let groupNames = Object.keys(grouped);
 
 // let md = "# コマンドリファレンス\n";
 // md += `
@@ -131,7 +193,7 @@ let tsFileParser = new TsFileParser();
 
 // // 一覧表
 // md += `## コマンド一覧\n`
-// groupNames.forEach((groupName: string) => {
+// groupNames.forEach((groupName) => {
 //   md += `\n### ${groupName}\n\n`;
 //   md += `| コマンド名 | 内容 |\n`;
 //   md += `|------------|------|\n`;
@@ -145,7 +207,7 @@ let tsFileParser = new TsFileParser();
 // md += "\n";
 
 // // コマンド詳細
-// groupNames.forEach((groupName: string) => {
+// groupNames.forEach((groupName) => {
 //   md += `## ${groupName}\n\n`;
 
 //   let actions: TagAction[] = grouped[groupName];
@@ -158,8 +220,8 @@ let tsFileParser = new TsFileParser();
 //       md += `| パラメータ名 | 値の種類 | 必須 | デフォルト値 | 説明 |\n`;
 //       md += `|--------------|----------|------|--------------|------|\n`;
 //       action.values.forEach((value: TagValue) => {
-//         let required: string = value.required ? "○" : "";
-//         let defaultValue: string;
+//         let required = value.required ? "○" : "";
+//         let defaultValue;
 //         if (value.defaultValue == null) {
 //           defaultValue = "";
 //         } else {
@@ -168,13 +230,13 @@ let tsFileParser = new TsFileParser();
 //             defaultValue = `"${defaultValue}"`;
 //           }
 //         }
-//         let comment: string = value.comment.split("\n").map(s => s.trim()).join("\n").replace(/\|/g, "\\|");
+//         let comment = value.comment.split("\n").map(s => s.trim()).join("\n").replace(/\|/g, "\\|");
 //         md += `| ${value.name} | ${value.type} | ${required} | ${defaultValue} | ${comment} |\n`;
 //       });
 //       md += "\n";
 //     }
 
-//     let description: string = action.description;
+//     let description = action.description;
 //     md += description.split("\n").map(s => s.trim()).join("\n");
 //     md += "\n";
 //   });
