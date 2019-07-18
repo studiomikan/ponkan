@@ -128,7 +128,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤーの数を変更する",
       [
         /// @param レイヤー数
-        /// @param レイヤー数
         new TagValue("count", "number", true, null, "レイヤー数"),
       ],
       `TODO タグの説明文`,
@@ -801,7 +800,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("fontfamily", "array", false, null, "フォント名の配列"),
         /// @param フォントサイズ(px)
         new TagValue("fontsize", "number", false, null, "フォントサイズ(px)"),
-        /// @param bold
+        /// @param フォントウェイト。"normal" | "bold"
         new TagValue("fontweight", "string", false, null, `フォントウェイト。"normal" | "bold"`),
         /// @param 文字色(0xRRGGBB)
         new TagValue("color", "number", false, null, "文字色(0xRRGGBB)"),
@@ -819,7 +818,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("lineheight", "number", false, null, "テキストの行の高さ(px)"),
         /// @param テキストの行間(px)
         new TagValue("linepitch", "number", false, null, "テキストの行間(px)"),
-        /// @param right
+        /// @param テキスト寄せの方向。"left" | "center" | "right"
         new TagValue("align", "string", false, null, `テキスト寄せの方向。"left" | "center" | "right"`),
         /// @param 影の表示非表示
         new TagValue("shadow", "boolean", false, null, "影の表示非表示"),
@@ -952,8 +951,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "メッセージ操作",
       "文字出力のインターバルを設定",
       [
-        /// @param system
-        new TagValue("mode", "string", false, null, `インターバルのモード。"user" | "system"`),
+        /// @param インターバルのモード。"user" | "system"
+        new TagValue("mode", "string", false, null, ),
         /// @param 未読文章のインターバル時間(ms)
         new TagValue("unread", "number", false, null, "未読文章のインターバル時間(ms)"),
         /// @param 既読文章のインターバル時間(ms)
@@ -1250,7 +1249,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [
         /// @param グリフとして使用するレイヤー
         new TagValue("lay", "number", false, null, "グリフとして使用するレイヤー"),
-        /// @param string
+        /// @param グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。
+        ///        "eol"を指定すると文章の末尾に表示。
+        ///        "relative"を指定するとメッセージレイヤーとの相対位置で固定表示。
+        ///        "absolute"を指定すると画面上の絶対位置で固定表示。
         new TagValue("pos", "string", false, null,
           `グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。
            "eol"を指定すると文章の末尾に表示。
@@ -1281,7 +1283,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       [
         /// @param グリフとして使用するレイヤー
         new TagValue("lay", "number", false, null, "グリフとして使用するレイヤー"),
-        /// @param string
+        /// @param グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。
+        ///        "eol"を指定すると文章の末尾に表示。
+        ///        "relative"を指定するとメッセージレイヤーとの相対位置で固定表示。
+        ///        "absolute"を指定すると画面上の絶対位置で固定表示。
         new TagValue("pos", "string", false, null,
           `グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。
            "eol"を指定すると文章の末尾に表示。
@@ -1545,7 +1550,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("label", "string", false, null, "ボタン押下時にjumpまたはcallするラベル名"),
         /// @param ボタン押下時に実行するJavaScript
         new TagValue("exp", "string", false, null, "ボタン押下時に実行するJavaScript"),
-        /// @param , 
+        /// @param テキスト
         new TagValue("text", "string", false, "", "テキスト"),
         /// @param x座標(px)
         new TagValue("x", "number", false, 0, "x座標(px)"),
@@ -1571,7 +1576,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("marginl", "number", false, 0, "テキスト描画のマージン　左"),
         /// @param テキスト描画のマージン　左
         new TagValue("marginl", "number", false, 0, "テキスト描画のマージン　左"),
-        /// @param right
+        /// @param テキスト寄せの方向。"left" | "center" | "right"
         new TagValue("align", "string", false, "center", `テキスト寄せの方向。"left" | "center" | "right"`),
         /// @param 現在の位置を既読にするかどうか
         new TagValue("countpage", "boolean", false, true, "現在の位置を既読にするかどうか"),
@@ -1681,7 +1686,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("x", "number", false, 0, "x座標(px)"),
         /// @param y座標(px)
         new TagValue("y", "number", false, 0, "y座標(px)"),
-        /// @param vertical
+        /// @param ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"
         new TagValue("direction", "string", false, "horizontal", `ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"`),
         /// @param システム用ボタンとする場合はtrue
         new TagValue("system", "boolean", false, false, "システム用ボタンとする場合はtrue"),
@@ -1755,7 +1760,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("y", "number", false, 0, "y座標(px)"),
         /// @param 選択状態を格納する一時変数の名前
         new TagValue("statevar", "string", true, null, "選択状態を格納する一時変数の名前"),
-        /// @param vertical
+        /// @param ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"
         new TagValue("direction", "string", false, "horizontal", `ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"`),
         /// @param システム用ボタンとする場合はtrue
         new TagValue("system", "boolean", false, false, "システム用ボタンとする場合はtrue"),
@@ -2016,11 +2021,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("delay", "number", false, 0, "開始までの遅延時間(ms)"),
         /// @param 自動移動させる位置を指定
         new TagValue("path", "array", true, null, "自動移動させる位置を指定"),
-        /// @param catmullrom
+        /// @param 自動移動のタイプ。"linear" | "bezier2" | "bezier3" | "catmullrom"
         new TagValue("type", "string", false, "linear", `自動移動のタイプ。"linear" | "bezier2" | "bezier3" | "catmullrom"`),
-        /// @param both
+        /// @param 自動移動の入り・抜きの指定。"none" | "in" | "out" | "both" 
         new TagValue("ease", "string", false, "none", `自動移動の入り・抜きの指定。"none" | "in" | "out" | "both" `),
-        /// @param catmullrom
+        /// @param 自動移動をループさせるかどうか。タイプが "linear" か "catmullrom" の場合のみ有効
         new TagValue("loop", "boolean", false, null, `自動移動をループさせるかどうか。タイプが "linear" か "catmullrom" の場合のみ有効`),
       ],
       `TODO タグの説明文`,
@@ -2538,7 +2543,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("time", "number", true, null, "トランジションの時間(ms)"),
         /// @param トランジションの種類
         new TagValue("method", "string", false, "crossfade", "トランジションの種類"),
-        /// @param , 
+        /// @param 自動移動をループさせるかどうか。タイプが "linear" か "catmullrom" の場合のみ有効
         new TagValue("rule", "string", false, "", "ユニバーサルトランジションのルールファイル名"),
         /// @param あいまい値
         new TagValue("vague", "number", false, 0.25, "あいまい値"),
