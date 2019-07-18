@@ -118,9 +118,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // ======================================================================
     // その他
     // ======================================================================
-    /// @category: その他
-    /// @description: レイヤーの数を変更する
-    /// @details:
+    /// @category その他
+    /// @description レイヤーの数を変更する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["laycount"],
@@ -136,9 +136,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: その他
-    /// @description: エラーを発生させるかどうかの設定
-    /// @details:
+    /// @category その他
+    /// @description エラーを発生させるかどうかの設定
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["raiseerror"],
@@ -154,9 +154,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: その他
-    /// @description: システム変数をクリア
-    /// @details:
+    /// @category その他
+    /// @description システム変数をクリア
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["clearsysvar"],
@@ -169,9 +169,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: その他
-    /// @description: ゲーム変数をクリア
-    /// @details:
+    /// @category その他
+    /// @description ゲーム変数をクリア
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["cleargamevar"],
@@ -184,9 +184,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: その他
-    /// @description: 一時変数をクリア
-    /// @details:
+    /// @category その他
+    /// @description 一時変数をクリア
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["cleartmpvar"],
@@ -199,9 +199,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: その他
-    /// @description: システム変数を保存する
-    /// @details:
+    /// @category その他
+    /// @description システム変数を保存する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["savesysvar"],
@@ -214,9 +214,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: その他
-    /// @description: クリックスキップの設定
-    /// @details:
+    /// @category その他
+    /// @description クリックスキップの設定
+    /// @details
     ///   クリックスキップの有効無効を設定します。
     ///   （クリックスキップとは、テキスト表示途中にクリックすると行末・ページ末までスキップする機能のことです。）
     new TagAction(
@@ -234,9 +234,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: その他
-    /// @description: 画面揺れ効果の開始
-    /// @details:
+    /// @category その他
+    /// @description 画面揺れ効果の開始
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["quake"],
@@ -256,9 +256,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: その他
-    /// @description: 画面揺れ効果の停止
-    /// @details:
+    /// @category その他
+    /// @description 画面揺れ効果の停止
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["stopquake"],
@@ -271,9 +271,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: その他
-    /// @description: 画面揺れ効果の終了待ち
-    /// @details:
+    /// @category その他
+    /// @description 画面揺れ効果の終了待ち
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["waitquake"],
@@ -305,9 +305,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         }
       },
     ),
-    /// @category: その他
-    /// @description: 右クリック時の動作を設定する
-    /// @details:
+    /// @category その他
+    /// @description 右クリック時の動作を設定する
+    /// @details
     ///   右クリックまたは ESC キーを押下時の動作を設定します。
     ///   jump と call の両方を false に設定した場合、デフォルトの動作（メッセージレイヤーを隠す）になります。
 		///   jump を true に設定した場合、file と label で指定した場所へジャンプします。
@@ -341,9 +341,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: その他
-    /// @description: コマンドショートカットを設定する
-    /// @details:
+    /// @category その他
+    /// @description コマンドショートカットを設定する
+    /// @details
     ///   コマンドショートカットを設定します。
     new TagAction(
       ["commandshortcut", "cmdsc"],
@@ -361,9 +361,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: その他
-    /// @description: コマンドショートカットを削除する
-    /// @details:
+    /// @category その他
+    /// @description コマンドショートカットを削除する
+    /// @details
     ///   コマンドショートカットを削除します。
     new TagAction(
       ["delcommandshortcut", "delcmdsc"],
@@ -382,9 +382,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // ======================================================================
     // スクリプト制御
     // ======================================================================
-    /// @category: スクリプト制御
-    /// @description: スクリプトの実行を停止する
-    /// @details:
+    /// @category スクリプト制御
+    /// @description スクリプトの実行を停止する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["s"],
@@ -399,9 +399,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "break";
       },
     ),
-    /// @category: スクリプト制御
-    /// @description: スクリプトファイルを移動する
-    /// @details:
+    /// @category スクリプト制御
+    /// @description スクリプトファイルを移動する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["jump"],
@@ -427,9 +427,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         }
       },
     ),
-    /// @category: スクリプト制御
-    /// @description: サブルーチンを呼び出す
-    /// @details:
+    /// @category スクリプト制御
+    /// @description サブルーチンを呼び出す
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["call"],
@@ -455,9 +455,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         }
       },
     ),
-    /// @category: スクリプト制御
-    /// @description: サブルーチンをから戻る
-    /// @details:
+    /// @category スクリプト制御
+    /// @description サブルーチンをから戻る
+    /// @details
     ///   [call]タグで呼び出したサブルーチンから、呼び出し元に戻ります。
     ///   forcestart属性は、システムボタンを作成する際に指定します。
     ///   システムボタンで呼び出したサブルーチンで[skip]や[auto]を実行しても、通常はサブルーチンから戻るとスクリプトは停止してしまいます。
@@ -486,9 +486,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return p.returnSubroutine(values.forcestart, values.countpage);
       },
     ),
-    /// @category: スクリプト制御
-    /// @description: 条件によって分岐する
-    /// @details:
+    /// @category スクリプト制御
+    /// @description 条件によって分岐する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["if"],
@@ -504,9 +504,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: スクリプト制御
-    /// @description: 条件によって分岐する
-    /// @details:
+    /// @category スクリプト制御
+    /// @description 条件によって分岐する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["elseif", "elsif"],
@@ -519,9 +519,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: スクリプト制御
-    /// @description: 条件によって分岐する
-    /// @details:
+    /// @category スクリプト制御
+    /// @description 条件によって分岐する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["else"],
@@ -534,9 +534,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: スクリプト制御
-    /// @description: 条件分岐の終了
-    /// @details:
+    /// @category スクリプト制御
+    /// @description 条件分岐の終了
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["endif"],
@@ -548,9 +548,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: スクリプト制御
-    /// @description: 指定回数繰り返す
-    /// @details:
+    /// @category スクリプト制御
+    /// @description 指定回数繰り返す
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["for"],
@@ -570,9 +570,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: スクリプト制御
-    /// @description: forループの終端
-    /// @details:
+    /// @category スクリプト制御
+    /// @description forループの終端
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["endfor"],
@@ -585,9 +585,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: スクリプト制御
-    /// @description: forループから抜ける
-    /// @details:
+    /// @category スクリプト制御
+    /// @description forループから抜ける
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["breakfor"],
@@ -600,9 +600,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: スクリプト制御
-    /// @description: スキップを開始する
-    /// @details:
+    /// @category スクリプト制御
+    /// @description スキップを開始する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["startskip", "skip"],
@@ -615,9 +615,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: スクリプト制御
-    /// @description: スキップを停止する
-    /// @details:
+    /// @category スクリプト制御
+    /// @description スキップを停止する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["stopskip"],
@@ -630,9 +630,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: スクリプト制御
-    /// @description: オートモードを開始する
-    /// @details:
+    /// @category スクリプト制御
+    /// @description オートモードを開始する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["startautomode", "startauto", "auto"],
@@ -645,9 +645,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: スクリプト制御
-    /// @description: オートモードを停止する
-    /// @details:
+    /// @category スクリプト制御
+    /// @description オートモードを停止する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["stopautomode", "stopauto"],
@@ -660,9 +660,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: スクリプト制御
-    /// @description: オートモードの設定
-    /// @details:
+    /// @category スクリプト制御
+    /// @description オートモードの設定
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["automodeopt", "autoopt"],
@@ -681,9 +681,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: スクリプト制御
-    /// @description: 指定時間を待つ
-    /// @details:
+    /// @category スクリプト制御
+    /// @description 指定時間を待つ
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["wait"],
@@ -710,9 +710,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         }
       },
     ),
-    /// @category: スクリプト制御
-    /// @description: クリック待ちで停止する
-    /// @details:
+    /// @category スクリプト制御
+    /// @description クリック待ちで停止する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["waitclick"],
@@ -743,9 +743,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // ======================================================================
     // マクロ
     // ======================================================================
-    /// @category: マクロ
-    /// @description: マクロを定義する
-    /// @details:
+    /// @category マクロ
+    /// @description マクロを定義する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["macro"],
@@ -765,9 +765,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: マクロ
-    /// @description: マクロ定義の終わり
-    /// @details:
+    /// @category マクロ
+    /// @description マクロ定義の終わり
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["endmacro"],
@@ -783,9 +783,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // ======================================================================
     // メッセージ関係
     // ======================================================================
-    /// @category: メッセージ操作
-    /// @description: テキストの設定
-    /// @details:
+    /// @category メッセージ操作
+    /// @description テキストの設定
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["messageopt", "mesopt"],
@@ -864,9 +864,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: メッセージ操作
-    /// @description: 文字を出力する
-    /// @details:
+    /// @category メッセージ操作
+    /// @description 文字を出力する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["ch"],
@@ -899,9 +899,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         }
       },
     ),
-    /// @category: メッセージ操作
-    /// @description: 改行する
-    /// @details:
+    /// @category メッセージ操作
+    /// @description 改行する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["br"],
@@ -919,9 +919,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: メッセージ操作
-    /// @description: テキストをクリアする
-    /// @details:
+    /// @category メッセージ操作
+    /// @description テキストをクリアする
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["clear", "c"],
@@ -942,9 +942,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: メッセージ操作
-    /// @description: 文字出力のインターバルを設定
-    /// @details:
+    /// @category メッセージ操作
+    /// @description 文字出力のインターバルを設定
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["textspeed"],
@@ -952,7 +952,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "文字出力のインターバルを設定",
       [
         /// @param インターバルのモード。"user" | "system"
-        new TagValue("mode", "string", false, null, ),
+        new TagValue("mode", "string", false, null, `インターバルのモード。"user" | "system"`),
         /// @param 未読文章のインターバル時間(ms)
         new TagValue("unread", "number", false, null, "未読文章のインターバル時間(ms)"),
         /// @param 既読文章のインターバル時間(ms)
@@ -966,9 +966,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: メッセージ操作
-    /// @description: 一時的に文字出力インターバルを0にする
-    /// @details:
+    /// @category メッセージ操作
+    /// @description 一時的に文字出力インターバルを0にする
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["nowait"],
@@ -981,9 +981,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: メッセージ操作
-    /// @description: nowaitを終了する
-    /// @details:
+    /// @category メッセージ操作
+    /// @description nowaitを終了する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["endnowait"],
@@ -996,9 +996,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: メッセージ操作
-    /// @description: 文字表示位置を指定する
-    /// @details:
+    /// @category メッセージ操作
+    /// @description 文字表示位置を指定する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["textlocate", "locate"],
@@ -1022,10 +1022,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: メッセージ操作
-    /// @description: インデント位置を設定する
-    /// @details:
-    ///   TODO タグの説明文
+    /// @category メッセージ操作
+    /// @description インデント位置を設定する
+    /// @details
+    ///   現在の文字描画位置でインデントするように設定します。
+    ///   インデント位置は [endindent] または [clear] でクリアされます。
     new TagAction(
       ["indent"],
       "メッセージ操作",
@@ -1050,10 +1051,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: メッセージ操作
-    /// @description: インデント位置をクリアする
-    /// @details:
-    ///   TODO タグの説明文
+    /// @category メッセージ操作
+    /// @description インデント位置をクリアする
+    /// @details
+    ///   [indent] で設定したインデント位置をクリアします。
     new TagAction(
       ["endindent"],
       "メッセージ操作",
@@ -1077,9 +1078,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: メッセージ操作
-    /// @description: 行末クリック待ちで停止する
-    /// @details:
+    /// @category メッセージ操作
+    /// @description 行末クリック待ちで停止する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["linebreak", "lb", "l"],
@@ -1107,9 +1108,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         }
       },
     ),
-    /// @category: メッセージ操作
-    /// @description: 行末クリック待ちで停止する
-    /// @details:
+    /// @category メッセージ操作
+    /// @description 行末クリック待ちで停止する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["pagebreak", "pb", "p"],
@@ -1137,9 +1138,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         }
       },
     ),
-    /// @category: メッセージ操作
-    /// @description: メッセージレイヤを一時的に隠す
-    /// @details:
+    /// @category メッセージ操作
+    /// @description メッセージレイヤを一時的に隠す
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["hidemessages"],
@@ -1159,9 +1160,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // ======================================================================
     // レイヤー関係
     // ======================================================================
-    /// @category: レイヤー操作
-    /// @description: レイヤー名エイリアスを作成する
-    /// @details:
+    /// @category レイヤー操作
+    /// @description レイヤー名エイリアスを作成する
+    /// @details
     ///   レイヤー名のエイリアス（別名）を作成します。
     ///   エイリアスを作成すると、レイヤーを指定するコマンドでレイヤー番号のかわりにエイリアス名を使用することができるようになります。
     ///   たとえば以下のように、背景画像を表示するレイヤーに base というようなエイリアスを作成することで、
@@ -1198,9 +1199,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: レイヤー操作
-    /// @description: レイヤー名エイリアスを削除する
-    /// @details:
+    /// @category レイヤー操作
+    /// @description レイヤー名エイリアスを削除する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["dellayalias"],
@@ -1216,9 +1217,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: レイヤー操作
-    /// @description: メッセージレイヤーを指定する
-    /// @details:
+    /// @category レイヤー操作
+    /// @description メッセージレイヤーを指定する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["messagelayer", "messagelay", "meslay", "meslay"],
@@ -1238,9 +1239,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: レイヤー操作
-    /// @description: 行末グリフに関して設定する
-    /// @details:
+    /// @category レイヤー操作
+    /// @description 行末グリフに関して設定する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["linebreakglyph", "lbglyph"],
@@ -1272,9 +1273,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: レイヤー操作
-    /// @description: ページ末グリフに関して設定する
-    /// @details:
+    /// @category レイヤー操作
+    /// @description ページ末グリフに関して設定する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["pagebreakglyph", "pbglyph"],
@@ -1306,9 +1307,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: レイヤー操作
-    /// @description: レイヤーを塗りつぶす
-    /// @details:
+    /// @category レイヤー操作
+    /// @description レイヤーを塗りつぶす
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["fillcolor", "fill"],
@@ -1332,9 +1333,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: レイヤー操作
-    /// @description: レイヤー塗りつぶしをクリアする
-    /// @details:
+    /// @category レイヤー操作
+    /// @description レイヤー塗りつぶしをクリアする
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["clearcolor"],
@@ -1354,9 +1355,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: レイヤー操作
-    /// @description: レイヤーの設定
-    /// @details:
+    /// @category レイヤー操作
+    /// @description レイヤーの設定
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["layopt"],
@@ -1417,9 +1418,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: レイヤー操作
-    /// @description: レイヤーに画像を読み込む
-    /// @details:
+    /// @category レイヤー操作
+    /// @description レイヤーに画像を読み込む
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["loadimage", "image"],
@@ -1461,9 +1462,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return p.conductor.stop();
       },
     ),
-    /// @category: レイヤー操作
-    /// @description: レイヤーに追加で画像を読み込む
-    /// @details:
+    /// @category レイヤー操作
+    /// @description レイヤーに追加で画像を読み込む
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["loadchildimage", "childimage", ""],
@@ -1499,9 +1500,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return p.conductor.stop();
       },
     ),
-    /// @category: レイヤー操作
-    /// @description: レイヤーの画像を開放する
-    /// @details:
+    /// @category レイヤー操作
+    /// @description レイヤーの画像を開放する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["freeimage", "free", "unloadimage"],
@@ -1525,9 +1526,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // ======================================================================
     // ボタン関係
     // ======================================================================
-    /// @category: ボタン
-    /// @description: レイヤーにテキストボタンを配置する
-    /// @details:
+    /// @category ボタン
+    /// @description レイヤーにテキストボタンを配置する
+    /// @details
     ///   指定のレイヤーに、テキストと背景色を用いたボタンを配置します。
     ///   配置直後はボタンはロックされた状態となり、押下することはできません。
     ///   [unlockbuttons]タグでロック状態を解除することで、押下できるようになります。
@@ -1611,9 +1612,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: ボタン
-    /// @description: すべてのボタンをクリアする
-    /// @details:
+    /// @category ボタン
+    /// @description すべてのボタンをクリアする
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["clearbuttons", "clearbutton", "clearbtn"],
@@ -1635,9 +1636,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: ボタン
-    /// @description: テキストボタンをクリアする
-    /// @details:
+    /// @category ボタン
+    /// @description テキストボタンをクリアする
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["cleartextbuttons", "cleartextbutton", "cleartxtbtn"],
@@ -1657,9 +1658,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: ボタン
-    /// @description: レイヤーに画像ボタンを配置する
-    /// @details:
+    /// @category ボタン
+    /// @description レイヤーに画像ボタンを配置する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["imagebutton", "imgbtn"],
@@ -1715,9 +1716,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return p.conductor.stop();
       },
     ),
-    /// @category: ボタン
-    /// @description: 画像ボタンをクリアする
-    /// @details:
+    /// @category ボタン
+    /// @description 画像ボタンをクリアする
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["clearimagebuttons", "clearimagebutton", "clearimgbtn"],
@@ -1737,9 +1738,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: ボタン
-    /// @description: レイヤーにトグルボタンを配置する
-    /// @details:
+    /// @category ボタン
+    /// @description レイヤーにトグルボタンを配置する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["togglebutton", "tglbtn"],
@@ -1783,9 +1784,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return p.conductor.stop();
       },
     ),
-    /// @category: ボタン
-    /// @description: トグルボタンをクリアする
-    /// @details:
+    /// @category ボタン
+    /// @description トグルボタンをクリアする
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["cleartogglebuttons", "cleartogglebutton", "cleartglbtn"],
@@ -1805,9 +1806,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: ボタン
-    /// @description: ボタンをロックする
-    /// @details:
+    /// @category ボタン
+    /// @description ボタンをロックする
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["lockbuttons", "lockbutton",  "lock"],
@@ -1829,9 +1830,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: ボタン
-    /// @description: ボタンをアンロックする
-    /// @details:
+    /// @category ボタン
+    /// @description ボタンをアンロックする
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["unlockbuttons", "unlockbutton", "unlock"],
@@ -1853,9 +1854,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: ボタン
-    /// @description: システムボタンをロックする
-    /// @details:
+    /// @category ボタン
+    /// @description システムボタンをロックする
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["locksystembuttons", "locksystembutton", "locksystem"],
@@ -1869,9 +1870,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: ボタン
-    /// @description: システムボタンをアンロックする
-    /// @details:
+    /// @category ボタン
+    /// @description システムボタンをアンロックする
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["unlocksystembuttons", "unlocksystembutton", "unlocksystem"],
@@ -1888,9 +1889,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // ======================================================================
     // アニメーション関係
     // ======================================================================
-    /// @category: アニメーション
-    /// @description: フレームアニメーションを設定する
-    /// @details:
+    /// @category アニメーション
+    /// @description フレームアニメーションを設定する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["frameanim", "fanim"],
@@ -1920,9 +1921,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: アニメーション
-    /// @description: フレームアニメーションを開始する
-    /// @details:
+    /// @category アニメーション
+    /// @description フレームアニメーションを開始する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["startframeanim", "startfanim"],
@@ -1942,9 +1943,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: アニメーション
-    /// @description: フレームアニメーションを停止する
-    /// @details:
+    /// @category アニメーション
+    /// @description フレームアニメーションを停止する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["stopframeanim", "stopfanim"],
@@ -1964,9 +1965,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: アニメーション
-    /// @description: フレームアニメーションの終了を待つ
-    /// @details:
+    /// @category アニメーション
+    /// @description フレームアニメーションの終了を待つ
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["waitframeanim", "waitfanim"],
@@ -2002,9 +2003,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         }
       },
     ),
-    /// @category: アニメーション
-    /// @description: 自動移動を開始する
-    /// @details:
+    /// @category アニメーション
+    /// @description 自動移動を開始する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["startmove", "move"],
@@ -2036,9 +2037,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: アニメーション
-    /// @description: 自動移動を停止する
-    /// @details:
+    /// @category アニメーション
+    /// @description 自動移動を停止する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["stopmove"],
@@ -2058,9 +2059,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: アニメーション
-    /// @description: 自動移動の終了を待つ
-    /// @details:
+    /// @category アニメーション
+    /// @description 自動移動の終了を待つ
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["waitmove", "wm"],
@@ -2094,9 +2095,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // ======================================================================
     // レイヤーフィルタ関係
     // ======================================================================
-    /// @category: レイヤーフィルタ
-    /// @description: ぼかしフィルタ
-    /// @details:
+    /// @category レイヤーフィルタ
+    /// @description ぼかしフィルタ
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["blur"],
@@ -2128,9 +2129,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // ======================================================================
     // サウンド関係
     // ======================================================================
-    /// @category: サウンド
-    /// @description: バッファ番号エイリアスを作成する
-    /// @details:
+    /// @category サウンド
+    /// @description バッファ番号エイリアスを作成する
+    /// @details
     ///   バッファのエイリアス（別名）を作成します。
     ///   エイリアスを作成すると、バッファ番号を指定するコマンドでバッファ番号のかわりにエイリアス名を使用することができるようになります。
     ///   たとえば以下のように、効果音を再生するバッファに se というようなエイリアスを作成することで、
@@ -2167,9 +2168,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: サウンド
-    /// @description: バッファ番号エイリアスを削除する
-    /// @details:
+    /// @category サウンド
+    /// @description バッファ番号エイリアスを削除する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["delbufalias"],
@@ -2185,9 +2186,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: サウンド
-    /// @description: 音声をロードする
-    /// @details:
+    /// @category サウンド
+    /// @description 音声をロードする
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["loadsound", "sound"],
@@ -2209,9 +2210,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return p.conductor.stop();
       },
     ),
-    /// @category: サウンド
-    /// @description: 音声を開放する
-    /// @details:
+    /// @category サウンド
+    /// @description 音声を開放する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["freesound", "unloadsound"],
@@ -2227,9 +2228,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: サウンド
-    /// @description: 音声の設定
-    /// @details:
+    /// @category サウンド
+    /// @description 音声の設定
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["soundopt"],
@@ -2257,9 +2258,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: サウンド
-    /// @description: 音声を再生する
-    /// @details:
+    /// @category サウンド
+    /// @description 音声を再生する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["playsound"],
@@ -2275,9 +2276,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: サウンド
-    /// @description: 音声を停止する
-    /// @details:
+    /// @category サウンド
+    /// @description 音声を停止する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["stopsound"],
@@ -2293,9 +2294,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: サウンド
-    /// @description: 音声をフェードする
-    /// @details:
+    /// @category サウンド
+    /// @description 音声をフェードする
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["fadesound"],
@@ -2317,9 +2318,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: サウンド
-    /// @description: 音声をフェードアウトして再生停止する
-    /// @details:
+    /// @category サウンド
+    /// @description 音声をフェードアウトして再生停止する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["fadeoutsound", "fadeout"],
@@ -2339,9 +2340,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: サウンド
-    /// @description: 音声をフェードインで再生開始する
-    /// @details:
+    /// @category サウンド
+    /// @description 音声をフェードインで再生開始する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["fadeinsound", "fadein"],
@@ -2361,9 +2362,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: サウンド
-    /// @description: 音声の再生終了を待つ
-    /// @details:
+    /// @category サウンド
+    /// @description 音声の再生終了を待つ
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["waitsoundstop", "waitsound"],
@@ -2397,9 +2398,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         }
       },
     ),
-    /// @category: サウンド
-    /// @description: 音声のフェード終了を待つ
-    /// @details:
+    /// @category サウンド
+    /// @description 音声のフェード終了を待つ
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["waitsoundfade", "waitfade"],
@@ -2433,9 +2434,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         }
       },
     ),
-    /// @category: サウンド
-    /// @description: 音声のフェードを終了する
-    /// @details:
+    /// @category サウンド
+    /// @description 音声のフェードを終了する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["endfadesound", "endfade"],
@@ -2454,9 +2455,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // ======================================================================
     // トランジション
     // ======================================================================
-    /// @category: トランジション
-    /// @description: 表レイヤを裏レイヤにコピーする
-    /// @details:
+    /// @category トランジション
+    /// @description 表レイヤを裏レイヤにコピーする
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["backlay"],
@@ -2472,9 +2473,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: トランジション
-    /// @description: レイヤ情報をコピーする
-    /// @details:
+    /// @category トランジション
+    /// @description レイヤ情報をコピーする
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["copylay"],
@@ -2496,9 +2497,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: トランジション
-    /// @description: 操作対象ページを変更する
-    /// @details:
+    /// @category トランジション
+    /// @description 操作対象ページを変更する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["currentpage"],
@@ -2514,9 +2515,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: トランジション
-    /// @description: トランジションの前準備
-    /// @details:
+    /// @category トランジション
+    /// @description トランジションの前準備
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["preparetrans", "pretrans"],
@@ -2530,9 +2531,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: トランジション
-    /// @description: トランジションを実行する
-    /// @details:
+    /// @category トランジション
+    /// @description トランジションを実行する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["trans"],
@@ -2571,9 +2572,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         }
       },
     ),
-    /// @category: トランジション
-    /// @description: トランジションを停止する
-    /// @details:
+    /// @category トランジション
+    /// @description トランジションを停止する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["stoptrans"],
@@ -2590,9 +2591,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         }
       },
     ),
-    /// @category: トランジション
-    /// @description: トランジションの終了を待つ
-    /// @details:
+    /// @category トランジション
+    /// @description トランジションの終了を待つ
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["waittrans", "wt"],
@@ -2626,9 +2627,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // ======================================================================
     // メッセージ履歴関係
     // ======================================================================
-    /// @category: メッセージ履歴
-    /// @description: メッセージ履歴を設定する
-    /// @details:
+    /// @category メッセージ履歴
+    /// @description メッセージ履歴を設定する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["historyopt"],
@@ -2647,9 +2648,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: メッセージ履歴
-    /// @description: メッセージ履歴を表示する
-    /// @details:
+    /// @category メッセージ履歴
+    /// @description メッセージ履歴を表示する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["showhistory", "history"],
@@ -2662,9 +2663,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: メッセージ履歴
-    /// @description: メッセージ履歴にテキストを出力する
-    /// @details:
+    /// @category メッセージ履歴
+    /// @description メッセージ履歴にテキストを出力する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["historych", "hch"],
@@ -2680,9 +2681,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: メッセージ履歴
-    /// @description: メッセージ履歴を改行する
-    /// @details:
+    /// @category メッセージ履歴
+    /// @description メッセージ履歴を改行する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["hbr"],
@@ -2698,9 +2699,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // ======================================================================
     // セーブ＆ロード関係
     // ======================================================================
-    /// @category: セーブ／ロード
-    /// @description: 最新状態をセーブする
-    /// @details:
+    /// @category セーブ／ロード
+    /// @description 最新状態をセーブする
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["save"],
@@ -2716,9 +2717,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: セーブ／ロード
-    /// @description: セーブデータから復元する
-    /// @details:
+    /// @category セーブ／ロード
+    /// @description セーブデータから復元する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["load"],
@@ -2738,9 +2739,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return p.conductor.stop();
       },
     ),
-    /// @category: セーブ／ロード
-    /// @description: 一時セーブする
-    /// @details:
+    /// @category セーブ／ロード
+    /// @description 一時セーブする
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["tempsave"],
@@ -2756,9 +2757,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: セーブ／ロード
-    /// @description: 一時セーブデータから復元する
-    /// @details:
+    /// @category セーブ／ロード
+    /// @description 一時セーブデータから復元する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["tempload"],
@@ -2782,9 +2783,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return p.conductor.stop();
       },
     ),
-    /// @category: セーブ／ロード
-    /// @description: 現在の画面でスクリーンショットを固定する
-    /// @details:
+    /// @category セーブ／ロード
+    /// @description 現在の画面でスクリーンショットを固定する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["lockscreenshot"],
@@ -2798,9 +2799,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: セーブ／ロード
-    /// @description: スクリーンショットの固定を解除する
-    /// @details:
+    /// @category セーブ／ロード
+    /// @description スクリーンショットの固定を解除する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["unlockscreenshot"],
@@ -2814,9 +2815,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: セーブ／ロード
-    /// @description: セーブデータをコピーする
-    /// @details:
+    /// @category セーブ／ロード
+    /// @description セーブデータをコピーする
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["copysavedata", "copysave"],
@@ -2834,9 +2835,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         return "continue";
       },
     ),
-    /// @category: セーブ／ロード
-    /// @description: セーブデータを削除する
-    /// @details:
+    /// @category セーブ／ロード
+    /// @description セーブデータを削除する
+    /// @details
     ///   TODO タグの説明文
     new TagAction(
       ["deletesavedata", "delsavedata", "delsave"],

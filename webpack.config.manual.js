@@ -2,6 +2,7 @@ const path = require('path')
 
 module.exports = {
   mode: "production",
+  target: 'node',
   entry: {
     gen_command_ref_md: path.join(__dirname, 'manual/scripts/gen_command_ref_md.ts')
   },
