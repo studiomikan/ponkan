@@ -7,47 +7,41 @@ import { PonLayer } from "./layer/pon-layer";
 import { Ponkan3 } from "./ponkan3";
 
 export class TagValue {
-  public name: string;
-  public type: "number" | "boolean" | "string" | "array" | "object";
-  public required: boolean;
-  public defaultValue: any;
-  public comment: string;
+  public readonly name: string;
+  public readonly type: "number" | "boolean" | "string" | "array" | "object";
+  public readonly required: boolean;
+  public readonly defaultValue: any;
 
   public constructor(
     name: string,
     type: "number" | "boolean" | "string" | "array" | "object",
     required: boolean,
-    defaultValue: any,
-    comment: string) {
+    defaultValue: any) {
     this.name = name;
     this.type = type;
     this.required = required;
     this.defaultValue = defaultValue;
-    this.comment = comment;
   }
 }
 
 export class TagAction {
-  public names: string[];
-  public group: string;
-  public comment: string;
-  public values: TagValue[];
-  public description: string;
-  public action: (values: any, tick: number) => "continue" | "break";
+  public readonly names: string[];
+  public readonly group: string;
+  public readonly comment: string;
+  public readonly values: TagValue[];
+  public readonly action: (values: any, tick: number) => "continue" | "break";
 
   public constructor(
     names: string[],
     group: string,
     comment: string,
     values: TagValue[],
-    description: string,
     action: (val: any, tick: number) => "continue" | "break",
   ) {
     this.names = names;
     this.group = group;
     this.comment = comment;
     this.values = values;
-    this.description = description;
     this.action = action;
   }
 }
@@ -128,9 +122,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤーの数を変更する",
       [
         /// @param レイヤー数
-        new TagValue("count", "number", true, null, "レイヤー数"),
+        new TagValue("count", "number", true, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.layerCount = values.count;
         return "continue";
@@ -146,9 +139,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "エラーを発生させるかどうかの設定",
       [
         /// @param 存在しないタグを実行したときにエラーにする
-        new TagValue("unknowntag", "boolean", false, null, "存在しないタグを実行したときにエラーにする"),
+        new TagValue("unknowntag", "boolean", false, null),
       ],
-      "",
       (values, tick) => {
         if (values.unknowntag != null) { p.raiseError.unknowntag = values.unknowntag; }
         return "continue";
@@ -163,7 +155,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "その他",
       "システム変数をクリア",
       [],
-      ``,
       (values, tick) => {
         p.resource.systemVar = {};
         return "continue";
@@ -178,7 +169,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "その他",
       "ゲーム変数をクリア",
       [],
-      ``,
       (values, tick) => {
         p.resource.gameVar = {};
         return "continue";
@@ -193,7 +183,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "その他",
       "一時変数をクリア",
       [],
-      ``,
       (values, tick) => {
         p.resource.tmpVar = {};
         return "continue";
@@ -208,7 +197,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "その他",
       "システム変数を保存する",
       [],
-      ``,
       (values, tick) => {
         p.saveSystemData();
         return "continue";
@@ -225,10 +213,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "クリックスキップの設定",
       [
         /// @param 有効ならtrue、無効ならfalseを指定
-        new TagValue("enabled", "boolean", true, null, "有効ならtrue、無効ならfalseを指定"),
+        new TagValue("enabled", "boolean", true, null),
       ],
-      `クリックスキップの有効無効を設定します。
-      （クリックスキップとは、テキスト表示途中にクリックすると行末・ページ末までスキップする機能のことです。）`,
       (values, tick) => {
         p.clickSkipEnabled = values.enabled;
         return "continue";
@@ -244,13 +230,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "画面揺れ効果の開始",
       [
         /// @param 画面揺れの時間
-        new TagValue("time", "number", true, null, "画面揺れの時間"),
+        new TagValue("time", "number", true, null),
         /// @param 横方向の揺れの最大値
-        new TagValue("x", "number", false, 20, "横方向の揺れの最大値"),
+        new TagValue("x", "number", false, 20),
         /// @param 縦方向の揺れの最大値
-        new TagValue("y", "number", false, 20, "縦方向の揺れの最大値"),
+        new TagValue("y", "number", false, 20),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.startQuake(tick, values.time, values.x, values.y);
         return "continue";
@@ -265,7 +250,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "その他",
       "画面揺れ効果の停止",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.stopQuake();
         return "continue";
@@ -281,9 +265,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "画面揺れ効果の終了待ち",
       [
         /// @param スキップ可能かどうか
-        new TagValue("canskip", "boolean", false, true, "スキップ可能かどうか"),
+        new TagValue("canskip", "boolean", false, true),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         if (!p.isQuaking) {
           return "continue";
@@ -310,28 +293,24 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @details
     ///   右クリックまたは ESC キーを押下時の動作を設定します。
     ///   jump と call の両方を false に設定した場合、デフォルトの動作（メッセージレイヤーを隠す）になります。
-		///   jump を true に設定した場合、file と label で指定した場所へジャンプします。
-		///   call を true に設定した場合、file と label で指定した場所でサブルーチンを呼び出します。
+    ///   jump を true に設定した場合、file と label で指定した場所へジャンプします。
+    ///   call を true に設定した場合、file と label で指定した場所でサブルーチンを呼び出します。
     new TagAction(
       ["rightclick", "rclick"],
       "その他",
       "右クリック時の動作を設定する",
       [
         /// @param 右クリック時にjumpする場合はtrue
-        new TagValue("jump", "boolean", false, null, "右クリック時にjumpする場合はtrue"),
+        new TagValue("jump", "boolean", false, null),
         /// @param 右クリック時にcallする場合はtrue
-        new TagValue("call", "boolean", false, null, "右クリック時にcallする場合はtrue"),
+        new TagValue("call", "boolean", false, null),
         /// @param jumpまたはcallするスクリプトファイル名
-        new TagValue("file", "string", false, null, "jumpまたはcallするスクリプトファイル名"),
+        new TagValue("file", "string", false, null),
         /// @param jumpまたはcallするラベル名
-        new TagValue("label", "string", false, null, "jumpまたはcallするラベル名"),
+        new TagValue("label", "string", false, null),
         /// @param 右クリックの有効無効
-        new TagValue("enabled", "boolean", false, null, "右クリックの有効無効"),
+        new TagValue("enabled", "boolean", false, null),
       ],
-      `右クリックまたは ESC キーを押下時の動作を設定します。
-       jump と call の両方を false に設定した場合、デフォルトの動作（メッセージレイヤーを隠す）になります。
-			 jump を true に設定した場合、file と label で指定した場所へジャンプします。
-			 call を true に設定した場合、file と label で指定した場所でサブルーチンを呼び出します。`,
       (values, tick) => {
         if (values.jump != null) { p.rightClickJump = values.jump; }
         if (values.call != null) { p.rightClickCall = values.call; }
@@ -351,11 +330,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "コマンドショートカットを設定する",
       [
         /// @param ショートカットの文字
-        new TagValue("ch", "string", true, null, "ショートカットの文字"),
+        new TagValue("ch", "string", true, null),
         /// @param コマンドの名前
-        new TagValue("command", "string", true, null, "コマンドの名前"),
+        new TagValue("command", "string", true, null),
       ],
-      `コマンドショートカットを設定します。`,
       (values, tick) => {
         p.addCommandShortcut(values.ch, values.command);
         return "continue";
@@ -371,9 +349,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "コマンドショートカットを削除する",
       [
         /// @param ショートカットの文字
-        new TagValue("ch", "string", true, null, "ショートカットの文字"),
+        new TagValue("ch", "string", true, null),
       ],
-      `コマンドショートカットを削除します。`,
       (values, tick) => {
         p.delCommandShortcut(values.ch);
         return "continue";
@@ -391,7 +368,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "スクリプト制御",
       "スクリプトの実行を停止する",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.conductor.passLatestSaveMark();
         p.conductor.stop();
@@ -409,13 +385,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "スクリプトファイルを移動する",
       [
         /// @param 移動先のスクリプトファイル名。省略時は現在のファイル内で移動する
-        new TagValue("file", "string", false, null, "移動先のスクリプトファイル名。省略時は現在のファイル内で移動する"),
+        new TagValue("file", "string", false, null),
         /// @param 移動先のラベル名。省略時はファイルの先頭
-        new TagValue("label", "string", false, null, "移動先のラベル名。省略時はファイルの先頭"),
+        new TagValue("label", "string", false, null),
         /// @param 現在の位置を既読にするかどうか
-        new TagValue("countpage", "boolean", false, true, "現在の位置を既読にするかどうか"),
+        new TagValue("countpage", "boolean", false, true),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         if (values.file == null && values.label == null) {
           return "continue";
@@ -437,13 +412,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "サブルーチンを呼び出す",
       [
         /// @param 移動先のスクリプトファイル名。省略時は現在のファイル内で移動する
-        new TagValue("file", "string", false, null, "移動先のスクリプトファイル名。省略時は現在のファイル内で移動する"),
+        new TagValue("file", "string", false, null),
         /// @param 移動先のラベル名。省略時はファイルの先頭
-        new TagValue("label", "string", false, null, "移動先のラベル名。省略時はファイルの先頭"),
+        new TagValue("label", "string", false, null),
         /// @param 現在の位置を既読にするかどうか
-        new TagValue("countpage", "boolean", false, false, "現在の位置を既読にするかどうか"),
+        new TagValue("countpage", "boolean", false, false),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         if (values.file == null && values.label == null) {
           return "continue";
@@ -469,19 +443,14 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "サブルーチンをから戻る",
       [
         /// @param 移動先のスクリプトファイル名。省略時は現在のファイル内で移動する
-        new TagValue("file", "string", false, null, "移動先のスクリプトファイル名。省略時は現在のファイル内で移動する"),
+        new TagValue("file", "string", false, null),
         /// @param 移動先のラベル名。省略時はファイルの先頭
-        new TagValue("label", "string", false, null, "移動先のラベル名。省略時はファイルの先頭"),
+        new TagValue("label", "string", false, null),
         /// @param 戻った後、強制的にシナリオを再開する
-        new TagValue("forcestart", "boolean", false, false, "戻った後、強制的にシナリオを再開する"),
+        new TagValue("forcestart", "boolean", false, false),
         /// @param 現在の位置を既読にするかどうか
-        new TagValue("countpage", "boolean", false, true, "現在の位置を既読にするかどうか"),
+        new TagValue("countpage", "boolean", false, true),
       ],
-      `[call]タグで呼び出したサブルーチンから、呼び出し元に戻ります。
-       forcestart属性は、システムボタンを作成する際に指定します。
-       システムボタンで呼び出したサブルーチンで[skip]や[auto]を実行しても、通常はサブルーチンから戻るとスクリプトは停止してしまいます。
-       forcestart属性をtrueにした時は、呼び出し元へ戻ると同時に、[lb][pb]などで停止していたとしても、強制的に再開されます。
-       ただし[s]タグでスクリプトが完全に停止していた場合は停止したままです。`,
       (values, tick) => {
         return p.returnSubroutine(values.forcestart, values.countpage);
       },
@@ -496,9 +465,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "条件によって分岐する",
       [
         /// @param 条件式(JavaScript)
-        new TagValue("exp", "string", true, null, "条件式(JavaScript)"),
+        new TagValue("exp", "string", true, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.conductor.script.ifJump(values.exp, p.tagActions);
         return "continue";
@@ -513,7 +481,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "スクリプト制御",
       "条件によって分岐する",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.conductor.script.elsifJump();
         return "continue";
@@ -528,7 +495,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "スクリプト制御",
       "条件によって分岐する",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.conductor.script.elseJump();
         return "continue";
@@ -543,7 +509,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "スクリプト制御",
       "条件分岐の終了",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         return "continue";
       },
@@ -551,20 +516,19 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @category スクリプト制御
     /// @description 指定回数繰り返す
     /// @details
-    ///   TODO タグの説明文
+    ///   [for]と[endfor]の間を指定回数繰り返します。
+    ///   indexvarで指定した名前の一時変数にループ回数が格納されます。
+    ///   ループ回数は0から始まるため、、0 〜 loops-1 の値をとります。
     new TagAction(
       ["for"],
       "スクリプト制御",
       "指定回数繰り返す",
       [
         /// @param 繰り替えし回数
-        new TagValue("loops", "number", true, null, "繰り替えし回数"),
+        new TagValue("loops", "number", true, null),
         /// @param ループ中のインデックスを格納する変数名
-        new TagValue("indexvar", "string", false, "__index__", "ループ中のインデックスを格納する変数名"),
+        new TagValue("indexvar", "string", false, "__index__"),
       ],
-      `[for]と[endfor]の間を指定回数繰り返します。
-       indexvarで指定した名前の一時変数にループ回数が格納されます。
-       ループ回数は0から始まるため、、0 〜 loops-1 の値をとります。`,
       (values, tick) => {
         p.conductor.script.startForLoop(values.loops, values.indexvar);
         return "continue";
@@ -579,7 +543,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "スクリプト制御",
       "forループの終端",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.conductor.script.endForLoop();
         return "continue";
@@ -594,7 +557,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "スクリプト制御",
       "forループから抜ける",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.conductor.script.breakForLoop();
         return "continue";
@@ -609,7 +571,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "スクリプト制御",
       "スキップを開始する",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.startSkipByTag();
         return "continue";
@@ -624,7 +585,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "スクリプト制御",
       "スキップを停止する",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.stopSkip();
         return "continue";
@@ -639,7 +599,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "スクリプト制御",
       "オートモードを開始する",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.startAutoMode();
         return "continue";
@@ -654,7 +613,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "スクリプト制御",
       "オートモードを停止する",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.stopAutoMode();
         return "continue";
@@ -670,11 +628,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "オートモードの設定",
       [
         /// @param オートモード状態表示に使用するレイヤー
-        new TagValue("lay", "number", false, null, "オートモード状態表示に使用するレイヤー"),
+        new TagValue("lay", "number", false, null),
         /// @param オートモードのインターバル時間(ms)
-        new TagValue("time", "number", false, null, "オートモードのインターバル時間(ms)"),
+        new TagValue("time", "number", false, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         if (values.lay) { p.autoModeLayerNum = values.lay; }
         if (values.time) { p.autoModeInterval = values.time; }
@@ -691,11 +648,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "指定時間を待つ",
       [
         /// @param 停止時間(ms)
-        new TagValue("time", "number", true, null, "停止時間(ms)"),
+        new TagValue("time", "number", true, null),
         /// @param スキップ可能かどうか
-        new TagValue("canskip", "boolean", false, true, "スキップ可能かどうか"),
+        new TagValue("canskip", "boolean", false, true),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         if (p.isSkipping && values.canskip) {
           return "continue";
@@ -720,9 +676,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "クリック待ちで停止する",
       [
         /// @param スキップ可能かどうか
-        new TagValue("canskip", "boolean", false, true, "スキップ可能かどうか"),
+        new TagValue("canskip", "boolean", false, true),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.stopUntilClickSkip(); // クリック待ちまでのスキップを停止
         if (p.isSkipping && values.canskip) {
@@ -753,9 +708,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "マクロを定義する",
       [
         /// @param マクロの名前
-        new TagValue("name", "string", true, null, "マクロの名前"),
+        new TagValue("name", "string", true, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         if (p.resource.hasMacro(values.name)) {
           throw new Error(`${values.name}マクロはすでに登録されています`);
@@ -774,7 +728,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "マクロ",
       "マクロ定義の終わり",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         throw new Error("マクロ定義エラー。macroとendmacroの対応が取れていません");
         return "continue";
@@ -793,51 +746,50 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "テキストの設定",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", false, "message", "対象レイヤー"),
+        new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
         /// @param フォント名の配列
-        new TagValue("fontfamily", "array", false, null, "フォント名の配列"),
+        new TagValue("fontfamily", "array", false, null),
         /// @param フォントサイズ(px)
-        new TagValue("fontsize", "number", false, null, "フォントサイズ(px)"),
+        new TagValue("fontsize", "number", false, null),
         /// @param フォントウェイト。"normal" | "bold"
-        new TagValue("fontweight", "string", false, null, `フォントウェイト。"normal" | "bold"`),
+        new TagValue("fontweight", "string", false, null),
         /// @param 文字色(0xRRGGBB)
-        new TagValue("color", "number", false, null, "文字色(0xRRGGBB)"),
+        new TagValue("color", "number", false, null),
         /// @param テキスト描画のマージン　上
-        new TagValue("margint", "number", false, null, "テキスト描画のマージン　上"),
+        new TagValue("margint", "number", false, null),
         /// @param テキスト描画のマージン　右
-        new TagValue("marginr", "number", false, null, "テキスト描画のマージン　右"),
+        new TagValue("marginr", "number", false, null),
         /// @param テキスト描画のマージン　下
-        new TagValue("marginb", "number", false, null, "テキスト描画のマージン　下"),
+        new TagValue("marginb", "number", false, null),
         /// @param テキスト描画のマージン　左
-        new TagValue("marginl", "number", false, null, "テキスト描画のマージン　左"),
+        new TagValue("marginl", "number", false, null),
         /// @param テキストの文字間(px)
-        new TagValue("pitch", "number", false, null, "テキストの文字間(px)"),
+        new TagValue("pitch", "number", false, null),
         /// @param テキストの行の高さ(px)
-        new TagValue("lineheight", "number", false, null, "テキストの行の高さ(px)"),
+        new TagValue("lineheight", "number", false, null),
         /// @param テキストの行間(px)
-        new TagValue("linepitch", "number", false, null, "テキストの行間(px)"),
+        new TagValue("linepitch", "number", false, null),
         /// @param テキスト寄せの方向。"left" | "center" | "right"
-        new TagValue("align", "string", false, null, `テキスト寄せの方向。"left" | "center" | "right"`),
+        new TagValue("align", "string", false, null),
         /// @param 影の表示非表示
-        new TagValue("shadow", "boolean", false, null, "影の表示非表示"),
+        new TagValue("shadow", "boolean", false, null),
         /// @param 影のAlpha(0.0〜1.0)
-        new TagValue("shadowalpha", "number", false, null, "影のAlpha(0.0〜1.0)"),
+        new TagValue("shadowalpha", "number", false, null),
         /// @param 影の角度(ラジアン)
-        new TagValue("shadowangle", "number", false, null, "影の角度(ラジアン)"),
+        new TagValue("shadowangle", "number", false, null),
         /// @param 影のBlur
-        new TagValue("shadowblur", "number", false, null, "影のBlur"),
+        new TagValue("shadowblur", "number", false, null),
         /// @param 影の色(0xRRGGBB)
-        new TagValue("shadowcolor ", "number", false, null, "影の色(0xRRGGBB)"),
+        new TagValue("shadowcolor ", "number", false, null),
         /// @param 影の距離(px)
-        new TagValue("shadowdistance", "number", false, null, "影の距離(px)"),
+        new TagValue("shadowdistance", "number", false, null),
         /// @param 縁取りの太さ(px)。0で非表示になる
-        new TagValue("edgewidth", "number", false, null, "縁取りの太さ(px)。0で非表示になる"),
+        new TagValue("edgewidth", "number", false, null),
         /// @param 縁取りの色(0xRRGGBB)
-        new TagValue("edgecolor", "number", false, null, "縁取りの色(0xRRGGBB)"),
+        new TagValue("edgecolor", "number", false, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer: PonLayer) => {
           if (values.fontfamily != null) { layer.textFontFamily = values.fontfamily; }
@@ -874,13 +826,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "文字を出力する",
       [
         /// @param 出力する先のレイヤ
-        new TagValue("lay", "string", false, "message", "出力する先のレイヤ"),
+        new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
         /// @param 出力する文字
-        new TagValue("text", "string", true, null, "出力する文字"),
+        new TagValue("text", "string", true, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.hideBreakGlyph();
         p.getLayers(values).forEach((layer) => {
@@ -909,9 +860,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "改行する",
       [
         /// @param 出力する文字
-        new TagValue("lay", "string", false, "message", "出力する文字"),
+        new TagValue("lay", "string", false, "message"),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.addTextReturn();
@@ -929,11 +879,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "テキストをクリアする",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", false, "message", "対象レイヤー"),
+        new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.clearText();
@@ -952,13 +901,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "文字出力のインターバルを設定",
       [
         /// @param インターバルのモード。"user" | "system"
-        new TagValue("mode", "string", false, null, `インターバルのモード。"user" | "system"`),
+        new TagValue("mode", "string", false, null),
         /// @param 未読文章のインターバル時間(ms)
-        new TagValue("unread", "number", false, null, "未読文章のインターバル時間(ms)"),
+        new TagValue("unread", "number", false, null),
         /// @param 既読文章のインターバル時間(ms)
-        new TagValue("read", "number", false, null, "既読文章のインターバル時間(ms)"),
+        new TagValue("read", "number", false, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         if (values.move != null) { p.textSpeedMode = values.mode; }
         if (values.unread != null) { p.unreadTextSpeed = values.unread; }
@@ -975,7 +923,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "メッセージ操作",
       "一時的に文字出力インターバルを0にする",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.nowaitModeFlag = true;
         return "continue";
@@ -990,7 +937,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "メッセージ操作",
       "nowaitを終了する",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.nowaitModeFlag = false;
         return "continue";
@@ -1006,15 +952,14 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "文字表示位置を指定する",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", false, "message", "対象レイヤー"),
+        new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
         /// @param x座標
-        new TagValue("x", "number", false, null, "x座標"),
+        new TagValue("x", "number", false, null),
         /// @param x座標
-        new TagValue("y", "number", false, null, "x座標"),
+        new TagValue("y", "number", false, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.setCharLocate(values.x, values.y);
@@ -1033,14 +978,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "インデント位置を設定する",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", false, "message", "対象レイヤー"),
+        new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
         /// @param メッセージ履歴もインデントするかどうか
-        new TagValue("history", "boolean", false, true, "メッセージ履歴もインデントするかどうか"),
+        new TagValue("history", "boolean", false, true),
       ],
-      `現在の文字描画位置でインデントするように設定します。
-       インデント位置は [endindent] または [clear] でクリアされます。`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.setIndentPoint();
@@ -1061,13 +1004,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "インデント位置をクリアする",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", false, "message", "対象レイヤー"),
+        new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
         /// @param メッセージ履歴もインデント解除するか
-        new TagValue("history", "boolean", false, true, "メッセージ履歴もインデント解除するか"),
+        new TagValue("history", "boolean", false, true),
       ],
-      `[indent] で設定したインデント位置をクリアします。`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.clearIndentPoint();
@@ -1087,7 +1029,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "メッセージ操作",
       "行末クリック待ちで停止する",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.stopUntilClickSkip(); // クリック待ちまでのスキップを停止
         if (p.isSkipping) {
@@ -1117,7 +1058,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "メッセージ操作",
       "行末クリック待ちで停止する",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.stopUntilClickSkip(); // クリック待ちまでのスキップを停止
         p.historyTextReturn();
@@ -1147,7 +1087,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "メッセージ操作",
       "メッセージレイヤを一時的に隠す",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.hideMessages();
         p.conductor.addEventHandler(new PonEventHandler("click", () => {
@@ -1179,21 +1118,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤー名エイリアスを作成する",
       [
         /// @param エイリアス名
-        new TagValue("name", "string", true, null, "エイリアス名"),
+        new TagValue("name", "string", true, null),
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
       ],
-      `レイヤー名のエイリアス（別名）を作成します。
-       エイリアスを作成すると、レイヤーを指定するコマンドでレイヤー番号のかわりにエイリアス名を使用することができるようになります。
-       たとえば以下のように、背景画像を表示するレイヤーに base というようなエイリアスを作成することで、
-       スクリプト作成時の可読性が向上します。
-       \`\`\`
-       # 背景画像はレイヤー 0 に作成するので、エイリアスを作成する
-       ;layalias name: "base", lay: "0"
-       # 以後、背景画像は以下のように読み込める
-       ;image lay: "base", file: "image/bg0.png", x: 0, y: 0
-       \`\`\`
-       `,
       (values, tick) => {
         p.layerAlias[values.name] = values.lay;
         return "continue";
@@ -1209,9 +1137,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤー名エイリアスを削除する",
       [
         /// @param エイリアス名
-        new TagValue("name", "string", true, null, "エイリアス名"),
+        new TagValue("name", "string", true, null),
       ],
-      ``,
       (values, tick) => {
         delete p.layerAlias[values.name];
         return "continue";
@@ -1227,9 +1154,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "メッセージレイヤーを指定する",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "number", true, null, "対象レイヤー"),
+        new TagValue("lay", "number", true, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         const lay: number = +values.lay;
         if (lay < 0 || p.layerCount <= lay) {
@@ -1249,22 +1175,17 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "行末グリフに関して設定する",
       [
         /// @param グリフとして使用するレイヤー
-        new TagValue("lay", "number", false, null, "グリフとして使用するレイヤー"),
+        new TagValue("lay", "number", false, null),
         /// @param グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。
         ///        "eol"を指定すると文章の末尾に表示。
         ///        "relative"を指定するとメッセージレイヤーとの相対位置で固定表示。
         ///        "absolute"を指定すると画面上の絶対位置で固定表示。
-        new TagValue("pos", "string", false, null,
-          `グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。
-           "eol"を指定すると文章の末尾に表示。
-           "relative"を指定するとメッセージレイヤーとの相対位置で固定表示。
-           "absolute"を指定すると画面上の絶対位置で固定表示。`),
+        new TagValue("pos", "string", false, null),
         /// @param グリフの表示位置（メッセージレイヤーからの相対位置）
-        new TagValue("x", "number", false, null, "グリフの表示位置（メッセージレイヤーからの相対位置）"),
+        new TagValue("x", "number", false, null),
         /// @param グリフの表示位置（メッセージレイヤーからの相対位置）
-        new TagValue("y", "number", false, null, "グリフの表示位置（メッセージレイヤーからの相対位置）"),
+        new TagValue("y", "number", false, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         if (values.lay != null) { p.lineBreakGlyphLayerNum = values.lay; }
         if (values.pos != null) { p.lineBreakGlyphPos = values.pos; }
@@ -1283,22 +1204,17 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "ページ末グリフに関して設定する",
       [
         /// @param グリフとして使用するレイヤー
-        new TagValue("lay", "number", false, null, "グリフとして使用するレイヤー"),
+        new TagValue("lay", "number", false, null),
         /// @param グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。
         ///        "eol"を指定すると文章の末尾に表示。
         ///        "relative"を指定するとメッセージレイヤーとの相対位置で固定表示。
         ///        "absolute"を指定すると画面上の絶対位置で固定表示。
-        new TagValue("pos", "string", false, null,
-          `グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。
-           "eol"を指定すると文章の末尾に表示。
-           "relative"を指定するとメッセージレイヤーとの相対位置で固定表示。
-           "absolute"を指定すると画面上の絶対位置で固定表示。`),
+        new TagValue("pos", "string", false, null),
         /// @param グリフの表示位置（メッセージレイヤーからの相対位置）
-        new TagValue("x", "number", false, null, "グリフの表示位置（メッセージレイヤーからの相対位置）"),
+        new TagValue("x", "number", false, null),
         /// @param グリフの表示位置（メッセージレイヤーからの相対位置）
-        new TagValue("y", "number", false, null, "グリフの表示位置（メッセージレイヤーからの相対位置）"),
+        new TagValue("y", "number", false, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         if (values.lay != null) { p.pageBreakGlyphLayerNum = values.lay; }
         if (values.pos != null) { p.pageBreakGlyphPos = values.pos; }
@@ -1317,15 +1233,14 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤーを塗りつぶす",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
         /// @param 塗りつぶし色(0xRRGGBB)
-        new TagValue("color", "number", true, null, "塗りつぶし色(0xRRGGBB)"),
+        new TagValue("color", "number", true, null),
         /// @param 塗りつぶしのAlpha(0.0〜1.0)
-        new TagValue("alpha", "number", false, 1.0, "塗りつぶしのAlpha(0.0〜1.0)"),
+        new TagValue("alpha", "number", false, 1.0),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.setBackgroundColor(values.color, values.alpha);
@@ -1343,11 +1258,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤー塗りつぶしをクリアする",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.clearBackgroundColor();
@@ -1365,39 +1279,38 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤーの設定",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
         /// @param 表示非表示
-        new TagValue("visible", "boolean", false, null, "表示非表示"),
+        new TagValue("visible", "boolean", false, null),
         /// @param x座標(px)
-        new TagValue("x", "number", false, null, "x座標(px)"),
+        new TagValue("x", "number", false, null),
         /// @param y座標(px)
-        new TagValue("y", "number", false, null, "y座標(px)"),
+        new TagValue("y", "number", false, null),
         /// @param 幅(px)
-        new TagValue("width", "number", false, null, "幅(px)"),
+        new TagValue("width", "number", false, null),
         /// @param 高さ(px)
-        new TagValue("height", "number", false, null, "高さ(px)"),
+        new TagValue("height", "number", false, null),
         /// @param レイヤーのAlpha(0.0〜1.0)
-        new TagValue("alpha", "number", false, 1.0, "レイヤーのAlpha(0.0〜1.0)"),
+        new TagValue("alpha", "number", false, 1.0),
         /// @param hidemessagesで同時に隠すかどうか
-        new TagValue("autohide", "boolean", false, null, "hidemessagesで同時に隠すかどうか"),
+        new TagValue("autohide", "boolean", false, null),
         /// @param x軸方向のスケール。1.0で等倍
-        new TagValue("scalex", "number", false, null, "x軸方向のスケール。1.0で等倍"),
+        new TagValue("scalex", "number", false, null),
         /// @param y軸方向のスケール。1.0で等倍
-        new TagValue("scaley", "number", false, null, "y軸方向のスケール。1.0で等倍"),
+        new TagValue("scaley", "number", false, null),
         /// @param 左クリックイベントを遮断するかどうか
-        new TagValue("blocklclick", "boolean", false, null, "左クリックイベントを遮断するかどうか"),
+        new TagValue("blocklclick", "boolean", false, null),
         /// @param 右クリックイベントを遮断するかどうか
-        new TagValue("blockrclick", "boolean", false, null, "右クリックイベントを遮断するかどうか"),
+        new TagValue("blockrclick", "boolean", false, null),
         /// @param 中クリックイベントを遮断するかどうか
-        new TagValue("blockcclick", "boolean", false, null, "中クリックイベントを遮断するかどうか"),
+        new TagValue("blockcclick", "boolean", false, null),
         /// @param マウス移動イベントを遮断するかどうか
-        new TagValue("blockmove", "boolean", false, null, "マウス移動イベントを遮断するかどうか"),
+        new TagValue("blockmove", "boolean", false, null),
         /// @param マウスホイールイベントを遮断するかどうか
-        new TagValue("blockwheel", "boolean", false, null, "マウスホイールイベントを遮断するかどうか"),
+        new TagValue("blockwheel", "boolean", false, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           if (values.visible != null) { layer.visible = values.visible; }
@@ -1428,21 +1341,20 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤーに画像を読み込む",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
         /// @param 読み込む画像ファイルパス
-        new TagValue("file", "string", true, null, "読み込む画像ファイルパス"),
+        new TagValue("file", "string", true, null),
         /// @param 表示非表示
-        new TagValue("visible", "boolean", false, null, "表示非表示"),
+        new TagValue("visible", "boolean", false, null),
         /// @param x座標(px)
-        new TagValue("x", "number", false, null, "x座標(px)"),
+        new TagValue("x", "number", false, null),
         /// @param y座標(px)
-        new TagValue("y", "number", false, null, "y座標(px)"),
+        new TagValue("y", "number", false, null),
         /// @param レイヤーのAlpha(0.0〜1.0)
-        new TagValue("alpha", "number", false, 1.0, "レイヤーのAlpha(0.0〜1.0)"),
+        new TagValue("alpha", "number", false, 1.0),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         const task: AsyncTask = new AsyncTask();
         p.getLayers(values).forEach((layer) => {
@@ -1472,19 +1384,18 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤーに追加で画像を読み込む",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
         /// @param 読み込む画像ファイルパス
-        new TagValue("file", "string", true, null, "読み込む画像ファイルパス"),
+        new TagValue("file", "string", true, null),
         /// @param x座標(px)
-        new TagValue("x", "number", true, null, "x座標(px)"),
+        new TagValue("x", "number", true, null),
         /// @param y座標(px)
-        new TagValue("y", "number", true, null, "y座標(px)"),
+        new TagValue("y", "number", true, null),
         /// @param 表示非表示
-        new TagValue("alpha", "number", false, 1.0, "表示非表示"),
+        new TagValue("alpha", "number", false, 1.0),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         const task: AsyncTask = new AsyncTask();
         p.getLayers(values).forEach((layer) => {
@@ -1510,11 +1421,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤーの画像を開放する",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.freeImage();
@@ -1538,53 +1448,50 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤーにテキストボタンを配置する",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
         /// @param ボタン押下時にjumpする場合はtrue
-        new TagValue("jump", "boolean", false, true, "ボタン押下時にjumpする場合はtrue"),
+        new TagValue("jump", "boolean", false, true),
         /// @param ボタン押下時にcallする場合はtrue
-        new TagValue("call", "boolean", false, null, "ボタン押下時にcallする場合はtrue"),
+        new TagValue("call", "boolean", false, null),
         /// @param ボタン押下時にjumpまたはcallするスクリプトファイル名
-        new TagValue("file", "string", false, null, "ボタン押下時にjumpまたはcallするスクリプトファイル名"),
+        new TagValue("file", "string", false, null),
         /// @param ボタン押下時にjumpまたはcallするラベル名
-        new TagValue("label", "string", false, null, "ボタン押下時にjumpまたはcallするラベル名"),
+        new TagValue("label", "string", false, null),
         /// @param ボタン押下時に実行するJavaScript
-        new TagValue("exp", "string", false, null, "ボタン押下時に実行するJavaScript"),
+        new TagValue("exp", "string", false, null),
         /// @param テキスト
-        new TagValue("text", "string", false, "", "テキスト"),
+        new TagValue("text", "string", false, ""),
         /// @param x座標(px)
-        new TagValue("x", "number", false, 0, "x座標(px)"),
+        new TagValue("x", "number", false, 0),
         /// @param y座標(px)
-        new TagValue("y", "number", false, 0, "y座標(px)"),
+        new TagValue("y", "number", false, 0),
         /// @param 幅(px)
-        new TagValue("width", "number", true, null, "幅(px)"),
+        new TagValue("width", "number", true, null),
         /// @param 高さ(px)
-        new TagValue("height", "number", true, null, "高さ(px)"),
+        new TagValue("height", "number", true, null),
         /// @param 背景色の配列(0xRRGGBB)。通常時、マウスオーバー時、マウス押下時の順
-        new TagValue("bgcolors", "array", true, null, "背景色の配列(0xRRGGBB)。通常時、マウスオーバー時、マウス押下時の順"),
+        new TagValue("bgcolors", "array", true, null),
         /// @param 背景色のAlphaの配列(0.0〜1.0)。通常時、マウスオーバー時、マウス押下時の順
-        new TagValue("bgalphas", "array", false, [1, 1, 1], "背景色のAlphaの配列(0.0〜1.0)。通常時、マウスオーバー時、マウス押下時の順"),
+        new TagValue("bgalphas", "array", false, [1, 1, 1]),
         /// @param システム用ボタンとする場合はtrue
-        new TagValue("system", "boolean", false, false, "システム用ボタンとする場合はtrue"),
+        new TagValue("system", "boolean", false, false),
         /// @param テキスト描画のマージン　上
-        new TagValue("margint", "number", false, 0, "テキスト描画のマージン　上"),
+        new TagValue("margint", "number", false, 0),
         /// @param テキスト描画のマージン　右
-        new TagValue("marginr", "number", false, 0, "テキスト描画のマージン　右"),
+        new TagValue("marginr", "number", false, 0),
         /// @param テキスト描画のマージン　下
-        new TagValue("marginb", "number", false, 0, "テキスト描画のマージン　下"),
+        new TagValue("marginb", "number", false, 0),
         /// @param テキスト描画のマージン　左
-        new TagValue("marginl", "number", false, 0, "テキスト描画のマージン　左"),
+        new TagValue("marginl", "number", false, 0),
         /// @param テキスト描画のマージン　左
-        new TagValue("marginl", "number", false, 0, "テキスト描画のマージン　左"),
+        new TagValue("marginl", "number", false, 0),
         /// @param テキスト寄せの方向。"left" | "center" | "right"
-        new TagValue("align", "string", false, "center", `テキスト寄せの方向。"left" | "center" | "right"`),
+        new TagValue("align", "string", false, "center"),
         /// @param 現在の位置を既読にするかどうか
-        new TagValue("countpage", "boolean", false, true, "現在の位置を既読にするかどうか"),
+        new TagValue("countpage", "boolean", false, true),
       ],
-      `指定のレイヤーに、テキストと背景色を用いたボタンを配置します。
-       配置直後はボタンはロックされた状態となり、押下することはできません。
-       [unlockbuttons]タグでロック状態を解除することで、押下できるようになります。`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.addTextButton(
@@ -1622,11 +1529,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "すべてのボタンをクリアする",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.clearTextButtons();
@@ -1646,11 +1552,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "テキストボタンをクリアする",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.clearTextButtons();
@@ -1668,33 +1573,32 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤーに画像ボタンを配置する",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
         /// @param ボタン押下時にjumpする場合はtrue
-        new TagValue("jump", "boolean", false, true, "ボタン押下時にjumpする場合はtrue"),
+        new TagValue("jump", "boolean", false, true),
         /// @param ボタン押下時にcallする場合はtrue
-        new TagValue("call", "boolean", false, null, "ボタン押下時にcallする場合はtrue"),
+        new TagValue("call", "boolean", false, null),
         /// @param ボタン押下時にjumpまたはcallするスクリプトファイル名
-        new TagValue("file", "string", false, null, "ボタン押下時にjumpまたはcallするスクリプトファイル名"),
+        new TagValue("file", "string", false, null),
         /// @param ボタン押下時にjumpまたはcallするラベル名
-        new TagValue("label", "string", false, null, "ボタン押下時にjumpまたはcallするラベル名"),
+        new TagValue("label", "string", false, null),
         /// @param ボタン押下時に実行するJavaScript
-        new TagValue("exp", "string", false, null, "ボタン押下時に実行するJavaScript"),
+        new TagValue("exp", "string", false, null),
         /// @param ボタンにする画像ファイル
-        new TagValue("imagefile", "string", true, null, "ボタンにする画像ファイル"),
+        new TagValue("imagefile", "string", true, null),
         /// @param x座標(px)
-        new TagValue("x", "number", false, 0, "x座標(px)"),
+        new TagValue("x", "number", false, 0),
         /// @param y座標(px)
-        new TagValue("y", "number", false, 0, "y座標(px)"),
+        new TagValue("y", "number", false, 0),
         /// @param ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"
-        new TagValue("direction", "string", false, "horizontal", `ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"`),
+        new TagValue("direction", "string", false, "horizontal"),
         /// @param システム用ボタンとする場合はtrue
-        new TagValue("system", "boolean", false, false, "システム用ボタンとする場合はtrue"),
+        new TagValue("system", "boolean", false, false),
         /// @param 現在の位置を既読にするかどうか
-        new TagValue("countpage", "boolean", false, true, "現在の位置を既読にするかどうか"),
+        new TagValue("countpage", "boolean", false, true),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.addImageButton(
@@ -1726,11 +1630,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "画像ボタンをクリアする",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.clearImageButtons();
@@ -1748,25 +1651,24 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤーにトグルボタンを配置する",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
         /// @param ボタン押下時に実行するJavaScript
-        new TagValue("exp", "string", false, null, "ボタン押下時に実行するJavaScript"),
+        new TagValue("exp", "string", false, null),
         /// @param ボタンにする画像ファイル
-        new TagValue("imagefile", "string", true, null, "ボタンにする画像ファイル"),
+        new TagValue("imagefile", "string", true, null),
         /// @param x座標(px)
-        new TagValue("x", "number", false, 0, "x座標(px)"),
+        new TagValue("x", "number", false, 0),
         /// @param y座標(px)
-        new TagValue("y", "number", false, 0, "y座標(px)"),
+        new TagValue("y", "number", false, 0),
         /// @param 選択状態を格納する一時変数の名前
-        new TagValue("statevar", "string", true, null, "選択状態を格納する一時変数の名前"),
+        new TagValue("statevar", "string", true, null),
         /// @param ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"
-        new TagValue("direction", "string", false, "horizontal", `ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"`),
+        new TagValue("direction", "string", false, "horizontal"),
         /// @param システム用ボタンとする場合はtrue
-        new TagValue("system", "boolean", false, false, "システム用ボタンとする場合はtrue"),
+        new TagValue("system", "boolean", false, false),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.addToggleButton(
@@ -1794,11 +1696,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "トグルボタンをクリアする",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.clearToggleButtons();
@@ -1816,11 +1717,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "ボタンをロックする",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", false, "all", "対象レイヤー"),
+        new TagValue("lay", "string", false, "all"),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.lockButtons();
@@ -1840,11 +1740,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "ボタンをアンロックする",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", false, "all", "対象レイヤー"),
+        new TagValue("lay", "string", false, "all"),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.unlockButtons();
@@ -1863,7 +1762,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "ボタン",
       "システムボタンをロックする",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.foreLayers.forEach((layer) => layer.lockSystemButtons());
         p.backLayers.forEach((layer) => layer.lockSystemButtons());
@@ -1879,7 +1777,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "ボタン",
       "システムボタンをアンロックする",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.foreLayers.forEach((layer) => layer.unlockSystemButtons());
         p.backLayers.forEach((layer) => layer.unlockSystemButtons());
@@ -1899,21 +1796,20 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "フレームアニメーションを設定する",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
         /// @param アニメーションをループさせるかどうか
-        new TagValue("loop", "boolean", false, false, "アニメーションをループさせるかどうか"),
+        new TagValue("loop", "boolean", false, false),
         /// @param 1フレームの時間
-        new TagValue("time", "number", true, null, "1フレームの時間"),
+        new TagValue("time", "number", true, null),
         /// @param 1フレームの幅
-        new TagValue("width", "number", true, null, "1フレームの幅"),
+        new TagValue("width", "number", true, null),
         /// @param 1フレームの高さ
-        new TagValue("height", "number", true, null, "1フレームの高さ"),
+        new TagValue("height", "number", true, null),
         /// @param フレーム指定
-        new TagValue("frames", "array", true, null, "フレーム指定"),
+        new TagValue("frames", "array", true, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.initFrameAnim(values.loop, values.time, values.width, values.height, values.frames);
@@ -1931,11 +1827,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "フレームアニメーションを開始する",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.startFrameAnim(tick);
@@ -1953,11 +1848,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "フレームアニメーションを停止する",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.deleteFrameAnim();
@@ -1975,13 +1869,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "フレームアニメーションの終了を待つ",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
         /// @param スキップ可能かどうか
-        new TagValue("canskip", "boolean", false, true, "スキップ可能かどうか"),
+        new TagValue("canskip", "boolean", false, true),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         const layers = p.getLayers(values).filter((l) => l.frameAnimRunning && !l.frameAnimLoop);
         if (layers.length === 0) {
@@ -2013,23 +1906,22 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "自動移動を開始する",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
         /// @param 自動移動させる時間
-        new TagValue("time", "number", true, null, "自動移動させる時間"),
+        new TagValue("time", "number", true, null),
         /// @param 開始までの遅延時間(ms)
-        new TagValue("delay", "number", false, 0, "開始までの遅延時間(ms)"),
+        new TagValue("delay", "number", false, 0),
         /// @param 自動移動させる位置を指定
-        new TagValue("path", "array", true, null, "自動移動させる位置を指定"),
+        new TagValue("path", "array", true, null),
         /// @param 自動移動のタイプ。"linear" | "bezier2" | "bezier3" | "catmullrom"
-        new TagValue("type", "string", false, "linear", `自動移動のタイプ。"linear" | "bezier2" | "bezier3" | "catmullrom"`),
+        new TagValue("type", "string", false, "linear"),
         /// @param 自動移動の入り・抜きの指定。"none" | "in" | "out" | "both" 
-        new TagValue("ease", "string", false, "none", `自動移動の入り・抜きの指定。"none" | "in" | "out" | "both" `),
+        new TagValue("ease", "string", false, "none"),
         /// @param 自動移動をループさせるかどうか。タイプが "linear" か "catmullrom" の場合のみ有効
-        new TagValue("loop", "boolean", false, null, `自動移動をループさせるかどうか。タイプが "linear" か "catmullrom" の場合のみ有効`),
+        new TagValue("loop", "boolean", false, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.startMove(tick, values.time, values.delay, values.path, values.type, values.ease, values.loop);
@@ -2047,11 +1939,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "自動移動を停止する",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", false, "all", "対象レイヤー"),
+        new TagValue("lay", "string", false, "all"),
         /// @param 対象ページ
-        new TagValue("page", "string", false, "current", "対象ページ"),
+        new TagValue("page", "string", false, "current"),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.stopMove();
@@ -2069,9 +1960,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "自動移動の終了を待つ",
       [
         /// @param スキップ可能かどうか
-        new TagValue("canskip", "boolean", false, true, "スキップ可能かどうか"),
+        new TagValue("canskip", "boolean", false, true),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         if (!p.hasMovingLayer) {
           return "continue";
@@ -2105,15 +1995,14 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "ぼかしフィルタ",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null, "対象レイヤー"),
+        new TagValue("lay", "string", true, null),
         /// @param x軸方向のぼかし
-        new TagValue("blurx", "number", false, 4, "x軸方向のぼかし"),
+        new TagValue("blurx", "number", false, 4),
         /// @param y軸方向のぼかし
-        new TagValue("blury", "number", false, 4, "y軸方向のぼかし"),
+        new TagValue("blury", "number", false, 4),
         /// @param ぼかしの品質
-        new TagValue("quality", "number", false, 4, "ぼかしの品質"),
+        new TagValue("quality", "number", false, 4),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.addFilter("blur", {
@@ -2148,21 +2037,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "バッファ番号エイリアスを作成する",
       [
         /// @param エイリアス名
-        new TagValue("name", "string", true, null, "エイリアス名"),
+        new TagValue("name", "string", true, null),
         /// @param 対象レイヤー
-        new TagValue("buf", "string", true, null, "対象レイヤー"),
+        new TagValue("buf", "string", true, null),
       ],
-      `バッファのエイリアス（別名）を作成します。
-       エイリアスを作成すると、バッファ番号を指定するコマンドでバッファ番号のかわりにエイリアス名を使用することができるようになります。
-       たとえば以下のように、効果音を再生するバッファに se というようなエイリアスを作成することで、
-       スクリプト作成時の可読性が向上します。
-       \`\`\`
-       # 背景画像はレイヤー 0 に作成するので、エイリアスを作成する
-       ;bufalias name: "se", buf: "0"
-       # 以後、効果音は以下のように読み込める
-       ;loadsound "buf": "se", "file": "sound/pekowave1.wav"
-       \`\`\`
-       `,
       (values, tick) => {
         p.soundBufferAlias[values.name] = values.buf;
         return "continue";
@@ -2178,9 +2056,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "バッファ番号エイリアスを削除する",
       [
         /// @param エイリアス名
-        new TagValue("name", "string", true, null, "エイリアス名"),
+        new TagValue("name", "string", true, null),
       ],
-      ``,
       (values, tick) => {
         delete p.soundBufferAlias[values.name];
         return "continue";
@@ -2196,11 +2073,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "音声をロードする",
       [
         /// @param 読み込み先バッファ番号
-        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null),
         /// @param 読み込む音声ファイルパス
-        new TagValue("file", "string", true, null, "読み込む音声ファイルパス"),
+        new TagValue("file", "string", true, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getSoundBuffer(values.buf).loadSound(values.file).done((sb) => {
           p.conductor.start();
@@ -2220,9 +2096,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "音声を開放する",
       [
         /// @param 読み込み先バッファ番号
-        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getSoundBuffer(values.buf).freeSound();
         return "continue";
@@ -2238,17 +2113,16 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "音声の設定",
       [
         /// @param バッファ番号
-        new TagValue("buf", "string", true, null, "バッファ番号"),
+        new TagValue("buf", "string", true, null),
         /// @param 音量(0.0〜1.0)
-        new TagValue("volume", "number", false, null, "音量(0.0〜1.0)"),
+        new TagValue("volume", "number", false, null),
         /// @param グローバル音量(0.0〜1.0)
-        new TagValue("gvolume", "number", false, null, "グローバル音量(0.0〜1.0)"),
+        new TagValue("gvolume", "number", false, null),
         /// @param シーク位置(ms)
-        new TagValue("seek", "number", false, null, "シーク位置(ms)"),
+        new TagValue("seek", "number", false, null),
         /// @param ループ再生するかどうか
-        new TagValue("loop", "boolean", false, null, "ループ再生するかどうか"),
+        new TagValue("loop", "boolean", false, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         const sb: SoundBuffer = p.getSoundBuffer(values.buf);
         if (values.volume != null) { sb.volume = values.volume; }
@@ -2268,9 +2142,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "音声を再生する",
       [
         /// @param 読み込み先バッファ番号
-        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getSoundBuffer(values.buf).play();
         return "continue";
@@ -2286,9 +2159,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "音声を停止する",
       [
         /// @param 読み込み先バッファ番号
-        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getSoundBuffer(values.buf).stop();
         return "continue";
@@ -2304,15 +2176,14 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "音声をフェードする",
       [
         /// @param 読み込み先バッファ番号
-        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null),
         /// @param フェード後の音量(0.0〜1.0)
-        new TagValue("volume", "number", true, null, "フェード後の音量(0.0〜1.0)"),
+        new TagValue("volume", "number", true, null),
         /// @param フェード時間(ms)
-        new TagValue("time", "number", true, null, "フェード時間(ms)"),
+        new TagValue("time", "number", true, null),
         /// @param フェード終了後に再生停止するか
-        new TagValue("autostop", "boolean", false, false, "フェード終了後に再生停止するか"),
+        new TagValue("autostop", "boolean", false, false),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getSoundBuffer(values.buf).fade(values.volume, values.time, values.autostop);
         return "continue";
@@ -2328,13 +2199,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "音声をフェードアウトして再生停止する",
       [
         /// @param 読み込み先バッファ番号
-        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null),
         /// @param フェード時間(ms)
-        new TagValue("time", "number", true, null, "フェード時間(ms)"),
+        new TagValue("time", "number", true, null),
         /// @param フェード終了後に再生停止するか
-        new TagValue("autostop", "boolean", false, false, "フェード終了後に再生停止するか"),
+        new TagValue("autostop", "boolean", false, false),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getSoundBuffer(values.buf).fadeout(values.time, values.autostop);
         return "continue";
@@ -2350,13 +2220,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "音声をフェードインで再生開始する",
       [
         /// @param 読み込み先バッファ番号
-        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null),
         /// @param フェード後の音量(0.0〜1.0)
-        new TagValue("volume", "number", true, null, "フェード後の音量(0.0〜1.0)"),
+        new TagValue("volume", "number", true, null),
         /// @param フェード時間(ms)
-        new TagValue("time", "number", true, null, "フェード時間(ms)"),
+        new TagValue("time", "number", true, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getSoundBuffer(values.buf).fadein(values.volume, values.time);
         return "continue";
@@ -2372,11 +2241,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "音声の再生終了を待つ",
       [
         /// @param 読み込み先バッファ番号
-        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null),
         /// @param スキップ可能かどうか
-        new TagValue("canskip", "boolean", false, true, "スキップ可能かどうか"),
+        new TagValue("canskip", "boolean", false, true),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         const s: SoundBuffer = p.getSoundBuffer(values.buf);
         if (!s.playing || s.loop) {
@@ -2408,11 +2276,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "音声のフェード終了を待つ",
       [
         /// @param 読み込み先バッファ番号
-        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null),
         /// @param スキップ可能かどうか
-        new TagValue("canskip", "boolean", false, true, "スキップ可能かどうか"),
+        new TagValue("canskip", "boolean", false, true),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         const s: SoundBuffer = p.getSoundBuffer(values.buf);
         if (!s.fading) {
@@ -2444,9 +2311,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "音声のフェードを終了する",
       [
         /// @param 読み込み先バッファ番号
-        new TagValue("buf", "string", true, null, "読み込み先バッファ番号"),
+        new TagValue("buf", "string", true, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.getSoundBuffer(values.buf).endFade();
         return "continue";
@@ -2465,9 +2331,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "表レイヤを裏レイヤにコピーする",
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", false, "all", "対象レイヤー"),
+        new TagValue("lay", "string", false, "all"),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.backlay(values.lay);
         return "continue";
@@ -2483,15 +2348,14 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "レイヤ情報をコピーする",
       [
         /// @param コピー元レイヤー
-        new TagValue("srclay", "number", true, null, "コピー元レイヤー"),
+        new TagValue("srclay", "number", true, null),
         /// @param コピー先レイヤー
-        new TagValue("destlay", "number", true, null, "コピー先レイヤー"),
+        new TagValue("destlay", "number", true, null),
         /// @param コピー元ページ
-        new TagValue("srcpage", "string", false, "fore", "コピー元ページ"),
+        new TagValue("srcpage", "string", false, "fore"),
         /// @param コピー先ページ
-        new TagValue("destpage", "string", false, "fore", "コピー先ページ"),
+        new TagValue("destpage", "string", false, "fore"),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.copylay(values.srclay, values.destlay, values.srcpage, values.destpage);
         return "continue";
@@ -2507,9 +2371,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "操作対象ページを変更する",
       [
         /// @param 操作対象ページを指定
-        new TagValue("page", "string", true, null, "操作対象ページを指定"),
+        new TagValue("page", "string", true, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.currentPage = values.page;
         return "continue";
@@ -2524,7 +2387,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "トランジション",
       "トランジションの前準備",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.backlay("all");
         p.currentPage = "back";
@@ -2541,15 +2403,14 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "トランジションを実行する",
       [
         /// @param トランジションの時間(ms)
-        new TagValue("time", "number", true, null, "トランジションの時間(ms)"),
+        new TagValue("time", "number", true, null),
         /// @param トランジションの種類
-        new TagValue("method", "string", false, "crossfade", "トランジションの種類"),
+        new TagValue("method", "string", false, "crossfade"),
         /// @param 自動移動をループさせるかどうか。タイプが "linear" か "catmullrom" の場合のみ有効
-        new TagValue("rule", "string", false, "", "ユニバーサルトランジションのルールファイル名"),
+        new TagValue("rule", "string", false, ""),
         /// @param あいまい値
-        new TagValue("vague", "number", false, 0.25, "あいまい値"),
+        new TagValue("vague", "number", false, 0.25),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         if (values.time <= 0) {
           p.flip();
@@ -2581,7 +2442,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "トランジション",
       "トランジションを停止する",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         if (!p.transManager.isRunning) {
           return "continue";
@@ -2601,9 +2461,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "トランジションの終了を待つ",
       [
         /// @param スキップ可能かどうか
-        new TagValue("canskip", "boolean", false, true, "スキップ可能かどうか"),
+        new TagValue("canskip", "boolean", false, true),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         if (!p.transManager.isRunning) {
           return "continue";
@@ -2637,11 +2496,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "メッセージ履歴を設定する",
       [
         /// @param メッセージレイヤに文字を出力するかどうか
-        new TagValue("output", "boolean", false, null, "メッセージレイヤに文字を出力するかどうか"),
+        new TagValue("output", "boolean", false, null),
         /// @param メッセージレイヤを表示できるかどうか
-        new TagValue("enabled", "boolean", false, null, "メッセージレイヤを表示できるかどうか"),
+        new TagValue("enabled", "boolean", false, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         if (values.output != null) { p.historyLayer.outputFlag = values.output; }
         if (values.enabled != null) { p.enabledHistory = values.enabled; }
@@ -2657,7 +2515,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "メッセージ履歴",
       "メッセージ履歴を表示する",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.showHistoryLayer();
         return "continue";
@@ -2673,9 +2530,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "メッセージ履歴にテキストを出力する",
       [
         /// @param 出力する文字
-        new TagValue("text", "string", true, null, "出力する文字"),
+        new TagValue("text", "string", true, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.addTextToHistory(values.text);
         return "continue";
@@ -2690,7 +2546,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "メッセージ履歴",
       "メッセージ履歴を改行する",
       [],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.historyTextReturn();
         return "continue";
@@ -2709,9 +2564,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "最新状態をセーブする",
       [
         /// @param セーブ番号
-        new TagValue("num", "number", true, null, "セーブ番号"),
+        new TagValue("num", "number", true, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.save(tick, values.num);
         return "continue";
@@ -2727,9 +2581,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "セーブデータから復元する",
       [
         /// @param セーブ番号
-        new TagValue("num", "number", true, null, "セーブ番号"),
+        new TagValue("num", "number", true, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.load(tick, values.num).done(() => {
           p.conductor.start();
@@ -2749,9 +2602,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "一時セーブする",
       [
         /// @param セーブ番号
-        new TagValue("num", "number", true, null, "セーブ番号"),
+        new TagValue("num", "number", true, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.tempSave(tick, values.num);
         return "continue";
@@ -2767,13 +2619,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "一時セーブデータから復元する",
       [
         /// @param セーブ番号
-        new TagValue("num", "number", true, null, "セーブ番号"),
+        new TagValue("num", "number", true, null),
         /// @param 音声もロードするかどうか
-        new TagValue("sound", "boolean", false, false, "音声もロードするかどうか"),
+        new TagValue("sound", "boolean", false, false),
         /// @param 表レイヤーを裏レイヤーとして復元するかどうか
-        new TagValue("toback", "boolean", false, false, "表レイヤーを裏レイヤーとして復元するかどうか"),
+        new TagValue("toback", "boolean", false, false),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.tempLoad(tick, values.num, values.sound, values.toback).done(() => {
           p.conductor.start();
@@ -2786,14 +2637,13 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @category セーブ／ロード
     /// @description 現在の画面でスクリーンショットを固定する
     /// @details
-    ///   TODO タグの説明文
+    ///   現在の画面の状態でスクリーンショットを取ります。
+    ///   取得されたスクリーンショットは [save] で保存されます。
     new TagAction(
       ["lockscreenshot"],
       "セーブ／ロード",
       "現在の画面でスクリーンショットを固定する",
       [],
-      `現在の画面の状態でスクリーンショットを取ります。
-       取得されたスクリーンショットは [save] で保存されます。`,
       (values, tick) => {
         p.lockScreenShot();
         return "continue";
@@ -2808,8 +2658,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "セーブ／ロード",
       "スクリーンショットの固定を解除する",
       [],
-      `現在の画面の状態でスクリーンショットを取ります。
-       取得されたスクリーンショットは [save] で保存されます。`,
       (values, tick) => {
         p.unlockScreenShot();
         return "continue";
@@ -2825,11 +2673,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "セーブデータをコピーする",
       [
         /// @param コピー元のセーブ番号
-        new TagValue("srcnum", "number", true, null, "コピー元のセーブ番号"),
+        new TagValue("srcnum", "number", true, null),
         /// @param コピー先のセーブ番号
-        new TagValue("destnum", "number", true, null, "コピー先のセーブ番号"),
+        new TagValue("destnum", "number", true, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.copySaveData(values.srcnum, values.destnum);
         return "continue";
@@ -2845,9 +2692,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       "セーブデータを削除する",
       [
         /// @param セーブ番号
-        new TagValue("num", "number", true, null, "セーブ番号"),
+        new TagValue("num", "number", true, null),
       ],
-      `TODO タグの説明文`,
       (values, tick) => {
         p.deleteSaveData(values.num);
         return "continue";
