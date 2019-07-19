@@ -42,7 +42,7 @@ class TsFileParser {
 
       let paramLineMatch = line.match(/\/\/\/.*@param(.*)/);
       let paragraphMatch = line.match(/\/\/\/ (.*)/);
-      let tagValueMatch = line.match(/new TagValue\(\"([^"]+)\"/);
+      let tagValueMatch = line.match(/new TagValue\(\"([^"]+)\", \"([^,"]+)\",([^,]+),([^,`]+)/);
       if (paramLineMatch != null) {
         // @paramの開始
         value = paramLineMatch[1].trim();
@@ -55,9 +55,15 @@ class TsFileParser {
       } else if (tagValueMatch != null) {
         // new TagValue
         let valueName = tagValueMatch[1];
+        let type = tagValueMatch[2].trim();
+        let required = tagValueMatch[3].trim();
+        let defaultValue = tagValueMatch[4].trim();
         values.push({ 
           name: valueName,
-          description: value
+          type: type.trim(),
+          required: required == "true" ? "〇" : "",
+          defaultValue: defaultValue == "null" ? "" : "`" + defaultValue + "`",
+          description: value,
         });
       }
     });
@@ -123,40 +129,76 @@ class TsFileParser {
   }
 
   printMd() {
-    // カテゴリごとに処理
     const categories = this.genCategories();
-    console.log(categories);
+
+    this.printMdHeadetText();
+    this.printMdTableOfContents(categories);
     categories.forEach((c) => {
       this.printMdCategory(c);
     });
   }
 
+  printMdHeadetText() {
+    let md = "# コマンドリファレンス\n" +
+             "Ponkan3 のスクリプトで使用できる全てのコマンドの解説です。\n" +
+             "\n" +
+             "コマンドの中には、長いコマンドをタイプする手間を省くため、別名が設けられているものがあります。\n" +
+             "たとえば `startautomode` と `startauto` と `auto` は名前は異なりますが全て同じ動作をします。\n" +
+             "\n";
+    console.log(md);
+  }
+
+  printMdTableOfContents(categories) {
+    let md = "";
+    md += "## コマンド一覧\n\n";
+
+    categories.forEach((category) => {
+      md += `### ${category}\n\n`;
+      md += "| コマンド名 | 内容 |\n";
+      md += "|------------|------|\n";
+      this.tagList.filter(tag => tag.category == category).forEach((tag) => {
+        md += `| [${tag.tagNames.join(', ')}](#${tag.tagNames.join("-")}) | ${tag.description} |\n`;
+      });;
+      md += "\n";
+    });
+    console.log(md);
+  }
+
   printMdCategory(category) {
-    let target = this.tagList.filter(tag => tag.category == category)
-    target.forEach((tag) => {
+    let md = "";
+    md += `## ${category}\n\n`;
+    console.log(md);
+
+    this.tagList.filter(tag => tag.category == category).forEach((tag) => {
       this.printMdTag(tag);
     });
   }
 
   printMdTag(tag) {
     // console.log(tag);
+    let typeMap = {
+      "number": "数値(Number)",
+      "boolean": "真偽値(Boolean)",
+      "string": "文字列(String)",
+      "array": "配列(Array)",
+      "object": "オブジェクト(Object)",
+    }
 
     let md = "";
 
-    md += `### ${tag.tagNames.join(', ')} | ${tag.description}\n\n`;
-    md += `${tag.details}\n`;
-
-    // md += `| パラメータ名 | 値の種類 | 必須 | デフォルト値 | 説明 |\n`;
-    // md += `|--------------|----------|------|--------------|------|\n`;
+    md += `### ${tag.tagNames.join(', ')}\n\n`;
+    md += `${tag.description}\n\n`;
 
     if (tag.paramsList.length > 0) {
-      md += "\n";
-      md += `| パラメータ名 | 説明 |\n`;
-      md += `|--------------|------|\n`;
+      md += `| パラメータ名 | 値の種類 | 必須 | デフォルト値 | 説明 |\n`;
+      md += `|--------------|----------|------|--------------|------|\n`;
       tag.paramsList.forEach((param) => {
-        md += `| ${param.name} | ${param.description} |\n`;
+        md += `| ${param.name} | ${typeMap[param.type]} | ${param.required} | ${param.defaultValue} | ${param.description} |\n`;
       })
     }
+    md += `\n`;
+
+    md += `${tag.details}\n`;
 
     console.log(md);
   }
@@ -166,83 +208,4 @@ class TsFileParser {
 let fileString = fs.readFileSync("./src/ts/tag-action.ts", "utf8");
 let tsFileParser = new TsFileParser(fileString);
 tsFileParser.parse();
-// console.log(tsFileParser.tagInfo);
 tsFileParser.printMd();
-
-
-// let tagActions = (generateTagActions as any)({});
-
-// // tagActionsの情報をグループごとに分ける
-// let grouped = {};
-// tagActions.forEach((ta: TagAction) => {
-//   if (grouped[ta.group] == null) {
-//     grouped[ta.group] = [];
-//   }
-//   grouped[ta.group].push(ta);
-// });
-// let groupNames = Object.keys(grouped);
-
-// let md = "# コマンドリファレンス\n";
-// md += `
-// Ponkan3 のスクリプトで使用できる全てのコマンドの解説です。
-
-// コマンドの中には、長いコマンドをタイプする手間を省くため、別名が設けられているものがあります。
-// たとえば \`startautomode\` と \`startauto\` と \`auto\` は名前は異なりますが全て同じ動作をします。
-
-// `;
-
-// // 一覧表
-// md += `## コマンド一覧\n`
-// groupNames.forEach((groupName) => {
-//   md += `\n### ${groupName}\n\n`;
-//   md += `| コマンド名 | 内容 |\n`;
-//   md += `|------------|------|\n`;
-
-//   let actions: TagAction[] = grouped[groupName];
-//   actions.forEach((action) => {
-//     // md += `| ${action.names.join(', ')} | ${action.comment} |\n`;
-//     md += `| [${action.names.join(', ')}](#${action.names.join('-')}) | ${action.comment} |\n`;
-//   });
-// });
-// md += "\n";
-
-// // コマンド詳細
-// groupNames.forEach((groupName) => {
-//   md += `## ${groupName}\n\n`;
-
-//   let actions: TagAction[] = grouped[groupName];
-//   actions.forEach((action) => {
-//     md += `### ${action.names.join(', ')} \n\n${action.comment}\n\n`;
-//     // md += `### ${action.names.join(', ')}\n`;
-//     // md += `${action.comment})\n\n`;
-
-//     if (action.values.length > 0) {
-//       md += `| パラメータ名 | 値の種類 | 必須 | デフォルト値 | 説明 |\n`;
-//       md += `|--------------|----------|------|--------------|------|\n`;
-//       action.values.forEach((value: TagValue) => {
-//         let required = value.required ? "○" : "";
-//         let defaultValue;
-//         if (value.defaultValue == null) {
-//           defaultValue = "";
-//         } else {
-//           defaultValue = value.defaultValue;
-//           if (typeof defaultValue === "string") {
-//             defaultValue = `"${defaultValue}"`;
-//           }
-//         }
-//         let comment = value.comment.split("\n").map(s => s.trim()).join("\n").replace(/\|/g, "\\|");
-//         md += `| ${value.name} | ${value.type} | ${required} | ${defaultValue} | ${comment} |\n`;
-//       });
-//       md += "\n";
-//     }
-
-//     let description = action.description;
-//     md += description.split("\n").map(s => s.trim()).join("\n");
-//     md += "\n";
-//   });
-// });
-// md += "\n\n";
-
-
-// // console.log(md);
-
