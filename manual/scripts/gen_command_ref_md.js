@@ -41,8 +41,8 @@ class TsFileParser {
       }
 
       let paramLineMatch = line.match(/\/\/\/.*@param(.*)/);
-      let paragraphMatch = line.match(/\/\/\/ (.*)/);
-      let tagValueMatch = line.match(/new TagValue\(\"([^"]+)\", \"([^,"]+)\",([^,]+),([^,`]+)/);
+      let paragraphMatch = line.match(/\/\/\/(.*)/);
+      let tagValueMatch = line.match(/new TagValue\(\"([^"]+)\", \"([^,"]+)\",([^,]+),([^,)`]+)/);
       if (paramLineMatch != null) {
         // @paramの開始
         value = paramLineMatch[1].trim();
@@ -76,7 +76,7 @@ class TsFileParser {
     let values = {};
 
     lines.forEach((line, index) => {
-      let mbody  = line.match(/\/\/\/(.+)/);
+      let mbody  = line.match(/\/\/\/(.*)/);
       if (mbody != null) {
         let body = mbody[1];
         let p = "";
@@ -87,6 +87,9 @@ class TsFileParser {
           v = mparam[2].trim();
         } else {
           v = body.substring(body.indexOf("///")).trim();
+        }
+        if (v.endsWith("\\n")) {
+          v = v.substring(0, v.length - 2) + "  ";
         }
         if (p !== "" && p !== "param") {
           values[p] = v;

@@ -33,7 +33,7 @@ const DEFAULT_SOUND_BUFFER_COUNT = 5;
 export class Ponkan3 extends PonGame {
   // ゲーム設定
   public raiseError: any = {
-    unknowntag: true,
+    unknowncommand: true,
   };
 
   protected initialAsyncTask: AsyncTask;
@@ -446,7 +446,7 @@ export class Ponkan3 extends PonGame {
     const tagAction: TagAction = this.tagActions[tag.name];
     if (tagAction === null || tagAction === undefined) {
       // Logger.debug("Unknown Tag: ", tag.name, tag);
-      if (this.raiseError.unknowntag) {
+      if (this.raiseError.unknowncommand) {
         throw new Error(`${tag.name}というタグは存在しません`);
       } else {
         return "continue";

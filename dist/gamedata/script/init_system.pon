@@ -1,6 +1,6 @@
 # init_system
 
-;raiseerror {"unknowntag": true}
+;raiseerror {"unknowncommand": true}
 
 #=============================================
 # 設定
