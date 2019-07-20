@@ -67,6 +67,7 @@ class TsFileParser {
         });
       }
     });
+    this.tagInfo[currentTagName].paramsList = values;
   }
 
   parseTagAction() {
@@ -100,7 +101,6 @@ class TsFileParser {
           }
           values[currentParamName] += v;
         }
-        // console.log("tagNameStr: ", tagNameStr);
       }
       // タグ名が来たとき
       if (line.match(/new TagAction\(/)) {
@@ -146,8 +146,7 @@ class TsFileParser {
              "Ponkan3 のスクリプトで使用できる全てのコマンドの解説です。\n" +
              "\n" +
              "コマンドの中には、長いコマンドをタイプする手間を省くため、別名が設けられているものがあります。\n" +
-             "たとえば `startautomode` と `startauto` と `auto` は名前は異なりますが全て同じ動作をします。\n" +
-             "\n";
+             "たとえば `startautomode` と `startauto` と `auto` は名前は異なりますが全て同じ動作をします。\n";
     console.log(md);
   }
 
@@ -169,7 +168,7 @@ class TsFileParser {
 
   printMdCategory(category) {
     let md = "";
-    md += `## ${category}\n\n`;
+    md += `## ${category}\n`;
     console.log(md);
 
     this.tagList.filter(tag => tag.category == category).forEach((tag) => {
@@ -198,10 +197,12 @@ class TsFileParser {
       tag.paramsList.forEach((param) => {
         md += `| ${param.name} | ${typeMap[param.type]} | ${param.required} | ${param.defaultValue} | ${param.description} |\n`;
       })
+      md += `\n`;
     }
-    md += `\n`;
 
-    md += `${tag.details}\n`;
+    if (tag.details != null && tag.details != "") {
+      md += `${tag.details}\n`;
+    }
 
     console.log(md);
   }
