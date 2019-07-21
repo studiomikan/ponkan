@@ -2,7 +2,7 @@ import { AsyncTask } from "../base/async-task";
 import { LayerFilter } from "./layer-filter";
 
 export class ColorMatrixFilter extends LayerFilter {
-  public static readonly filterName: string = "color";
+  public static readonly filterName: string = "colormatrix";
   public get filterName(): string { return ColorMatrixFilter.filterName; }
   public get filter(): PIXI.filters.ColorMatrixFilter { return this._filter as PIXI.filters.ColorMatrixFilter; }
 

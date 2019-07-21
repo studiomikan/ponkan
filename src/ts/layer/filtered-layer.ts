@@ -4,16 +4,10 @@ import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
 import { MovableLayer } from "./movable-layer";
 
+import { ColorFilter, createColorFilter } from "../filter/adjustment-filter";
 import { BlurFilter, createBlurFilter } from "../filter/blur-filter";
 import { ColorMatrixFilter, createColorMatrixFilter } from "../filter/color-matrix-filter";
 import { LayerFilter } from "../filter/layer-filter";
-
-
-// BlurFilter
-// ColorMatrixFilter
-// DisplacementFilter
-// FXAAFilter
-// NoiseFilter
 
 export class FilteredLayer extends MovableLayer {
 
@@ -34,6 +28,7 @@ export class FilteredLayer extends MovableLayer {
       FilteredLayer.filterClassList = {};
       FilteredLayer.registerFilter(BlurFilter.filterName, createBlurFilter);
       FilteredLayer.registerFilter(ColorMatrixFilter.filterName, createColorMatrixFilter);
+      FilteredLayer.registerFilter(ColorFilter.filterName, createColorFilter);
     }
   }
 
@@ -43,10 +38,7 @@ export class FilteredLayer extends MovableLayer {
   }
 
   public addFilter(filterName: string, params: any): void {
-    // console.log("@@", filterName, params);
-    // console.log("@@", FilteredLayer.filterClassList);
     const createFunction: any = FilteredLayer.filterClassList[filterName];
-    // console.log("@@ createFunction", createFunction);
     const filter = createFunction(params);
     this.addLayerFilter(filter);
   }

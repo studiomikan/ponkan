@@ -98,7 +98,7 @@
 ;textspeed read: 1, unread: 1
 
 ;blur lay: 1, blurx: 20
-#;blur lay: 0, blurx: 20
+;colorfilter lay: 1, gamma: 0.5
 
 ;layopt lay: "mes", height: 300
 ;cmdsc ch: "「", command: "speak"
