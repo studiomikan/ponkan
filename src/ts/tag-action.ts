@@ -1070,7 +1070,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           layer.clearIndentPoint();
         });
         if (values.history) {
-          p.historyLayer.clearIndentPoint();
+          p.historyLayer.clearHistoryIndentPoint();
         }
         return "continue";
       },

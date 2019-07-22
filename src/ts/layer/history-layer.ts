@@ -264,6 +264,7 @@ class HistoryTextLayer extends BaseLayer {
   public clear(): void {
     this.lines = [[]];
     this.indentPoints = [-1];
+    this.clearIndentPoints = [-1];
   }
 
   public add(ch: string): void {
@@ -273,14 +274,15 @@ class HistoryTextLayer extends BaseLayer {
   public textReturn(): void {
     this.lines.push([]);
     this.indentPoints.push(-1);
+    this.clearIndentPoints.push(-1);
   }
 
   public setHistoryIndentPoint(): void {
-    this.indentPoints[this.indentPoints.length - 1] = this.currentLine.length;
+    this.indentPoints[this.indentPoints.length - 1] = this.currentLine.length - 1;
   }
 
   public clearHistoryIndentPoint(): void {
-    this.clearIndentPoints[this.clearIndentPoints.length - 1] = this.currentLine.length;
+    this.clearIndentPoints[this.clearIndentPoints.length - 1] = this.currentLine.length - 1;
   }
 
   public scrollUp(count: number = 1): void {
@@ -323,17 +325,17 @@ class HistoryTextLayer extends BaseLayer {
       const indentPoint = this.indentPoints[i];
       const clearIndentPoint = this.clearIndentPoints[i];
       this.lines[i].forEach((ch, index) => {
+        this.addChar(ch);
         if (index === indentPoint) {
           this.setIndentPoint();
         }
         if (index === clearIndentPoint) {
           this.clearIndentPoint();
         }
-        this.addChar(ch);
       });
       this.addTextReturn();
-      this.clearIndentPoint();
     }
+    // this.clearIndentPoint();
   }
 
   public redrawLazy(): void {
@@ -601,6 +603,10 @@ export class HistoryLayer extends BaseLayer {
 
   public setHistoryIndentPoint(): void {
     this.textLayer.setHistoryIndentPoint();
+  }
+
+  public clearHistoryIndentPoint(): void {
+    this.textLayer.clearHistoryIndentPoint();
   }
 
   public goToEnd(): void {
