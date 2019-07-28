@@ -14,6 +14,80 @@ export interface IBaseLayerEventListener {
   onChangeY(sender: BaseLayer, y: number): void;
 }
 
+export class BaseLayerChar {
+  public readonly ch: string;
+  public readonly ruby: string;
+  public readonly sp: PonSprite;
+  public constructor(ch: string, sp: PonSprite, ruby: string = "") {
+    this.ch = ch;
+    this.sp = sp;
+    this.ruby = ruby;
+  }
+
+  public clone(spriteCallbacks: IPonSpriteCallbacks): BaseLayerChar {
+    const sp = new PonSprite(spriteCallbacks);
+    sp.createText(this.ch, this.sp.textStyle as PIXI.TextStyle, this.sp.textPitch);
+    return new BaseLayerChar(this.ch, sp, this.ruby);
+  }
+}
+
+export class BaseLayerTextLine {
+  public readonly chList: BaseLayerChar[] = [];
+
+  public get text() {
+    let str = "";
+    this.chList.forEach((blc) => {
+      str += blc.ch;
+    });
+    return str;
+  }
+
+  public get length() { return this.chList.length; }
+
+  public get width(): number {
+    if (this.chList.length === 0) {
+      return 0;
+    }
+    let width = 0;
+    this.chList.forEach((blc) => {
+      width += blc.sp.textWidth;
+    });
+    return width;
+  }
+
+  public addChar(ch: string, sp: PonSprite): void {
+    this.chList.push(new BaseLayerChar(ch, sp));
+  }
+
+  public getCh(index: number): BaseLayerChar {
+    return this.chList[index];
+  }
+
+  public backspace(): void {
+    this.chList[this.chList.length - 1].sp.destroy();
+    this.chList.splice(this.chList.length - 1, 1);
+  }
+
+  public forEach(func: (ch: BaseLayerChar, index: number) => void): void {
+    this.chList.forEach(func);
+  }
+
+  public destroy(): void {
+    this.chList.forEach((blc) => {
+      blc.sp.destroy();
+    });
+    this.chList.splice(0, this.chList.length);
+  }
+
+  public copyFrom(src: BaseLayerTextLine, spriteCallbacks: IPonSpriteCallbacks): void {
+      this.destroy();
+      src.chList.forEach((srcBlc: BaseLayerChar) => {
+        const newBlc = srcBlc.clone(spriteCallbacks);
+        this.chList.push(newBlc);
+      });
+  }
+}
+
 
 /**
  * 基本レイヤ。PIXI.Containerをラップしたもの
@@ -66,7 +140,7 @@ export class BaseLayer {
   public blockWheelFlag: boolean = false;
 
   // 文字関係
-  protected textLines: PonSprite[][] = [[]];
+  protected textLines: BaseLayerTextLine[] = [new BaseLayerTextLine()];
   public textStyle: PIXI.TextStyle = new PIXI.TextStyle({
     fontFamily: ["mplus-1m-regular", "monospace"],
     fontSize: 24,
@@ -492,25 +566,31 @@ export class BaseLayer {
     this.hasBackgroundColor = false;
   }
 
-  public get currentTextLine(): PonSprite[] {
+  public get currentTextLine(): BaseLayerTextLine {
     return this.textLines[this.textLines.length - 1];
   }
 
-  public get currentTextStylesBuf(): PonSprite[] {
-    return this.textLines[this.textLines.length - 1];
-  }
+  // public get currentTextStylesBuf(): BaseLayerTextLine {
+  //   return this.textLines[this.textLines.length - 1];
+  // }
 
   public get text(): string {
     let str = "";
-    this.textLines.forEach((textLine: PonSprite[]) => {
+    this.textLines.forEach((textLine: BaseLayerTextLine) => {
       if (str !== "") {
         str += "\n";
       }
-      textLine.forEach((sp) => {
-        str += sp.text;
-      });
+      str += textLine.text;
     });
     return str;
+  }
+
+  /**
+   * 表示しているテキストの内容を文字列で取得
+   * @return テキスト
+   */
+  public get messageText(): string {
+    return this.text;
   }
 
   /**
@@ -546,35 +626,26 @@ export class BaseLayer {
     const pos = this.getNextTextPos(ch, sp.textWidth);
     sp.x = pos.x;
     sp.y = pos.y;
-    this.currentTextLine.push(sp);
+    this.currentTextLine.addChar(ch, sp);
     this.textX = pos.x + sp.textWidth;
   }
 
-  public getCurrentLineWidth() {
-    const line = this.currentTextLine;
-    if (line.length === 0) {
-      return 0;
-    }
-    let width: number = 0;
-    line.forEach((sp) => {
-      width += sp.textWidth;
-    });
-    return width;
+  public getCurrentLineWidth(): number {
+    return this.currentTextLine.width;
   }
 
   public backspace(): void {
     if (this.textLines.length === 0) { return; }
     if (this.textLines.length === 1 && this.textLines[0].length === 0) { return; }
 
-    const line: PonSprite[] = this.currentTextLine;
-    if (line.length === 0 || line[0].text === "") {
+    const line: BaseLayerTextLine = this.currentTextLine;
+    if (line.length === 0 || line.getCh(0).ch === "") {
       // 改行したばかりなので、この行を削除する。
       this.textLines.splice(this.textLines.length - 1, 1);
       this.textY -= this.textLineHeight + this.textLinePitch;
     } else {
       // 最後の文字を削除する
-      line[line.length - 1].destroy();
-      line.splice(line.length - 1, 1);
+      line.backspace();
     }
   }
 
@@ -655,12 +726,12 @@ export class BaseLayer {
         break;
     }
     let x = startX;
-    const list: number[] = [];
+    // const list: number[] = [];
     const currentTextLine = this.currentTextLine;
-    currentTextLine.forEach((sp) => {
-      list.push(x);
-      sp.x = x;
-      x += sp.textWidth;
+    currentTextLine.forEach((blc, index) => {
+      // list.push(x);
+      blc.sp.x = x;
+      x += blc.sp.textWidth;
     });
 
     const y = this.textY + this.textLineHeight - chHeight;
@@ -672,7 +743,7 @@ export class BaseLayer {
    */
   public addTextReturn(): void {
     this.textY += this.textLineHeight + this.textLinePitch;
-    this.textLines.push([]);
+    this.textLines.push(new BaseLayerTextLine());
     this.textLocatePoint = 0;
     if (this.reservedTextIndentPoint !== 0) {
       this.textIndentPoint = this.reservedTextIndentPoint;
@@ -692,8 +763,8 @@ export class BaseLayer {
   public setCharLocate(x: number | null, y: number | null): void {
     const line = this.currentTextLine;
     const tmpY: number = this.textY;
-    const tmpX: number = line.length === 0 ? 0 : line[line.length - 1].x;
-    const tmpX2: number = line.length === 0 ? 0 : line[0].x;
+    const tmpX: number = line.length === 0 ? 0 : line.getCh(line.length - 1).sp.x;
+    const tmpX2: number = line.length === 0 ? 0 : line.getCh(0).sp.x;
 
     this.addTextReturn();
     if (x != null) {
@@ -753,35 +824,16 @@ export class BaseLayer {
    * インデント位置は初期化される。
    */
   public clearText(): void {
-    this.textLines.forEach((textLine: PonSprite[]) => {
-      textLine.forEach((sp) => {
-        sp.destroy();
-      });
+    this.textLines.forEach((textLine: BaseLayerTextLine) => {
+      textLine.destroy();
     });
-    this.textLines = [[]];
+    this.textLines = [new BaseLayerTextLine()];
     this.textX = this.textMarginLeft;
     this.textY = this.textMarginTop;
     this.textLocatePoint = 0;
     this.textIndentPoint = 0;
     this.reservedTextIndentPoint = 0;
     this.reservedTextIndentClear = false;
-  }
-
-  /**
-   * 表示しているテキストの内容を文字列で取得
-   * @return テキスト
-   */
-  public get messageText(): string {
-    let message: string = "";
-    this.textLines.forEach((textLine: PonSprite[], index: number) => {
-      if (index > 0 ) {
-        message += "\n";
-      }
-      textLine.forEach((sp) => {
-        message += sp.text;
-      });
-    });
-    return message;
   }
 
   /**
@@ -939,24 +991,25 @@ export class BaseLayer {
   public copyTo(dest: BaseLayer): void {
     // テキストのコピー
     dest.clearText();
-    this.textLines.forEach((textLine: PonSprite[], index: number) => {
+    this.textLines.forEach((srcTextLine: BaseLayerTextLine, index: number) => {
       if (dest.textLines.length !== 0) {
-        dest.textLines.push([]);
+        dest.textLines.push(new BaseLayerTextLine());
       }
-      const destTextLine: PonSprite[] = dest.textLines[dest.textLines.length - 1];
-      textLine.forEach((srcSp: PonSprite) => {
-        const ch: string | null = srcSp.text;
-        const style: PIXI.TextStyle | null = srcSp.textStyle;
-        const pitch: number = srcSp.textPitch;
-        if (ch === null || style === null) {
-          return;
-        }
-        const destSp: PonSprite = new PonSprite(dest.textSpriteCallbacks);
-        destSp.createText(ch, style, pitch);
-        destSp.x = srcSp.x;
-        destSp.y = srcSp.y;
-        destTextLine.push(destSp);
-      });
+      const destTextLine: BaseLayerTextLine = dest.textLines[dest.textLines.length - 1];
+      destTextLine.copyFrom(srcTextLine, dest.textSpriteCallbacks);
+      // textLine.forEach((srcSp: PonSprite) => {
+      //   const ch: string | null = srcSp.text;
+      //   const style: PIXI.TextStyle | null = srcSp.textStyle;
+      //   const pitch: number = srcSp.textPitch;
+      //   if (ch === null || style === null) {
+      //     return;
+      //   }
+      //   const destSp: PonSprite = new PonSprite(dest.textSpriteCallbacks);
+      //   destSp.createText(ch, style, pitch);
+      //   destSp.x = srcSp.x;
+      //   destSp.y = srcSp.y;
+      //   destTextLine.push(destSp);
+      // });
     });
 
     // 背景色のコピー
