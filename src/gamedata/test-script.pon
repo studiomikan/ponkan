@@ -16,7 +16,6 @@
 ;image "lay": 1, "page": "fore", "file": "image/okayu.jpg", "visible": true, "x": 0, "y": 0
 ;layopt lay: 1, scalex: 1.5, scaley: 1.5
 
-
 ;image "lay": 2, "file": "image/pagebreak.png", "visible": true, "x": 0, "y": 0
 ;frameanim "lay": 2, "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.pageBreakFrames"
 ;startframeanim "lay": 2
@@ -35,33 +34,34 @@
   "y": 70,
   "exp": "alert('onClickImageButton');"
 }
-;textbutton {
-  lay:    3,
-  text:   "ボタン",
-  x:  20,
-  y:  20,
-  width:  200,
-  height: 32,
-  bgcolors: ["0xFF0000", "0x00FF00", "0x0000FF"],
-  exp:    "alert('onClickTextButton')",
-  calllabel:  "button-action-call",
-  align: "left",
-}
-;togglebutton {
-  "lay": 3,
-  "imagefile": "image/sample-toggle-button.png",
-  "direction": "vertical",
-  "x": 20,
-  "y": 140,
-  "statevar": "sample-toggle-button"
-}
-# ;layopt "lay": 4, "x": 100, "y": 50, "visible": true
-# ;image lay: 4, file: "image/okayu.jpg"
-;childimage lay: 1, file: "image/okayu.jpg", x: 100, y: 100
-;unlockbuttons
-;unlocksystembuttons
 
-# ;rclick jump: true, label: "jump-target-label"
+#;textbutton {
+#  lay:    3,
+#  text:   "ボタン",
+#  x:  20,
+#  y:  20,
+#  width:  200,
+#  height: 32,
+#  bgcolors: ["0xFF0000", "0x00FF00", "0x0000FF"],
+#  exp:    "alert('onClickTextButton')",
+#  calllabel:  "button-action-call",
+#  align: "left",
+#}
+#;togglebutton {
+#  "lay": 3,
+#  "imagefile": "image/sample-toggle-button.png",
+#  "direction": "vertical",
+#  "x": 20,
+#  "y": 140,
+#  "statevar": "sample-toggle-button"
+#}
+## ;layopt "lay": 4, "x": 100, "y": 50, "visible": true
+## ;image lay: 4, file: "image/okayu.jpg"
+#;childimage lay: 1, file: "image/okayu.jpg", x: 100, y: 100
+#;unlockbuttons
+#;unlocksystembuttons
+#
+## ;rclick jump: true, label: "jump-target-label"
 
 *trans_loop
 ;clear
@@ -70,8 +70,13 @@
   width: 1280 / 2 - 20,
   height: 720,
   x: 1280 / 2,
-  y: 0
+  y: 0,
+  align: "left",
 }
+あいうえお
+;br
+かきくけこ
+;p
 
 # ;loadsound "buf": 0, "file": "sound/pekowave1.wav"
 # ;soundopt buf: 0, loop: false, volume: 0.1

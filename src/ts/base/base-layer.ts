@@ -16,12 +16,14 @@ export interface IBaseLayerEventListener {
 
 export class BaseLayerChar {
   public readonly ch: string;
-  public readonly ruby: string;
   public readonly sp: PonSprite;
-  public constructor(ch: string, sp: PonSprite, ruby: string = "") {
+  public readonly ruby: string;
+  public readonly rubySp: PonSprite | null;
+  public constructor(ch: string, sp: PonSprite, ruby: string = "", rubySp: PonSprite | null = null) {
     this.ch = ch;
     this.sp = sp;
     this.ruby = ruby;
+    this.rubySp = rubySp;
   }
 
   public clone(spriteCallbacks: IPonSpriteCallbacks): BaseLayerChar {
@@ -29,11 +31,56 @@ export class BaseLayerChar {
     sp.createText(this.ch, this.sp.textStyle as PIXI.TextStyle, this.sp.textPitch);
     return new BaseLayerChar(this.ch, sp, this.ruby);
   }
+
+  public destroy(): void {
+    this.sp.destroy();
+    if (this.rubySp != null) {
+      this.rubySp.destroy();
+    }
+  }
 }
 
 export class BaseLayerTextLine {
+  public readonly container: PIXI.Container;
+  public readonly spriteCallbacks: IPonSpriteCallbacks;
   public readonly chList: BaseLayerChar[] = [];
 
+  private _textX: number = 0;
+  // private _textY: number = 0;
+
+  public constructor() {
+    this.container = new PIXI.Container();
+    this.spriteCallbacks = {
+      pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
+        this.container.addChild(child);
+      },
+      pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
+        this.container.removeChild(child);
+      },
+    };
+  }
+
+  // public addChar(ch: string, sp: PonSprite): void {
+  //   this.chList.push(new BaseLayerChar(ch, sp));
+  // }
+
+  public forEach(func: (ch: BaseLayerChar, index: number) => void): void {
+    this.chList.forEach(func);
+  }
+
+  public destroy(): void {
+    this.chList.forEach((blc) => {
+      blc.destroy();
+    });
+    this.chList.splice(0, this.chList.length);
+    this.container.destroy();
+  }
+
+  public get x() { return this.container.x; }
+  public set x(x: number) { this.container.x = x; }
+  public get y() { return this.container.y; }
+  public set y(y: number) { this.container.y = y; }
+  public get textX() { return this._textX; }
   public get text() {
     let str = "";
     this.chList.forEach((blc) => {
@@ -41,9 +88,7 @@ export class BaseLayerTextLine {
     });
     return str;
   }
-
   public get length() { return this.chList.length; }
-
   public get width(): number {
     if (this.chList.length === 0) {
       return 0;
@@ -55,8 +100,15 @@ export class BaseLayerTextLine {
     return width;
   }
 
-  public addChar(ch: string, sp: PonSprite): void {
+  public addChar(ch: string, textStyle: PIXI.TextStyle, pitch: number, lineHeight: number): void {
+    const sp: PonSprite = new PonSprite(this.spriteCallbacks);
+    sp.createText(ch, textStyle, pitch);
+    sp.x = this._textX;
+    sp.y = lineHeight - (+textStyle.fontSize);
+    this._textX += sp.textWidth;
     this.chList.push(new BaseLayerChar(ch, sp));
+
+    console.log("text", this.text);
   }
 
   public getCh(index: number): BaseLayerChar {
@@ -64,27 +116,16 @@ export class BaseLayerTextLine {
   }
 
   public backspace(): void {
-    this.chList[this.chList.length - 1].sp.destroy();
+    this.chList[this.chList.length - 1].destroy();
     this.chList.splice(this.chList.length - 1, 1);
   }
 
-  public forEach(func: (ch: BaseLayerChar, index: number) => void): void {
-    this.chList.forEach(func);
-  }
-
-  public destroy(): void {
-    this.chList.forEach((blc) => {
-      blc.sp.destroy();
+  public copyFrom(src: BaseLayerTextLine): void {
+    this.destroy();
+    src.chList.forEach((srcBlc: BaseLayerChar) => {
+      const newBlc = srcBlc.clone(this.spriteCallbacks);
+      this.chList.push(newBlc);
     });
-    this.chList.splice(0, this.chList.length);
-  }
-
-  public copyFrom(src: BaseLayerTextLine, spriteCallbacks: IPonSpriteCallbacks): void {
-      this.destroy();
-      src.chList.forEach((srcBlc: BaseLayerChar) => {
-        const newBlc = srcBlc.clone(spriteCallbacks);
-        this.chList.push(newBlc);
-      });
   }
 }
 
@@ -113,7 +154,7 @@ export class BaseLayer {
   protected _backgroundAlpha: number = 1.0;
 
   protected textContainer: PIXI.Container;
-  protected textSpriteCallbacks: IPonSpriteCallbacks;
+  // protected textSpriteCallbacks: IPonSpriteCallbacks;
   protected childContainer: PIXI.Container;
   protected childSpriteCallbacks: IPonSpriteCallbacks;
   protected imageContainer: PIXI.Container;
@@ -215,9 +256,9 @@ export class BaseLayer {
   public textMarginBottom: number  = 10;
   public textMarginLeft: number  = 10;
   /** 次の文字を描画する予定の位置。予定であって、自動改行等が発生した場合は次の行になるため注意。 */
-  public textX: number = NaN;
+  // public textX: number = NaN;
   /** 次の文字を描画する予定の位置。予定であって、自動改行等が発生した場合は次の行になるため注意。 */
-  public textY: number = NaN;
+  // public textY: number = NaN;
   public textPitch: number = 0;
   public textLineHeight: number = 24;
   public textLinePitch: number = 5;
@@ -288,8 +329,6 @@ export class BaseLayer {
     this.owner = owner;
 
     this._container = new PIXI.Container();
-    // this._container.width = 32;
-    // this._container.height = 32;
 
     this.maskSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
     this.maskSprite.width = 32;
@@ -312,14 +351,16 @@ export class BaseLayer {
 
     this.textContainer = new PIXI.Container();
     this.container.addChild(this.textContainer);
-    this.textSpriteCallbacks = {
-      pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
-        this.textContainer.addChild(child);
-      },
-      pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
-        this.textContainer.removeChild(child);
-      },
-    };
+    this.textContainer.addChild(this.currentTextLine.container);
+    // this.textSpriteCallbacks = {
+    //   pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
+    //     this.textContainer.addChild(child);
+    //   },
+    //   pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
+    //     this.textContainer.removeChild(child);
+    //   },
+    // };
+    this.clearText();
 
     this.childContainer = new PIXI.Container();
     this.container.addChild(this.childContainer);
@@ -570,9 +611,16 @@ export class BaseLayer {
     return this.textLines[this.textLines.length - 1];
   }
 
-  // public get currentTextStylesBuf(): BaseLayerTextLine {
-  //   return this.textLines[this.textLines.length - 1];
-  // }
+  private createBaseLayerTextLine(): BaseLayerTextLine {
+    const line = new BaseLayerTextLine();
+    this.textContainer.addChild(line.container);
+    return line;
+  }
+
+  private deleteBaseLayerTextLine(line: BaseLayerTextLine): void {
+    line.destroy();
+    this.textContainer.removeChild(line.container);
+  }
 
   public get text(): string {
     let str = "";
@@ -611,23 +659,11 @@ export class BaseLayer {
     if (ch.length > 1) {
       return this.addText(ch);
     }
-
-    if (isNaN(this.textX)) { this.textX = this.textMarginLeft; }
-    if (isNaN(this.textY)) { this.textY = this.textMarginTop; }
-
     if (ch === "\n" || ch === "\r") {
       this.addTextReturn();
       return;
     }
-    const sp: PonSprite = new PonSprite(this.textSpriteCallbacks);
-    const fontSize: number = +this.textStyle.fontSize;
-    sp.createText(ch, this.textStyle, this.textPitch);
-
-    const pos = this.getNextTextPos(ch, sp.textWidth);
-    sp.x = pos.x;
-    sp.y = pos.y;
-    this.currentTextLine.addChar(ch, sp);
-    this.textX = pos.x + sp.textWidth;
+    this.currentTextLine.addChar(ch, this.textStyle, this.textPitch, this.textLineHeight);
   }
 
   public getCurrentLineWidth(): number {
@@ -642,7 +678,7 @@ export class BaseLayer {
     if (line.length === 0 || line.getCh(0).ch === "") {
       // 改行したばかりなので、この行を削除する。
       this.textLines.splice(this.textLines.length - 1, 1);
-      this.textY -= this.textLineHeight + this.textLinePitch;
+      // this.textY -= this.textLineHeight + this.textLinePitch;
     } else {
       // 最後の文字を削除する
       line.backspace();
@@ -659,98 +695,125 @@ export class BaseLayer {
                         chWidth: number,
                         chHeight: number = this.textFontSize,
                         enabledAutoReturn: boolean = true): { x: number, y: number, newLineFlag: boolean } {
-    // 自動改行の判定
-    const lineWidth = this.getCurrentLineWidth();
-    let totalMargin = this.textMarginLeft + this.textMarginRight;
-    const indentOrLocate: number = 0;
-    if (this.textLocatePoint !== 0) {
-      switch (this.textAlign) {
-        case "left": case "center":
-          totalMargin = this.textIndentPoint + this.textMarginRight;
-          break;
-        case "right":
-          totalMargin = (this.width - this.textLocatePoint) - this.textMarginLeft;
-          break;
-      }
-    } else if (this.textIndentPoint !== 0) {
-      switch (this.textAlign) {
-        case "left": case "center":
-          totalMargin = this.textIndentPoint + this.textMarginRight;
-          break;
-        case "right":
-          totalMargin = (this.width - this.textIndentPoint) + this.textMarginLeft;
-          break;
-      }
-    }
-    // 自動改行
-    let newLineFlag: boolean = false;
-    if (this.textAutoReturn && enabledAutoReturn) {
-      if (BaseLayer.headProhibitionChar.indexOf(ch) === -1 &&
-         (lineWidth + chWidth + totalMargin) > this.width) {
-        this.addTextReturn();
-        newLineFlag = true;
-      } else {
-        // 文字が行末禁則文字かつ、行末になってしまいそうなら改行
-        if (BaseLayer.tailProhibitionChar.indexOf(ch) !== -1 &&
-          (lineWidth + (chWidth * 2) + totalMargin) > this.width) {
-          this.addTextReturn();
-          newLineFlag = true;
-        }
-      }
-    }
+    // // 自動改行の判定
+    // const lineWidth = this.getCurrentLineWidth();
+    // let totalMargin = this.textMarginLeft + this.textMarginRight;
+    // const indentOrLocate: number = 0;
+    // if (this.textLocatePoint !== 0) {
+    //   switch (this.textAlign) {
+    //     case "left": case "center":
+    //       totalMargin = this.textIndentPoint + this.textMarginRight;
+    //       break;
+    //     case "right":
+    //       totalMargin = (this.width - this.textLocatePoint) - this.textMarginLeft;
+    //       break;
+    //   }
+    // } else if (this.textIndentPoint !== 0) {
+    //   switch (this.textAlign) {
+    //     case "left": case "center":
+    //       totalMargin = this.textIndentPoint + this.textMarginRight;
+    //       break;
+    //     case "right":
+    //       totalMargin = (this.width - this.textIndentPoint) + this.textMarginLeft;
+    //       break;
+    //   }
+    // }
+    // // 自動改行
+    // let newLineFlag: boolean = false;
+    // if (this.textAutoReturn && enabledAutoReturn) {
+    //   if (BaseLayer.headProhibitionChar.indexOf(ch) === -1 &&
+    //      (lineWidth + chWidth + totalMargin) > this.width) {
+    //     this.addTextReturn();
+    //     newLineFlag = true;
+    //   } else {
+    //     // 文字が行末禁則文字かつ、行末になってしまいそうなら改行
+    //     if (BaseLayer.tailProhibitionChar.indexOf(ch) !== -1 &&
+    //       (lineWidth + (chWidth * 2) + totalMargin) > this.width) {
+    //       this.addTextReturn();
+    //       newLineFlag = true;
+    //     }
+    //   }
+    // }
 
-    // 追加する1文字に合わせて、既存の文字の位置を調整＆次の文字位置の算出
-    const newLineWidth = this.getCurrentLineWidth() + chWidth;
-    let leftMargin: number = 0;
-    let startX: number = 0;
-    switch (this.textAlign) {
-      case "left":
-        leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft + this.textLocatePoint;
-        startX = leftMargin;
-        break;
-      case "center":
-        leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft + this.textLocatePoint;
-        const center = leftMargin + (this.width - leftMargin - this.textMarginRight) / 2;
-        startX = center - (newLineWidth / 2);
-        break;
-      case "right":
-        let right: number;
-        if (this.textLocatePoint !== 0) {
-          right = this.textLocatePoint;
-        } else if (this.textIndentPoint !== 0) {
-          right = this.textIndentPoint;
-        } else {
-          right = this.width - this.textMarginRight;
-        }
-        startX = right - newLineWidth;
-        break;
-    }
-    let x = startX;
-    // const list: number[] = [];
-    const currentTextLine = this.currentTextLine;
-    currentTextLine.forEach((blc, index) => {
-      // list.push(x);
-      blc.sp.x = x;
-      x += blc.sp.textWidth;
-    });
+    // // 追加する1文字に合わせて、既存の文字の位置を調整＆次の文字位置の算出
+    // const newLineWidth = this.getCurrentLineWidth() + chWidth;
+    // let leftMargin: number = 0;
+    // let startX: number = 0;
+    // switch (this.textAlign) {
+    //   case "left":
+    //     leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft + this.textLocatePoint;
+    //     startX = leftMargin;
+    //     break;
+    //   case "center":
+    //     leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft + this.textLocatePoint;
+    //     const center = leftMargin + (this.width - leftMargin - this.textMarginRight) / 2;
+    //     startX = center - (newLineWidth / 2);
+    //     break;
+    //   case "right":
+    //     let right: number;
+    //     if (this.textLocatePoint !== 0) {
+    //       right = this.textLocatePoint;
+    //     } else if (this.textIndentPoint !== 0) {
+    //       right = this.textIndentPoint;
+    //     } else {
+    //       right = this.width - this.textMarginRight;
+    //     }
+    //     startX = right - newLineWidth;
+    //     break;
+    // }
+    // let x = startX;
+    // // const list: number[] = [];
+    // const currentTextLine = this.currentTextLine;
+    // currentTextLine.forEach((blc, index) => {
+    //   // list.push(x);
+    //   blc.sp.x = x;
+    //   x += blc.sp.textWidth;
+    // });
 
-    const y = this.textY + this.textLineHeight - chHeight;
-    return {x, y, newLineFlag};
+    // const y = this.textY + this.textLineHeight - chHeight;
+    // return {x, y, newLineFlag};
+
+    // TODO ここ作る
+    return {x: 0, y: 0, newLineFlag: false};
   }
 
   /**
    * テキストを改行する
    */
   public addTextReturn(): void {
-    this.textY += this.textLineHeight + this.textLinePitch;
-    this.textLines.push(new BaseLayerTextLine());
-    this.textLocatePoint = 0;
+    const preLineY = this.currentTextLine.y;
+    this.textLines.push(this.createBaseLayerTextLine());
+
+    // TODO インデント
     if (this.reservedTextIndentPoint !== 0) {
       this.textIndentPoint = this.reservedTextIndentPoint;
-    } else if (this.reservedTextIndentClear ) {
+    } else if (this.reservedTextIndentClear) {
       this.textIndentPoint = 0;
       this.reservedTextIndentClear = false;
     }
+    switch (this.textAlign) {
+      case "left":
+        if (this.textIndentPoint !== 0) {
+          this.currentTextLine.x = this.textIndentPoint;
+        } else {
+          this.currentTextLine.x = this.textMarginLeft;
+        }
+        this.currentTextLine.y = this.textMarginTop;
+        break;
+      case "center":
+        this.currentTextLine.x = (this.width - this.textMarginLeft - this.textMarginRight) / 2;
+        this.currentTextLine.y = this.textMarginTop;
+        break;
+      case "right":
+        this.currentTextLine.x = this.textMarginRight;
+        this.currentTextLine.y = this.textMarginTop;
+        break;
+    }
+    this.currentTextLine.y = preLineY + this.textLineHeight + this.textLinePitch;
+  }
+
+  public alignCurrentTextLine(): void {
+    // TODO ここ作る
   }
 
   /**
@@ -761,32 +824,34 @@ export class BaseLayer {
    * @param y y座標
    */
   public setCharLocate(x: number | null, y: number | null): void {
+    // TODO ここ作る
     const line = this.currentTextLine;
-    const tmpY: number = this.textY;
-    const tmpX: number = line.length === 0 ? 0 : line.getCh(line.length - 1).sp.x;
-    const tmpX2: number = line.length === 0 ? 0 : line.getCh(0).sp.x;
+    // const tmpY: number = this.textY;
+    // const tmpX: number = line.length === 0 ? 0 : line.getCh(line.length - 1).sp.x;
+    // const tmpX2: number = line.length === 0 ? 0 : line.getCh(0).sp.x;
 
-    this.addTextReturn();
-    if (x != null) {
-      this.textLocatePoint = x;
-    } else {
-      if (this.textAlign !== "right") {
-        this.textLocatePoint = tmpX;
-      } else {
-        this.textLocatePoint = tmpX2;
-      }
-    }
-    if (y != null) {
-      this.textY = y + this.textMarginTop;
-    } else {
-      this.textY = tmpY;
-    }
+    // this.addTextReturn();
+    // if (x != null) {
+    //   this.textLocatePoint = x;
+    // } else {
+    //   if (this.textAlign !== "right") {
+    //     this.textLocatePoint = tmpX;
+    //   } else {
+    //     this.textLocatePoint = tmpX2;
+    //   }
+    // }
+    // if (y != null) {
+    //   this.textY = y + this.textMarginTop;
+    // } else {
+    //   this.textY = tmpY;
+    // }
   }
 
   /**
    * 現在のテキスト描画位置でインデントするように設定する
    */
   public setIndentPoint(): void {
+    // TODO ここ作る
     switch (this.textAlign) {
       case "left":
         const leftMargin = this.textIndentPoint !== 0 ?
@@ -794,7 +859,7 @@ export class BaseLayer {
         this.reservedTextIndentPoint = leftMargin + this.getCurrentLineWidth();
         break;
       case "center":
-        this.reservedTextIndentPoint = this.textX;
+        this.reservedTextIndentPoint = this.currentTextLine.textX;
         break;
       case "right":
         const rightMargin: number = 0;
@@ -825,15 +890,30 @@ export class BaseLayer {
    */
   public clearText(): void {
     this.textLines.forEach((textLine: BaseLayerTextLine) => {
-      textLine.destroy();
+      this.deleteBaseLayerTextLine(textLine);
     });
-    this.textLines = [new BaseLayerTextLine()];
-    this.textX = this.textMarginLeft;
-    this.textY = this.textMarginTop;
+    this.textLines = [this.createBaseLayerTextLine()];
+    // this.textX = this.textMarginLeft;
+    // this.textY = this.textMarginTop;
     this.textLocatePoint = 0;
     this.textIndentPoint = 0;
     this.reservedTextIndentPoint = 0;
     this.reservedTextIndentClear = false;
+
+    switch (this.textAlign) {
+      case "left":
+        this.currentTextLine.x = this.textMarginLeft;
+        this.currentTextLine.y = this.textMarginTop;
+        break;
+      case "center":
+        this.currentTextLine.x = (this.width - this.textMarginLeft - this.textMarginRight) / 2;
+        this.currentTextLine.y = this.textMarginTop;
+        break;
+      case "right":
+        this.currentTextLine.x = this.textMarginRight;
+        this.currentTextLine.y = this.textMarginTop;
+        break;
+    }
   }
 
   /**
@@ -912,8 +992,8 @@ export class BaseLayer {
     "textMarginRight",
     "textMarginBottom",
     "textMarginLeft",
-    "textX",
-    "textY",
+    // "textX",
+    // "textY",
     "textPitch",
     "textLineHeight",
     "textLinePitch",
@@ -993,10 +1073,10 @@ export class BaseLayer {
     dest.clearText();
     this.textLines.forEach((srcTextLine: BaseLayerTextLine, index: number) => {
       if (dest.textLines.length !== 0) {
-        dest.textLines.push(new BaseLayerTextLine());
+        dest.textLines.push(dest.createBaseLayerTextLine());
       }
       const destTextLine: BaseLayerTextLine = dest.textLines[dest.textLines.length - 1];
-      destTextLine.copyFrom(srcTextLine, dest.textSpriteCallbacks);
+      destTextLine.copyFrom(srcTextLine);
       // textLine.forEach((srcSp: PonSprite) => {
       //   const ch: string | null = srcSp.text;
       //   const style: PIXI.TextStyle | null = srcSp.textStyle;

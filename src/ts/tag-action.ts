@@ -1536,15 +1536,13 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("bgalphas", "array", false, [1, 1, 1]),
         /// @param システム用ボタンとする場合はtrue
         new TagValue("system", "boolean", false, false),
-        /// @param テキスト描画のマージン　上
+        /// @param テキスト描画のマージン（上）。この値を反映させるには、`clear` で一度テキストをクリアする必要があります。
         new TagValue("margint", "number", false, 0),
-        /// @param テキスト描画のマージン　右
+        /// @param テキスト描画のマージン（右）。この値を反映させるには、`clear` で一度テキストをクリアする必要があります。
         new TagValue("marginr", "number", false, 0),
-        /// @param テキスト描画のマージン　下
+        /// @param テキスト描画のマージン（下）。この値を反映させるには、`clear` で一度テキストをクリアする必要があります。
         new TagValue("marginb", "number", false, 0),
-        /// @param テキスト描画のマージン　左
-        new TagValue("marginl", "number", false, 0),
-        /// @param テキスト描画のマージン　左
+        /// @param テキスト描画のマージン（左）。この値を反映させるには、`clear` で一度テキストをクリアする必要があります。
         new TagValue("marginl", "number", false, 0),
         /// @param テキスト寄せの方向。"left" | "center" | "right"
         new TagValue("align", "string", false, "center"),
