@@ -263,9 +263,9 @@ export class BaseLayer {
   public textLineHeight: number = 24;
   public textLinePitch: number = 5;
   public textAutoReturn: boolean = true;
-  public textLocatePoint: number = 0;
-  public textIndentPoint: number = 0;
-  public reservedTextIndentPoint: number = 0;
+  public textLocatePoint: number | null = null;
+  public textIndentPoint: number | null = null;
+  public reservedTextIndentPoint: number | null = null;
   public reservedTextIndentClear: boolean = false;
   public textAlign: "left" | "center" | "right" = "left";
 
@@ -664,6 +664,7 @@ export class BaseLayer {
       return;
     }
     this.currentTextLine.addChar(ch, this.textStyle, this.textPitch, this.textLineHeight);
+    this.alignCurrentTextLine();
   }
 
   public getCurrentLineWidth(): number {
@@ -784,92 +785,117 @@ export class BaseLayer {
     const preLineY = this.currentTextLine.y;
     this.textLines.push(this.createBaseLayerTextLine());
 
-    // TODO インデント
-    if (this.reservedTextIndentPoint !== 0) {
+    if (this.reservedTextIndentPoint != null) {
       this.textIndentPoint = this.reservedTextIndentPoint;
     } else if (this.reservedTextIndentClear) {
       this.textIndentPoint = 0;
       this.reservedTextIndentClear = false;
     }
-    switch (this.textAlign) {
-      case "left":
-        if (this.textIndentPoint !== 0) {
-          this.currentTextLine.x = this.textIndentPoint;
-        } else {
-          this.currentTextLine.x = this.textMarginLeft;
-        }
-        this.currentTextLine.y = this.textMarginTop;
-        break;
-      case "center":
-        this.currentTextLine.x = (this.width - this.textMarginLeft - this.textMarginRight) / 2;
-        this.currentTextLine.y = this.textMarginTop;
-        break;
-      case "right":
-        this.currentTextLine.x = this.textMarginRight;
-        this.currentTextLine.y = this.textMarginTop;
-        break;
-    }
+    // switch (this.textAlign) {
+    //   case "left":
+    //     if (this.textIndentPoint != null) {
+    //       this.currentTextLine.x = this.textIndentPoint;
+    //     } else {
+    //       this.currentTextLine.x = this.textMarginLeft;
+    //     }
+    //     this.currentTextLine.y = this.textMarginTop;
+    //     break;
+    //   case "center":
+    //     this.currentTextLine.x = (this.width - this.textMarginLeft - this.textMarginRight) / 2;
+    //     this.currentTextLine.y = this.textMarginTop;
+    //     break;
+    //   case "right":
+    //     this.currentTextLine.x = this.textMarginRight;
+    //     this.currentTextLine.y = this.textMarginTop;
+    //     break;
+    // }
+    this.alignCurrentTextLine();
     this.currentTextLine.y = preLineY + this.textLineHeight + this.textLinePitch;
   }
 
+  /**
+   * 現在描画中のテキスト行をの位置をtextAlignにそろえる
+   */
   public alignCurrentTextLine(): void {
-    // TODO ここ作る
+    switch (this.textAlign) {
+      case "left":
+        if (this.textLocatePoint != null) {
+          this.currentTextLine.x = this.textLocatePoint;
+        } else {
+          const left = this.textIndentPoint == null ? this.textMarginLeft : this.textIndentPoint;
+          this.currentTextLine.x = left;
+        }
+        break;
+      case "center":
+        if (this.textLocatePoint != null) {
+          this.currentTextLine.x = this.textLocatePoint - (this.currentTextLine.width / 2);
+        } else {
+          const center = this.textIndentPoint == null ?
+            (this.width - this.textMarginLeft  - this.textMarginRight) / 2 :
+            (this.width - this.textIndentPoint - this.textMarginRight) / 2;
+          this.currentTextLine.x = center - (this.currentTextLine.width / 2);
+        }
+        break;
+      case "right":
+        if (this.textLocatePoint != null) {
+          this.currentTextLine.x = this.textLocatePoint - this.currentTextLine.width;
+        } else {
+          const right = this.textIndentPoint == null ?
+            (this.width - this.textMarginRight) :
+            this.textIndentPoint;
+          this.currentTextLine.x = right - this.currentTextLine.width;
+        }
+        break;
+    }
   }
 
   /**
    * テキストの表示位置を指定する。
    * 内部的には、指定前とは別の行として扱われる。
-   * また、xとyの座標には、別途marginが考慮される。
    * @param x x座標
    * @param y y座標
    */
   public setCharLocate(x: number | null, y: number | null): void {
-    // TODO ここ作る
-    const line = this.currentTextLine;
-    // const tmpY: number = this.textY;
-    // const tmpX: number = line.length === 0 ? 0 : line.getCh(line.length - 1).sp.x;
-    // const tmpX2: number = line.length === 0 ? 0 : line.getCh(0).sp.x;
-
-    // this.addTextReturn();
-    // if (x != null) {
-    //   this.textLocatePoint = x;
-    // } else {
-    //   if (this.textAlign !== "right") {
-    //     this.textLocatePoint = tmpX;
-    //   } else {
-    //     this.textLocatePoint = tmpX2;
-    //   }
-    // }
-    // if (y != null) {
-    //   this.textY = y + this.textMarginTop;
-    // } else {
-    //   this.textY = tmpY;
-    // }
+    const preLine = this.currentTextLine;
+    this.addTextReturn();
+    const currentLine = this.currentTextLine;
+    if (x != null) {
+      this.textLocatePoint = x;
+    } else {
+      // yだけ変えるときのxを自動算出
+      switch (this.textAlign) {
+        case "left":
+          this.textLocatePoint = preLine.x + preLine.width;
+          break;
+        case "center":
+          this.textLocatePoint = preLine.x + (preLine.width / 2);
+          break;
+        case "right":
+          this.textLocatePoint = preLine.x;
+          break;
+      }
+      console.log("auto x:", this.textLocatePoint);
+    }
+    if (y != null) {
+      currentLine.y = y;
+    } else {
+      // xだけ変えるときのy
+      currentLine.y = preLine.y;
+    }
   }
 
   /**
    * 現在のテキスト描画位置でインデントするように設定する
    */
   public setIndentPoint(): void {
-    // TODO ここ作る
+    const currentLine = this.currentTextLine;
     switch (this.textAlign) {
       case "left":
-        const leftMargin = this.textIndentPoint !== 0 ?
-          this.textIndentPoint : this.textMarginLeft + this.textLocatePoint;
-        this.reservedTextIndentPoint = leftMargin + this.getCurrentLineWidth();
-        break;
       case "center":
-        this.reservedTextIndentPoint = this.currentTextLine.textX;
+        this.reservedTextIndentPoint = currentLine.x + currentLine.width;
         break;
       case "right":
-        const rightMargin: number = 0;
-        if (this.textLocatePoint !== 0) {
-          this.reservedTextIndentPoint = this.textLocatePoint - this.getCurrentLineWidth();
-        } else if (this.textIndentPoint !== 0) {
-          this.reservedTextIndentPoint = this.textIndentPoint - this.getCurrentLineWidth();
-        } else {
-          this.reservedTextIndentPoint = this.width - this.textMarginRight - this.getCurrentLineWidth();
-        }
+        this.reservedTextIndentPoint = currentLine.x;
         break;
     }
   }
@@ -878,7 +904,7 @@ export class BaseLayer {
    * インデント位置をクリアする
    */
   public clearIndentPoint(): void {
-    this.reservedTextIndentPoint = 0;
+    this.reservedTextIndentPoint = null;
     this.reservedTextIndentClear = true;
   }
 
@@ -893,17 +919,16 @@ export class BaseLayer {
       this.deleteBaseLayerTextLine(textLine);
     });
     this.textLines = [this.createBaseLayerTextLine()];
-    // this.textX = this.textMarginLeft;
-    // this.textY = this.textMarginTop;
-    this.textLocatePoint = 0;
-    this.textIndentPoint = 0;
-    this.reservedTextIndentPoint = 0;
+    this.textLocatePoint = null;
+    this.textIndentPoint = null;
+    this.reservedTextIndentPoint = null;
     this.reservedTextIndentClear = false;
 
     switch (this.textAlign) {
       case "left":
         this.currentTextLine.x = this.textMarginLeft;
         this.currentTextLine.y = this.textMarginTop;
+        console.log(this.textMarginLeft);
         break;
       case "center":
         this.currentTextLine.x = (this.width - this.textMarginLeft - this.textMarginRight) / 2;

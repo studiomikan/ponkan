@@ -71,10 +71,18 @@
   height: 720,
   x: 1280 / 2,
   y: 0,
-  align: "left",
 }
+;mesopt {
+  margint: 20,
+  marginl: 20,
+  marginr: 100,
+  align: "right",
+}
+;clear
 あいうえお
-;br
+;locate x: 200
+#;locate x: 200, y: 200
+#;locate y: 200
 かきくけこ
 ;p
 
