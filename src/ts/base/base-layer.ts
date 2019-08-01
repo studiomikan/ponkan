@@ -29,6 +29,8 @@ export class BaseLayerChar {
   public clone(spriteCallbacks: IPonSpriteCallbacks): BaseLayerChar {
     const sp = new PonSprite(spriteCallbacks);
     sp.createText(this.ch, this.sp.textStyle as PIXI.TextStyle, this.sp.textPitch);
+    sp.x = this.sp.x;
+    sp.y = this.sp.y;
     return new BaseLayerChar(this.ch, sp, this.ruby);
   }
 
@@ -60,20 +62,30 @@ export class BaseLayerTextLine {
     };
   }
 
-  // public addChar(ch: string, sp: PonSprite): void {
-  //   this.chList.push(new BaseLayerChar(ch, sp));
-  // }
-
   public forEach(func: (ch: BaseLayerChar, index: number) => void): void {
     this.chList.forEach(func);
   }
 
+  /**
+   * このテキスト行を破棄する。
+   * 以後、テキストを追加したりするとエラーになる。
+   */
   public destroy(): void {
     this.chList.forEach((blc) => {
       blc.destroy();
     });
     this.chList.splice(0, this.chList.length);
     this.container.destroy();
+  }
+
+  /**
+   * このテキスト行の文字をすべてクリアする。
+   */
+  public clear(): void {
+    this.chList.forEach((blc) => {
+      blc.destroy();
+    });
+    this.chList.splice(0, this.chList.length);
   }
 
   public get x() { return this.container.x; }
@@ -88,6 +100,7 @@ export class BaseLayerTextLine {
     });
     return str;
   }
+  public get tailChar(): string { return this.chList[this.chList.length - 1].ch; }
   public get length() { return this.chList.length; }
   public get width(): number {
     if (this.chList.length === 0) {
@@ -107,8 +120,6 @@ export class BaseLayerTextLine {
     sp.y = lineHeight - (+textStyle.fontSize);
     this._textX += sp.textWidth;
     this.chList.push(new BaseLayerChar(ch, sp));
-
-    console.log("text", this.text);
   }
 
   public getCh(index: number): BaseLayerChar {
@@ -121,11 +132,14 @@ export class BaseLayerTextLine {
   }
 
   public copyFrom(src: BaseLayerTextLine): void {
-    this.destroy();
+    this.clear();
     src.chList.forEach((srcBlc: BaseLayerChar) => {
       const newBlc = srcBlc.clone(this.spriteCallbacks);
       this.chList.push(newBlc);
     });
+    this.x = src.x;
+    this.y = src.y;
+    this._textX = src._textX;
   }
 }
 
@@ -607,6 +621,10 @@ export class BaseLayer {
     this.hasBackgroundColor = false;
   }
 
+  public get preTextLine(): BaseLayerTextLine {
+    return this.textLines[this.textLines.length - 2];
+  }
+
   public get currentTextLine(): BaseLayerTextLine {
     return this.textLines[this.textLines.length - 1];
   }
@@ -663,119 +681,91 @@ export class BaseLayer {
       this.addTextReturn();
       return;
     }
+
+    // いったん描画
     this.currentTextLine.addChar(ch, this.textStyle, this.textPitch, this.textLineHeight);
     this.alignCurrentTextLine();
-  }
 
-  public getCurrentLineWidth(): number {
-    return this.currentTextLine.width;
-  }
-
-  public backspace(): void {
-    if (this.textLines.length === 0) { return; }
-    if (this.textLines.length === 1 && this.textLines[0].length === 0) { return; }
-
-    const line: BaseLayerTextLine = this.currentTextLine;
-    if (line.length === 0 || line.getCh(0).ch === "") {
-      // 改行したばかりなので、この行を削除する。
-      this.textLines.splice(this.textLines.length - 1, 1);
-      // this.textY -= this.textLineHeight + this.textLinePitch;
-    } else {
-      // 最後の文字を削除する
-      line.backspace();
+    // 自動改行判定
+    // const isHeadProhibitionChar = BaseLayer.headProhibitionChar.indexOf(ch) != -1;
+    // const isTailProhibitionChar = BaseLayer.tailProhibitionChar.indexOf(ch) != -1;
+    if (this.shouldBeNewTextLine()) {
+      this.currentTextLine.backspace();
+      this.alignCurrentTextLine();
+      this.addTextReturn();
+      this.currentTextLine.addChar(ch, this.textStyle, this.textPitch, this.textLineHeight);
+      this.alignCurrentTextLine();
     }
   }
 
   /**
    * 次の文字の表示位置を取得する
-   * @param ch 追加しようとしている文字
    * @param chWidth 追加しようとしている文字の横幅
    * @return 表示位置
    */
-  public getNextTextPos(ch: string,
-                        chWidth: number,
-                        chHeight: number = this.textFontSize,
-                        enabledAutoReturn: boolean = true): { x: number, y: number, newLineFlag: boolean } {
-    // // 自動改行の判定
-    // const lineWidth = this.getCurrentLineWidth();
-    // let totalMargin = this.textMarginLeft + this.textMarginRight;
-    // const indentOrLocate: number = 0;
-    // if (this.textLocatePoint !== 0) {
-    //   switch (this.textAlign) {
-    //     case "left": case "center":
-    //       totalMargin = this.textIndentPoint + this.textMarginRight;
-    //       break;
-    //     case "right":
-    //       totalMargin = (this.width - this.textLocatePoint) - this.textMarginLeft;
-    //       break;
-    //   }
-    // } else if (this.textIndentPoint !== 0) {
-    //   switch (this.textAlign) {
-    //     case "left": case "center":
-    //       totalMargin = this.textIndentPoint + this.textMarginRight;
-    //       break;
-    //     case "right":
-    //       totalMargin = (this.width - this.textIndentPoint) + this.textMarginLeft;
-    //       break;
-    //   }
-    // }
-    // // 自動改行
-    // let newLineFlag: boolean = false;
-    // if (this.textAutoReturn && enabledAutoReturn) {
-    //   if (BaseLayer.headProhibitionChar.indexOf(ch) === -1 &&
-    //      (lineWidth + chWidth + totalMargin) > this.width) {
-    //     this.addTextReturn();
-    //     newLineFlag = true;
-    //   } else {
-    //     // 文字が行末禁則文字かつ、行末になってしまいそうなら改行
-    //     if (BaseLayer.tailProhibitionChar.indexOf(ch) !== -1 &&
-    //       (lineWidth + (chWidth * 2) + totalMargin) > this.width) {
-    //       this.addTextReturn();
-    //       newLineFlag = true;
-    //     }
-    //   }
-    // }
+  public getNextTextPos(chWidth: number): { x: number, y: number, newLineFlag: boolean } {
+    const currentLine = this.currentTextLine;
+    const right = currentLine.x + currentLine.width;
+    let x = 0;
+    let y = currentLine.y;
+    let newLineFlag = false;
+    switch (this.textAlign) {
+      case "left":
+        if (this.shouldBeNewTextLine(chWidth)) {
+          x = this.getTextLineBasePoint();
+          y = this.currentTextLine.y + this.textLineHeight + this.textLinePitch;
+          newLineFlag = true;
+        } else {
+          x = right;
+          y = currentLine.y;
+        }
+        break;
+      case "center":
+        if (this.shouldBeNewTextLine(chWidth)) {
+          x = this.getTextLineBasePoint() - chWidth / 2;
+          y = this.currentTextLine.y + this.textLineHeight + this.textLinePitch;
+          newLineFlag = true;
+        } else {
+          x = right + chWidth / 2;
+          y = currentLine.y;
+        }
+        break;
+      case "right":
+        x = right;
+        y = currentLine.y;
+        if (this.shouldBeNewTextLine(chWidth)) {
+          x = this.getTextLineBasePoint() - chWidth;
+          y = this.currentTextLine.y + this.textLineHeight + this.textLinePitch;
+          newLineFlag = true;
+        } else {
+          x = right;
+          y = currentLine.y;
+        }
+        break;
+    }
+    return {x, y, newLineFlag};
+  }
 
-    // // 追加する1文字に合わせて、既存の文字の位置を調整＆次の文字位置の算出
-    // const newLineWidth = this.getCurrentLineWidth() + chWidth;
-    // let leftMargin: number = 0;
-    // let startX: number = 0;
-    // switch (this.textAlign) {
-    //   case "left":
-    //     leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft + this.textLocatePoint;
-    //     startX = leftMargin;
-    //     break;
-    //   case "center":
-    //     leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft + this.textLocatePoint;
-    //     const center = leftMargin + (this.width - leftMargin - this.textMarginRight) / 2;
-    //     startX = center - (newLineWidth / 2);
-    //     break;
-    //   case "right":
-    //     let right: number;
-    //     if (this.textLocatePoint !== 0) {
-    //       right = this.textLocatePoint;
-    //     } else if (this.textIndentPoint !== 0) {
-    //       right = this.textIndentPoint;
-    //     } else {
-    //       right = this.width - this.textMarginRight;
-    //     }
-    //     startX = right - newLineWidth;
-    //     break;
-    // }
-    // let x = startX;
-    // // const list: number[] = [];
-    // const currentTextLine = this.currentTextLine;
-    // currentTextLine.forEach((blc, index) => {
-    //   // list.push(x);
-    //   blc.sp.x = x;
-    //   x += blc.sp.textWidth;
-    // });
-
-    // const y = this.textY + this.textLineHeight - chHeight;
-    // return {x, y, newLineFlag};
-
-    // TODO ここ作る
-    return {x: 0, y: 0, newLineFlag: false};
+  /**
+   * 改行が必要かどうかを返す（自動改行の判定用）
+   * @param chWidth 追加する文字の幅
+   * @return 改行が必要ならtrue
+   */
+  protected shouldBeNewTextLine(chWidth: number = 0): boolean {
+    const currentLine = this.currentTextLine;
+    const left = currentLine.x;
+    const right = currentLine.x + currentLine.width;
+    let x = 0;
+    switch (this.textAlign) {
+      case "left":
+        return right + chWidth > this.width - this.textMarginRight;
+      case "center":
+        x = right + chWidth / 2;
+        return (left - (chWidth / 2)) < this.textMarginLeft ||
+               (right + (chWidth / 2) > this.width - this.textMarginRight);
+      case "right":
+        return left - chWidth < this.textMarginLeft;
+    }
   }
 
   /**
@@ -788,27 +778,9 @@ export class BaseLayer {
     if (this.reservedTextIndentPoint != null) {
       this.textIndentPoint = this.reservedTextIndentPoint;
     } else if (this.reservedTextIndentClear) {
-      this.textIndentPoint = 0;
+      this.textIndentPoint = null;
       this.reservedTextIndentClear = false;
     }
-    // switch (this.textAlign) {
-    //   case "left":
-    //     if (this.textIndentPoint != null) {
-    //       this.currentTextLine.x = this.textIndentPoint;
-    //     } else {
-    //       this.currentTextLine.x = this.textMarginLeft;
-    //     }
-    //     this.currentTextLine.y = this.textMarginTop;
-    //     break;
-    //   case "center":
-    //     this.currentTextLine.x = (this.width - this.textMarginLeft - this.textMarginRight) / 2;
-    //     this.currentTextLine.y = this.textMarginTop;
-    //     break;
-    //   case "right":
-    //     this.currentTextLine.x = this.textMarginRight;
-    //     this.currentTextLine.y = this.textMarginTop;
-    //     break;
-    // }
     this.alignCurrentTextLine();
     this.currentTextLine.y = preLineY + this.textLineHeight + this.textLinePitch;
   }
@@ -819,33 +791,38 @@ export class BaseLayer {
   public alignCurrentTextLine(): void {
     switch (this.textAlign) {
       case "left":
-        if (this.textLocatePoint != null) {
-          this.currentTextLine.x = this.textLocatePoint;
-        } else {
-          const left = this.textIndentPoint == null ? this.textMarginLeft : this.textIndentPoint;
-          this.currentTextLine.x = left;
-        }
+        this.currentTextLine.x = this.getTextLineBasePoint();
         break;
       case "center":
-        if (this.textLocatePoint != null) {
-          this.currentTextLine.x = this.textLocatePoint - (this.currentTextLine.width / 2);
-        } else {
-          const center = this.textIndentPoint == null ?
-            (this.width - this.textMarginLeft  - this.textMarginRight) / 2 :
-            (this.width - this.textIndentPoint - this.textMarginRight) / 2;
-          this.currentTextLine.x = center - (this.currentTextLine.width / 2);
-        }
+        this.currentTextLine.x = this.getTextLineBasePoint() - (this.currentTextLine.width / 2);
         break;
       case "right":
-        if (this.textLocatePoint != null) {
-          this.currentTextLine.x = this.textLocatePoint - this.currentTextLine.width;
-        } else {
-          const right = this.textIndentPoint == null ?
-            (this.width - this.textMarginRight) :
-            this.textIndentPoint;
-          this.currentTextLine.x = right - this.currentTextLine.width;
-        }
+        this.currentTextLine.x = this.getTextLineBasePoint() - this.currentTextLine.width;
         break;
+    }
+  }
+
+  /**
+   * テキスト行の描画時、ベースとなる点(x)を取得する。
+   * 左揃えの時: 左端の位置
+   * 中央揃えの時：中央の位置
+   * 右揃えの時：右端の位置
+   */
+  protected getTextLineBasePoint(): number {
+    if (this.textLocatePoint != null) {
+      return this.textLocatePoint;
+    }
+    switch (this.textAlign) {
+      case "left":
+        return this.textIndentPoint == null ? this.textMarginLeft : this.textIndentPoint;
+      case "center":
+        return this.textIndentPoint == null ?
+          (this.width - this.textMarginLeft - this.textMarginRight) / 2 :
+          (this.width - this.textIndentPoint - this.textMarginRight) / 2;
+      case "right":
+        return this.textIndentPoint == null ?
+          (this.width - this.textMarginRight) :
+          this.textIndentPoint;
     }
   }
 
@@ -874,7 +851,6 @@ export class BaseLayer {
           this.textLocatePoint = preLine.x;
           break;
       }
-      console.log("auto x:", this.textLocatePoint);
     }
     if (y != null) {
       currentLine.y = y;
@@ -924,21 +900,8 @@ export class BaseLayer {
     this.reservedTextIndentPoint = null;
     this.reservedTextIndentClear = false;
 
-    switch (this.textAlign) {
-      case "left":
-        this.currentTextLine.x = this.textMarginLeft;
-        this.currentTextLine.y = this.textMarginTop;
-        console.log(this.textMarginLeft);
-        break;
-      case "center":
-        this.currentTextLine.x = (this.width - this.textMarginLeft - this.textMarginRight) / 2;
-        this.currentTextLine.y = this.textMarginTop;
-        break;
-      case "right":
-        this.currentTextLine.x = this.textMarginRight;
-        this.currentTextLine.y = this.textMarginTop;
-        break;
-    }
+    this.currentTextLine.x = this.getTextLineBasePoint();
+    this.currentTextLine.y = this.textMarginTop;
   }
 
   /**
@@ -1017,8 +980,6 @@ export class BaseLayer {
     "textMarginRight",
     "textMarginBottom",
     "textMarginLeft",
-    // "textX",
-    // "textY",
     "textPitch",
     "textLineHeight",
     "textLinePitch",
@@ -1102,19 +1063,6 @@ export class BaseLayer {
       }
       const destTextLine: BaseLayerTextLine = dest.textLines[dest.textLines.length - 1];
       destTextLine.copyFrom(srcTextLine);
-      // textLine.forEach((srcSp: PonSprite) => {
-      //   const ch: string | null = srcSp.text;
-      //   const style: PIXI.TextStyle | null = srcSp.textStyle;
-      //   const pitch: number = srcSp.textPitch;
-      //   if (ch === null || style === null) {
-      //     return;
-      //   }
-      //   const destSp: PonSprite = new PonSprite(dest.textSpriteCallbacks);
-      //   destSp.createText(ch, style, pitch);
-      //   destSp.x = srcSp.x;
-      //   destSp.y = srcSp.y;
-      //   destTextLine.push(destSp);
-      // });
     });
 
     // 背景色のコピー

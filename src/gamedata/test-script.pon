@@ -75,16 +75,37 @@
 ;mesopt {
   margint: 20,
   marginl: 20,
-  marginr: 100,
+  marginr: 20,
   align: "right",
 }
 ;clear
 あいうえお
-;locate x: 200
+かきくけこ
+さしすせそ
+たちつてと
+なにぬねの
+はひふへほ
+まみむめも
+#;locate x: 200
 #;locate x: 200, y: 200
 #;locate y: 200
+;br
 かきくけこ
 ;p
+
+# トランジションのテスト
+|save_mark_before_trans:save_mark_before_trans
+;backlay
+;layopt "lay": 1, "visible": false
+;image "lay": 0, "file": "image/bg1.png", "visible": true, "x": 0, "y": 0
+;lockbutton
+;locksystembutton
+preparetrans
+;p
+;trans "time": 3000, "method": "univ", "rule": "rule/rule_around.png"
+;waittrans "canskip": true
+end.
+;pb
 
 # ;loadsound "buf": 0, "file": "sound/pekowave1.wav"
 # ;soundopt buf: 0, loop: false, volume: 0.1
@@ -147,24 +168,6 @@
 |move後
 ;waitmove canskip: true
 ;pb
-
-#あああああああああああああああああああああああ」
-あああああああああああああああああああああ「
-いいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
-;pb
-;br
-;clear
-
-ロック,
-;lockbutton
-;pb
-;tempsave num: 0
-tempsave,
-;pb
-;tempload num: 0
-tempload,
-;pb
-
 |
 ;mesopt fontsize: 36, lineheight: 36
 BIG
@@ -177,32 +180,6 @@ Normal
 
 -tv.start = Date.now();
 -console.log("###@@@@@@@@@@", (Date.now() - tv.start));
-
-
-;messageopt "align": "left"
-テキスト1
-;indent
-テキスト1
-;pb
-# ;locate x: 400
-;locate y: 200
-テキスト2
-# あいうえお
-;lb
-# ;wait time:"1000", canskip:false
-かきくけこさしすせそたちつてとなにぬねの
-# ;hidemessages
-;lb
-;quake time: 2000, x: 10, y: 30
-;waitquake canskip: true
-はひふへほまみむめもやいゆ
-;lb
-えよらりるれろ
-;lb
-OK.
-;pb
-
-
 
 # トランジションのテスト
 |save_mark_before_trans:save_mark_before_trans
@@ -221,7 +198,6 @@ preparetrans
 ;trans "time": 3000, "method": "univ", "rule": "rule/rule_around.png"
 ;waittrans "canskip": true
 ;unlocksystembutton
-
 end.
 ;pb
 # ;jump "label": "trans_loop"
