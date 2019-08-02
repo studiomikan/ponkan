@@ -126,6 +126,10 @@ export class BaseLayerTextLine {
     return this.chList[index];
   }
 
+  public getTailCh(): BaseLayerChar {
+    return this.chList[this.chList.length - 1];
+  }
+
   public backspace(): void {
     this.chList[this.chList.length - 1].destroy();
     this.chList.splice(this.chList.length - 1, 1);
@@ -682,16 +686,28 @@ export class BaseLayer {
       return;
     }
 
-    // いったん描画
-    this.currentTextLine.addChar(ch, this.textStyle, this.textPitch, this.textLineHeight);
+    // いったん、現在の行に文字を追加する
+    const currentLine =  this.currentTextLine;
+    const tail = currentLine.getTailCh();
+
+    currentLine.addChar(ch, this.textStyle, this.textPitch, this.textLineHeight);
     this.alignCurrentTextLine();
 
     // 自動改行判定
-    // const isHeadProhibitionChar = BaseLayer.headProhibitionChar.indexOf(ch) != -1;
-    // const isTailProhibitionChar = BaseLayer.tailProhibitionChar.indexOf(ch) != -1;
-    if (this.textAutoReturn && this.shouldBeNewTextLine()) {
+    let newLineFlag = this.textAutoReturn && this.shouldBeNewTextLine();
+    if (newLineFlag && tail != null && BaseLayer.tailProhibitionChar.indexOf(tail.ch) !== -1) {
+      // 改行すると行末禁止文字で終わってしまう場合は改行しない。
+      newLineFlag = false;
+    }
+    if (newLineFlag && BaseLayer.headProhibitionChar.indexOf(ch) !== -1) {
+      // 改行すると行頭禁止文字から始まってしまう場合は、自動改行しない。
+      newLineFlag = false;
+    }
+    if (newLineFlag) {
+      // 一度文字を追加してしまっているので、削除して行揃えし直す。
       this.currentTextLine.backspace();
       this.alignCurrentTextLine();
+      // 改行して、改めて文字を追加する。
       this.addTextReturn();
       this.currentTextLine.addChar(ch, this.textStyle, this.textPitch, this.textLineHeight);
       this.alignCurrentTextLine();
