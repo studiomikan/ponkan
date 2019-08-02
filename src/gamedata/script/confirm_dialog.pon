@@ -30,7 +30,7 @@ tv.dialog = {
 ;mesopt {
   lay:      "&tv.dialog.baseLay",
   color:    0x000000,
-  align: "center",
+  align:    "center",
   fontsize: 24
 }
 ;textbutton {
@@ -63,7 +63,7 @@ tv.dialog = {
 }
 
 ;nowait
-;locate lay: "&tv.dialog.baseLay", y: 70
+;locate lay: "&tv.dialog.baseLay", x: 500/2, y: 70
 ;ch lay: "&tv.dialog.baseLay", text: "&tv.dialogMessage"
 ;endnowait
 ;layopt lay: "&tv.dialog.baseLay", visible: true

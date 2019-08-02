@@ -689,7 +689,7 @@ export class BaseLayer {
     // 自動改行判定
     // const isHeadProhibitionChar = BaseLayer.headProhibitionChar.indexOf(ch) != -1;
     // const isTailProhibitionChar = BaseLayer.tailProhibitionChar.indexOf(ch) != -1;
-    if (this.shouldBeNewTextLine()) {
+    if (this.textAutoReturn && this.shouldBeNewTextLine()) {
       this.currentTextLine.backspace();
       this.alignCurrentTextLine();
       this.addTextReturn();
@@ -781,6 +781,8 @@ export class BaseLayer {
       this.textIndentPoint = null;
       this.reservedTextIndentClear = false;
     }
+    this.textLocatePoint = null;
+
     this.alignCurrentTextLine();
     this.currentTextLine.y = preLineY + this.textLineHeight + this.textLinePitch;
   }
