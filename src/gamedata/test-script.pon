@@ -79,12 +79,18 @@
   align: "right",
 }
 ;clear
+;mesopt {
+  rubyoffset: 0,
+  rubysize: 15,
+  rubypitch: 10
+}
+;ruby text: "かん"
+漢字
 あいうえお
 かきくけこ
 さしすせそ
 たちつてと
-な「に
-ぬねの
+なにぬねの
 はひふへほ
 まみむめも
 #;locate x: 200

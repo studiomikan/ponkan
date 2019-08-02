@@ -17,13 +17,9 @@ export interface IBaseLayerEventListener {
 export class BaseLayerChar {
   public readonly ch: string;
   public readonly sp: PonSprite;
-  public readonly ruby: string;
-  public readonly rubySp: PonSprite | null;
-  public constructor(ch: string, sp: PonSprite, ruby: string = "", rubySp: PonSprite | null = null) {
+  public constructor(ch: string, sp: PonSprite) {
     this.ch = ch;
     this.sp = sp;
-    this.ruby = ruby;
-    this.rubySp = rubySp;
   }
 
   public clone(spriteCallbacks: IPonSpriteCallbacks): BaseLayerChar {
@@ -31,14 +27,11 @@ export class BaseLayerChar {
     sp.createText(this.ch, this.sp.textStyle as PIXI.TextStyle, this.sp.textPitch);
     sp.x = this.sp.x;
     sp.y = this.sp.y;
-    return new BaseLayerChar(this.ch, sp, this.ruby);
+    return new BaseLayerChar(this.ch, sp);
   }
 
   public destroy(): void {
     this.sp.destroy();
-    if (this.rubySp != null) {
-      this.rubySp.destroy();
-    }
   }
 }
 
@@ -46,9 +39,14 @@ export class BaseLayerTextLine {
   public readonly container: PIXI.Container;
   public readonly spriteCallbacks: IPonSpriteCallbacks;
   public readonly chList: BaseLayerChar[] = [];
+  public readonly rubyList: BaseLayerChar[] = [];
 
   private _textX: number = 0;
-  // private _textY: number = 0;
+
+  private rubyText: string = "";
+  private rubyFontSize: number = 2;
+  private rubyOffset: number = 2;
+  private rubyPitch: number = 2;
 
   public constructor() {
     this.container = new PIXI.Container();
@@ -120,6 +118,48 @@ export class BaseLayerTextLine {
     sp.y = lineHeight - (+textStyle.fontSize);
     this._textX += sp.textWidth;
     this.chList.push(new BaseLayerChar(ch, sp));
+
+    // TODO ルビがあったら追加する
+    if (this.rubyText !== "") {
+      this.addRubyText(sp, textStyle);
+      this.rubyText = "";
+    }
+  }
+
+  private addRubyText(targetSp: PonSprite, srcTextStyle: PIXI.TextStyle): void {
+    const rubyStyle = srcTextStyle.clone();
+    rubyStyle.fontSize = this.rubyFontSize;
+
+    const rubyText = this.rubyText;
+    const pitch = this.rubyPitch;
+    const center = targetSp.x + targetSp.textWidth / 2;
+    const tmpRubyList: BaseLayerChar[] = [];
+    let rubyWidthSum: number = 0;
+
+    for (let i = 0; i < rubyText.length; i++) {
+      const sp: PonSprite = new PonSprite(this.spriteCallbacks);
+      sp.createText(rubyText.charAt(i), rubyStyle, pitch);
+      tmpRubyList.push(new BaseLayerChar(this.rubyText, sp));
+      rubyWidthSum += sp.textWidth;
+    }
+    rubyWidthSum -= pitch; // 最後の一文字のpitchは幅に含めない
+
+    // 追加対象の文字に対して中央揃えとなるように配置する
+    const rubyY = targetSp.y - this.rubyFontSize - this.rubyOffset;
+    let rubyX = center - rubyWidthSum / 2;
+    tmpRubyList.forEach((ruby: BaseLayerChar) => {
+      ruby.sp.y = rubyY;
+      ruby.sp.x = rubyX;
+      rubyX += ruby.sp.textWidth;
+      this.rubyList.push(ruby);
+    });
+  }
+
+  public reserveRubyText(rubyText: string, rubyFontSize: number, rubyOffset: number, rubyPitch: number) {
+    this.rubyText = rubyText;
+    this.rubyFontSize = rubyFontSize;
+    this.rubyOffset = rubyOffset;
+    this.rubyPitch = rubyPitch;
   }
 
   public getCh(index: number): BaseLayerChar {
@@ -286,6 +326,9 @@ export class BaseLayer {
   public reservedTextIndentPoint: number | null = null;
   public reservedTextIndentClear: boolean = false;
   public textAlign: "left" | "center" | "right" = "left";
+  public rubyFontSize: number = 10;
+  public rubyOffset: number = 2;
+  public rubyPitch: number = 2;
 
   /** 禁則文字（行頭禁則文字） */
   public static headProhibitionChar: string =
@@ -902,6 +945,10 @@ export class BaseLayer {
     this.reservedTextIndentClear = true;
   }
 
+  public reserveRubyText(rubyText: string): void {
+    this.currentTextLine.reserveRubyText(rubyText, this.rubyFontSize, this.rubyOffset, this.rubyPitch);
+  }
+
   /**
    * テキストをクリアする。
    * 描画していたテキストは全削除される。
@@ -1006,6 +1053,9 @@ export class BaseLayer {
     "textIndentPoint",
     "reservedTextIndentPoint",
     "textAlign",
+    "rubyFontSize",
+    "rubyOffset",
+    "rubyPitch",
   ];
 
   protected static baseLayerIgnoreParams: string[] = [

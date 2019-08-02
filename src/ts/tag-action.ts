@@ -823,6 +823,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("edgewidth", "number", false, null),
         /// @param 縁取りの色(0xRRGGBB)
         new TagValue("edgecolor", "number", false, null),
+        /// @param ルビのフォントファイズ(px)
+        new TagValue("rubysize", "number", false, null),
+        /// @param ルビの文字間(px)
+        new TagValue("rubypitch", "number", false, null),
+        /// @param ルビのオフセット(px)
+        new TagValue("rubyoffset", "number", false, null),
       ],
       (values, tick) => {
         p.getLayers(values).forEach((layer: PonLayer) => {
@@ -846,6 +852,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           if (values.shadowdistance != null) { layer.textShadowDistance = values.shadowdistance ; }
           if (values.edgewidth != null) { layer.textEdgeWidth = values.edgewidth; }
           if (values.edgecolor != null) { layer.textEdgeColor = values.edgecolor; }
+          if (values.rubysize != null) { layer.rubyFontSize = values.rubysize; }
+          if (values.rubypitch != null) { layer.rubyPitch = values.rubypitch; }
+          if (values.rubyoffset != null) { layer.rubyOffset = values.rubyoffset; }
         });
         return "continue";
       },
@@ -883,6 +892,31 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         } else {
           return p.conductor.sleep(tick, p.textSpeed, "ch");
         }
+      },
+    ),
+    /// @category メッセージ操作
+    /// @description 改行する
+    /// @details
+    ///   次に出力する文字にルビ（ふりがな）を設定します。
+    new TagAction(
+      ["ruby"],
+      "メッセージ",
+      "次の文字にルビを設定する",
+      [
+        /// @param 出力する先のレイヤー
+        new TagValue("lay", "string", false, "message"),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+        /// @param ルビ
+        new TagValue("text", "string", false, null),
+      ],
+      (values, tick) => {
+        if (values.text != null) {
+          p.getLayers(values).forEach((layer) => {
+            layer.reserveRubyText(values.text);
+          });
+        }
+        return "continue";
       },
     ),
     /// @category メッセージ操作
