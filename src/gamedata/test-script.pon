@@ -87,6 +87,7 @@
 ;ruby text: "かん"
 漢字
 あいうえお
+;mesopt { fontweight: "700" }
 かきくけこ
 さしすせそ
 たちつてと

@@ -68,7 +68,7 @@ tv.layer = {
 }
 ;messageopt {
   "lay": "message",
-  "fontfamily": ["mplus-1m-regular", "monospace"],
+  "fontfamily": ["GenShinGothic", "monospace"],
   "fontsize": 24,
   "weight": "normal",
   "color": "0xFFFFFF",

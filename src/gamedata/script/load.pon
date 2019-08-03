@@ -52,7 +52,7 @@ tv.system.load = {
 ;meslay lay: "&tv.system.load.textLay"
 ;clear lay: "&tv.system.load.textLay"
 ;mesopt {
-  fontfamily: ["mplus-1m-regular", "monospace"],
+  fontfamily: ["GenShinGothic", "monospace"],
   fontsize: 18,
   lineheight: 18,
   align: "left",

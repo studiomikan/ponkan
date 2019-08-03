@@ -79,7 +79,7 @@ tv.systembutton = {
   lay:          "&tv.layer.systembutton",
   align:        "center",
   margint:      0,
-  fontfamily:   ["mplus-1m-regular", "monospace"],
+  fontfamily:   ["GenShinGothic", "monospace"],
   lineheight:   16, fontsize:     16,
   fontweight:   "normal",
   color:        "&tv.systembutton.color",

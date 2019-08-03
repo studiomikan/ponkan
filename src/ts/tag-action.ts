@@ -787,7 +787,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("fontfamily", "array", false, null),
         /// @param フォントサイズ(px)
         new TagValue("fontsize", "number", false, null),
-        /// @param フォントウェイト。"normal" | "bold"
+        /// @param フォントウェイト
         new TagValue("fontweight", "string", false, null),
         /// @param 文字色(0xRRGGBB)
         new TagValue("color", "number", false, null),

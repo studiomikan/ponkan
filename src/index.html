@@ -5,8 +5,14 @@
     <title>Ponkan3 Sample</title>
     <style>
       @font-face {
-        font-family: 'mplus-1m-regular';
-        src: url('./fonts/mplus-1m-regular.woff') format('woff')
+        font-family: 'GenShinGothic';
+        font-weight: 400;
+        src: url('./fonts/GenShinGothic-Monospace-Regular-sub.woff') format('woff')
+      }
+      @font-face {
+        font-family: 'GenShinGothic';
+        font-weight: 700;
+        src: url('./fonts/GenShinGothic-Monospace-Bold-sub.woff') format('woff')
       }
       html, body {
         margin: 0;
@@ -65,7 +71,7 @@
             y: 130,
             width: 900,
             height: 500,
-            textFontFamily: ["mplus-1m-regular"],
+            textFontFamily: ["GenShinGothic"],
             textFontSize: 26,
             textPitch: -1,
             textLineHeight: 26,
@@ -119,7 +125,7 @@
       });
       WebFont.load({
         classes: false,
-        custom: { families: ["mplus-1m-regular"] },
+        custom: { families: ["GenShinGothic"] },
         active: function() {
           console.log("WebFont: ", "active.");
           ponkan.start();

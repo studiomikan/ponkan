@@ -241,7 +241,7 @@ export class BaseLayer {
   // 文字関係
   protected textLines: BaseLayerTextLine[] = [new BaseLayerTextLine()];
   public textStyle: PIXI.TextStyle = new PIXI.TextStyle({
-    fontFamily: ["mplus-1m-regular", "monospace"],
+    fontFamily: ["GenShinGothic", "monospace"],
     fontSize: 24,
     fontWeight: "normal",
     fill: 0xffffff,

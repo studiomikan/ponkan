@@ -65,7 +65,7 @@ tv.system.config.selected = {
 ;meslay lay: "&tv.system.config.textLay"
 ;clear lay: "&tv.system.config.textLay"
 ;mesopt {
-  fontfamily: ["mplus-1m-regular", "monospace"],
+  fontfamily: ["GenShinGothic", "monospace"],
   fontsize: 18,
   lineheight: 18,
   align: "left",

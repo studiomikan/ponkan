@@ -16,7 +16,6 @@
 ;image "lay": 1, "page": "fore", "file": "image/okayu.jpg", "visible": true, "x": 0, "y": 0
 ;layopt lay: 1, scalex: 1.5, scaley: 1.5
 
-
 ;image "lay": 2, "file": "image/pagebreak.png", "visible": true, "x": 0, "y": 0
 ;frameanim "lay": 2, "loop": true, "time": 50, "width": 24, "height": 24, "frames": "&tv.pageBreakFrames"
 ;startframeanim "lay": 2
@@ -35,33 +34,34 @@
   "y": 70,
   "exp": "alert('onClickImageButton');"
 }
-;textbutton {
-  lay:    3,
-  text:   "ボタン",
-  x:  20,
-  y:  20,
-  width:  200,
-  height: 32,
-  bgcolors: ["0xFF0000", "0x00FF00", "0x0000FF"],
-  exp:    "alert('onClickTextButton')",
-  calllabel:  "button-action-call",
-  align: "left",
-}
-;togglebutton {
-  "lay": 3,
-  "imagefile": "image/sample-toggle-button.png",
-  "direction": "vertical",
-  "x": 20,
-  "y": 140,
-  "statevar": "sample-toggle-button"
-}
-# ;layopt "lay": 4, "x": 100, "y": 50, "visible": true
-# ;image lay: 4, file: "image/okayu.jpg"
-;childimage lay: 1, file: "image/okayu.jpg", x: 100, y: 100
-;unlockbuttons
-;unlocksystembuttons
 
-# ;rclick jump: true, label: "jump-target-label"
+#;textbutton {
+#  lay:    3,
+#  text:   "ボタン",
+#  x:  20,
+#  y:  20,
+#  width:  200,
+#  height: 32,
+#  bgcolors: ["0xFF0000", "0x00FF00", "0x0000FF"],
+#  exp:    "alert('onClickTextButton')",
+#  calllabel:  "button-action-call",
+#  align: "left",
+#}
+#;togglebutton {
+#  "lay": 3,
+#  "imagefile": "image/sample-toggle-button.png",
+#  "direction": "vertical",
+#  "x": 20,
+#  "y": 140,
+#  "statevar": "sample-toggle-button"
+#}
+## ;layopt "lay": 4, "x": 100, "y": 50, "visible": true
+## ;image lay: 4, file: "image/okayu.jpg"
+#;childimage lay: 1, file: "image/okayu.jpg", x: 100, y: 100
+#;unlockbuttons
+#;unlocksystembuttons
+#
+## ;rclick jump: true, label: "jump-target-label"
 
 *trans_loop
 ;clear
@@ -70,8 +70,50 @@
   width: 1280 / 2 - 20,
   height: 720,
   x: 1280 / 2,
-  y: 0
+  y: 0,
 }
+;mesopt {
+  margint: 20,
+  marginl: 20,
+  marginr: 20,
+  align: "right",
+}
+;clear
+;mesopt {
+  rubyoffset: 0,
+  rubysize: 15,
+  rubypitch: 10
+}
+;ruby text: "かん"
+漢字
+あいうえお
+;mesopt { fontweight: "700" }
+かきくけこ
+さしすせそ
+たちつてと
+なにぬねの
+はひふへほ
+まみむめも
+#;locate x: 200
+#;locate x: 200, y: 200
+#;locate y: 200
+;br
+かきくけこ
+;p
+
+# トランジションのテスト
+|save_mark_before_trans:save_mark_before_trans
+;backlay
+;layopt "lay": 1, "visible": false
+;image "lay": 0, "file": "image/bg1.png", "visible": true, "x": 0, "y": 0
+;lockbutton
+;locksystembutton
+preparetrans
+;p
+;trans "time": 3000, "method": "univ", "rule": "rule/rule_around.png"
+;waittrans "canskip": true
+end.
+;pb
 
 # ;loadsound "buf": 0, "file": "sound/pekowave1.wav"
 # ;soundopt buf: 0, loop: false, volume: 0.1
@@ -98,7 +140,7 @@
 ;textspeed read: 1, unread: 1
 
 ;blur lay: 1, blurx: 20
-#;blur lay: 0, blurx: 20
+;colorfilter lay: 1, gamma: 0.5
 
 ;layopt lay: "mes", height: 300
 ;cmdsc ch: "「", command: "speak"
@@ -134,24 +176,6 @@
 |move後
 ;waitmove canskip: true
 ;pb
-
-#あああああああああああああああああああああああ」
-あああああああああああああああああああああ「
-いいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
-;pb
-;br
-;clear
-
-ロック,
-;lockbutton
-;pb
-;tempsave num: 0
-tempsave,
-;pb
-;tempload num: 0
-tempload,
-;pb
-
 |
 ;mesopt fontsize: 36, lineheight: 36
 BIG
@@ -164,32 +188,6 @@ Normal
 
 -tv.start = Date.now();
 -console.log("###@@@@@@@@@@", (Date.now() - tv.start));
-
-
-;messageopt "align": "left"
-テキスト1
-;indent
-テキスト1
-;pb
-# ;locate x: 400
-;locate y: 200
-テキスト2
-# あいうえお
-;lb
-# ;wait time:"1000", canskip:false
-かきくけこさしすせそたちつてとなにぬねの
-# ;hidemessages
-;lb
-;quake time: 2000, x: 10, y: 30
-;waitquake canskip: true
-はひふへほまみむめもやいゆ
-;lb
-えよらりるれろ
-;lb
-OK.
-;pb
-
-
 
 # トランジションのテスト
 |save_mark_before_trans:save_mark_before_trans
@@ -208,7 +206,6 @@ preparetrans
 ;trans "time": 3000, "method": "univ", "rule": "rule/rule_around.png"
 ;waittrans "canskip": true
 ;unlocksystembutton
-
 end.
 ;pb
 # ;jump "label": "trans_loop"
