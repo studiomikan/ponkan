@@ -34,12 +34,16 @@ export class TextButton extends Button {
     normalBackgroundAlpha: number,
     overBackgroundAlpha: number,
     onBackgroundAlpha: number,
+    onEnterSoundBuf: string,
+    onLeaveSoundBuf: string,
+    onClickSoundBuf: string,
   ): void {
     this.resetButton();
     this.freeImage();
     this.clearText();
 
-    this.initButton(jump, call, filePath, label, countPage, isSystemButton, exp);
+    this.initButton(jump, call, filePath, label, countPage, isSystemButton, exp,
+                    onEnterSoundBuf, onLeaveSoundBuf, onClickSoundBuf);
 
     this.txtBtnText = text;
     this.txtBtnNormalBackgroundColor = normalBackgroundColor;
@@ -163,6 +167,9 @@ export class TextButtonLayer extends FrameAnimLayer {
     textMarginBottom: number = 0,
     textMarginLeft: number = 0,
     textAlign: "left" | "center" | "right" = "center",
+    onEnterSoundBuf: string,
+    onLeaveSoundBuf: string,
+    onClickSoundBuf: string,
   ): void {
 
     const name = `TextButton ${this.textButtons.length}`;
@@ -202,6 +209,9 @@ export class TextButtonLayer extends FrameAnimLayer {
       normalAlpha,
       overAlpha,
       onAlpha,
+      onEnterSoundBuf,
+      onLeaveSoundBuf,
+      onClickSoundBuf,
     );
   }
 
@@ -230,8 +240,6 @@ export class TextButtonLayer extends FrameAnimLayer {
       "textLineHeight",
       "textLinePitch",
       "textAutoReturn",
-      // "textLocatePoint",
-      // "textIndentPoint",
       "textAlign",
     ].forEach((param) => {
       dest[param] = me[param];

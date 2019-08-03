@@ -30,7 +30,7 @@ export class SoundBuffer {
   protected _volume: number = 1.0;
   protected _gvolume: number = 1.0;
   protected _seek: number = 0;
-  protected _loop: boolean = true;
+  protected _loop: boolean = false;
   protected fadeStartVolume: number = 0;
   protected fadeTargetVolume: number = 0;
   protected fadeTime: number = 0;

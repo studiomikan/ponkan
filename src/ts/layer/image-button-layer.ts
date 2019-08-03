@@ -20,13 +20,17 @@ export class ImageButton extends Button {
     exp: string | null = null,
     file: string,
     direction: "horizontal" | "vertical",
+    onEnterSoundBuf: string,
+    onLeaveSoundBuf: string,
+    onClickSoundBuf: string,
   ): AsyncCallbacks {
     const cb = new AsyncCallbacks();
 
     this.resetButton();
     this.freeImage();
 
-    this.initButton(jump, call, filePath, label, countPage, isSystemButton, exp);
+    this.initButton(jump, call, filePath, label, countPage, isSystemButton, exp,
+                    onEnterSoundBuf, onLeaveSoundBuf, onClickSoundBuf);
     this.direction = direction;
 
     this.loadImage(file).done(() => {
@@ -134,6 +138,9 @@ export class ImageButtonLayer extends TextButtonLayer {
     y: number,
     direction: "horizontal" | "vertical",
     isSystemButton: boolean,
+    onEnterSoundBuf: string,
+    onLeaveSoundBuf: string,
+    onClickSoundBuf: string,
   ): AsyncCallbacks {
     const name = `ImageButton ${this.imageButtons.length}`;
     const btn = new ImageButton(name, this.resource, this.owner);
@@ -152,6 +159,9 @@ export class ImageButtonLayer extends TextButtonLayer {
       exp,
       file,
       direction,
+      onEnterSoundBuf,
+      onLeaveSoundBuf,
+      onClickSoundBuf,
     );
   }
 

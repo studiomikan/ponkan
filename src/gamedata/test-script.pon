@@ -32,8 +32,12 @@
   "direction": "vertical",
   "x": 20,
   "y": 70,
-  "exp": "alert('onClickImageButton');"
+  "exp": "console.log('onClickImageButton');",
 }
+#;loadsound "buf": 1, "file": "sound/pekowave1.wav"
+#;soundopt "buf": 1, "volume": 0.1, loop: false
+#;unlockbuttons
+#;s
 
 #;textbutton {
 #  lay:    3,

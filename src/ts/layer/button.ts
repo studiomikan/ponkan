@@ -20,6 +20,9 @@ export class Button extends BaseLayer {
   protected exp: string | null = null;
   protected isSystemButton: boolean = false;
   protected systemButtonLocked: boolean = false;
+  protected onEnterSoundBuf: string = "";
+  protected onLeaveSoundBuf: string = "";
+  protected onClickSoundBuf: string = "";
 
   public initButton(
     jump: boolean = true,
@@ -29,6 +32,12 @@ export class Button extends BaseLayer {
     countPage: boolean = true,
     isSystemButton: boolean = false,
     exp: string | null = null,
+    // onEnterSoundBuf: string = "",
+    // onLeaveSoundBuf: string = "",
+    // onClickSoundBuf: string = "",
+    onEnterSoundBuf: string,
+    onLeaveSoundBuf: string,
+    onClickSoundBuf: string,
   ): void {
     this.insideFlag = false;
     this.jump = jump;
@@ -39,6 +48,9 @@ export class Button extends BaseLayer {
     this.isSystemButton = isSystemButton;
     this.exp = exp;
     this.visible = true;
+    this.onEnterSoundBuf = onEnterSoundBuf;
+    this.onLeaveSoundBuf = onLeaveSoundBuf;
+    this.onClickSoundBuf = onClickSoundBuf;
   }
 
   public resetButton(): void {
@@ -49,6 +61,9 @@ export class Button extends BaseLayer {
     this.filePath = null;
     this.label = null;
     this.exp = null;
+    this.onEnterSoundBuf = "";
+    this.onLeaveSoundBuf = "";
+    this.onClickSoundBuf = "";
   }
 
   public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
@@ -94,6 +109,10 @@ export class Button extends BaseLayer {
     // if (!super.onMouseEnter(e)) { return false; }
     if (this.buttonStatus !== "disabled") {
       this.setButtonStatus("over");
+      if (this.onEnterSoundBuf !== "") {
+        const p: Ponkan3 = this.owner as Ponkan3;
+        p.getSoundBuffer(this.onEnterSoundBuf).play();
+      }
     }
     this.insideFlag = true;
     return false;
@@ -103,6 +122,10 @@ export class Button extends BaseLayer {
     // if (!super.onMouseLeave(e)) { return false; }
     if (this.buttonStatus !== "disabled") {
       this.setButtonStatus("normal");
+      if (this.onLeaveSoundBuf !== "") {
+        const p: Ponkan3 = this.owner as Ponkan3;
+        p.getSoundBuffer(this.onLeaveSoundBuf).play();
+      }
     }
     this.insideFlag = false;
     return false;
@@ -131,6 +154,9 @@ export class Button extends BaseLayer {
       const p: Ponkan3 = this.owner as Ponkan3;
       if (this.exp !== null && this.exp !== "") {
         this.resource.evalJs(this.exp);
+      }
+      if (this.onClickSoundBuf !== "") {
+        p.getSoundBuffer(this.onClickSoundBuf).play();
       }
       if (this.filePath != null || this.label != null) {
         if (this.jump) {

@@ -1582,6 +1582,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("align", "string", false, "center"),
         /// @param 現在の位置を既読にするかどうか
         new TagValue("countpage", "boolean", false, true),
+        /// @param マウスポインタが重なったタイミングで再生する音声の音声バッファ
+        new TagValue("enterbuf", "string", false, ""),
+        /// @param マウスポインタが出て行ったタイミングで再生する音声の音声バッファ
+        new TagValue("leavebuf", "string", false, ""),
+        /// @param ボタン押下時に再生する音声の音声バッファ
+        new TagValue("clickbuf", "string", false, ""),
       ],
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
@@ -1605,6 +1611,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
             values.marginb,
             values.marginl,
             values.align,
+            values.enterbuf,
+            values.leavebuf,
+            values.clickbuf,
           );
         });
         return "continue";
@@ -1691,6 +1700,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("system", "boolean", false, false),
         /// @param 現在の位置を既読にするかどうか
         new TagValue("countpage", "boolean", false, true),
+        /// @param マウスポインタが重なったタイミングで再生する音声の音声バッファ
+        new TagValue("enterbuf", "string", false, ""),
+        /// @param マウスポインタが出て行ったタイミングで再生する音声の音声バッファ
+        new TagValue("leavebuf", "string", false, ""),
+        /// @param ボタン押下時に再生する音声の音声バッファ
+        new TagValue("clickbuf", "string", false, ""),
       ],
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
@@ -1706,6 +1721,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
             values.y,
             values.direction,
             values.system,
+            values.enterbuf,
+            values.leavebuf,
+            values.clickbuf,
           ).done(() => {
             p.conductor.start();
           });
