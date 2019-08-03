@@ -7,6 +7,8 @@ import { Script } from "./script";
 import * as Util from "./util";
 
 export class Resource {
+  public gameVersion: string = "";
+  public enableResourceCache: boolean = true;
   private ponGame: PonGame;
   private basePath: string;
   public tmpVar: any = {};
@@ -29,9 +31,10 @@ export class Resource {
   private bufferCanvas: HTMLCanvasElement;
   private bufferCanvasContext: CanvasRenderingContext2D;
 
-  public constructor(ponGame: PonGame, basePath: string = "") {
+  public constructor(ponGame: PonGame, basePath: string = "", gameVersion: string) {
     this.ponGame = ponGame;
     this.basePath = this.fixPath(basePath);
+    this.gameVersion = gameVersion;
 
     Howler.usingWebAudio = true;
 
@@ -128,7 +131,13 @@ export class Resource {
    * @param filePath ファイルパス（basePathからの相対パス）
    */
   public getPath(filePath: string) {
-    return `${this.basePath}/${filePath}`;
+    let path = `${this.basePath}/${filePath}`;
+    if (this.enableResourceCache) {
+      path += `?v=${this.gameVersion}`;
+    } else {
+      path += `?x=${Math.random().toString(36).slice(-8)}`;
+    }
+    return path;
   }
 
   public hasMacro(name: string): boolean {

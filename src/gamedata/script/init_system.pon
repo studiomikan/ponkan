@@ -1,5 +1,6 @@
 # init_system
 
+# 存在しないコマンドはエラーにする
 ;raiseerror {"unknowncommand": true}
 
 #=============================================

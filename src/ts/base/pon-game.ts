@@ -75,7 +75,8 @@ export class PonGame implements IConductorEvent {
     this.foreRenderer.canvasElm.style.display = "block";
     this.backRenderer.canvasElm.style.display = "none";
 
-    this.resource = new Resource(this, config.gameDataDir);
+    this.resource = new Resource(this, config.gameDataDir, config.gameVersion);
+    this.resource.enableResourceCache = !config.developMode;
 
     this.transManager = new TransManager(this, this.resource);
     this.screenShot = new ScreenShot(config);
