@@ -154,6 +154,9 @@ export class SoundBuffer {
     if (this.howl == null) {
       throw new Error("音声が読み込まれていません");
     }
+    if (this.playing) {
+      this.stop();
+    }
     // this.seek = 0;
     this.setHowlerEvent();
     this.setHowlerOptions();
