@@ -74,6 +74,8 @@ export class PonGame implements IConductorEvent {
     elm.style.padding = "0";
     this.foreRenderer.canvasElm.style.display = "block";
     this.backRenderer.canvasElm.style.display = "none";
+    this.foreRenderer.canvasElm.className = "ponkan-scale-target";
+    this.backRenderer.canvasElm.className = "ponkan-scale-target";
 
     this.resource = new Resource(this, config.gameDataDir, config.gameVersion);
     this.resource.enableResourceCache = !config.developMode;
@@ -232,10 +234,15 @@ export class PonGame implements IConductorEvent {
     const height = this.config.height * scaleY;
     const left = ((this.parentElm.clientWidth - width) / 2) + "px";
     const top = ((this.parentElm.clientHeight - height) / 2) + "px";
-    [this.foreRenderer.canvasElm, this.backRenderer.canvasElm].forEach((canvas: HTMLCanvasElement) => {
-      canvas.style.transform = `scale(${scaleX},${scaleY})`;
-      canvas.style.left = left;
-      canvas.style.top = top;
+    const transform = `scale(${scaleX},${scaleY})`;
+    document.querySelectorAll(".ponkan-scale-target").forEach((elm: any) => {
+      if (elm.style !=  null) {
+        elm.style.position = "absolute";
+        elm.style.transform = transform;
+        elm.style["transform-origin"] = "0 0";
+        elm.style.left = left;
+        elm.style.top = top;
+      }
     });
   }
 
