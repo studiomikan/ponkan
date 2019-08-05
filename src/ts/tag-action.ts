@@ -8,13 +8,13 @@ import { Ponkan3 } from "./ponkan3";
 
 export class TagValue {
   public readonly name: string;
-  public readonly type: "number" | "boolean" | "string" | "array" | "object";
+  public readonly type: "number" | "boolean" | "string" | "array" | "object" | "function";
   public readonly required: boolean;
   public readonly defaultValue: any;
 
   public constructor(
     name: string,
-    type: "number" | "boolean" | "string" | "array" | "object",
+    type: "number" | "boolean" | "string" | "array" | "object" | "function",
     required: boolean,
     defaultValue: any) {
     this.name = name;
@@ -85,6 +85,9 @@ export function castTagValues(tag: Tag, tagAction: TagAction) {
           break;
         case "string":
           tag.values[def.name] = str;
+          break;
+        case "function":
+          tag.values[def.name] = value;
           break;
         case "array":
           // Logger.debug(Array.isArray(value));
@@ -1898,6 +1901,57 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         p.foreLayers.forEach((layer) => layer.unlockSystemButtons());
         p.backLayers.forEach((layer) => layer.unlockSystemButtons());
         return "continue";
+      },
+    ),
+    /// @category ボタン
+    /// @description レイヤーにスライダーを配置する
+    /// @details
+    ///   指定のレイヤーに、画像を用いたスライダーを配置します。
+    ///   配置直後はロックされた状態となり、押下することはできません。
+    ///   `unlockslider` コマンドでロック状態を解除することで、押下できるようになります。
+    new TagAction(
+      ["slider"],
+      "ボタン",
+      "レイヤーにスライダーを配置する",
+      [
+        /// @param 対象レイヤー
+        new TagValue("lay", "string", true, null),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+        /// @param 値変更時に実行する関数
+        new TagValue("onchange", "string", false, null),
+        /// @param x座標(px)
+        new TagValue("x", "number", false, 0),
+        /// @param y座標(px)
+        new TagValue("y", "number", false, 0),
+        /// @param スライダーの背景用画像のファイルパス
+        new TagValue("back", "string", true, null),
+        /// @param スライダーの表面画像のファイルパス
+        new TagValue("fore", "string", true, null),
+        /// @param スライダーの表面画像のファイルパス
+        new TagValue("button", "string", true, null),
+        /// @param ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"
+        new TagValue("direction", "string", false, "horizontal"),
+        /// @param マウスポインタがボタン部分に重なったタイミングで再生する音声の音声バッファ
+        new TagValue("enterbuf", "string", false, ""),
+        /// @param マウスポインタがボタン部分から出て行ったタイミングで再生する音声の音声バッファ
+        new TagValue("leavebuf", "string", false, ""),
+        /// @param ボタン押下時に再生する音声の音声バッファ
+        new TagValue("clickbuf", "string", false, ""),
+      ],
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          layer.addSlider(
+            values.x,
+            values.y,
+            values.back,
+            values.fore,
+            values.button,
+          ).done(() => {
+            p.conductor.start();
+          });
+        });
+        return p.conductor.stop();
       },
     ),
     // ======================================================================

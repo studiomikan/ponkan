@@ -67,6 +67,16 @@
 #
 ## ;rclick jump: true, label: "jump-target-label"
 
+;slider {
+  lay: 0,
+  x: 550,
+  y: 500,
+  back: "image/slider-back.png",
+  fore: "image/slider-fore.png",
+  button: "image/slider-button.png",
+}
+;s
+
 *trans_loop
 ;clear
 ;layopt {

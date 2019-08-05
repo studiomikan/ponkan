@@ -32,12 +32,9 @@ export class Button extends BaseLayer {
     countPage: boolean = true,
     isSystemButton: boolean = false,
     exp: string | null = null,
-    // onEnterSoundBuf: string = "",
-    // onLeaveSoundBuf: string = "",
-    // onClickSoundBuf: string = "",
-    onEnterSoundBuf: string,
-    onLeaveSoundBuf: string,
-    onClickSoundBuf: string,
+    onEnterSoundBuf: string = "",
+    onLeaveSoundBuf: string = "",
+    onClickSoundBuf: string = "",
   ): void {
     this.insideFlag = false;
     this.jump = jump;

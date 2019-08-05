@@ -4,7 +4,7 @@ import { BaseLayer } from "../base/base-layer";
 import { PonGame } from "../base/pon-game";
 import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
-import { ToggleButtonLayer } from "./toggle-button-layer";
+import { SliderLayer } from "./slider";
 
 export interface IMovePos {
   x: number;
@@ -14,7 +14,7 @@ export interface IMovePos {
   scaley: number;
 }
 
-export class MovableLayer extends ToggleButtonLayer {
+export class MovableLayer extends SliderLayer {
 
   protected _isMoving: boolean = false;
   protected moveType: "linear" | "bezier2" | "bezier3" | "catmullrom" = "linear";

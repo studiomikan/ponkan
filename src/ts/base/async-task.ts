@@ -27,11 +27,13 @@ export class AsyncTask {
     } else {
       this._status = "run";
       this.tasks.forEach((task, index: number) => {
-        task(index, params).done((data) => {
-          this.onTaskDone(index);
-        }).fail(() => {
-          this.onTaskFailed(index);
-        });
+        setTimeout(() => {
+          task(index, params).done((data) => {
+            this.onTaskDone(index);
+          }).fail(() => {
+            this.onTaskFailed(index);
+          });
+        }, 0);
       });
     }
     return this.completeCallbacks;
