@@ -1924,6 +1924,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("x", "number", false, 0),
         /// @param y座標(px)
         new TagValue("y", "number", false, 0),
+        /// @param 初期値(0.0～1.0)
+        new TagValue("value", "number", false, 0),
         /// @param スライダーの背景用画像のファイルパス
         new TagValue("back", "string", true, null),
         /// @param スライダーの表面画像のファイルパス
@@ -1944,6 +1946,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           layer.addSlider(
             values.x,
             values.y,
+            values.value,
             values.back,
             values.fore,
             values.button,

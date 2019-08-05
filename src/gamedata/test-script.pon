@@ -71,6 +71,7 @@
   lay: 0,
   x: 550,
   y: 500,
+  value: 0.5,
   back: "image/slider-back.png",
   fore: "image/slider-fore.png",
   button: "image/slider-button.png",
