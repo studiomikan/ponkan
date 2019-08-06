@@ -16,27 +16,30 @@ export class SliderButton extends ImageButton {
     this.callback = callback;
   }
 
-  public onMouseDown(e: PonMouseEvent): boolean {
+  public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     this.callback.onMouseDown(e);
-    return true;
   }
 
-  public onMouseUp(e: PonMouseEvent): boolean {
+  public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     this.callback.onMouseUp(e);
-    return true;
   }
 
-  public onMouseMove(e: PonMouseEvent): boolean {
+  public onMouseMove(e: PonMouseEvent): void {
     super.onMouseMove(e);
-    return true;
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
   }
 
-  public onMouseLeave(e: PonMouseEvent): boolean {
+  public onMouseLeave(e: PonMouseEvent): void {
     super.onMouseLeave(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     this.callback.onMouseLeave(e);
-    return true;
   }
 
 }
@@ -172,34 +175,38 @@ export class Slider extends BaseLayer {
     console.log("onButtonLeave");
   }
 
-  public onMouseDown(e: PonMouseEvent): boolean {
-    if (!super.onMouseDown(e)) { return false; }
+  public onMouseDown(e: PonMouseEvent): void {
+    super.onMouseDown(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     this.down = true;
     this.setValueX(e.x);
-    return false;
   }
 
-  public onMouseMove(e: PonMouseEvent): boolean {
-    if (!super.onMouseMove(e)) { return false; }
+  public onMouseMove(e: PonMouseEvent): void {
+    super.onMouseMove(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
     console.log("down:", this.down);
     if (this.down) {
       this.setValueX(e.x);
     }
-    return false;
   }
 
-  public onMouseUp(e: PonMouseEvent): boolean {
-    if (!super.onMouseUp(e)) { return false; }
+  public onMouseUp(e: PonMouseEvent): void {
+    super.onMouseUp(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     // this.down = false;
-    return false;
   }
 
-  public onMouseLeave(e: PonMouseEvent): boolean {
-    if (!super.onMouseLeave(e)) { return false; }
+  public onMouseLeave(e: PonMouseEvent): void {
+    super.onMouseLeave(e)
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
     this.down = false;
-    return true;
   }
 
 

@@ -235,26 +235,26 @@ export class Ponkan3 extends PonGame {
     return this.historyLayer.visible ? this.historyLayer : this.forePrimaryLayer;
   }
 
-  public onMouseEnter(e: PonMouseEvent): boolean  {
-    return this.eventReceivesLayer.onMouseEnter(e);
+  public onMouseEnter(e: PonMouseEvent): void {
+    this.eventReceivesLayer.onMouseEnter(e);
   }
-  public onMouseLeave(e: PonMouseEvent): boolean  {
-    return this.eventReceivesLayer.onMouseLeave(e);
+  public onMouseLeave(e: PonMouseEvent): void {
+    this.eventReceivesLayer.onMouseLeave(e);
   }
-  public onMouseMove(e: PonMouseEvent): boolean  {
-    return this.eventReceivesLayer.onMouseMove(e);
+  public onMouseMove(e: PonMouseEvent): void {
+    this.eventReceivesLayer.onMouseMove(e);
   }
-  public onMouseDown(e: PonMouseEvent): boolean  {
-    return this.eventReceivesLayer.onMouseDown(e);
+  public onMouseDown(e: PonMouseEvent): void {
+    this.eventReceivesLayer.onMouseDown(e);
   }
-  public onMouseUp(e: PonMouseEvent): boolean  {
-    if (!this.eventReceivesLayer.onMouseUp(e)) {
-      return false;
-    }
+  public onMouseUp(e: PonMouseEvent): void {
+    this.eventReceivesLayer.onMouseUp(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     if (e.isRight) {
-      return this.onPrimaryRightClick();
+      this.onPrimaryRightClick();
     } else {
-      return this.onPrimaryClick();
+      this.onPrimaryClick();
     }
   }
 

@@ -24,6 +24,8 @@ export class Button extends BaseLayer {
   protected onLeaveSoundBuf: string = "";
   protected onClickSoundBuf: string = "";
 
+  private down: boolean = false;
+
   public initButton(
     jump: boolean = true,
     call: boolean = false,
@@ -70,6 +72,7 @@ export class Button extends BaseLayer {
     } else {
       this.buttonStatus = status;
     }
+    if (this.buttonStatus === "disabled") { this.down = false; }
     this.resource.getForeCanvasElm().style.cursor = this.resource.cursor[status];
   }
 
@@ -102,8 +105,10 @@ export class Button extends BaseLayer {
     }
   }
 
-  public onMouseEnter(e: PonMouseEvent): boolean {
-    // if (!super.onMouseEnter(e)) { return false; }
+  public onMouseEnter(e: PonMouseEvent): void {
+    super.onMouseEnter(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     if (this.buttonStatus !== "disabled") {
       this.setButtonStatus("over");
       if (this.onEnterSoundBuf !== "") {
@@ -112,11 +117,12 @@ export class Button extends BaseLayer {
       }
     }
     this.insideFlag = true;
-    return false;
   }
 
-  public onMouseLeave(e: PonMouseEvent): boolean {
-    // if (!super.onMouseLeave(e)) { return false; }
+  public onMouseLeave(e: PonMouseEvent): void {
+    super.onMouseLeave(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     if (this.buttonStatus !== "disabled") {
       this.setButtonStatus("normal");
       if (this.onLeaveSoundBuf !== "") {
@@ -125,29 +131,34 @@ export class Button extends BaseLayer {
       }
     }
     this.insideFlag = false;
-    return false;
   }
 
-  public onMouseMove(e: PonMouseEvent): boolean {
-    // if (!super.onMouseLeave(e)) { return false; }
+  public onMouseMove(e: PonMouseEvent): void {
+    super.onMouseMove(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     if (this.buttonStatus !== "disabled") {
       this.setButtonStatus("over");
     }
     this.insideFlag = true;
-    return false;
   }
 
-  public onMouseDown(e: PonMouseEvent): boolean {
-    // if (!super.onMouseDown(e)) { return false; }
-    if (this.buttonStatus !== "disabled") {
+  public onMouseDown(e: PonMouseEvent): void {
+    super.onMouseDown(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
+    if (this.isInsideEvent(e) && this.buttonStatus !== "disabled") {
       this.setButtonStatus("on");
+      this.down = true;
     }
-    return false;
   }
 
-  public onMouseUp(e: PonMouseEvent): boolean {
-    if (!e.isLeft) { return true; }
-    if (this.buttonStatus !== "disabled") {
+  public onMouseUp(e: PonMouseEvent): void {
+    super.onMouseUp(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+    if (!e.isLeft) { return; }
+
+    if (this.down && this.isInsideEvent(e) && this.buttonStatus !== "disabled") {
       const p: Ponkan3 = this.owner as Ponkan3;
       if (this.exp !== null && this.exp !== "") {
         this.resource.evalJs(this.exp);
@@ -173,10 +184,9 @@ export class Button extends BaseLayer {
       } else {
         this.setButtonStatus("disabled");
       }
-      return false;
-    } else {
-      return false;
+      e.stopPropagation();
     }
+    this.down = false;
   }
 
   protected static buttonStoreParams: string[] = [

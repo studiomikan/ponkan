@@ -48,39 +48,44 @@ class SimpleButton extends BaseLayer {
     this.resource.getForeCanvasElm().style.cursor = this.resource.cursor[status];
   }
 
-  public onMouseEnter(e: PonMouseEvent): boolean {
-    // if (!super.onMouseEnter(e)) { return false; }
+  public onMouseEnter(e: PonMouseEvent): void {
+    super.onMouseEnter(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     this.setStatus("over");
     this.mouseEnter(this);
-    return false;
   }
 
-  public onMouseLeave(e: PonMouseEvent): boolean {
-    // if (!super.onMouseLeave(e)) { return false; }
+  public onMouseLeave(e: PonMouseEvent): void {
+    super.onMouseLeave(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     this.setStatus("normal");
     this.mouseLeave(this);
-    return false;
   }
 
-  public onMouseMove(e: PonMouseEvent): boolean {
-    // if (!super.onMouseMove(e)) { return false; }
+  public onMouseMove(e: PonMouseEvent): void {
+    super.onMouseMove(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     this.mouseMove(this);
-    return false;
   }
 
-  public onMouseDown(e: PonMouseEvent): boolean {
-    // if (!super.onMouseDown(e)) { return false; }
+  public onMouseDown(e: PonMouseEvent): void {
+    super.onMouseDown(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     this.setStatus("on");
     this.mouseDown(this);
-    return false;
   }
 
-  public onMouseUp(e: PonMouseEvent): boolean {
-    // if (!super.onMouseUp(e)) { return false; }
-    if (this.status !== "on") { return true; }
-    if (!e.isLeft) { return true; }
+  public onMouseUp(e: PonMouseEvent): void {
+    super.onMouseUp(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
+    if (this.status !== "on") { return; }
+    if (!e.isLeft) { return; }
     this.mouseUp(this);
-    return false;
   }
 }
 
@@ -89,24 +94,26 @@ class ScrollBarButton extends SimpleButton {
   public downX: number = 0;
   public downY: number = 0;
 
-  public onMouseDown(e: PonMouseEvent): boolean {
+  public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     this.down = true;
     this.downX = e.y;
     this.downY = e.y;
-    return true;
   }
 
-  public onMouseMove(e: PonMouseEvent): boolean {
+  public onMouseMove(e: PonMouseEvent): void {
     super.onMouseMove(e);
-    return true;
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
   }
 
-  public onMouseUp(e: PonMouseEvent): boolean {
+  public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
-    if (!e.isLeft) { return true; }
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
+    if (!e.isLeft) { return; }
     this.down = false;
-    return true;
   }
 }
 
@@ -171,41 +178,45 @@ class ScrollBar extends BaseLayer {
     this.bar.visible = true;
   }
 
-  public onMouseEnter(e: PonMouseEvent): boolean {
+  public onMouseEnter(e: PonMouseEvent): void {
     super.onMouseEnter(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
-    return false;
   }
 
-  public onMouseLeave(e: PonMouseEvent): boolean {
+  public onMouseLeave(e: PonMouseEvent): void {
     super.onMouseLeave(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
-    return false;
   }
 
-  public onMouseDown(e: PonMouseEvent): boolean {
-    if (!super.onMouseDown(e)) { return false; }
-    return false;
+  public onMouseDown(e: PonMouseEvent): void {
+    super.onMouseDown(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
   }
 
-  public onMouseMove(e: PonMouseEvent): boolean {
+  public onMouseMove(e: PonMouseEvent): void {
     super.onMouseMove(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
     if (this.bar.down) {
       this.setBarY(e.y - this.bar.downY);
       this.onChangeCallback(this);
     }
-    return false;
   }
 
-  public onMouseUp(e: PonMouseEvent): boolean {
-    if (!super.onMouseUp(e)) { return false; }
-    if (!e.isLeft) { return true; }
+  public onMouseUp(e: PonMouseEvent): void {
+    super.onMouseUp(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
+    if (!e.isLeft) { return; }
     this.setBarY(e.y - (this.bar.height / 2));
     this.onChangeCallback(this);
     // FIXME eの中身がおかしいが、現状使ってないのでこのまま
     this.bar.onMouseUp(new PonMouseEvent(0, 0, 0));
-    return false;
   }
 
   protected setBarY(y: number): void {

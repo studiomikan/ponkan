@@ -522,14 +522,20 @@ export class BaseLayer {
   }
 
   /**
-   * 座標が、指定の子レイヤーの内側かどうかを調査する
+   * 座標が、指定のレイヤーの内側かどうかを調査する
    */
-  protected isInsideOfChildLayer(child: BaseLayer, x: number, y: number): boolean {
-    const top: number = child.y;
-    const right: number = child.x + child.width;
-    const bottom: number = child.y + child.height;
-    const left: number = child.x;
+  public static isInsideOfLayer(layer: BaseLayer, x: number, y: number): boolean {
+    const top: number = layer.y;
+    const right: number = layer.x + layer.width;
+    const bottom: number = layer.y + layer.height;
+    const left: number = layer.x;
     return left <= x && x <= right && top <= y && y <= bottom;
+  }
+
+  protected isInsideEvent(e: PonMouseEvent): boolean {
+    const x = e.x;
+    const y = e.y;
+    return 0 <= x && x <= this.width && 0 <= y && y <= this.height;
   }
 
   protected isBlockedEvent(e: PonMouseEvent | PonWheelEvent, eventName: string): boolean {
@@ -548,87 +554,104 @@ export class BaseLayer {
     return false;
   }
 
-  public onMouseEnter(e: PonMouseEvent): boolean {
+  // MEMO マウスイベントについて
+  //
+  // 基本的にイベントは子レイヤー→親レイヤーの順番で処理することとする。
+  // 同レベルの子レイヤーはレイヤー番号の降順に呼ばれる。
+  // このルールを守るため、すべてのレイヤはイベント処理の最初で以下の処理を実行するべき。
+  //   ```
+  //   super.onMouseXXXXX(e);
+  //   if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+  //   ```
+  //
+  // e.forceStop();
+  //    以降のすべてのイベント処理をキャンセルする。
+  //    これが呼ばれると e.forceStopFlag が true になっているので、
+  //    同レベルの子レイヤーのイベント呼び出しなどもキャンセルする。
+  // e.stopPropagation();
+  //    イベント伝播を停止する。
+  //    これが呼ばれると e.stopPropagationFlag が true になっているので、
+  //    その場合は親レイヤーのイベント処理をしてはいけない。
+
+  public onMouseEnter(e: PonMouseEvent): void {
     // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる
-    if (!this.callChildrenMouseEnterLeave(e)) { return false; }
-    if (!this.isBlockedEvent(e, "move")) { return false; }
-    return true;
+    this.callChildrenMouseEnterLeave(e);
+    // if (e.forceStopFlag) { return; }
   }
 
-  public onMouseLeave(e: PonMouseEvent): boolean {
+  public onMouseLeave(e: PonMouseEvent): void {
     // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる
-    if (!this.callChildrenMouseEnterLeave(e)) { return false; }
-    if (!this.isBlockedEvent(e, "move")) { return false; }
-    return true;
+    this.callChildrenMouseEnterLeave(e);
+    // if (e.forceStopFlag) { return; }
   }
 
   /** onMouseEnter等を発生させるためのバッファ */
   protected isInsideBuffer: boolean = false;
-  public onMouseMove(e: PonMouseEvent): boolean {
+  public onMouseMove(e: PonMouseEvent): void {
     // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる
-    if (!this.callChildrenMouseEnterLeave(e)) { return false; }
+    this.callChildrenMouseEnterLeave(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     // mousemove
     for (let i = this.children.length - 1; i >= 0; i--) {
       const child: BaseLayer = this.children[i];
       if (!child.visible) { continue; }
-      const isInside = this.isInsideOfChildLayer(child, e.x, e.y);
+      const isInside = BaseLayer.isInsideOfLayer(child, e.x, e.y);
       if (isInside) {
         const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
-        if (!child.onMouseMove(e2)) { return false; }
+        child.onMouseMove(e2);
+        if (e2.stopPropagationFlag) { e.stopPropagation(); }
+        if (e2.forceStopFlag) { e.forceStop(); return; }
       }
       child.isInsideBuffer = isInside;
     }
-    if (this.isBlockedEvent(e, "move")) { return false; }
-    return true;
+    // if (this.isBlockedEvent(e, "move")) { return false; }
   }
 
   // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる
-  private callChildrenMouseEnterLeave(e: PonMouseEvent): boolean {
+  private callChildrenMouseEnterLeave(e: PonMouseEvent): void {
     for (let i = this.children.length - 1; i >= 0; i--) {
       const child: BaseLayer = this.children[i];
       if (!child.visible) { continue; }
-      const isInside = this.isInsideOfChildLayer(child, e.x, e.y);
-      let result: boolean = true;
+      const isInside = BaseLayer.isInsideOfLayer(child, e.x, e.y);
       if (isInside !== child.isInsideBuffer) {
         const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
-        result = isInside ? child.onMouseEnter(e2) : child.onMouseLeave(e2);
+        if (isInside) {
+          child.onMouseEnter(e2);
+        } else {
+          child.onMouseLeave(e2);
+        }
+        child.isInsideBuffer = isInside;
+        if (e2.stopPropagationFlag) { e.stopPropagation(); }
+        if (e2.forceStopFlag) { e.forceStop(); return; }
+      } else {
+        child.isInsideBuffer = isInside;
       }
-      child.isInsideBuffer = isInside;
-      if (!result) { return false; }
     }
-    if (this.isBlockedEvent(e, "move")) {
-      return false;
-    }
-    return true;
   }
 
-  public onMouseDown(e: PonMouseEvent): boolean {
+  public onMouseDown(e: PonMouseEvent): void {
     for (let i = this.children.length - 1; i >= 0; i--) {
       const child: BaseLayer = this.children[i];
       if (!child.visible) { continue; }
-      if (this.isInsideOfChildLayer(child, e.x, e.y)) {
-        const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
-        if (!child.onMouseDown(e2)) { return false; }
-      }
+      const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
+      child.onMouseDown(e2);
+      if (e2.stopPropagationFlag) { e.stopPropagation(); }
+      if (e2.forceStopFlag) { e.forceStop(); return; }
     }
-    Logger.debug("onMouseDown", this.name, e);
-    if (this.isBlockedEvent(e, "down")) { return false; }
-    return true;
+    // Logger.debug("onMouseDown", this.name, e);
   }
 
-  public onMouseUp(e: PonMouseEvent): boolean {
+  public onMouseUp(e: PonMouseEvent): void {
     for (let i = this.children.length - 1; i >= 0; i--) {
       const child: BaseLayer = this.children[i];
       if (!child.visible) { continue; }
-      if (this.isInsideOfChildLayer(child, e.x, e.y)) {
-        const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
-        if (!child.onMouseUp(e2)) { return false; }
-      }
+      const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
+      child.onMouseUp(e2);
+      if (e2.stopPropagationFlag) { e.stopPropagation(); }
+      if (e2.forceStopFlag) { e.forceStop(); return; }
     }
-    Logger.debug("onMouseUp", this.name, e);
-    if (this.isBlockedEvent(e, "up")) { return false; }
-    return true;
+    // Logger.debug("onMouseUp", this.name, e);
   }
 
   public onChangeStable(isStable: boolean): void {
@@ -637,11 +660,14 @@ export class BaseLayer {
     }
   }
 
-  public onMouseWheel(e: PonWheelEvent): boolean {
+  public onMouseWheel(e: PonWheelEvent) {
     for (let i = this.children.length - 1; i >= 0; i--) {
       const child: BaseLayer = this.children[i];
       if (!child.visible) { continue; }
-      if (!child.onMouseWheel(e)) { return false; }
+      child.onMouseWheel(e);
+      // TODO 伝播をきちんとする
+      // if (e.stopPropagationFlag) { e.stopPropagation(); }
+      // if (e.forceStopFlag) { return; }
     }
     if (this.isBlockedEvent(e, "wheel")) { return false; }
     return true;

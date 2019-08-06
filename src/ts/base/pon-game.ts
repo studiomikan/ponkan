@@ -599,11 +599,11 @@ export class PonGame implements IConductorEvent {
     }
   }
 
-  public onMouseEnter(e: PonMouseEvent): boolean { return true; }
-  public onMouseLeave(e: PonMouseEvent): boolean { return true; }
-  public onMouseMove(e: PonMouseEvent): boolean { return true; }
-  public onMouseDown(e: PonMouseEvent): boolean { return true; }
-  public onMouseUp(e: PonMouseEvent): boolean { return true; }
+  public onMouseEnter(e: PonMouseEvent): void { return; }
+  public onMouseLeave(e: PonMouseEvent): void { return; }
+  public onMouseMove(e: PonMouseEvent): void { return; }
+  public onMouseDown(e: PonMouseEvent): void { return; }
+  public onMouseUp(e: PonMouseEvent): void { return; }
   public onMouseWheel(e: PonWheelEvent): boolean { return true; }
 
   private initKeyboardEvent(): void {

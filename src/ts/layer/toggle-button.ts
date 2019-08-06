@@ -82,43 +82,45 @@ export class ToggleButton extends BaseLayer {
     }
   }
 
-  public onMouseEnter(e: PonMouseEvent): boolean {
-    if (!super.onMouseEnter(e)) { return false; }
+  public onMouseEnter(e: PonMouseEvent): void {
+    super.onMouseEnter(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     if (this.buttonStatus !== "disabled") {
       this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
     }
     this.insideFlag = true;
-    return true;
   }
 
-  public onMouseLeave(e: PonMouseEvent): boolean {
-    if (!super.onMouseLeave(e)) { return false; }
+  public onMouseLeave(e: PonMouseEvent): void {
+    super.onMouseLeave(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     if (this.buttonStatus !== "disabled") {
       this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
     }
     this.insideFlag = false;
-    return true;
   }
 
-  public onMouseDown(e: PonMouseEvent): boolean {
-    if (!super.onMouseDown(e)) { return false; }
+  public onMouseDown(e: PonMouseEvent): void {
+    super.onMouseDown(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     if (this.buttonStatus !== "disabled") {
       this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.on;
     }
-    return true;
   }
 
-  public onMouseUp(e: PonMouseEvent): boolean {
-    if (!super.onMouseUp(e)) { return false; }
-    if (!e.isLeft) { return true; }
+  public onMouseUp(e: PonMouseEvent): void {
+    super.onMouseUp(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+    if (!e.isLeft) { return; }
+
     if (this.buttonStatus !== "disabled") {
       this.setValue(!this.getValue());
       if (this.exp !== null && this.exp !== "") {
         this.resource.evalJs(this.exp);
       }
-      return false;
-    } else {
-      return true;
     }
   }
 
