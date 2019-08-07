@@ -30,7 +30,7 @@ export class Button extends BaseLayer {
 
   public onMouseEnter(e: PonMouseEvent): void {
     super.onMouseEnter(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
     if (this.buttonStatus !== "disabled") {
       this.setButtonStatus("over");
     }
@@ -39,7 +39,6 @@ export class Button extends BaseLayer {
 
   public onMouseLeave(e: PonMouseEvent): void {
     super.onMouseLeave(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     if (this.buttonStatus !== "disabled") {
       this.setButtonStatus("normal");
@@ -49,7 +48,6 @@ export class Button extends BaseLayer {
 
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     if (this.isInsideEvent(e) && this.buttonStatus !== "disabled") {
       this.setButtonStatus("on");
@@ -59,7 +57,6 @@ export class Button extends BaseLayer {
 
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
     this.down = false;
   }
 
@@ -202,7 +199,6 @@ export class CommandButton extends BaseLayer {
 
   public onMouseEnter(e: PonMouseEvent): void {
     super.onMouseEnter(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     if (this.buttonStatus !== "disabled") {
       this.setButtonStatus("over");
@@ -216,7 +212,6 @@ export class CommandButton extends BaseLayer {
 
   public onMouseLeave(e: PonMouseEvent): void {
     super.onMouseLeave(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     if (this.buttonStatus !== "disabled") {
       this.setButtonStatus("normal");
@@ -230,7 +225,6 @@ export class CommandButton extends BaseLayer {
 
   // public onMouseMove(e: PonMouseEvent): void {
   //   super.onMouseMove(e);
-  //   if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
   //   // if (this.isInsideEvent(e) && this.buttonStatus !== "disabled") {
   //   //   this.setButtonStatus("over");
@@ -240,7 +234,6 @@ export class CommandButton extends BaseLayer {
 
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     if (this.isInsideEvent(e) && this.buttonStatus !== "disabled") {
       this.setButtonStatus("on");
@@ -250,7 +243,6 @@ export class CommandButton extends BaseLayer {
 
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
     if (!e.isLeft) { return; }
 
     if (this.down && this.isInsideEvent(e) && this.buttonStatus !== "disabled") {

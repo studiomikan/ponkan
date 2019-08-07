@@ -49,7 +49,6 @@ class SimpleButton extends BaseLayer {
 
   public onMouseEnter(e: PonMouseEvent): void {
     super.onMouseEnter(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     this.setStatus("over");
     this.mouseEnter(this);
@@ -57,7 +56,6 @@ class SimpleButton extends BaseLayer {
 
   public onMouseLeave(e: PonMouseEvent): void {
     super.onMouseLeave(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     this.setStatus("normal");
     this.mouseLeave(this);
@@ -65,7 +63,6 @@ class SimpleButton extends BaseLayer {
 
   public onMouseMove(e: PonMouseEvent): void {
     super.onMouseMove(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     if (this.isInsideEvent(e)) {
       this.mouseMove(this);
@@ -74,7 +71,6 @@ class SimpleButton extends BaseLayer {
 
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     if (this.isInsideEvent(e)) {
       this.setStatus("on");
@@ -84,7 +80,6 @@ class SimpleButton extends BaseLayer {
 
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     if (this.isInsideEvent(e)) {
       if (this.status !== "on") { return; }
@@ -102,7 +97,6 @@ class ScrollBarButton extends SimpleButton {
 
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     this.down = true;
     this.downX = e.y;
@@ -111,12 +105,10 @@ class ScrollBarButton extends SimpleButton {
 
   public onMouseMove(e: PonMouseEvent): void {
     super.onMouseMove(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
   }
 
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     if (!e.isLeft) { return; }
     this.down = false;
@@ -186,7 +178,6 @@ class ScrollBar extends BaseLayer {
 
   public onMouseEnter(e: PonMouseEvent): void {
     super.onMouseEnter(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
     e.stopPropagation();
@@ -194,7 +185,6 @@ class ScrollBar extends BaseLayer {
 
   public onMouseLeave(e: PonMouseEvent): void {
     super.onMouseLeave(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
     e.stopPropagation();
@@ -202,13 +192,11 @@ class ScrollBar extends BaseLayer {
 
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
     e.stopPropagation();
   }
 
   public onMouseMove(e: PonMouseEvent): void {
     super.onMouseMove(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
     if (this.bar.down) {
@@ -220,7 +208,6 @@ class ScrollBar extends BaseLayer {
 
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     if (!e.isLeft) { return; }
     this.setBarY(e.y - (this.bar.height / 2));
@@ -638,17 +625,14 @@ export class HistoryLayer extends BaseLayer {
 
   public onMouseEnter(e: PonMouseEvent): void  {
     super.onMouseEnter(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
     e.stopPropagation();
   }
   public onMouseLeave(e: PonMouseEvent): void {
     super.onMouseLeave(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
     e.stopPropagation();
   }
   public onMouseMove(e: PonMouseEvent): void {
     super.onMouseMove(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
     e.stopPropagation();
 
     // スクロール操作中ははみ出ても操作できるようにする
@@ -660,13 +644,11 @@ export class HistoryLayer extends BaseLayer {
   }
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
     e.stopPropagation();
   }
 
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
     e.stopPropagation();
 
     if (e.isLeft) {

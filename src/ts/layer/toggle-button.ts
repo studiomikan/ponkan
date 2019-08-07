@@ -84,7 +84,6 @@ export class ToggleButton extends BaseLayer {
 
   public onMouseEnter(e: PonMouseEvent): void {
     super.onMouseEnter(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     if (this.buttonStatus !== "disabled") {
       this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
@@ -94,7 +93,6 @@ export class ToggleButton extends BaseLayer {
 
   public onMouseLeave(e: PonMouseEvent): void {
     super.onMouseLeave(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     if (this.buttonStatus !== "disabled") {
       this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
@@ -104,7 +102,6 @@ export class ToggleButton extends BaseLayer {
 
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     if (this.buttonStatus !== "disabled") {
       this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.on;
@@ -113,7 +110,6 @@ export class ToggleButton extends BaseLayer {
 
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
     if (!e.isLeft) { return; }
 
     if (this.buttonStatus !== "disabled") {

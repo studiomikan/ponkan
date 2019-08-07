@@ -17,7 +17,6 @@ export class SliderButton extends ImageButton {
 
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
     if (this.isInsideEvent(e)) {
       this.callback.onMouseDown(e);
     }
@@ -26,17 +25,14 @@ export class SliderButton extends ImageButton {
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
     this.callback.onMouseUp(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
   }
 
   // public onMouseMove(e: PonMouseEvent): void {
   //   super.onMouseMove(e);
-  //   if (e.stopPropagationFlag || e.forceStopFlag) { return; }
   // }
 
   public onMouseLeave(e: PonMouseEvent): void {
     super.onMouseLeave(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
     this.callback.onMouseLeave(e);
   }
 
@@ -171,7 +167,6 @@ export class Slider extends BaseLayer {
 
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     if (this.isInsideEvent(e)) {
       this.setValueX(e.x);
@@ -180,7 +175,6 @@ export class Slider extends BaseLayer {
 
   public onMouseMove(e: PonMouseEvent): void {
     super.onMouseMove(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     // this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
     if (this.down) {
@@ -190,13 +184,11 @@ export class Slider extends BaseLayer {
 
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
     this.down = false;
   }
 
   public onMouseLeave(e: PonMouseEvent): void {
-    super.onMouseLeave(e)
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+    super.onMouseLeave(e);
 
     // this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
     // this.down = false;
