@@ -68,24 +68,31 @@ class SimpleButton extends BaseLayer {
     super.onMouseMove(e);
     if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
-    this.mouseMove(this);
+    if (this.isInsideEvent(e)) {
+      this.mouseMove(this);
+    }
   }
 
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
     if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
-    this.setStatus("on");
-    this.mouseDown(this);
+    if (this.isInsideEvent(e)) {
+      this.setStatus("on");
+      this.mouseDown(this);
+    }
   }
 
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
     if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
-    if (this.status !== "on") { return; }
-    if (!e.isLeft) { return; }
-    this.mouseUp(this);
+    if (this.isInsideEvent(e)) {
+      if (this.status !== "on") { return; }
+      if (!e.isLeft) { return; }
+      this.mouseUp(this);
+      this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
+    }
   }
 }
 
@@ -183,6 +190,7 @@ class ScrollBar extends BaseLayer {
     if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
+    e.stopPropagation();
   }
 
   public onMouseLeave(e: PonMouseEvent): void {
@@ -190,11 +198,13 @@ class ScrollBar extends BaseLayer {
     if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
+    e.stopPropagation();
   }
 
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
     if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+    e.stopPropagation();
   }
 
   public onMouseMove(e: PonMouseEvent): void {
@@ -206,6 +216,7 @@ class ScrollBar extends BaseLayer {
       this.setBarY(e.y - this.bar.downY);
       this.onChangeCallback(this);
     }
+    e.stopPropagation();
   }
 
   public onMouseUp(e: PonMouseEvent): void {
@@ -217,6 +228,7 @@ class ScrollBar extends BaseLayer {
     this.onChangeCallback(this);
     // FIXME eの中身がおかしいが、現状使ってないのでこのまま
     this.bar.onMouseUp(new PonMouseEvent(0, 0, 0));
+    e.stopPropagation();
   }
 
   protected setBarY(y: number): void {
@@ -577,6 +589,7 @@ export class HistoryLayer extends BaseLayer {
 
   public hide(): void {
     this.visible = false;
+    // this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
   }
 
   public scrollUp(count: number = 1): void {
@@ -624,30 +637,39 @@ export class HistoryLayer extends BaseLayer {
     this.textLayer.goToEnd();
   }
 
-  public onMouseEnter(e: PonMouseEvent): boolean  {
+  public onMouseEnter(e: PonMouseEvent): void  {
     super.onMouseEnter(e);
-    return false;
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+    e.stopPropagation();
   }
-  public onMouseLeave(e: PonMouseEvent): boolean  {
+  public onMouseLeave(e: PonMouseEvent): void {
     super.onMouseLeave(e);
-    return false;
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+    e.stopPropagation();
   }
-  public onMouseMove(e: PonMouseEvent): boolean  {
+  public onMouseMove(e: PonMouseEvent): void {
     super.onMouseMove(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+    e.stopPropagation();
+
     // スクロール操作中ははみ出ても操作できるようにする
     const sb = this.scrollBar;
     if (sb.dragging) {
       const e2 = new PonMouseEvent(e.x - sb.x, e.y - sb.y, e.button);
       this.scrollBar.onMouseMove(e2);
     }
-    return false;
   }
-  public onMouseDown(e: PonMouseEvent): boolean  {
+  public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
-    return false;
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+    e.stopPropagation();
   }
-  public onMouseUp(e: PonMouseEvent): boolean  {
+
+  public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+    e.stopPropagation();
+
     if (e.isLeft) {
       const sb = this.scrollBar;
       if (sb.dragging) {
@@ -661,7 +683,6 @@ export class HistoryLayer extends BaseLayer {
       // 右クリックで閉じる
       this.hide();
     }
-    return false;
   }
   public onMouseWheel(e: PonWheelEvent): boolean {
     if (e.isUp) {
