@@ -4,13 +4,13 @@ import { Logger } from "../base/logger";
 import { PonMouseEvent } from "../base/pon-mouse-event";
 import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
-import { Button } from "./button";
+import { CommandButton } from "./button";
 import { FrameAnimLayer } from "./frame-anim-layer";
 
 /**
  * テキストと背景色を指定できるボタン
  */
-export class TextButton extends Button {
+export class TextButton extends CommandButton {
   private txtBtnText: string = "";
   private txtBtnNormalBackgroundColor: number = 0x000000;
   private txtBtnOverBackgroundColor: number = 0x000000;
@@ -38,11 +38,11 @@ export class TextButton extends Button {
     onLeaveSoundBuf: string,
     onClickSoundBuf: string,
   ): void {
-    this.resetButton();
+    this.resetCommandButton();
     this.freeImage();
     this.clearText();
 
-    this.initButton(jump, call, filePath, label, countPage, isSystemButton, exp,
+    this.initCommandButton(jump, call, filePath, label, countPage, isSystemButton, exp,
                     onEnterSoundBuf, onLeaveSoundBuf, onClickSoundBuf);
 
     this.txtBtnText = text;
@@ -58,8 +58,8 @@ export class TextButton extends Button {
     this.setButtonStatus("disabled");
   }
 
-  public resetButton(): void {
-    super.resetButton();
+  public resetCommandButton(): void {
+    super.resetCommandButton();
 
     this.txtBtnText = "";
     this.txtBtnNormalBackgroundColor = 0x000000;
@@ -248,7 +248,7 @@ export class TextButtonLayer extends FrameAnimLayer {
 
   public clearTextButtons(): void {
     this.textButtons.forEach((textButton) => {
-      textButton.resetButton();
+      textButton.resetCommandButton();
       textButton.destroy();
       this.deleteChildLayer(textButton);
     });

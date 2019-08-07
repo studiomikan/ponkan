@@ -236,19 +236,19 @@ export class Ponkan3 extends PonGame {
   }
 
   public onMouseEnter(e: PonMouseEvent): void {
-    this.eventReceivesLayer.onMouseEnter(e);
+    this.eventReceivesLayer._onMouseEnter(e);
   }
   public onMouseLeave(e: PonMouseEvent): void {
-    this.eventReceivesLayer.onMouseLeave(e);
+    this.eventReceivesLayer._onMouseLeave(e);
   }
   public onMouseMove(e: PonMouseEvent): void {
-    this.eventReceivesLayer.onMouseMove(e);
+    this.eventReceivesLayer._onMouseMove(e);
   }
   public onMouseDown(e: PonMouseEvent): void {
-    this.eventReceivesLayer.onMouseDown(e);
+    this.eventReceivesLayer._onMouseDown(e);
   }
   public onMouseUp(e: PonMouseEvent): void {
-    this.eventReceivesLayer.onMouseUp(e);
+    this.eventReceivesLayer._onMouseUp(e);
     if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
     if (e.isRight) {

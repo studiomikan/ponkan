@@ -7,7 +7,6 @@ import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
 import { ImageButton } from "./image-button-layer";
 import { ToggleButtonLayer } from "./toggle-button-layer";
-import { timingSafeEqual } from "crypto";
 
 export class SliderButton extends ImageButton {
   private callback: any;
@@ -19,26 +18,25 @@ export class SliderButton extends ImageButton {
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
     if (e.stopPropagationFlag || e.forceStopFlag) { return; }
-
-    this.callback.onMouseDown(e);
+    if (this.isInsideEvent(e)) {
+      this.callback.onMouseDown(e);
+    }
   }
 
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
-
     this.callback.onMouseUp(e);
-  }
-
-  public onMouseMove(e: PonMouseEvent): void {
-    super.onMouseMove(e);
     if (e.stopPropagationFlag || e.forceStopFlag) { return; }
   }
+
+  // public onMouseMove(e: PonMouseEvent): void {
+  //   super.onMouseMove(e);
+  //   if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+  // }
 
   public onMouseLeave(e: PonMouseEvent): void {
     super.onMouseLeave(e);
     if (e.stopPropagationFlag || e.forceStopFlag) { return; }
-
     this.callback.onMouseLeave(e);
   }
 
@@ -139,7 +137,7 @@ export class Slider extends BaseLayer {
     this.foreImage.freeImage();
     this.foreImage.visible = false;
 
-    this.button.resetButton();
+    this.button.resetCommandButton();
     this.button.freeImage();
     this.button.visible = false;
   }
@@ -162,33 +160,29 @@ export class Slider extends BaseLayer {
 
   public onButtonDown(e: PonMouseEvent) {
     this.down = true;
-    console.log("onButtonDown", this.down);
   }
 
   public onButtonUp(e: PonMouseEvent) {
     this.down = false;
-    console.log("onButtonUp", this.down);
   }
 
   public onButtonLeave(e: PonMouseEvent) {
-    // this.down = false;
-    console.log("onButtonLeave");
   }
 
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
     if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
-    this.down = true;
-    this.setValueX(e.x);
+    if (this.isInsideEvent(e)) {
+      this.setValueX(e.x);
+    }
   }
 
   public onMouseMove(e: PonMouseEvent): void {
     super.onMouseMove(e);
     if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
-    this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
-    console.log("down:", this.down);
+    // this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
     if (this.down) {
       this.setValueX(e.x);
     }
@@ -197,16 +191,15 @@ export class Slider extends BaseLayer {
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
     if (e.stopPropagationFlag || e.forceStopFlag) { return; }
-
-    // this.down = false;
+    this.down = false;
   }
 
   public onMouseLeave(e: PonMouseEvent): void {
     super.onMouseLeave(e)
     if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
-    this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
-    this.down = false;
+    // this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
+    // this.down = false;
   }
 
 

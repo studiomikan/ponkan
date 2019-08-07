@@ -8,7 +8,6 @@ import { PonWheelEvent } from "../base/pon-wheel-event";
 import { Resource } from "../base/resource";
 import * as Util from "../base/util";
 import { Ponkan3 } from "../ponkan3";
-import { Button } from "./button";
 
 class SimpleButton extends BaseLayer {
   protected bgColors: number[] = [0xFF0000, 0x00FF00, 0x0000FF];

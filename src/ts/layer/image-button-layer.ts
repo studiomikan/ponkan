@@ -4,10 +4,10 @@ import { Logger } from "../base/logger";
 import { PonMouseEvent } from "../base/pon-mouse-event";
 import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
-import { Button } from "./button";
+import { CommandButton } from "./button";
 import { TextButtonLayer } from "./text-button-layer";
 
-export class ImageButton extends Button {
+export class ImageButton extends CommandButton {
   protected direction: "horizontal" | "vertical" = "horizontal";
 
   public initImageButton(
@@ -26,10 +26,10 @@ export class ImageButton extends Button {
   ): AsyncCallbacks {
     const cb = new AsyncCallbacks();
 
-    this.resetButton();
+    this.resetCommandButton();
     this.freeImage();
 
-    this.initButton(jump, call, filePath, label, countPage, isSystemButton, exp,
+    this.initCommandButton(jump, call, filePath, label, countPage, isSystemButton, exp,
                     onEnterSoundBuf, onLeaveSoundBuf, onClickSoundBuf);
     this.direction = direction;
 
@@ -49,8 +49,8 @@ export class ImageButton extends Button {
     return cb;
   }
 
-  public resetButton(): void {
-    super.resetButton();
+  public resetCommandButton(): void {
+    super.resetCommandButton();
     this.direction = "horizontal";
   }
 
@@ -167,7 +167,7 @@ export class ImageButtonLayer extends TextButtonLayer {
 
   public clearImageButtons(): void {
     this.imageButtons.forEach((imageButton) => {
-      imageButton.resetButton();
+      imageButton.resetCommandButton();
       imageButton.destroy();
       this.deleteChildLayer(imageButton);
     });

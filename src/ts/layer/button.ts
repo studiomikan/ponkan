@@ -6,10 +6,105 @@ import { PonMouseEvent } from "../base/pon-mouse-event";
 import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
 
+export class Button extends BaseLayer {
+  protected insideFlag: boolean = false;
+  protected buttonStatus: "normal" | "over" | "on" | "disabled" = "disabled";
+  private down: boolean = false;
+
+  public initButton() {
+    this.resetButton();
+  }
+
+  public resetButton(): void {
+    this.setButtonStatus("disabled");
+    this.insideFlag = false;
+    this.down = false;
+  }
+
+  public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
+    const cursor: string = "auto";
+    this.buttonStatus = status;
+    if (this.buttonStatus === "disabled") { this.down = false; }
+    this.resource.getForeCanvasElm().style.cursor = this.resource.cursor[status];
+  }
+
+  public onMouseEnter(e: PonMouseEvent): void {
+    super.onMouseEnter(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+    if (this.buttonStatus !== "disabled") {
+      this.setButtonStatus("over");
+    }
+    this.insideFlag = true;
+  }
+
+  public onMouseLeave(e: PonMouseEvent): void {
+    super.onMouseLeave(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
+    if (this.buttonStatus !== "disabled") {
+      this.setButtonStatus("normal");
+    }
+    this.insideFlag = false;
+  }
+
+  public onMouseDown(e: PonMouseEvent): void {
+    super.onMouseDown(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+
+    if (this.isInsideEvent(e) && this.buttonStatus !== "disabled") {
+      this.setButtonStatus("on");
+      this.down = true;
+    }
+  }
+
+  public onMouseUp(e: PonMouseEvent): void {
+    super.onMouseUp(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+    this.down = false;
+  }
+
+  protected static buttonStoreParams: string[] = [
+    "insideFlag",
+    "buttonStatus",
+  ];
+
+  public store(tick: number): any {
+    const data: any = super.store(tick);
+    const me: any = this as any;
+    Button.buttonStoreParams.forEach((param: string) => {
+      data[param] = me[param];
+    });
+    return data;
+  }
+
+  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+    this.resetButton();
+    super.restore(asyncTask, data, tick, clear);
+
+    const me: any = this as any;
+    Button.buttonStoreParams.forEach((param: string) => {
+      me[param] = data[param];
+    });
+    this.insideFlag = false;
+    this.setButtonStatus(data.buttonStatus);
+  }
+
+  public copyTo(dest: Button): void {
+    super.copyTo(dest);
+
+    const me: any = this as any;
+    const you: any = dest as any;
+    Button.buttonStoreParams.forEach((param: string) => {
+      you[param] = me[param];
+    });
+  }
+
+}
+
 /**
  * TextButton、ImageButtonなどの基礎となるボタン機能
  */
-export class Button extends BaseLayer {
+export class CommandButton extends BaseLayer {
   protected insideFlag: boolean = false;
   protected buttonStatus: "normal" | "over" | "on" | "disabled" = "disabled";
   protected jump: boolean = true;
@@ -26,7 +121,7 @@ export class Button extends BaseLayer {
 
   private down: boolean = false;
 
-  public initButton(
+  public initCommandButton(
     jump: boolean = true,
     call: boolean = false,
     filePath: string | null = null,
@@ -52,7 +147,7 @@ export class Button extends BaseLayer {
     this.onClickSoundBuf = onClickSoundBuf;
   }
 
-  public resetButton(): void {
+  public resetCommandButton(): void {
     this.setButtonStatus("disabled");
     this.insideFlag = false;
     this.jump = true;
@@ -133,15 +228,15 @@ export class Button extends BaseLayer {
     this.insideFlag = false;
   }
 
-  public onMouseMove(e: PonMouseEvent): void {
-    super.onMouseMove(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+  // public onMouseMove(e: PonMouseEvent): void {
+  //   super.onMouseMove(e);
+  //   if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
-    if (this.buttonStatus !== "disabled") {
-      this.setButtonStatus("over");
-    }
-    this.insideFlag = true;
-  }
+  //   // if (this.isInsideEvent(e) && this.buttonStatus !== "disabled") {
+  //   //   this.setButtonStatus("over");
+  //   //   this.insideFlag = true;
+  //   // }
+  // }
 
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
@@ -185,11 +280,12 @@ export class Button extends BaseLayer {
         this.setButtonStatus("disabled");
       }
       e.stopPropagation();
+      e.forceStop();
     }
     this.down = false;
   }
 
-  protected static buttonStoreParams: string[] = [
+  protected static commandButtonStoreParams: string[] = [
     "insideFlag",
     "buttonStatus",
     "jump",
@@ -204,34 +300,36 @@ export class Button extends BaseLayer {
   public store(tick: number): any {
     const data: any = super.store(tick);
     const me: any = this as any;
-    Button.buttonStoreParams.forEach((param: string) => {
+    CommandButton.commandButtonStoreParams.forEach((param: string) => {
       data[param] = me[param];
     });
     return data;
   }
 
   public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
-    this.resetButton();
+    this.resetCommandButton();
     super.restore(asyncTask, data, tick, clear);
   }
 
   public restoreAfterLoadImage(data: any, tick: number): void {
     super.restoreAfterLoadImage(data, tick);
     const me: any = this as any;
-    Button.buttonStoreParams.forEach((param: string) => {
+    CommandButton.commandButtonStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
     this.insideFlag = false;
     this.setButtonStatus(data.buttonStatus);
   }
 
-  public copyTo(dest: Button): void {
+  public copyTo(dest: CommandButton): void {
     super.copyTo(dest);
 
     const me: any = this as any;
     const you: any = dest as any;
-    Button.buttonStoreParams.forEach((param: string) => {
+    CommandButton.commandButtonStoreParams.forEach((param: string) => {
       you[param] = me[param];
     });
   }
 }
+
+// export class eImageButton extends BaseLayer {
