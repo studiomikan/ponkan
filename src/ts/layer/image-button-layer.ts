@@ -7,7 +7,7 @@ import { Ponkan3 } from "../ponkan3";
 import { CommandButton } from "./button";
 import { TextButtonLayer } from "./text-button-layer";
 
-export class ImageButton extends CommandButton {
+export class CommandImageButton extends CommandButton {
   protected direction: "horizontal" | "vertical" = "horizontal";
 
   public initImageButton(
@@ -93,7 +93,7 @@ export class ImageButton extends CommandButton {
   public store(tick: number): any {
     const data: any = super.store(tick);
     const me: any = this as any;
-    ImageButton.imageButtonStoreParams.forEach((param: string) => {
+    CommandImageButton.imageButtonStoreParams.forEach((param: string) => {
       data[param] = me[param];
     });
     return data;
@@ -105,18 +105,18 @@ export class ImageButton extends CommandButton {
 
   public restoreAfterLoadImage(data: any, tick: number): void {
     const me: any = this as any;
-    ImageButton.imageButtonStoreParams.forEach((param: string) => {
+    CommandImageButton.imageButtonStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
     super.restoreAfterLoadImage(data, tick);
   }
 
-  public copyTo(dest: ImageButton): void {
+  public copyTo(dest: CommandImageButton): void {
     super.copyTo(dest);
 
     const me: any = this as any;
     const you: any = dest as any;
-    ImageButton.imageButtonStoreParams.forEach((param: string) => {
+    CommandImageButton.imageButtonStoreParams.forEach((param: string) => {
       you[param] = me[param];
     });
   }
@@ -124,7 +124,7 @@ export class ImageButton extends CommandButton {
 
 export class ImageButtonLayer extends TextButtonLayer {
 
-  private imageButtons: ImageButton[] = [];
+  private imageButtons: CommandImageButton[] = [];
 
   public addImageButton(
     jump: boolean = true,
@@ -143,7 +143,7 @@ export class ImageButtonLayer extends TextButtonLayer {
     onClickSoundBuf: string,
   ): AsyncCallbacks {
     const name = `ImageButton ${this.imageButtons.length}`;
-    const btn = new ImageButton(name, this.resource, this.owner);
+    const btn = new CommandImageButton(name, this.resource, this.owner);
     this.addChild(btn);
     this.imageButtons.push(btn);
 
@@ -222,7 +222,7 @@ export class ImageButtonLayer extends TextButtonLayer {
         // 数が合わない場合は一度破棄して作り直す
         this.clearImageButtons();
         data.imageButtons.forEach((imageButtonData: any) => {
-          const btn = new ImageButton(imageButtonData.name, this.resource, this.owner);
+          const btn = new CommandImageButton(imageButtonData.name, this.resource, this.owner);
           this.addChild(btn);
           this.imageButtons.push(btn);
           btn.restore(asyncTask, imageButtonData, tick, clear);
@@ -248,7 +248,7 @@ export class ImageButtonLayer extends TextButtonLayer {
 
     dest.clearImageButtons();
     this.imageButtons.forEach((srcBtn) => {
-      const destBtn = new ImageButton(srcBtn.name, dest.resource, dest.owner);
+      const destBtn = new CommandImageButton(srcBtn.name, dest.resource, dest.owner);
       dest.addChild(destBtn);
       dest.imageButtons.push(destBtn);
       srcBtn.copyTo(destBtn);

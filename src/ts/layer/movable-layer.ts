@@ -4,7 +4,7 @@ import { BaseLayer } from "../base/base-layer";
 import { PonGame } from "../base/pon-game";
 import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
-import { SliderLayer } from "./slider";
+import { SliderLayer } from "./slider-layer";
 
 export interface IMovePos {
   x: number;

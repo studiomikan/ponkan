@@ -1844,8 +1844,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         p.getLayers(values).forEach((layer) => {
           layer.lockButtons();
         });
-        // p.foreLayers.forEach((layer) => layer.lockButtons());
-        // p.backLayers.forEach((layer) => layer.lockButtons());
         return "continue";
       },
     ),
@@ -1865,11 +1863,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("page", "string", false, "current"),
       ],
       (values, tick) => {
-        p.getLayers(values).forEach((layer) => {
-          layer.unlockButtons();
-        });
-        // p.foreLayers.forEach((layer) => layer.unlockButtons());
-        // p.backLayers.forEach((layer) => layer.unlockButtons());
+        p.getLayers(values).forEach((layer) => { layer.unlockButtons(); });
         return "continue";
       },
     ),
@@ -1881,10 +1875,14 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ["locksystembuttons", "locksystembutton", "locksystem"],
       "ボタン",
       "システムボタンをロックする",
-      [],
+      [
+        /// @param 対象レイヤー
+        new TagValue("lay", "string", false, "all"),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+      ],
       (values, tick) => {
-        p.foreLayers.forEach((layer) => layer.lockSystemButtons());
-        p.backLayers.forEach((layer) => layer.lockSystemButtons());
+        p.getLayers(values).forEach((layer) => { layer.lockSystemButtons(); });
         return "continue";
       },
     ),
@@ -1896,10 +1894,14 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ["unlocksystembuttons", "unlocksystembutton", "unlocksystem"],
       "ボタン",
       "システムボタンをアンロックする",
-      [],
+      [
+        /// @param 対象レイヤー
+        new TagValue("lay", "string", false, "all"),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+      ],
       (values, tick) => {
-        p.foreLayers.forEach((layer) => layer.unlockSystemButtons());
-        p.backLayers.forEach((layer) => layer.unlockSystemButtons());
+        p.getLayers(values).forEach((layer) => { layer.unlockSystemButtons(); });
         return "continue";
       },
     ),
@@ -1932,14 +1934,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("fore", "string", true, null),
         /// @param スライダーの表面画像のファイルパス
         new TagValue("button", "string", true, null),
-        /// @param ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"
-        new TagValue("direction", "string", false, "horizontal"),
-        /// @param マウスポインタがボタン部分に重なったタイミングで再生する音声の音声バッファ
-        new TagValue("enterbuf", "string", false, ""),
-        /// @param マウスポインタがボタン部分から出て行ったタイミングで再生する音声の音声バッファ
-        new TagValue("leavebuf", "string", false, ""),
-        /// @param ボタン押下時に再生する音声の音声バッファ
-        new TagValue("clickbuf", "string", false, ""),
+        // /// @param マウスポインタがスライダーに重なったタイミングで再生する音声の音声バッファ
+        // new TagValue("enterbuf", "string", false, ""),
+        // /// @param マウスポインタがスライダーから出て行ったタイミングで再生する音声の音声バッファ
+        // new TagValue("leavebuf", "string", false, ""),
+        // /// @param スライダー押下時に再生する音声の音声バッファ
+        // new TagValue("clickbuf", "string", false, ""),
       ],
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
@@ -1955,6 +1955,44 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           });
         });
         return p.conductor.stop();
+      },
+    ),
+    /// @category ボタン
+    /// @description スライダーをロックする
+    /// @details
+    ///   指定レイヤーのスライダーをロックし、押下できない状態にします。
+    new TagAction(
+      ["locksliders", "lockslider"],
+      "ボタン",
+      "スライダーをロックする",
+      [
+        /// @param 対象レイヤー
+        new TagValue("lay", "string", false, "all"),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+      ],
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => { layer.lockSliders(); });
+        return "continue";
+      },
+    ),
+    /// @category ボタン
+    /// @description スライダーをアンロックする
+    /// @details
+    ///   指定レイヤーのスライダーのロックを解除し、押下できる状態にします。
+    new TagAction(
+      ["unlocksliders", "unlockslider"],
+      "ボタン",
+      "スライダーをアンロックする",
+      [
+        /// @param 対象レイヤー
+        new TagValue("lay", "string", false, "all"),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+      ],
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => { layer.unlockSliders(); });
+        return "continue";
       },
     ),
     // ======================================================================

@@ -660,7 +660,6 @@ export class BaseLayer {
       if (e2.forceStopFlag) { e.forceStop(); return; }
     }
 
-    console.log("_onMouseUp " , this.name);
     if (e.stopPropagationFlag || e.forceStopFlag) { return; }
     this.onMouseUp(e);
   }

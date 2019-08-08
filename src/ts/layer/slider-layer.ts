@@ -5,37 +5,59 @@ import { PonGame } from "../base/pon-game";
 import { PonMouseEvent } from "../base/pon-mouse-event";
 import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
-import { ImageButton } from "./image-button-layer";
+// import { CommandImageButton } from "./image-button-layer";
+import { Button } from "./button";
 import { ToggleButtonLayer } from "./toggle-button-layer";
 
-export class SliderButton extends ImageButton {
-  private callback: any;
+export class SliderButton extends Button {
+  private callbacks: any;
 
-  public setCallback(callback: any): void {
-    this.callback = callback;
+  public initSliderButton(imagePath: string): AsyncCallbacks {
+    return this.loadImage(imagePath).done(() => {
+      this.initButton();
+      this.width = Math.floor(this.imageWidth / 3);
+    });
+  }
+
+  public resetSliderButton() {
+    this.resetButton();
+    this.freeImage();
+  }
+
+  public setButtonStatus(status: "normal" | "over" | "on" | "disabled") {
+    super.setButtonStatus(status);
+
+    switch (status) {
+      case "normal":
+      case "disabled":
+        this.imageX = 0;
+        break;
+      case "over":
+        this.imageX = -Math.floor(this.imageWidth / 3);
+        break;
+      case "on":
+        this.imageX = -Math.floor(this.imageWidth / 3 * 2);
+        break;
+    }
+  }
+
+  public setCallbacks(callbacks: any): void {
+    this.callbacks = callbacks;
   }
 
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
-    if (this.isInsideEvent(e)) {
-      this.callback.onMouseDown(e);
+    if (this.isInsideEvent(e) && this.callbacks.onMouseDown) {
+      this.callbacks.onMouseDown(e);
     }
   }
 
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
-    this.callback.onMouseUp(e);
+    if (this.callbacks.onMouseUp) {
+      this.callbacks.onMouseUp(e);
+    }
   }
-
-  // public onMouseMove(e: PonMouseEvent): void {
-  //   super.onMouseMove(e);
-  // }
-
-  public onMouseLeave(e: PonMouseEvent): void {
-    super.onMouseLeave(e);
-    this.callback.onMouseLeave(e);
-  }
-
 }
 
 /**
@@ -54,10 +76,9 @@ export class Slider extends BaseLayer {
     this.addChild(this.foreImage);
     this.button = new SliderButton("slider button", resource, owner);
     this.addChild(this.button);
-    this.button.setCallback({
+    this.button.setCallbacks({
       onMouseDown: (e: PonMouseEvent) => { this.onButtonDown(e); },
       onMouseUp: (e: PonMouseEvent) => { this.onButtonUp(e); },
-      onMouseLeave: (e: PonMouseEvent) => { this.onButtonLeave(e); },
     });
   }
 
@@ -94,20 +115,7 @@ export class Slider extends BaseLayer {
     // ボタン読み込み
     task.add((params: any, index: number): AsyncCallbacks => {
       const button = this.button;
-      const buttonCb = button.initImageButton(
-        false,           // jump: boolean = true,
-        false,           // call: boolean = false,
-        null,            // filePath: string | null = null,
-        null,            // label: string | null = null,
-        true,            // countPage: boolean = true,
-        true,           // isSystemButton: boolean = false,
-        "",      // exp: string | null = null,
-        buttonImagePath, // file: string,
-        "horizontal",    // direction: "horizontal" | "vertical",
-        "",              // onEnterSoundBuf: string,
-        "",              // onLeaveSoundBuf: string,
-        "",              // onClickSoundBuf: string,
-      );
+      const buttonCb = button.initSliderButton(buttonImagePath);
       buttonCb.done(() => {
         button.x = 0;
         button.y = 0;
@@ -122,6 +130,7 @@ export class Slider extends BaseLayer {
       this.foreImage.width = x;
       this.button.x = x;
       this.visible = true;
+      this.lock();
     });
   }
 
@@ -133,68 +142,72 @@ export class Slider extends BaseLayer {
     this.foreImage.freeImage();
     this.foreImage.visible = false;
 
-    this.button.resetCommandButton();
+    this.button.resetSliderButton();
     this.button.freeImage();
     this.button.visible = false;
   }
 
   public lock(): void {
     this.locked = true;
+    this.button.setButtonStatus("disabled");
   }
 
   public unlock(): void {
     this.locked = false;
+    this.button.setButtonStatus("normal");
   }
 
   public setValueX(x: number): void {
-    this.foreImage.width = x - this.button.width / 2;
-    this.button.x = x - this.button.width / 2;
-    this.value = x / (this.width - this.button.width);
-    if (this.value < 0.0) { this.value = 0.0; }
-    if (this.value > 1.0) { this.value = 1.0; }
+    let x2 = x - (this.button.width / 2);
+    if (x2 < 0.0) { x2 = 0.0; }
+    if (x2 > this.width - this.button.width) { x2 = this.width - this.button.width; }
+    this.foreImage.width = x2;
+    this.button.x = x2;
+
+    let value = x2 / (this.width - this.button.width);
+    if (value < 0.0) { value = 0.0; }
+    if (value > 1.0) { value = 1.0; }
+    this.value = value;
   }
 
   public onButtonDown(e: PonMouseEvent) {
-    this.down = true;
+    if (!this.locked) {
+      this.down = true;
+    }
   }
 
   public onButtonUp(e: PonMouseEvent) {
     this.down = false;
   }
 
-  public onButtonLeave(e: PonMouseEvent) {
+  public onMouseEnter(e: PonMouseEvent): void {
+    super.onMouseEnter(e);
+  }
+
+  public onMouseLeave(e: PonMouseEvent): void {
+    super.onMouseLeave(e);
   }
 
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
-
-    if (this.isInsideEvent(e)) {
+    if (!this.locked && this.isInsideEvent(e)) {
       this.setValueX(e.x);
     }
   }
 
   public onMouseMove(e: PonMouseEvent): void {
     super.onMouseMove(e);
-
-    // this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
-    if (this.down) {
+    if (!this.locked && this.down) {
       this.setValueX(e.x);
+      this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
     }
   }
 
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
     this.down = false;
+    this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
   }
-
-  public onMouseLeave(e: PonMouseEvent): void {
-    super.onMouseLeave(e);
-
-    // this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
-    // this.down = false;
-  }
-
-
 }
 
 export class SliderLayer extends ToggleButtonLayer {
@@ -243,11 +256,13 @@ export class SliderLayer extends ToggleButtonLayer {
 
   public store(tick: number): any {
     const data: any = super.store(tick);
+    // TODO 実装
     return data;
   }
 
   public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
     super.restore(asyncTask, data, tick, clear);
+    // TODO 実装
   }
 
   protected restoreAfterLoadImage(data: any, tick: number): void {

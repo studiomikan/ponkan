@@ -39,18 +39,18 @@
 #;unlockbuttons
 #;s
 
-#;textbutton {
-#  lay:    3,
-#  text:   "ボタン",
-#  x:  20,
-#  y:  20,
-#  width:  200,
-#  height: 32,
-#  bgcolors: ["0xFF0000", "0x00FF00", "0x0000FF"],
-#  exp:    "alert('onClickTextButton')",
-#  calllabel:  "button-action-call",
-#  align: "left",
-#}
+;textbutton {
+  lay:    3,
+  text:   "ボタン",
+  x:  20,
+  y:  20,
+  width:  200,
+  height: 32,
+  bgcolors: ["0xFF0000", "0x00FF00", "0x0000FF"],
+  exp:    "alert('onClickTextButton')",
+  calllabel:  "button-action-call",
+  align: "left",
+}
 #;togglebutton {
 #  "lay": 3,
 #  "imagefile": "image/sample-toggle-button.png",
@@ -76,6 +76,7 @@
   fore: "image/slider-fore.png",
   button: "image/slider-button.png",
 }
+;unlockslider
 ;s
 
 *trans_loop
