@@ -67,6 +67,8 @@
 #
 ## ;rclick jump: true, label: "jump-target-label"
 
+#|save_point
+
 ;slider {
   lay: 0,
   x: 550,
@@ -77,7 +79,6 @@
   button: "image/slider-button.png",
 }
 ;unlockslider
-;s
 
 *trans_loop
 ;clear
@@ -122,8 +123,8 @@
 ;backlay
 ;layopt "lay": 1, "visible": false
 ;image "lay": 0, "file": "image/bg1.png", "visible": true, "x": 0, "y": 0
-;lockbutton
-;locksystembutton
+#;lockbutton
+#;locksystembutton
 preparetrans
 ;p
 ;trans "time": 3000, "method": "univ", "rule": "rule/rule_around.png"

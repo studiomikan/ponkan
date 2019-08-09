@@ -126,9 +126,7 @@ export class Slider extends BaseLayer {
     });
 
     return task.run().done(() => {
-      const x = this.value * (this.width - this.button.width);
-      this.foreImage.width = x;
-      this.button.x = x;
+      this.setValue(value);
       this.visible = true;
       this.lock();
     });
@@ -170,6 +168,15 @@ export class Slider extends BaseLayer {
     this.value = value;
   }
 
+  public setValue(value: number): void {
+    if (value < 0.0) { value = 0.0; }
+    if (value > 1.0) { value = 1.0; }
+    const x = value * (this.width - this.button.width);
+    this.value = value;
+    this.foreImage.width = x;
+    this.button.x = x;
+  }
+
   public onButtonDown(e: PonMouseEvent) {
     if (!this.locked) {
       this.down = true;
@@ -177,7 +184,7 @@ export class Slider extends BaseLayer {
   }
 
   public onButtonUp(e: PonMouseEvent) {
-    this.down = false;
+    // this.down = false;
   }
 
   public onMouseEnter(e: PonMouseEvent): void {
@@ -192,6 +199,9 @@ export class Slider extends BaseLayer {
     super.onMouseDown(e);
     if (!this.locked && this.isInsideEvent(e)) {
       this.setValueX(e.x);
+      this.down = true;
+      e.stopPropagation();
+      e.forceStop();
     }
   }
 
@@ -205,8 +215,66 @@ export class Slider extends BaseLayer {
 
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
-    this.down = false;
-    this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
+    if (this.down) {
+      this.down = false;
+      this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
+      e.stopPropagation();
+      e.forceStop();
+    }
+  }
+
+  protected static sliderStoreParams: string[] = [
+    "locked",
+    "value",
+  ];
+
+  public store(tick: number): any {
+    const data: any = super.store(tick);
+    const me: any = this as any;
+    Slider.sliderStoreParams.forEach((param: string) => {
+      data[param] = me[param];
+    });
+    data.foreImage = this.foreImage.store(tick);
+    data.button = this.button.store(tick);
+    return data;
+  }
+
+  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+    this.resetSlider();
+    super.restore(asyncTask, data, tick, clear);
+
+    const me: any = this as any;
+    Slider.sliderStoreParams.forEach((param: string) => {
+      me[param] = data[param];
+    });
+    this.foreImage.restore(asyncTask, data.foreImage, tick, clear);
+    this.button.restore(asyncTask, data.button, tick, clear);
+    this.button.setCallbacks({
+      onMouseDown: (e: PonMouseEvent) => { this.onButtonDown(e); },
+      onMouseUp: (e: PonMouseEvent) => { this.onButtonUp(e); },
+    });
+  }
+
+  public restoreAfterLoadImage(data: any, tick: number): void {
+    super.restoreAfterLoadImage(data, tick);
+    this.setValue(data.value);
+    if (data.locked) {
+      this.lock();
+    } else {
+      this.unlock();
+    }
+  }
+
+  public copyTo(dest: Slider): void {
+    super.copyTo(dest);
+
+    const me: any = this as any;
+    const you: any = dest as any;
+    Slider.sliderStoreParams.forEach((param: string) => {
+      you[param] = me[param];
+    });
+    this.foreImage.copyTo(dest.foreImage);
+    this.button.copyTo(dest.button);
   }
 }
 
@@ -256,20 +324,53 @@ export class SliderLayer extends ToggleButtonLayer {
 
   public store(tick: number): any {
     const data: any = super.store(tick);
-    // TODO 実装
+    data.sliders = this.sliders.map((slider) => slider.store(tick));
     return data;
   }
 
   public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
     super.restore(asyncTask, data, tick, clear);
-    // TODO 実装
+
+    if (data.sliders != null && data.sliders.length > 0) {
+      console.log("sliders", data.sliders);
+      if (data.sliders.length === this.sliders.length) {
+        // 数が同じ場合
+        data.sliders.forEach((sliderData: any, i: number) => {
+          this.sliders[i].restore(asyncTask, sliderData, tick, clear);
+        });
+      } else {
+        // 数が合わない場合は一度破棄して作り直す
+        this.clearSliders();
+        data.sliders.forEach((sliderData: any, i: number) => {
+          const s = new Slider(sliderData.name, this.resource, this.owner);
+          this.addChild(s);
+          this.sliders.push(s);
+          s.restore(asyncTask, sliderData, tick, clear);
+        });
+      }
+    } else {
+      this.clearSliders();
+    }
   }
 
-  protected restoreAfterLoadImage(data: any, tick: number): void {
-    super.restoreAfterLoadImage(data, tick);
-  }
+  // protected restoreAfterLoadImage(data: any, tick: number): void {
+  //   super.restoreAfterLoadImage(data, tick);
+  //   if (data.sliders != null && data.sliders.length > 0) {
+  //     for (let i = 0; i < data.sliders.length; i++) {
+  //       this.sliders[i].restoreAfterLoadImage(data.sliders[i], tick);
+  //     }
+  //   }
+  // }
 
   public copyTo(dest: SliderLayer): void {
     super.copyTo(dest);
+
+    dest.clearSliders();
+    this.sliders.forEach((srcSlider) => {
+      const destSlider = new Slider(this.name, dest.resource, dest.owner);
+      dest.addChild(destSlider);
+      dest.sliders.push(destSlider);
+      srcSlider.copyTo(destSlider);
+    });
   }
 }
