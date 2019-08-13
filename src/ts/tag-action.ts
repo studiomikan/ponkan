@@ -163,6 +163,36 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     /// @category その他
+    /// @description Ponkanのイベント処理を一時的にロックする
+    /// @details
+    ///   Ponkanが行うマウス・タップ・キーボードイベント処理を一時的にロックします。
+    ///   HTMLで作成したコンフィグ画面などを表示するときなどは、このコマンドで
+    ///   イベント処理をロックするようにしてください。
+    new TagAction(
+      ["lockgame"],
+      "その他",
+      "Ponkanのイベント処理を一時的にロックする",
+      [],
+      (values, tick) => {
+        p.lock();
+        return "break";
+      },
+    ),
+    /// @category その他
+    /// @description Ponkanのイベント処理ロックを解除する
+    /// @details
+    ///   `lockgame` によるロックを解除します。
+    new TagAction(
+      ["unlockgame"],
+      "その他",
+      "Ponkanのイベント処理ロックを解除する",
+      [],
+      (values, tick) => {
+        p.unlock();
+        return "break";
+      },
+    ),
+    /// @category その他
     /// @description システム変数をクリア
     /// @details
     ///   システム変数を初期化します。すべてのシステム変数が削除されます。

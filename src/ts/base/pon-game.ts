@@ -114,13 +114,20 @@ export class PonGame implements IConductorEvent {
     this.fps = 0;
   }
 
-  public lock(): void {
+  public lock(stop: boolean = true): void {
     this.isLocked = true;
+    if (stop) {
+      this.conductor.stop();
+    }
   }
 
-  public unlock(): void {
+  public unlock(restart: boolean = true): void {
     this.isLocked = false;
+    if (restart) {
+      this.conductor.start();
+    }
   }
+
 
   // ============================================================
   // スケーリング
@@ -363,10 +370,6 @@ export class PonGame implements IConductorEvent {
     // console.log("AFTER", this.conductor.name, this.conductor.status);
     this.onChangeStable(this.conductor.isStable);
     return "break";
-  }
-
-  public onLoadNewScript(labelName: string | null, countPage: boolean): void {
-    return;
   }
 
   public onTag(tag: Tag, line: number, tick: number): "continue" | "break" {

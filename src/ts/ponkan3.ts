@@ -432,15 +432,15 @@ export class Ponkan3 extends PonGame {
     delete this.conductor.commandShortcut[ch];
   }
 
+  public execCommand(commandName: string, values: any = {}): void {
+    const currentTag = this.conductor.script.getCurrentTag();
+    const line = currentTag != null ? currentTag.line : 0;
+    this.onTag(new Tag(commandName, values, line), line, Date.now());
+  }
+
   // =========================================================
   // コンダクタ
   // =========================================================
-  public onLoadNewScript(labelName: string | null, countPage: boolean): void {
-    if (labelName == null || labelName === "") {
-      labelName = "__start__";
-    }
-  }
-
   public onTag(tag: Tag, line: number, tick: number): "continue" | "break" {
     // Logger.debug("onTag: ", tag.name, tag.values, tag);
     const tagAction: TagAction = this.tagActions[tag.name];
