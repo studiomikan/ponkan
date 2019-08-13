@@ -310,6 +310,7 @@ export class SliderLayer extends ToggleButtonLayer {
     this.sliders.forEach((slider) => {
       slider.resetSlider();
       slider.destroy();
+      this.deleteChildLayer(slider);
     });
     this.sliders = [];
   }
@@ -353,14 +354,14 @@ export class SliderLayer extends ToggleButtonLayer {
     }
   }
 
-  // protected restoreAfterLoadImage(data: any, tick: number): void {
-  //   super.restoreAfterLoadImage(data, tick);
-  //   if (data.sliders != null && data.sliders.length > 0) {
-  //     for (let i = 0; i < data.sliders.length; i++) {
-  //       this.sliders[i].restoreAfterLoadImage(data.sliders[i], tick);
-  //     }
-  //   }
-  // }
+  protected restoreAfterLoadImage(data: any, tick: number): void {
+    super.restoreAfterLoadImage(data, tick);
+    if (data.sliders != null && data.sliders.length > 0) {
+      for (let i = 0; i < data.sliders.length; i++) {
+        this.sliders[i].restoreAfterLoadImage(data.sliders[i], tick);
+      }
+    }
+  }
 
   public copyTo(dest: SliderLayer): void {
     super.copyTo(dest);

@@ -516,37 +516,42 @@ export class PonGame implements IConductorEvent {
       try {
         e.preventDefault();
         if (this.isLocked) { return true; }
-        return this.onMouseEnter(new PonMouseEvent(e));
+        this.onMouseEnter(new PonMouseEvent(e));
       } catch (ex) {
         this.error(ex);
       }
+      return true;
     });
     canvas.addEventListener("mouseleave", (e: MouseEvent) => {
       try {
         e.preventDefault();
         if (this.isLocked) { return true; }
-        return this.onMouseLeave(new PonMouseEvent(e));
+        this.onMouseLeave(new PonMouseEvent(e));
+        return true;
       } catch (ex) {
         this.error(ex);
+        return true;
       }
     });
     canvas.addEventListener("mousewheel", (e: Event) => {
       try {
         e.preventDefault();
         if (this.isLocked) { return true; }
-        return this.onMouseWheel(new PonWheelEvent(e as WheelEvent));
+        this.onMouseWheel(new PonWheelEvent(e as WheelEvent));
       } catch (ex) {
         this.error(ex);
       }
+      return true;
     });
     canvas.addEventListener("mousemove", (e: MouseEvent) => {
       try {
         e.preventDefault();
         if (this.isLocked) { return true; }
-        return this.onMouseMove(new PonMouseEvent(e));
+        this.onMouseMove(new PonMouseEvent(e));
       } catch (ex) {
         this.error(ex);
       }
+      return true;
     });
     canvas.addEventListener("mousedown", (e: MouseEvent) => {
       try {
@@ -581,20 +586,22 @@ export class PonGame implements IConductorEvent {
         e.preventDefault();
         try {
           if (this.isLocked) { return true; }
-          return this.onMouseUp(new PonMouseEvent(x, y, button));
+          this.onMouseUp(new PonMouseEvent(x, y, button));
         } catch (ex) {
           this.error(ex);
         }
+        return true;
       });
     } else  {
       (canvas as HTMLCanvasElement).addEventListener("mouseup", (e: MouseEvent) => {
         e.preventDefault();
         try {
           if (this.isLocked) { return true; }
-          return this.onMouseUp(new PonMouseEvent(e));
+          this.onMouseUp(new PonMouseEvent(e));
         } catch (ex) {
           this.error(ex);
         }
+        return true;
       });
     }
   }
