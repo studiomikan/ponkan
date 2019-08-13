@@ -12,10 +12,10 @@ export class Button extends BaseLayer {
   protected down: boolean = false;
 
   public initButton() {
-    this.resetButton();
+    this.clearButton();
   }
 
-  public resetButton(): void {
+  public clearButton(): void {
     this.setButtonStatus("disabled");
     this.insideFlag = false;
     this.down = false;
@@ -75,7 +75,7 @@ export class Button extends BaseLayer {
   }
 
   public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
-    this.resetButton();
+    this.clearButton();
     super.restore(asyncTask, data, tick, clear);
 
     const me: any = this as any;
@@ -139,8 +139,8 @@ export class CommandButton extends Button {
     this.onClickSoundBuf = onClickSoundBuf;
   }
 
-  public resetCommandButton(): void {
-    this.resetButton();
+  public clearCommandButton(): void {
+    this.clearButton();
     this.jump = true;
     this.call = false;
     this.filePath = null;
@@ -281,7 +281,7 @@ export class CommandButton extends Button {
   }
 
   public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
-    this.resetCommandButton();
+    this.clearCommandButton();
     super.restore(asyncTask, data, tick, clear);
   }
 

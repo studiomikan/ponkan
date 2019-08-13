@@ -19,8 +19,8 @@ export class SliderButton extends Button {
     });
   }
 
-  public resetSliderButton() {
-    this.resetButton();
+  public clearSliderButton() {
+    this.clearButton();
     this.freeImage();
   }
 
@@ -91,7 +91,7 @@ export class Slider extends BaseLayer {
     const cb = new AsyncCallbacks();
     const task = new AsyncTask();
 
-    this.resetSlider();
+    this.clearSlider();
 
     if (value < 0.0) { value = 0.0; }
     if (value > 1.0) { value = 1.0; }
@@ -132,7 +132,7 @@ export class Slider extends BaseLayer {
     });
   }
 
-  public resetSlider(): void {
+  public clearSlider(): void {
     this.freeImage();
     this.value = 0;
     this.down = false;
@@ -140,7 +140,7 @@ export class Slider extends BaseLayer {
     this.foreImage.freeImage();
     this.foreImage.visible = false;
 
-    this.button.resetSliderButton();
+    this.button.clearSliderButton();
     this.button.freeImage();
     this.button.visible = false;
   }
@@ -240,7 +240,7 @@ export class Slider extends BaseLayer {
   }
 
   public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
-    this.resetSlider();
+    this.clearSlider();
     super.restore(asyncTask, data, tick, clear);
 
     const me: any = this as any;
@@ -308,7 +308,7 @@ export class SliderLayer extends ToggleButtonLayer {
 
   public clearSliders(): void {
     this.sliders.forEach((slider) => {
-      slider.resetSlider();
+      slider.clearSlider();
       slider.destroy();
       this.deleteChildLayer(slider);
     });

@@ -42,6 +42,7 @@
 ;textbutton {
   lay:    3,
   text:   "ボタン",
+  btnname: "testbutton",
   x:  20,
   y:  20,
   width:  200,
@@ -51,6 +52,16 @@
   calllabel:  "button-action-call",
   align: "left",
 }
+;p
+;textbuttonopt {
+  lay: 3,
+  height: 100,
+  btnname: "testbutton",
+  bgcolors: ["0xFFFF00", "0x00FFFF", "0xFF00FF"],
+  bgalphas: [0.8, 0.8, 0.8]
+}
+;p
+
 #;togglebutton {
 #  "lay": 3,
 #  "imagefile": "image/sample-toggle-button.png",

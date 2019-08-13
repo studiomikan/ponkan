@@ -150,7 +150,7 @@ export class Script {
         }
       } else {
         this.macroStack.pop();
-        this.resource.resetMacroParams();
+        this.resource.clearMacroParams();
         return this.getNextTag();
       }
     }
@@ -158,7 +158,7 @@ export class Script {
 
   protected callMacro(tag: Tag): void {
     const macro: Macro = this.resource.getMacro(tag.name).clone();
-    macro.resetTagPoint();
+    macro.clearTagPoint();
     applyJsEntity(this.resource, tag.values);
     macro.params = Util.objClone(tag.values);
     this.macroStack.push(macro);

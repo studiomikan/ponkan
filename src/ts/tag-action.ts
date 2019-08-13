@@ -1547,6 +1547,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param ボタンの名前
+        new TagValue("btnname", "string", false, null),
         /// @param ボタン押下時にjumpする場合はtrue
         new TagValue("jump", "boolean", false, true),
         /// @param ボタン押下時にcallする場合はtrue
@@ -1573,13 +1575,13 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("bgalphas", "array", false, [1, 1, 1]),
         /// @param システム用ボタンとする場合はtrue
         new TagValue("system", "boolean", false, false),
-        /// @param テキスト描画のマージン（上）。この値を反映させるには、`clear` で一度テキストをクリアする必要があります。
+        /// @param テキスト描画のマージン（上）。
         new TagValue("margint", "number", false, 0),
-        /// @param テキスト描画のマージン（右）。この値を反映させるには、`clear` で一度テキストをクリアする必要があります。
+        /// @param テキスト描画のマージン（右）。
         new TagValue("marginr", "number", false, 0),
-        /// @param テキスト描画のマージン（下）。この値を反映させるには、`clear` で一度テキストをクリアする必要があります。
+        /// @param テキスト描画のマージン（下）。
         new TagValue("marginb", "number", false, 0),
-        /// @param テキスト描画のマージン（左）。この値を反映させるには、`clear` で一度テキストをクリアする必要があります。
+        /// @param テキスト描画のマージン（左）。
         new TagValue("marginl", "number", false, 0),
         /// @param テキスト寄せの方向。"left" | "center" | "right"
         new TagValue("align", "string", false, "center"),
@@ -1595,6 +1597,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       (values, tick) => {
         p.getLayers(values).forEach((layer) => {
           layer.addTextButton(
+            values.btnname,
             values.jump,
             values.call,
             values.file,
@@ -1618,6 +1621,35 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
             values.leavebuf,
             values.clickbuf,
           );
+        });
+        return "continue";
+      },
+    ),
+    /// @category ボタン
+    /// @description テキストボタンの設定を変更する
+    /// @details
+    ///   指定されたレイヤーのテキストボタンの設定を変更します。
+    ///   変更対象のテキストボタンは、ボタンの名前（`textbutton` の `btnname` で設定した名前）で指定します。
+    new TagAction(
+      ["textbuttonopt", "txtbtnopt"],
+      "ボタン",
+      "テキストボタンの設定を変更する",
+      [
+        /// @param 対象レイヤー
+        new TagValue("lay", "string", true, null),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+        /// @param 対象のボタンの名前
+        new TagValue("btnname", "string", true, null),
+        /// @param 背景色の配列(0xRRGGBB)。通常時、マウスオーバー時、マウス押下時の順。例：[0xFF0000, 0x00FF00, 0x0000FF]
+        new TagValue("bgcolors", "array", false, null),
+        /// @param 背景色のAlphaの配列(0.0〜1.0)。通常時、マウスオーバー時、マウス押下時の順
+        new TagValue("bgalphas", "array", false, null),
+      ],
+      (values, tick) => {
+        p.getLayers(values).forEach((layer) => {
+          if (values.bgcolors) { layer.changeTextButtonColors(values.btnname, values.bgcolors); }
+          if (values.bgalphas) { layer.changeTextButtonAlphas(values.btnname, values.bgalphas); }
         });
         return "continue";
       },

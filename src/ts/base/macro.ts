@@ -42,7 +42,7 @@ export class Macro {
     }
   }
 
-  public resetTagPoint(): void {
+  public clearTagPoint(): void {
     this.tagPoint = 0;
   }
 

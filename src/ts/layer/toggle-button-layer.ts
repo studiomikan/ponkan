@@ -20,7 +20,7 @@ export class ImageToggleButton extends ToggleButton {
   ): AsyncCallbacks {
     const cb = new AsyncCallbacks();
 
-    this.resetToggleButton();
+    this.clearToggleButton();
     this.freeImage();
 
     this.loadImage(filePath).done(() => {
@@ -40,8 +40,8 @@ export class ImageToggleButton extends ToggleButton {
     return cb;
   }
 
-  public resetToggleButton(): void {
-    super.resetToggleButton();
+  public clearToggleButton(): void {
+    super.clearToggleButton();
     this.direction = "horizontal";
   }
 
@@ -130,7 +130,7 @@ export class ToggleButtonLayer extends ImageButtonLayer {
 
   public clearToggleButtons(): void {
     this.imageToggleButtons.forEach((toggleButton) => {
-      toggleButton.resetToggleButton();
+      toggleButton.clearToggleButton();
       toggleButton.destroy();
       this.deleteChildLayer(toggleButton);
     });

@@ -26,7 +26,7 @@ export class CommandImageButton extends CommandButton {
   ): AsyncCallbacks {
     const cb = new AsyncCallbacks();
 
-    this.resetCommandButton();
+    this.clearCommandButton();
     this.freeImage();
 
     this.initCommandButton(jump, call, filePath, label, countPage, isSystemButton, exp,
@@ -49,8 +49,8 @@ export class CommandImageButton extends CommandButton {
     return cb;
   }
 
-  public resetCommandButton(): void {
-    super.resetCommandButton();
+  public clearCommandButton(): void {
+    super.clearCommandButton();
     this.direction = "horizontal";
   }
 
@@ -167,7 +167,7 @@ export class ImageButtonLayer extends TextButtonLayer {
 
   public clearImageButtons(): void {
     this.imageButtons.forEach((imageButton) => {
-      imageButton.resetCommandButton();
+      imageButton.clearCommandButton();
       imageButton.destroy();
       this.deleteChildLayer(imageButton);
     });

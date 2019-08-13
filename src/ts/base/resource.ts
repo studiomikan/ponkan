@@ -115,7 +115,7 @@ export class Resource {
     this.macroParams = params;
   }
 
-  public resetMacroParams(): void {
+  public clearMacroParams(): void {
     this.macroParams = null;
   }
 

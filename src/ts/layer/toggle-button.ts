@@ -30,7 +30,7 @@ export class ToggleButton extends BaseLayer {
     this.visible = true;
   }
 
-  public resetToggleButton(): void {
+  public clearToggleButton(): void {
     this.setButtonStatus("disabled");
     this.insideFlag = false;
     this.varName = "toggle-button-value";
@@ -139,7 +139,7 @@ export class ToggleButton extends BaseLayer {
   }
 
   public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
-    this.resetToggleButton();
+    this.clearToggleButton();
     super.restore(asyncTask, data, tick, clear);
   }
 

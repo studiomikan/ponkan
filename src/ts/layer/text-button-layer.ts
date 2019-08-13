@@ -12,12 +12,12 @@ import { FrameAnimLayer } from "./frame-anim-layer";
  */
 export class TextButton extends CommandButton {
   private txtBtnText: string = "";
-  private txtBtnNormalBackgroundColor: number = 0x000000;
-  private txtBtnOverBackgroundColor: number = 0x000000;
-  private txtBtnOnBackgroundColor: number = 0x000000;
-  private txtBtnNormalBackgroundAlpha: number = 1.0;
-  private txtBtnOverBackgroundAlpha: number = 1.0;
-  private txtBtnOnBackgroundAlpha: number = 1.0;
+  public txtBtnNormalBackgroundColor: number = 0x000000;
+  public txtBtnOverBackgroundColor: number = 0x000000;
+  public txtBtnOnBackgroundColor: number = 0x000000;
+  public txtBtnNormalBackgroundAlpha: number = 1.0;
+  public txtBtnOverBackgroundAlpha: number = 1.0;
+  public txtBtnOnBackgroundAlpha: number = 1.0;
 
   public initTextButton(
     jump: boolean = true,
@@ -38,7 +38,7 @@ export class TextButton extends CommandButton {
     onLeaveSoundBuf: string = "",
     onClickSoundBuf: string = "",
   ): void {
-    this.resetCommandButton();
+    this.clearCommandButton();
     this.freeImage();
     this.clearText();
 
@@ -58,8 +58,8 @@ export class TextButton extends CommandButton {
     this.setButtonStatus("disabled");
   }
 
-  public resetCommandButton(): void {
-    super.resetCommandButton();
+  public clearCommandButton(): void {
+    super.clearCommandButton();
 
     this.txtBtnText = "";
     this.txtBtnNormalBackgroundColor = 0x000000;
@@ -72,10 +72,13 @@ export class TextButton extends CommandButton {
 
   public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
     super.setButtonStatus(status);
+    this.resetTextButtonColors();
+  }
 
+  public resetTextButtonColors(): void {
     let color: number | null = null;
     let alpha: number | null = null;
-    switch (status) {
+    switch (this.buttonStatus) {
       case "normal":
       case "disabled":
         color = this.txtBtnNormalBackgroundColor;
@@ -148,6 +151,7 @@ export class TextButtonLayer extends FrameAnimLayer {
   protected textButtons: TextButton[] = [];
 
   public addTextButton(
+    btnName: string = "",
     jump: boolean = true,
     call: boolean = false,
     filePath: string | null = null,
@@ -172,7 +176,10 @@ export class TextButtonLayer extends FrameAnimLayer {
     onClickSoundBuf: string,
   ): void {
 
-    const name = `TextButton ${this.textButtons.length}`;
+    if (btnName == null || btnName === "") {
+      btnName = `${this.textButtons.length}`;
+    }
+    const name = `TextButton ${btnName}`;
     const btn = new TextButton(name, this.resource, this.owner);
     this.addChild(btn);
     this.textButtons.push(btn);
@@ -194,6 +201,7 @@ export class TextButtonLayer extends FrameAnimLayer {
     btn.textMarginBottom = textMarginBottom;
     btn.textMarginLeft = textMarginLeft;
     btn.textAlign = textAlign;
+    btn.clearText();
     btn.initTextButton(
       jump,
       call,
@@ -248,11 +256,40 @@ export class TextButtonLayer extends FrameAnimLayer {
 
   public clearTextButtons(): void {
     this.textButtons.forEach((textButton) => {
-      textButton.resetCommandButton();
+      textButton.clearCommandButton();
       textButton.destroy();
       this.deleteChildLayer(textButton);
     });
     this.textButtons = [];
+  }
+
+  public changeTextButtonColors(btnName: string, backgroundColors: number[]): void {
+    const normal: number = +backgroundColors[0];
+    const over: number = backgroundColors[1] != null ? +backgroundColors[1] : normal;
+    const on: number = backgroundColors[2] != null ? +backgroundColors[2] : normal;
+    this.findTextButtonByName(btnName).forEach((btn) => {
+      btn.txtBtnNormalBackgroundColor = normal;
+      btn.txtBtnOverBackgroundColor = over;
+      btn.txtBtnOnBackgroundColor = on;
+      btn.resetTextButtonColors();
+    });
+  }
+
+  public changeTextButtonAlphas(btnName: string, backgroundAlphas: number[]): void {
+    const normalAlpha: number = +backgroundAlphas[0];
+    const overAlpha: number = backgroundAlphas[1] != null ? +backgroundAlphas[1] : normalAlpha;
+    const onAlpha: number = backgroundAlphas[2] != null ? +backgroundAlphas[2] : normalAlpha;
+    this.findTextButtonByName(btnName).forEach((btn) => {
+      btn.txtBtnNormalBackgroundAlpha = normalAlpha;
+      btn.txtBtnOverBackgroundAlpha = overAlpha;
+      btn.txtBtnOnBackgroundAlpha = onAlpha;
+      btn.resetTextButtonColors();
+    });
+  }
+
+  protected findTextButtonByName(btnName: string): TextButton[] {
+    const name = `TextButton ${btnName}`;
+    return this.textButtons.filter((l) => l.name === name);
   }
 
   public lockButtons(): void {
