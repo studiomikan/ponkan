@@ -8,13 +8,13 @@ import { Ponkan3 } from "./ponkan3";
 
 export class TagValue {
   public readonly name: string;
-  public readonly type: "number" | "boolean" | "string" | "array" | "object" | "function";
+  public readonly type: "number" | "boolean" | "string" | "array" | "object" | "function" | "string|function";
   public readonly required: boolean;
   public readonly defaultValue: any;
 
   public constructor(
     name: string,
-    type: "number" | "boolean" | "string" | "array" | "object" | "function",
+    type: "number" | "boolean" | "string" | "array" | "object" | "function" | "string|function",
     required: boolean,
     defaultValue: any) {
     this.name = name;
@@ -88,6 +88,13 @@ export function castTagValues(tag: Tag, tagAction: TagAction) {
           break;
         case "function":
           tag.values[def.name] = value;
+          break;
+        case "string|function":
+          if (typeof value === "string") {
+            tag.values[def.name] = str;
+          } else {
+            tag.values[def.name] = value;
+          }
           break;
         case "array":
           // Logger.debug(Array.isArray(value));
@@ -1958,6 +1965,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("x", "number", false, 0),
         /// @param y座標(px)
         new TagValue("y", "number", false, 0),
+        /// @param スライダーの値が変わったときに実行するJavaScript
+        new TagValue("exp", "string|function", false, ""),
         /// @param 初期値(0.0～1.0)
         new TagValue("value", "number", false, 0),
         /// @param スライダーの背景用画像のファイルパス
@@ -1979,6 +1988,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
             values.x,
             values.y,
             values.value,
+            values.exp,
             values.back,
             values.fore,
             values.button,

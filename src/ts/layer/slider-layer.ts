@@ -68,6 +68,7 @@ export class Slider extends BaseLayer {
   protected button: SliderButton;
   protected locked: boolean = false;
   protected value: number = 0;
+  protected exp: string | ((v: number) => void) = "";
   protected down: boolean = false;
 
   constructor(name: string, resource: Resource, owner: PonGame) {
@@ -84,6 +85,7 @@ export class Slider extends BaseLayer {
 
   public initSlider(
     value: number,
+    exp: string | ((v: number) => void),
     backImagePath: string,
     foreImagePath: string,
     buttonImagePath: string,
@@ -96,6 +98,7 @@ export class Slider extends BaseLayer {
     if (value < 0.0) { value = 0.0; }
     if (value > 1.0) { value = 1.0; }
     this.value = value;
+    this.exp = exp;
 
     // 背景画像読み込み
     task.add((params: any, index: number): AsyncCallbacks => {
@@ -135,6 +138,7 @@ export class Slider extends BaseLayer {
   public clearSlider(): void {
     this.freeImage();
     this.value = 0;
+    this.exp = "";
     this.down = false;
 
     this.foreImage.freeImage();
@@ -218,6 +222,14 @@ export class Slider extends BaseLayer {
     if (this.down) {
       this.down = false;
       this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
+      if (this.exp != null && this.exp !== "") {
+        console.log("typeof", (typeof this.exp));
+        if (typeof this.exp === "function") {
+          this.exp(this.value);
+        } else {
+          this.resource.evalJs(this.exp as string);
+        }
+      }
       e.stopPropagation();
       e.forceStop();
     }
@@ -226,6 +238,7 @@ export class Slider extends BaseLayer {
   protected static sliderStoreParams: string[] = [
     "locked",
     "value",
+    "exp",
   ];
 
   public store(tick: number): any {
@@ -286,6 +299,7 @@ export class SliderLayer extends ToggleButtonLayer {
     x: number,
     y: number,
     value: number,
+    exp: string | ((v: number) => void),
     backImagePath: string,
     foreImagePath: string,
     buttonImagePath: string,
@@ -300,6 +314,7 @@ export class SliderLayer extends ToggleButtonLayer {
 
     return slider.initSlider(
       value,
+      exp,
       backImagePath,
       foreImagePath,
       buttonImagePath,

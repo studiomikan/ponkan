@@ -52,7 +52,6 @@
   calllabel:  "button-action-call",
   align: "left",
 }
-;p
 ;textbuttonopt {
   lay: 3,
   height: 100,
@@ -60,7 +59,6 @@
   bgcolors: ["0xFFFF00", "0x00FFFF", "0xFF00FF"],
   bgalphas: [0.8, 0.8, 0.8]
 }
-;p
 
 #;togglebutton {
 #  "lay": 3,
@@ -85,6 +83,7 @@
   x: 550,
   y: 500,
   value: 0.5,
+  exp: function(v) {console.log(v, tv)},
   back: "image/slider-back.png",
   fore: "image/slider-fore.png",
   button: "image/slider-button.png",
