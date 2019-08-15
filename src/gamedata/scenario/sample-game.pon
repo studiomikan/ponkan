@@ -23,7 +23,7 @@
 ;layopt lay: "sysbtn", visible: true
 ;clear
 
-;jump file: "scenario/fork.pon"
+#;jump file: "scenario/fork.pon"
 
 ###########################
 # あいさつ

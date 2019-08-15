@@ -9,7 +9,6 @@
 
 【分岐（ボタン、条件分岐）】
 ;lbrbr
-;jump label: "test"
 
 ノベルゲームでは、プレイヤーの選択や乱数によって、シナリオを分岐させることがあります。
 ;lbrbr
@@ -76,9 +75,6 @@ Ponkan3で分岐を実現する方法は2通りあります。
 ;pcl
 ;clearbuttons lay: "message"
 
-*test
-;clear
-
 ボタンとは別のもう一つの方法が、ifコマンドとJavaScriptを用いる方法です。
 ;lbrbr
 ifコマンドでは、任意のJavaScriptを実行した結果によって処理を分岐することができます。
@@ -110,9 +106,8 @@ JavaScriptのif文と同じように、評価結果が真(true)の場合に、if
 ……といった風に、if/else/elsif/endifコマンドでは、$
 JavaScriptによる柔軟な分岐処理が可能です。
 ;lbrbr
-すべてを使いこなすにはプログラミングの知識も必要となってきますが、
+すべてを使いこなすにはプログラミングの知識も必要となってきますが、$
 まずは簡単な分岐から使ってみてください。
 ;p
-
 
 ;jump file: "scenario/sample-game.pon", label: "show_menu"
