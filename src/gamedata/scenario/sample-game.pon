@@ -23,7 +23,7 @@
 ;layopt lay: "sysbtn", visible: true
 ;clear
 
-;jump file: "scenario/image.pon"
+;jump file: "scenario/fork.pon"
 
 ###########################
 # あいさつ
@@ -61,11 +61,15 @@
 }
 ;textbutton {
   lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
-  text: "・背景・立ち絵表示"
+  text: "・背景・立ち絵表示", exp: "tv.jump_target_file = 'scenario/image.pon'"
 }
 ;textbutton {
   lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
-  text: "・レイヤー移動とアニメーション"
+  text: "・レイヤー移動", exp: "tv.jump_target_file = 'scenario/move.pon'"
+}
+;textbutton {
+  lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
+  text: "・フレームアニメーション", exp: "tv.jump_target_file = 'scenario/frameanim.pon'"
 }
 ;textbutton {
   lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
@@ -77,7 +81,7 @@
 }
 ;textbutton {
   lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
-  text: "・分岐（ボタン、条件分岐）"
+  text: "・分岐（ボタン、条件分岐）", exp: "tv.jump_target_file = 'scenario/fork.pon'"
 }
 ;textbutton {
   lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
@@ -94,10 +98,15 @@
 
 ;layopt lay: "sysbtn", visible: false
 ;layopt lay: "message", visible: true
+;layopt lay: "chara1, chara2", visible: false
+;freeimage lay: "chara1, chara2"
 ;historyopt enabled: false
-;trans time: 500
+;lockbuttons
+;locksystembuttons
+;trans time: 300
 ;waittrans canskip: false
 ;unlockbuttons
+;unlocksystembuttons
 
 ;s
 
@@ -107,5 +116,6 @@
 *on_click_menu
 ;clear
 ;clearbuttons lay: "message"
+;historyopt enabled: true
 ;layopt lay: "sysbtn", visible: true
 ;jump file: "&tv.jump_target_file"
