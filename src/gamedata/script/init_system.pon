@@ -97,10 +97,8 @@ tv.layer = {
   marginb: 20,
   marginl: 20
 }
-;fillcolor lay: "mes", "color": "0x4286f4", "alpha": 0.7
 ;image lay: "mes", file: "image/message.png"
 ;textspeed unread: 20, read: 20
-
 
 
 # 行末グリフの設定

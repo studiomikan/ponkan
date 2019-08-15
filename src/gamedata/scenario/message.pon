@@ -57,6 +57,6 @@ Ponkan3のメッセージテキストには、様々な効果をかけること�
 ;pcl
 
 色々な効果を使ってみてくださいね！
-;pcl
+;p
 
 ;jump file: "scenario/sample-game.pon", label: "show_menu"
