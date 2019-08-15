@@ -1,0 +1,107 @@
+##################################################
+# サンプルゲーム Vol.1
+##################################################
+
+###########################
+# エイリアス設定
+###########################
+;layalias name: "base", lay: "0"
+;layalias name: "chara1", lay: "1"
+;layalias name: "chara2", lay: "2"
+;layalias name: "button", lay: "3"
+;layalias name: "sysbtn", lay: "&tv.layer.systembutton"
+;commandshortcut ch: "$", command: "br"
+
+###########################
+# 画面の初期設定
+###########################
+*start_game
+;freeimage lay: "0-10"
+;layopt lay: "0-10", visible: false
+;image lay: "base", file: "image/bg01.jpg", visible: true
+;layopt lay: "message", visible: true
+;layopt lay: "sysbtn", visible: true
+;clear
+
+;jump file: "scenario/message.pon"
+
+###########################
+# あいさつ
+###########################
+|game_start_save_point:はじめに
+;win_mes
+こんにちは。
+;lbr
+このスクリプトは、Ponkan3の基本機能について紹介するサンプルゲームです。
+;pcl
+
+知りたい内容を選んでね。
+;pcl
+
+
+###########################
+# メニューを表示
+###########################
+*show_menu
+;pretrans
+;full_mes
+;nowait
+;ch lay: "message", text: "Ponkan3サンプルメニュー"
+;endnowait
+
+- tv.y = 60;
+- tv.width = 500;
+;textbutton {
+  lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
+  text: "・Ponkan3について", exp: "tv.jump_target_file = 'scenario/about.pon'"
+}
+;textbutton {
+  lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
+  text: "・メッセージ表示", exp: "tv.jump_target_file = 'scenario/message.pon'"
+}
+;textbutton {
+  lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
+  text: "・背景・立ち絵表示"
+}
+;textbutton {
+  lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
+  text: "・レイヤー移動とアニメーション"
+}
+;textbutton {
+  lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
+  text: "・トランジション"
+}
+;textbutton {
+  lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
+  text: "・サウンド"
+}
+;textbutton {
+  lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
+  text: "・分岐（ボタン、条件分岐）"
+}
+;textbutton {
+  lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
+  text: "・セーブ＆ロード"
+}
+;textbutton {
+  lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
+  text: "・コンフィグ画面"
+}
+
+;layopt lay: "sysbtn", visible: false
+;layopt lay: "message", visible: true
+;historyopt enabled: false
+;trans time: 500
+;waittrans canskip: false
+;unlockbuttons
+
+;s
+
+###########################
+# メニュー選択時
+###########################
+*on_click_menu
+;clear
+;clearbuttons lay: "message"
+;layopt lay: "sysbtn", visible: true
+;jump file: "&tv.jump_target_file"

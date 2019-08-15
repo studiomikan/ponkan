@@ -2,59 +2,74 @@
 
 ---
 tv.systembutton = {
-  color:        0xFFFFFF,
-  bgcolors:     [0x4286f4, 0x4286f4, 0x4286f4],
-  bgalphas:     [0.7, 1.0, 0.95],
-  x:            20,
-  y:            300,
-  width:        100,
-  height:       24,
-  marginr:      10,
+  x:            (1280 - 630) / 2,
+  y:            720 - 40,
+  width:        1000,
+  height:       40,
 
   buttons: [
     {
       text:  "Save",
+      image: "sysbtn/save.png",
       file:  "script/save.pon",
       label: "save_start",
-      exp:   ""
+      exp:   "",
+      x:     0,
+      y:     0,
     },
     {
       text:  "Load",
+      image: "sysbtn/load.png",
       file:  "script/load.pon",
       label: "load_start",
-      exp:   ""
+      exp:   "",
+      x:     100,
+      y:     0,
     },
     {
       text:  "Skip",
+      image: "sysbtn/skip.png",
       file:  "script/system_button.pon",
       label: "act_skip",
-      exp:   ""
+      exp:   "",
+      x:     200,
+      y:     0,
     },
     {
       text:  "Auto",
+      image: "sysbtn/auto.png",
       file:  "script/system_button.pon",
       label: "act_auto",
-      exp:   ""
+      exp:   "",
+      x:     300,
+      y:     0,
     },
     {
       text:  "Log",
+      image: "sysbtn/log.png",
       file:  "script/system_button.pon",
       label: "act_log",
-      exp:   ""
+      exp:   "",
+      x:     400,
+      y:     0,
     },
     {
       text:  "Config",
+      image: "sysbtn/config.png",
       file:  "script/config.pon",
       label: "config_start",
-      exp:   ""
+      exp:   "",
+      x:     500,
+      y:     0,
     },
     {
       text:  "x",
+      image: "sysbtn/close.png",
       file:  "script/system_button.pon",
       label: "act_close",
       exp:   "",
-      width:  24,
-      height: 24,
+      x:     600,
+      y:     0,
     },
   ]
 }
@@ -65,50 +80,24 @@ tv.systembutton = {
   lay:          "&tv.layer.systembutton",
   x:            "&tv.systembutton.x",
   y:            "&tv.systembutton.y",
-  width:        "&(tv.systembutton.width + tv.systembutton.marginr) * tv.systembutton.buttons.length",
+  width:        "&tv.systembutton.width",
   height:       "&tv.systembutton.height",
   visible:      true,
   autohide:     true,
 }
-# ;fillcolor {
-#   lay:          "&tv.layer.systembutton",
-#   color:        0x000000,
-#   alpha:        0.5
-# }
-;messageopt  {
-  lay:          "&tv.layer.systembutton",
-  align:        "center",
-  margint:      0,
-  fontfamily:   ["GenShinGothic", "monospace"],
-  lineheight:   16, fontsize:     16,
-  fontweight:   "normal",
-  color:        "&tv.systembutton.color",
-  margint:      2,
-  marginr:      2,
-  marginb:      2,
-  marginl:      2,
-}
-
 ---
 ---
 
 - tv.x = 0
 ;for loops: "&tv.systembutton.buttons.length", indexvar: "i"
   ---
-  tv.x = (tv.systembutton.width + tv.systembutton.marginr) * tv.i;
   tv.button = tv.systembutton.buttons[tv.i];
-  tv.width = tv.button.width ? tv.button.width : tv.systembutton.width;
-  tv.height = tv.button.height ? tv.button.height : tv.systembutton.height;
   ---
-  ;textbutton {
+  ;imagebutton {
     lay:          "&tv.layer.systembutton",
-    text:         "&tv.button.text",
-    x:            "&tv.x",
-    y:            0,
-    width:        "&tv.width",
-    height:       "&tv.height",
-    bgcolors:     "&tv.systembutton.bgcolors",
-    bgalphas:     "&tv.systembutton.bgalphas",
+    imagefile:    "&tv.button.image",
+    x:            "&tv.button.x",
+    y:            "&tv.button.y",
     exp:          "&tv.button.exp",
     jump:         false,
     call:         true,
@@ -135,11 +124,13 @@ tv.systembutton = {
 # スキップ
 *act_skip
 ;startskip
+;unlocksystembuttons
 ;return forcestart: true
 
 # オート
 *act_auto
 ;startautomode
+;unlocksystembuttons
 ;return forcestart: true
 
 # ログ

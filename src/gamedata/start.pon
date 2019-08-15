@@ -3,6 +3,6 @@
 ;call file: "script/init_system.pon"
 
 # テスト用スクリプトの呼び出し
-;jump file: "test-script.pon"
+;jump file: "scenario/sample-game.pon"
 
 ;s
