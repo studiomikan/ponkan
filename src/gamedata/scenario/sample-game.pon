@@ -25,7 +25,7 @@
 ;layopt lay: "sysbtn", visible: true
 ;clear
 
-;jump file: "scenario/sound.pon"
+;jump file: "scenario/filter.pon"
 
 ###########################
 # あいさつ
@@ -87,15 +87,11 @@
 }
 ;textbutton {
   lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
-  text: "・セーブ＆ロード"
+  text: "・セーブ/ロード/コンフィグ画面", exp: "tv.jump_target_file = 'scenario/save-load-config.pon'"
 }
 ;textbutton {
   lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
-  text: "・コンフィグ画面"
-}
-;textbutton {
-  lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
-  text: "・レイヤーフィルター"
+  text: "・レイヤーフィルター", exp: "tv.jump_target_file = 'scenario/filter.pon'"
 }
 
 ;layopt lay: "sysbtn", visible: false
