@@ -25,7 +25,7 @@
 ;layopt lay: "sysbtn", visible: true
 ;clear
 
-;jump file: "scenario/filter.pon"
+#;jump file: "scenario/filter.pon"
 
 ###########################
 # あいさつ
@@ -47,6 +47,8 @@
 *show_menu
 ;pretrans
 ;full_mes
+;image lay: "base", file: "image/bg01.jpg", visible: true
+;layopt lay: "sysbtn", visible: true
 ;nowait
 ;ch lay: "message", text: "Ponkan3サンプルメニュー"
 ;endnowait
@@ -99,6 +101,7 @@
 ;layopt lay: "chara1, chara2", visible: false
 ;layopt lay: "rule1, rule2", visible: false
 ;freeimage lay: "chara1, chara2"
+;freeimage lay: "rule1, rule2"
 ;historyopt enabled: false
 ;lockbuttons
 ;locksystembuttons

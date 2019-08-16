@@ -26,16 +26,16 @@ Ponkan3は吉里吉里/KAG3と似た仕組みを採用しており、$
 
 夕方にフェード。
 ;pretrans
-;image lay: "base", file: "image/bg02.jpg"
-;trans time: 1000
-;waittrans canskip: false
+  ;image lay: "base", file: "image/bg02.jpg"
+  ;trans time: 1000
+  ;waittrans canskip: false
 ;lbr
 
 キャラクターをフェード表示。
 ;pretrans
-;image lay: "chara1", file: "image/chara01.png", visible: true, x: (1280-244)/2, y: 720-600
-;trans time: 300
-;waittrans canskip: false
+  ;image lay: "chara1", file: "image/chara01.png", visible: true, x: (1280-244)/2, y: 720-600
+  ;trans time: 300
+  ;waittrans canskip: false
 ;lbr
 
 場所を移動したっぽい演出。
@@ -84,5 +84,13 @@ Ponkan3は吉里吉里/KAG3と似た仕組みを採用しており、$
 ユニバーサルトランジションはルール画像次第で色々な演出ができますので、
 ぜひ使ってみてください。
 ;p
+
+;pretrans
+  ;layopt lay: "rule1", scalex: 1, scaley: 1, visible: false
+  ;layopt lay: "rule2", scalex: 1, scaley: 1, visible: false
+  ;layopt lay: "base", visible: false
+  ;layopt lay: "message", visible: false
+  ;trans time: 250, method: "univ", rule: "rule/shutter.png"
+  ;waittrans canskip: false
 
 ;jump file: "scenario/sample-game.pon", label: "show_menu"
