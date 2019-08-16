@@ -1502,7 +1502,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         task.run().done(() => {
           p.conductor.start();
         }).fail(() => {
-          p.error(new Error("画像読み込みに失敗しました。"));
+          if (p.config && p.config.developMode) {
+            p.error(new Error(`画像読み込みに失敗しました。(${values.file})`));
+          } else {
+            p.error(new Error(`画像読み込みに失敗しました。`));
+          }
         });
         return p.conductor.stop();
       },
@@ -2281,7 +2285,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @details
     ///   指定レイヤーに設定されたすべてのフィルタをクリアします。
     new TagAction(
-      ["clearfilter"],
+      ["clearfilters", "clearfilter"],
       "レイヤーフィルタ",
       "フィルタをクリアする",
       [
