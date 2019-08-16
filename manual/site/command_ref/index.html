@@ -57,11 +57,11 @@
             <li><a href="#_15">その他</a></li>
             <li><a href="#_16">スクリプト制御</a></li>
             <li><a href="#_17">マクロ</a></li>
-            <li><a href="#_18">メッセージ</a></li>
-            <li><a href="#_19">メッセージ操作</a></li>
-            <li><a href="#_20">レイヤー操作</a></li>
-            <li><a href="#_21">ボタン</a></li>
-            <li><a href="#_22">アニメーション</a></li>
+            <li><a href="#_18">メッセージ操作</a></li>
+            <li><a href="#_19">レイヤー操作</a></li>
+            <li><a href="#_20">ボタン</a></li>
+            <li><a href="#_21">アニメーション</a></li>
+            <li><a href="#_22">レイヤーフィルタ</a></li>
             <li><a href="#_23">サウンド</a></li>
             <li><a href="#_24">トランジション</a></li>
             <li><a href="#_25">メッセージ履歴</a></li>
@@ -91,6 +91,14 @@
 <tr>
 <td><a href="#raiseerror">raiseerror</a></td>
 <td>エラーを発生させるかどうかの設定</td>
+</tr>
+<tr>
+<td><a href="#lockgame">lockgame</a></td>
+<td>Ponkanのイベント処理を一時的にロックする</td>
+</tr>
+<tr>
+<td><a href="#unlockgame">unlockgame</a></td>
+<td>Ponkanのイベント処理ロックを解除する</td>
 </tr>
 <tr>
 <td><a href="#clearsysvar">clearsysvar</a></td>
@@ -240,7 +248,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_6">メッセージ</h3>
+<h3 id="_6">メッセージ操作</h3>
 <table>
 <thead>
 <tr>
@@ -257,17 +265,10 @@
 <td><a href="#ch">ch</a></td>
 <td>文字を出力する</td>
 </tr>
-</tbody>
-</table>
-<h3 id="_7">メッセージ操作</h3>
-<table>
-<thead>
 <tr>
-<th>コマンド名</th>
-<th>内容</th>
+<td><a href="#ruby">ruby</a></td>
+<td>改行する</td>
 </tr>
-</thead>
-<tbody>
 <tr>
 <td><a href="#br">br</a></td>
 <td>改行する</td>
@@ -314,7 +315,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_8">レイヤー操作</h3>
+<h3 id="_7">レイヤー操作</h3>
 <table>
 <thead>
 <tr>
@@ -369,7 +370,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_9">ボタン</h3>
+<h3 id="_8">ボタン</h3>
 <table>
 <thead>
 <tr>
@@ -381,6 +382,10 @@
 <tr>
 <td><a href="#textbutton-txtbtn">textbutton, txtbtn</a></td>
 <td>レイヤーにテキストボタンを配置する</td>
+</tr>
+<tr>
+<td><a href="#textbuttonopt-txtbtnopt">textbuttonopt, txtbtnopt</a></td>
+<td>テキストボタンの設定を変更する</td>
 </tr>
 <tr>
 <td><a href="#clearbuttons-clearbutton-clearbtn">clearbuttons, clearbutton, clearbtn</a></td>
@@ -422,9 +427,21 @@
 <td><a href="#unlocksystembuttons-unlocksystembutton-unlocksystem">unlocksystembuttons, unlocksystembutton, unlocksystem</a></td>
 <td>システムボタンをアンロックする</td>
 </tr>
+<tr>
+<td><a href="#slider">slider</a></td>
+<td>レイヤーにスライダーを配置する</td>
+</tr>
+<tr>
+<td><a href="#locksliders-lockslider">locksliders, lockslider</a></td>
+<td>スライダーをロックする</td>
+</tr>
+<tr>
+<td><a href="#unlocksliders-unlockslider">unlocksliders, unlockslider</a></td>
+<td>スライダーをアンロックする</td>
+</tr>
 </tbody>
 </table>
-<h3 id="_10">アニメーション</h3>
+<h3 id="_9">アニメーション</h3>
 <table>
 <thead>
 <tr>
@@ -460,6 +477,29 @@
 <tr>
 <td><a href="#waitmove-wm">waitmove, wm</a></td>
 <td>自動移動の終了を待つ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_10">レイヤーフィルタ</h3>
+<table>
+<thead>
+<tr>
+<th>コマンド名</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#clearfilter">clearfilter</a></td>
+<td>フィルタをクリアする</td>
+</tr>
+<tr>
+<td><a href="#blur">blur</a></td>
+<td>ぼかしフィルタ</td>
+</tr>
+<tr>
+<td><a href="#colorfilter">colorfilter</a></td>
+<td>色補正フィルタ</td>
 </tr>
 </tbody>
 </table>
@@ -537,7 +577,7 @@
 <tbody>
 <tr>
 <td><a href="#backlay">backlay</a></td>
-<td>表レイヤを裏レイヤにコピーする</td>
+<td>表レイヤーを裏レイヤーにコピーする</td>
 </tr>
 <tr>
 <td><a href="#copylay">copylay</a></td>
@@ -618,8 +658,12 @@
 <td>一時セーブデータから復元する</td>
 </tr>
 <tr>
-<td><a href="#screenshot">screenshot</a></td>
-<td>現在の画面のスクリーンショットを取る</td>
+<td><a href="#lockscreenshot">lockscreenshot</a></td>
+<td>現在の画面でスクリーンショットを固定する</td>
+</tr>
+<tr>
+<td><a href="#unlockscreenshot">unlockscreenshot</a></td>
+<td>スクリーンショットの固定を解除する</td>
 </tr>
 <tr>
 <td><a href="#copysavedata-copysave">copysavedata, copysave</a></td>
@@ -647,14 +691,19 @@
 <tbody>
 <tr>
 <td>count</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>レイヤー数</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>レイヤーの総数を変更します。
+j
+Ponkan3初期化時のレイヤー数は40です。40では多すぎる場合・足りない場合は、
+このコマンドでレイヤー数を変更してください。</p>
+<p>レイヤー数の変更は頻繁には行わないでください。
+ゲーム開始時に必要なレイヤー数に設定し、以後は変更しないという使い方をしてください。</p>
 <h3 id="raiseerror">raiseerror</h3>
 <p>エラーを発生させるかどうかの設定</p>
 <table>
@@ -670,21 +719,41 @@
 <tbody>
 <tr>
 <td>unknowncommand</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
 <td></td>
-<td>存在しないタグを実行したときにエラーにする</td>
+<td><code>true</code> の場合、存在しないコマンドを実行したときにエラーにする</td>
 </tr>
 </tbody>
 </table>
+<p>各種エラーを発生させるか・無視するかの設定を行います。</p>
+<h3 id="lockgame">lockgame</h3>
+<p>Ponkanのイベント処理を一時的にロックする</p>
+<p>Ponkanが行うマウス・タップ・キーボードイベント処理を一時的にロックします。
+HTMLで作成したコンフィグ画面などを表示するときなどは、このコマンドで
+イベント処理をロックするようにしてください。</p>
+<h3 id="unlockgame">unlockgame</h3>
+<p>Ponkanのイベント処理ロックを解除する</p>
+<p><code>lockgame</code> によるロックを解除します。</p>
 <h3 id="clearsysvar">clearsysvar</h3>
 <p>システム変数をクリア</p>
+<p>システム変数を初期化します。すべてのシステム変数が削除されます。</p>
+<p>システム変数はゲーム全体を通して使用される変数です。<br />
+ゲーム変数はセーブデータごとに別々の値を保存しますが、システム変数はゲーム全体で一つの値を保存します。</p>
+<p>システム変数は、セーブ時やゲーム終了時に自動で保存され、ゲーム起動時に自動で復元されます。</p>
 <h3 id="cleargamevar">cleargamevar</h3>
 <p>ゲーム変数をクリア</p>
+<p>ゲーム変数を初期化します。すべてのゲーム変数が削除されます。</p>
+<p>ゲーム変数はセーブデータごとに保存させる変数です。シナリオの進行管理などに利用します。</p>
 <h3 id="cleartmpvar">cleartmpvar</h3>
 <p>一時変数をクリア</p>
+<p>一時変数を初期化します。すべての一時変数が削除されます。</p>
+<p>一時変数はセーブデータ等に保存されません。一時的な値（計算の途中の値など）を保持するのに利用します。</p>
 <h3 id="savesysvar">savesysvar</h3>
 <p>システム変数を保存する</p>
+<p>システム変数を保存します。<br />
+システム変数は普通、ゲーム終了時に自動的に保存されますが、
+このコマンドを利用して明示的に保存することもできます。</p>
 <h3 id="clickskipopt-clickskip">clickskipopt, clickskip</h3>
 <p>クリックスキップの設定</p>
 <table>
@@ -700,15 +769,15 @@
 <tbody>
 <tr>
 <td>enabled</td>
-<td>boolean</td>
-<td>○</td>
+<td>真偽値(Boolean)</td>
+<td>〇</td>
 <td></td>
 <td>有効ならtrue、無効ならfalseを指定</td>
 </tr>
 </tbody>
 </table>
-<p>クリックスキップの有効無効を設定します。
-（クリックスキップとは、テキスト表示途中にクリックすると行末・ページ末までスキップする機能のことです。）</p>
+<p>クリックスキップの有効無効を設定します。<br />
+クリックスキップとは、テキスト表示途中にクリックすると行末・ページ末までスキップする機能のことです。</p>
 <h3 id="quake">quake</h3>
 <p>画面揺れ効果の開始</p>
 <table>
@@ -724,31 +793,34 @@
 <tbody>
 <tr>
 <td>time</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>画面揺れの時間</td>
 </tr>
 <tr>
 <td>x</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
-<td>20</td>
+<td><code>20</code></td>
 <td>横方向の揺れの最大値</td>
 </tr>
 <tr>
 <td>y</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
-<td>20</td>
+<td><code>20</code></td>
 <td>縦方向の揺れの最大値</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>画面を揺らす効果を実行します。<br />
+このコマンドは画面揺れが終わるのを待ちません。
+画面揺れ効果が終わるまで処理を止めたい場合は、<code>waitquake</code> を使用してください。</p>
 <h3 id="stopquake">stopquake</h3>
 <p>画面揺れ効果の停止</p>
-<p>TODO タグの説明文</p>
+<p><code>quake</code> で開始した画面揺れ効果を即座に停止します。
+画面揺れ効果が実行されていない場合には何もしません。</p>
 <h3 id="waitquake">waitquake</h3>
 <p>画面揺れ効果の終了待ち</p>
 <table>
@@ -764,14 +836,16 @@
 <tbody>
 <tr>
 <td>canskip</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>true</td>
+<td><code>true</code></td>
 <td>スキップ可能かどうか</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p><code>quake</code> で開始した画面揺れ効果の終了を待ちます。<br />
+<code>canskip: false</code> とした場合、スキップ処理やクリック等でスキップできなくなります。
+イベントシーンなどでは <code>false</code> にしたほうが良いでしょう。</p>
 <h3 id="rightclick-rclick">rightclick, rclick</h3>
 <p>右クリック時の動作を設定する</p>
 <table>
@@ -787,45 +861,45 @@
 <tbody>
 <tr>
 <td>jump</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
 <td></td>
 <td>右クリック時にjumpする場合はtrue</td>
 </tr>
 <tr>
 <td>call</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
 <td></td>
 <td>右クリック時にcallする場合はtrue</td>
 </tr>
 <tr>
 <td>file</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
 <td></td>
 <td>jumpまたはcallするスクリプトファイル名</td>
 </tr>
 <tr>
 <td>label</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
 <td></td>
 <td>jumpまたはcallするラベル名</td>
 </tr>
 <tr>
 <td>enabled</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
 <td></td>
 <td>右クリックの有効無効</td>
 </tr>
 </tbody>
 </table>
-<p>右クリックまたは ESC キーを押下時の動作を設定します。
-jump と call の両方を false に設定した場合、デフォルトの動作（メッセージレイヤーを隠す）になります。
-jump を true に設定した場合、file と label で指定した場所へジャンプします。
-call を true に設定した場合、file と label で指定した場所でサブルーチンを呼び出します。</p>
+<p>右クリックまたは ESC キーを押下時の動作を設定します。</p>
+<p>jump と call の両方を false に設定した場合、デフォルトの動作（メッセージレイヤーを隠す）になります。<br />
+jump を true に設定した場合、file と label で指定した場所へジャンプします。<br />
+call を true に設定した場合、file と label で指定した場所でサブルーチンを呼び出します。  </p>
 <h3 id="commandshortcut-cmdsc">commandshortcut, cmdsc</h3>
 <p>コマンドショートカットを設定する</p>
 <table>
@@ -841,15 +915,15 @@ call を true に設定した場合、file と label で指定した場所でサ
 <tbody>
 <tr>
 <td>ch</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>ショートカットの文字</td>
 </tr>
 <tr>
 <td>command</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>コマンドの名前</td>
 </tr>
@@ -871,8 +945,8 @@ call を true に設定した場合、file と label で指定した場所でサ
 <tbody>
 <tr>
 <td>ch</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>ショートカットの文字</td>
 </tr>
@@ -882,7 +956,8 @@ call を true に設定した場合、file と label で指定した場所でサ
 <h2 id="_16">スクリプト制御</h2>
 <h3 id="s">s</h3>
 <p>スクリプトの実行を停止する</p>
-<p>TODO タグの説明文</p>
+<p>スクリプトの実行を停止します。
+ボタン（選択肢）の押下待ちなどで使用します。</p>
 <h3 id="jump">jump</h3>
 <p>スクリプトファイルを移動する</p>
 <table>
@@ -898,28 +973,31 @@ call を true に設定した場合、file と label で指定した場所でサ
 <tbody>
 <tr>
 <td>file</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
 <td></td>
 <td>移動先のスクリプトファイル名。省略時は現在のファイル内で移動する</td>
 </tr>
 <tr>
 <td>label</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
 <td></td>
 <td>移動先のラベル名。省略時はファイルの先頭</td>
 </tr>
 <tr>
 <td>countpage</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>true</td>
+<td><code>true</code></td>
 <td>現在の位置を既読にするかどうか</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定したファイルの、指定したラベルの位置に移動します。</p>
+<p>実行中のスクリプトファイルから別のシナリオファイルへ移動する場合、
+ファイルの読み込みや解析処理が発生するため、処理に時間がかかる場合があります。<br />
+同じスクリプトファイル内の移動は問題ありません。</p>
 <h3 id="call">call</h3>
 <p>サブルーチンを呼び出す</p>
 <table>
@@ -935,28 +1013,31 @@ call を true に設定した場合、file と label で指定した場所でサ
 <tbody>
 <tr>
 <td>file</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
 <td></td>
 <td>移動先のスクリプトファイル名。省略時は現在のファイル内で移動する</td>
 </tr>
 <tr>
 <td>label</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
 <td></td>
 <td>移動先のラベル名。省略時はファイルの先頭</td>
 </tr>
 <tr>
 <td>countpage</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>false</td>
+<td><code>false</code></td>
 <td>現在の位置を既読にするかどうか</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定したファイルの、指定したラベルの位置をサブルーチンとして呼び出します。</p>
+<p>実行中のスクリプトファイルから別のシナリオファイルへ移動する場合、
+ファイルの読み込みや解析処理が発生するため、処理に時間がかかる場合があります。<br />
+同じスクリプトファイル内の移動は問題ありません。</p>
 <h3 id="return">return</h3>
 <p>サブルーチンをから戻る</p>
 <table>
@@ -971,40 +1052,26 @@ call を true に設定した場合、file と label で指定した場所でサ
 </thead>
 <tbody>
 <tr>
-<td>file</td>
-<td>string</td>
-<td></td>
-<td></td>
-<td>移動先のスクリプトファイル名。省略時は現在のファイル内で移動する</td>
-</tr>
-<tr>
-<td>label</td>
-<td>string</td>
-<td></td>
-<td></td>
-<td>移動先のラベル名。省略時はファイルの先頭</td>
-</tr>
-<tr>
 <td>forcestart</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>false</td>
+<td><code>false</code></td>
 <td>戻った後、強制的にシナリオを再開する</td>
 </tr>
 <tr>
 <td>countpage</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>true</td>
+<td><code>true</code></td>
 <td>現在の位置を既読にするかどうか</td>
 </tr>
 </tbody>
 </table>
-<p>[call]タグで呼び出したサブルーチンから、呼び出し元に戻ります。</p>
-<p>forcestart属性は、システムボタンを作成する際に指定します。
-システムボタンで呼び出したサブルーチンで[skip]や[auto]を実行しても、通常はサブルーチンから戻るとスクリプトは停止してしまいます。
-forcestart属性をtrueにした時は、呼び出し元へ戻ると同時に、[lb][pb]などで停止していたとしても、強制的に再開されます。
-ただし[s]タグでスクリプトが完全に停止していた場合は停止したままです。</p>
+<p><code>call</code> コマンドで呼び出したサブルーチンから、呼び出し元に戻ります。</p>
+<p><code>forcestart</code> は、システムボタンを作成する際に使用します。
+システムボタンで呼び出したサブルーチンで <code>skip</code> や <code>auto</code> を実行しても、通常はサブルーチンから戻るとスクリプトは停止してしまいます。
+<code>forcestart</code> を <code>true</code> にした時は、呼び出し元へ戻ると同時に、<code>lb</code> <code>pb</code> コマンドなどで停止していたとしても、強制的に再開されます。
+ただし <code>s</code> コマンドでスクリプトが完全に停止していた場合は停止したままです。</p>
 <h3 id="if">if</h3>
 <p>条件によって分岐する</p>
 <table>
@@ -1020,23 +1087,19 @@ forcestart属性をtrueにした時は、呼び出し元へ戻ると同時に、
 <tbody>
 <tr>
 <td>exp</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>条件式(JavaScript)</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
 <h3 id="elseif-elsif">elseif, elsif</h3>
 <p>条件によって分岐する</p>
-<p>TODO タグの説明文</p>
 <h3 id="else">else</h3>
 <p>条件によって分岐する</p>
-<p>TODO タグの説明文</p>
 <h3 id="endif">endif</h3>
 <p>条件分岐の終了</p>
-<p>TODO タグの説明文</p>
 <h3 id="for">for</h3>
 <p>指定回数繰り返す</p>
 <table>
@@ -1052,41 +1115,41 @@ forcestart属性をtrueにした時は、呼び出し元へ戻ると同時に、
 <tbody>
 <tr>
 <td>loops</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>繰り替えし回数</td>
 </tr>
 <tr>
 <td>indexvar</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"<strong>index</strong>"</td>
+<td><code>"__index__"</code></td>
 <td>ループ中のインデックスを格納する変数名</td>
 </tr>
 </tbody>
 </table>
-<p>[for]と[endfor]の間を指定回数繰り返します。
-indexvarで指定した名前の一時変数にループ回数が格納されます。
-ループ回数は0から始まるため、、0 〜 loops-1 の値をとります。</p>
+<p><code>for</code> コマンドと <code>endfor</code> コマンドの間を指定回数繰り返します。<br />
+<code>indexvar</code> で指定した名前の一時変数にループ回数が格納されます。
+ループ回数は <code>0</code> から始まるため、 <code>0</code> 〜 <code>loops - 1</code> の値をとります。</p>
 <h3 id="endfor">endfor</h3>
 <p>forループの終端</p>
-<p>TODO タグの説明文</p>
 <h3 id="breakfor">breakfor</h3>
 <p>forループから抜ける</p>
-<p>TODO タグの説明文</p>
+<p>現在実行中の <code>for</code> ループから抜け、 <code>endfor</code> の位置まで移動します。<br />
+<code>if</code> コマンドなどと組み合わせて、条件によってループを抜けるときに使います。</p>
 <h3 id="startskip-skip">startskip, skip</h3>
 <p>スキップを開始する</p>
-<p>TODO タグの説明文</p>
+<p>スキップ処理を開始します。</p>
 <h3 id="stopskip">stopskip</h3>
 <p>スキップを停止する</p>
-<p>TODO タグの説明文</p>
+<p>スキップ処理を停止します。</p>
 <h3 id="startautomode-startauto-auto">startautomode, startauto, auto</h3>
 <p>オートモードを開始する</p>
-<p>TODO タグの説明文</p>
+<p>オートモードを開始します。</p>
 <h3 id="stopautomode-stopauto">stopautomode, stopauto</h3>
 <p>オートモードを停止する</p>
-<p>TODO タグの説明文</p>
+<p>オートモードを停止します。</p>
 <h3 id="automodeopt-autoopt">automodeopt, autoopt</h3>
 <p>オートモードの設定</p>
 <table>
@@ -1102,21 +1165,23 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>オートモード状態表示に使用するレイヤー</td>
 </tr>
 <tr>
 <td>time</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>オートモードのインターバル時間(ms)</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>オートモードに関する設定を行います。</p>
+<p><code>lay</code> では、オートモード中かどうかを表示するためのレイヤーを指定します。
+オートモード中は、ここで指定したレイヤーが強制的に表示状態になります。</p>
 <h3 id="wait">wait</h3>
 <p>指定時間を待つ</p>
 <table>
@@ -1132,21 +1197,23 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>time</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>停止時間(ms)</td>
 </tr>
 <tr>
 <td>canskip</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>true</td>
+<td><code>true</code></td>
 <td>スキップ可能かどうか</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定した時間だけ、スクリプトの動作を停止します。<br />
+<code>canskip: false</code> とした場合、スキップ処理やクリック等でスキップできなくなります。
+イベントシーンなどでは <code>false</code> にしたほうが良いでしょう。</p>
 <h3 id="waitclick">waitclick</h3>
 <p>クリック待ちで停止する</p>
 <table>
@@ -1162,14 +1229,16 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>canskip</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>true</td>
+<td><code>true</code></td>
 <td>スキップ可能かどうか</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>マウスのクリック・画面のタップなどの操作待ちでスクリプトを停止します。<br />
+<code>canskip: false</code> とした場合、スキップ処理やクリック等でスキップできなくなります。
+イベントシーンなどでは <code>false</code> にしたほうが良いでしょう。</p>
 <h2 id="_17">マクロ</h2>
 <h3 id="macro">macro</h3>
 <p>マクロを定義する</p>
@@ -1186,18 +1255,20 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>name</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>マクロの名前</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>マクロを定義します。<br />
+マクロについての詳細は <a href="../macro/">マクロを利用する</a> のページを参照にしてください。</p>
 <h3 id="endmacro">endmacro</h3>
 <p>マクロ定義の終わり</p>
-<p>TODO タグの説明文</p>
-<h2 id="_18">メッセージ</h2>
+<p>マクロ定義のl終わりを示します。
+マクロについての詳細は <a href="../macro/">マクロを利用する</a> のページを参照にしてください。</p>
+<h2 id="_18">メッセージ操作</h2>
 <h3 id="messageopt-mesopt">messageopt, mesopt</h3>
 <p>テキストの設定</p>
 <table>
@@ -1213,161 +1284,182 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"message"</td>
+<td><code>"message"</code></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 <tr>
 <td>fontfamily</td>
-<td>array</td>
+<td>配列(Array)</td>
 <td></td>
 <td></td>
 <td>フォント名の配列</td>
 </tr>
 <tr>
 <td>fontsize</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>フォントサイズ(px)</td>
 </tr>
 <tr>
 <td>fontweight</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
 <td></td>
-<td>フォントウェイト。"normal" | "bold"</td>
+<td>フォントウェイト</td>
 </tr>
 <tr>
 <td>color</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>文字色(0xRRGGBB)</td>
 </tr>
 <tr>
 <td>margint</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>テキスト描画のマージン　上</td>
 </tr>
 <tr>
 <td>marginr</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>テキスト描画のマージン　右</td>
 </tr>
 <tr>
 <td>marginb</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>テキスト描画のマージン　下</td>
 </tr>
 <tr>
 <td>marginl</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>テキスト描画のマージン　左</td>
 </tr>
 <tr>
 <td>pitch</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>テキストの文字間(px)</td>
 </tr>
 <tr>
 <td>lineheight</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>テキストの行の高さ(px)</td>
 </tr>
 <tr>
 <td>linepitch</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>テキストの行間(px)</td>
 </tr>
 <tr>
 <td>align</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
 <td></td>
-<td>テキスト寄せの方向。"left" | "center" | "right"</td>
+<td>テキスト寄せの方向。"left"</td>
 </tr>
 <tr>
 <td>shadow</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
 <td></td>
 <td>影の表示非表示</td>
 </tr>
 <tr>
 <td>shadowalpha</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>影のAlpha(0.0〜1.0)</td>
 </tr>
 <tr>
 <td>shadowangle</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>影の角度(ラジアン)</td>
 </tr>
 <tr>
 <td>shadowblur</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>影のBlur</td>
 </tr>
 <tr>
 <td>shadowcolor</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>影の色(0xRRGGBB)</td>
 </tr>
 <tr>
 <td>shadowdistance</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>影の距離(px)</td>
 </tr>
 <tr>
 <td>edgewidth</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>縁取りの太さ(px)。0で非表示になる</td>
 </tr>
 <tr>
 <td>edgecolor</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>縁取りの色(0xRRGGBB)</td>
 </tr>
+<tr>
+<td>rubysize</td>
+<td>数値(Number)</td>
+<td></td>
+<td></td>
+<td>ルビのフォントファイズ(px)</td>
+</tr>
+<tr>
+<td>rubypitch</td>
+<td>数値(Number)</td>
+<td></td>
+<td></td>
+<td>ルビの文字間(px)</td>
+</tr>
+<tr>
+<td>rubyoffset</td>
+<td>数値(Number)</td>
+<td></td>
+<td></td>
+<td>ルビのオフセット(px)</td>
+</tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>テキストに関する設定を行います。</p>
 <h3 id="ch">ch</h3>
 <p>文字を出力する</p>
 <table>
@@ -1383,29 +1475,66 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"message"</td>
-<td>出力する先のレイヤ</td>
+<td><code>"message"</code></td>
+<td>出力する先のレイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 <tr>
 <td>text</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>出力する文字</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
-<h2 id="_19">メッセージ操作</h2>
+<p>指定したレイヤーに文字を出力します。<br />
+デフォルトではカレントメッセージレイヤーが操作対象です。</p>
+<h3 id="ruby">ruby</h3>
+<p>改行する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>"message"</code></td>
+<td>出力する先のレイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>"current"</code></td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>text</td>
+<td>文字列(String)</td>
+<td></td>
+<td></td>
+<td>ルビ</td>
+</tr>
+</tbody>
+</table>
+<p>次に出力する文字にルビ（ふりがな）を設定します。</p>
 <h3 id="br">br</h3>
 <p>改行する</p>
 <table>
@@ -1421,14 +1550,22 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"message"</td>
-<td>出力する文字</td>
+<td><code>"message"</code></td>
+<td>出力する先のレイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>"current"</code></td>
+<td>対象ページ</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定したレイヤーのテキストを改行します。
+デフォルトではカレントメッセージレイヤーが操作対象です。</p>
 <h3 id="clear-c">clear, c</h3>
 <p>テキストをクリアする</p>
 <table>
@@ -1444,21 +1581,22 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"message"</td>
+<td><code>"message"</code></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定したレイヤーのテキストをクリアします。
+デフォルトではカレントメッセージレイヤーが操作対象です。</p>
 <h3 id="textspeed">textspeed</h3>
 <p>文字出力のインターバルを設定</p>
 <table>
@@ -1473,28 +1611,56 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 </thead>
 <tbody>
 <tr>
+<td>mode</td>
+<td>文字列(String)</td>
+<td></td>
+<td></td>
+<td>インターバルのモード。"user"</td>
+</tr>
+<tr>
 <td>unread</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
-<td>未読文章のインターバル時間(ms)</td>
+<td>ユーザーモードでの未読文章のインターバル時間(ms)</td>
 </tr>
 <tr>
 <td>read</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
-<td>既読文章のインターバル時間(ms)</td>
+<td>ユーザーモードでの既読文章のインターバル時間(ms)</td>
+</tr>
+<tr>
+<td>sysunread</td>
+<td>数値(Number)</td>
+<td></td>
+<td></td>
+<td>システムモードでの未読文章のインターバル時間(ms)</td>
+</tr>
+<tr>
+<td>sysread</td>
+<td>数値(Number)</td>
+<td></td>
+<td></td>
+<td>システムモードでの既読文章のインターバル時間(ms)</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>文字出力の、1文字表示するごとのインターバルについて設定します。</p>
+<p>通常、インターバル時間は user モードで動作しています。
+user モード時は、ユーザー（プレイヤー）が設定画面等から設定した値が利用されます。<br />
+イベントシーンなど、ユーザーの設定した時間ではなく、
+常に一定の間隔で表示したい場合は system モードに設定し、
+イベントシーンが終わったときに user モードに戻します。</p>
+<p>このコマンドとは別に、一時的にインターバル時間を 0 にする <a href="#nowait"><code>nowait</code></a> コマンドがあります。</p>
 <h3 id="nowait">nowait</h3>
 <p>一時的に文字出力インターバルを0にする</p>
-<p>TODO タグの説明文</p>
+<p>このコマンド実行直後から、文字出力のインターバル時間を一時的に 0 にします。
+もとに戻すときは <code>endnowait</code> コマンドを使用します。</p>
 <h3 id="endnowait">endnowait</h3>
 <p>nowaitを終了する</p>
-<p>TODO タグの説明文</p>
+<p><code>nowait</code> の効果を終了します。j</p>
 <h3 id="textlocate-locate">textlocate, locate</h3>
 <p>文字表示位置を指定する</p>
 <table>
@@ -1510,35 +1676,36 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"message"</td>
+<td><code>"message"</code></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 <tr>
 <td>x</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>x座標</td>
 </tr>
 <tr>
 <td>y</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>x座標</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>テキスト表示で、次の文字を表示する位置を変更します。
+以後のテキストは指定された位置からの表示となります。</p>
 <h3 id="indent">indent</h3>
 <p>インデント位置を設定する</p>
 <table>
@@ -1554,29 +1721,29 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"message"</td>
+<td><code>"message"</code></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 <tr>
 <td>history</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>true</td>
+<td><code>true</code></td>
 <td>メッセージ履歴もインデントするかどうか</td>
 </tr>
 </tbody>
 </table>
 <p>現在の文字描画位置でインデントするように設定します。
-インデント位置は [endindent] または [clear] でクリアされます。</p>
+インデント位置は <code>endindent</code> または <code>clear</code> でクリアされます。</p>
 <h3 id="endindent">endindent</h3>
 <p>インデント位置をクリアする</p>
 <table>
@@ -1592,38 +1759,37 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"message"</td>
+<td><code>"message"</code></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 <tr>
 <td>history</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>true</td>
+<td><code>true</code></td>
 <td>メッセージ履歴もインデント解除するか</td>
 </tr>
 </tbody>
 </table>
-<p>[indent] で設定したインデント位置をクリアします。</p>
+<p><code>indent</code> で設定したインデント位置をクリアします。</p>
 <h3 id="linebreak-lb-l">linebreak, lb, l</h3>
 <p>行末クリック待ちで停止する</p>
-<p>TODO タグの説明文</p>
 <h3 id="pagebreak-pb-p">pagebreak, pb, p</h3>
 <p>行末クリック待ちで停止する</p>
-<p>TODO タグの説明文</p>
 <h3 id="hidemessages">hidemessages</h3>
 <p>メッセージレイヤを一時的に隠す</p>
-<p>TODO タグの説明文</p>
-<h2 id="_20">レイヤー操作</h2>
+<p>メッセージレイヤを一時的に非表示にします。\
+非表示中はスクリプトの実行が停止します。クリック等の操作で再開します。</p>
+<h2 id="_19">レイヤー操作</h2>
 <h3 id="layalias">layalias</h3>
 <p>レイヤー名エイリアスを作成する</p>
 <table>
@@ -1639,15 +1805,15 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>name</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>エイリアス名</td>
 </tr>
 <tr>
 <td>lay</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
@@ -1678,13 +1844,14 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>name</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>エイリアス名</td>
 </tr>
 </tbody>
 </table>
+<p><a href="#layalias"><code>layalias</code></a> で設定したレイヤー名エイリアスを削除します。</p>
 <h3 id="messagelayer-messagelay-meslay-meslay">messagelayer, messagelay, meslay, meslay</h3>
 <p>メッセージレイヤーを指定する</p>
 <table>
@@ -1700,14 +1867,17 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>メッセージレイヤーとして使用するレイヤーを指定します。</p>
+<p>スクリプトに書かれたテキストは、メッセージレイヤーに出力されます。<br />
+出力先のレイヤーを切り替えたい場合は、このコマンドで切り替えるか、
+もしくは <a href="#ch"><code>ch</code></a> コマンドなどを使用して出力してください。</p>
 <h3 id="linebreakglyph-lbglyph">linebreakglyph, lbglyph</h3>
 <p>行末グリフに関して設定する</p>
 <table>
@@ -1723,14 +1893,14 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>グリフとして使用するレイヤー</td>
 </tr>
 <tr>
 <td>pos</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
 <td></td>
 <td>グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。</td>
@@ -1758,21 +1928,21 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 </tr>
 <tr>
 <td>x</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>グリフの表示位置（メッセージレイヤーからの相対位置）</td>
 </tr>
 <tr>
 <td>y</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>グリフの表示位置（メッセージレイヤーからの相対位置）</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>行末クリック待ち中に表示されるグリフに関して設定します。  </p>
 <h3 id="pagebreakglyph-pbglyph">pagebreakglyph, pbglyph</h3>
 <p>ページ末グリフに関して設定する</p>
 <table>
@@ -1788,14 +1958,14 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>グリフとして使用するレイヤー</td>
 </tr>
 <tr>
 <td>pos</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
 <td></td>
 <td>グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。</td>
@@ -1823,21 +1993,21 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 </tr>
 <tr>
 <td>x</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>グリフの表示位置（メッセージレイヤーからの相対位置）</td>
 </tr>
 <tr>
 <td>y</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>グリフの表示位置（メッセージレイヤーからの相対位置）</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>ページ末クリック待ち中に表示されるグリフに関して設定します。  </p>
 <h3 id="fillcolor-fill">fillcolor, fill</h3>
 <p>レイヤーを塗りつぶす</p>
 <table>
@@ -1853,35 +2023,35 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 <tr>
 <td>color</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>塗りつぶし色(0xRRGGBB)</td>
 </tr>
 <tr>
 <td>alpha</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
-<td>1</td>
+<td><code>1.0</code></td>
 <td>塗りつぶしのAlpha(0.0〜1.0)</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定されたレイヤーを単色で塗りつぶします。</p>
 <h3 id="clearcolor">clearcolor</h3>
 <p>レイヤー塗りつぶしをクリアする</p>
 <table>
@@ -1897,21 +2067,21 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p><a href="#fillcolor-fill"><code>fillcolor</code></a> コマンドでのレイヤー塗りつぶしをクリアします。</p>
 <h3 id="layopt">layopt</h3>
 <p>レイヤーの設定</p>
 <table>
@@ -1927,105 +2097,119 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 <tr>
 <td>visible</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
 <td></td>
 <td>表示非表示</td>
 </tr>
 <tr>
 <td>x</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>x座標(px)</td>
 </tr>
 <tr>
 <td>y</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>y座標(px)</td>
 </tr>
 <tr>
 <td>width</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>幅(px)</td>
 </tr>
 <tr>
 <td>height</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>高さ(px)</td>
 </tr>
 <tr>
 <td>alpha</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
-<td>1</td>
+<td><code>1.0</code></td>
 <td>レイヤーのAlpha(0.0〜1.0)</td>
 </tr>
 <tr>
 <td>autohide</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
 <td></td>
 <td>hidemessagesで同時に隠すかどうか</td>
 </tr>
 <tr>
+<td>scalex</td>
+<td>数値(Number)</td>
+<td></td>
+<td></td>
+<td>x軸方向のスケール。1.0で等倍</td>
+</tr>
+<tr>
+<td>scaley</td>
+<td>数値(Number)</td>
+<td></td>
+<td></td>
+<td>y軸方向のスケール。1.0で等倍</td>
+</tr>
+<tr>
 <td>blocklclick</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
 <td></td>
 <td>左クリックイベントを遮断するかどうか</td>
 </tr>
 <tr>
 <td>blockrclick</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
 <td></td>
 <td>右クリックイベントを遮断するかどうか</td>
 </tr>
 <tr>
 <td>blockcclick</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
 <td></td>
 <td>中クリックイベントを遮断するかどうか</td>
 </tr>
 <tr>
 <td>blockmove</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
 <td></td>
 <td>マウス移動イベントを遮断するかどうか</td>
 </tr>
 <tr>
 <td>blockwheel</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
 <td></td>
 <td>マウスホイールイベントを遮断するかどうか</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>レイヤーに関して設定します。</p>
 <h3 id="loadimage-image">loadimage, image</h3>
 <p>レイヤーに画像を読み込む</p>
 <table>
@@ -2041,56 +2225,57 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 <tr>
 <td>file</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>読み込む画像ファイルパス</td>
 </tr>
 <tr>
 <td>visible</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
 <td></td>
 <td>表示非表示</td>
 </tr>
 <tr>
 <td>x</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>x座標(px)</td>
 </tr>
 <tr>
 <td>y</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>y座標(px)</td>
 </tr>
 <tr>
 <td>alpha</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
-<td>1</td>
+<td><code>1.0</code></td>
 <td>レイヤーのAlpha(0.0〜1.0)</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定のレイヤーに画像ファイルを読み込みます。<br />
+画像読み込み後、レイヤーのサイズを画像と同じサイズに変更します。</p>
 <h3 id="loadchildimage-childimage">loadchildimage, childimage,</h3>
 <p>レイヤーに追加で画像を読み込む</p>
 <table>
@@ -2106,49 +2291,49 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 <tr>
 <td>file</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>読み込む画像ファイルパス</td>
 </tr>
 <tr>
 <td>x</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>x座標(px)</td>
 </tr>
 <tr>
 <td>y</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>y座標(px)</td>
 </tr>
 <tr>
 <td>alpha</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
-<td>1</td>
+<td><code>1.0</code></td>
 <td>表示非表示</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p><a href="#loadimage-image"><code>loadimage</code></a> コマンドとは別に、追加で画像を読み込みます。</p>
 <h3 id="freeimage-free-unloadimage">freeimage, free, unloadimage</h3>
 <p>レイヤーの画像を開放する</p>
 <table>
@@ -2164,22 +2349,22 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
-<h2 id="_21">ボタン</h2>
+<p>レイヤーに読み込まれた画像をすべて解放します。</p>
+<h2 id="_20">ボタン</h2>
 <h3 id="textbutton-txtbtn">textbutton, txtbtn</h3>
 <p>レイヤーにテキストボタンを配置する</p>
 <table>
@@ -2195,163 +2380,236 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 <tr>
-<td>jump</td>
-<td>boolean</td>
+<td>btnname</td>
+<td>文字列(String)</td>
 <td></td>
-<td>true</td>
+<td></td>
+<td>ボタンの名前</td>
+</tr>
+<tr>
+<td>jump</td>
+<td>真偽値(Boolean)</td>
+<td></td>
+<td><code>true</code></td>
 <td>ボタン押下時にjumpする場合はtrue</td>
 </tr>
 <tr>
 <td>call</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
 <td></td>
 <td>ボタン押下時にcallする場合はtrue</td>
 </tr>
 <tr>
 <td>file</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
 <td></td>
 <td>ボタン押下時にjumpまたはcallするスクリプトファイル名</td>
 </tr>
 <tr>
 <td>label</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
 <td></td>
 <td>ボタン押下時にjumpまたはcallするラベル名</td>
 </tr>
 <tr>
 <td>exp</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
 <td></td>
 <td>ボタン押下時に実行するJavaScript</td>
 </tr>
 <tr>
 <td>text</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>""</td>
+<td><code>""</code></td>
 <td>テキスト</td>
 </tr>
 <tr>
 <td>x</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
-<td>0</td>
+<td><code>0</code></td>
 <td>x座標(px)</td>
 </tr>
 <tr>
 <td>y</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
-<td>0</td>
+<td><code>0</code></td>
 <td>y座標(px)</td>
 </tr>
 <tr>
 <td>width</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>幅(px)</td>
 </tr>
 <tr>
 <td>height</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>高さ(px)</td>
 </tr>
 <tr>
 <td>bgcolors</td>
-<td>array</td>
-<td>○</td>
+<td>配列(Array)</td>
+<td>〇</td>
 <td></td>
-<td>背景色の配列(0xRRGGBB)。通常時、マウスオーバー時、マウス押下時の順</td>
+<td>背景色の配列(0xRRGGBB)。通常時、マウスオーバー時、マウス押下時の順。例：[0xFF0000, 0x00FF00, 0x0000FF]</td>
 </tr>
 <tr>
 <td>bgalphas</td>
-<td>array</td>
+<td>配列(Array)</td>
 <td></td>
-<td>1,1,1</td>
+<td><code>[1</code></td>
 <td>背景色のAlphaの配列(0.0〜1.0)。通常時、マウスオーバー時、マウス押下時の順</td>
 </tr>
 <tr>
 <td>system</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>false</td>
+<td><code>false</code></td>
 <td>システム用ボタンとする場合はtrue</td>
 </tr>
 <tr>
 <td>margint</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
-<td>0</td>
-<td>テキスト描画のマージン　上</td>
+<td><code>0</code></td>
+<td>テキスト描画のマージン（上）。</td>
 </tr>
 <tr>
 <td>marginr</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
-<td>0</td>
-<td>テキスト描画のマージン　右</td>
+<td><code>0</code></td>
+<td>テキスト描画のマージン（右）。</td>
 </tr>
 <tr>
 <td>marginb</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
-<td>0</td>
-<td>テキスト描画のマージン　下</td>
+<td><code>0</code></td>
+<td>テキスト描画のマージン（下）。</td>
 </tr>
 <tr>
 <td>marginl</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
-<td>0</td>
-<td>テキスト描画のマージン　左</td>
-</tr>
-<tr>
-<td>marginl</td>
-<td>number</td>
-<td></td>
-<td>0</td>
-<td>テキスト描画のマージン　左</td>
+<td><code>0</code></td>
+<td>テキスト描画のマージン（左）。</td>
 </tr>
 <tr>
 <td>align</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"center"</td>
-<td>テキスト寄せの方向。"left" | "center" | "right"</td>
+<td><code>"center"</code></td>
+<td>テキスト寄せの方向。"left"</td>
 </tr>
 <tr>
 <td>countpage</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>true</td>
+<td><code>true</code></td>
 <td>現在の位置を既読にするかどうか</td>
+</tr>
+<tr>
+<td>enterbuf</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>""</code></td>
+<td>マウスポインタが重なったタイミングで再生する音声の音声バッファ</td>
+</tr>
+<tr>
+<td>leavebuf</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>""</code></td>
+<td>マウスポインタが出て行ったタイミングで再生する音声の音声バッファ</td>
+</tr>
+<tr>
+<td>clickbuf</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>""</code></td>
+<td>ボタン押下時に再生する音声の音声バッファ</td>
 </tr>
 </tbody>
 </table>
 <p>指定のレイヤーに、テキストと背景色を用いたボタンを配置します。
 配置直後はボタンはロックされた状態となり、押下することはできません。
-[unlockbuttons]タグでロック状態を解除することで、押下できるようになります。</p>
+<code>unlockbuttons</code> コマンドでロック状態を解除することで、押下できるようになります。</p>
+<h3 id="textbuttonopt-txtbtnopt">textbuttonopt, txtbtnopt</h3>
+<p>テキストボタンの設定を変更する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>文字列(String)</td>
+<td>〇</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>"current"</code></td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>btnname</td>
+<td>文字列(String)</td>
+<td>〇</td>
+<td></td>
+<td>対象のボタンの名前</td>
+</tr>
+<tr>
+<td>bgcolors</td>
+<td>配列(Array)</td>
+<td></td>
+<td></td>
+<td>背景色の配列(0xRRGGBB)。通常時、マウスオーバー時、マウス押下時の順。例：[0xFF0000, 0x00FF00, 0x0000FF]</td>
+</tr>
+<tr>
+<td>bgalphas</td>
+<td>配列(Array)</td>
+<td></td>
+<td></td>
+<td>背景色のAlphaの配列(0.0〜1.0)。通常時、マウスオーバー時、マウス押下時の順</td>
+</tr>
+</tbody>
+</table>
+<p>指定されたレイヤーのテキストボタンの設定を変更します。
+変更対象のテキストボタンは、ボタンの名前（<code>textbutton</code> の <code>btnname</code> で設定した名前）で指定します。</p>
 <h3 id="clearbuttons-clearbutton-clearbtn">clearbuttons, clearbutton, clearbtn</h3>
 <p>すべてのボタンをクリアする</p>
 <table>
@@ -2367,21 +2625,21 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定されたレイヤーのテキストボタン、画像ボタン、トグルボタンをすべて解放します。</p>
 <h3 id="cleartextbuttons-cleartextbutton-cleartxtbtn">cleartextbuttons, cleartextbutton, cleartxtbtn</h3>
 <p>テキストボタンをクリアする</p>
 <table>
@@ -2397,21 +2655,21 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定されたレイヤーのテキストボタンをクリアします。</p>
 <h3 id="imagebutton-imgbtn">imagebutton, imgbtn</h3>
 <p>レイヤーに画像ボタンを配置する</p>
 <table>
@@ -2427,98 +2685,121 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 <tr>
 <td>jump</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>true</td>
+<td><code>true</code></td>
 <td>ボタン押下時にjumpする場合はtrue</td>
 </tr>
 <tr>
 <td>call</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
 <td></td>
 <td>ボタン押下時にcallする場合はtrue</td>
 </tr>
 <tr>
 <td>file</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
 <td></td>
 <td>ボタン押下時にjumpまたはcallするスクリプトファイル名</td>
 </tr>
 <tr>
 <td>label</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
 <td></td>
 <td>ボタン押下時にjumpまたはcallするラベル名</td>
 </tr>
 <tr>
 <td>exp</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
 <td></td>
 <td>ボタン押下時に実行するJavaScript</td>
 </tr>
 <tr>
 <td>imagefile</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>ボタンにする画像ファイル</td>
 </tr>
 <tr>
 <td>x</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
-<td>0</td>
+<td><code>0</code></td>
 <td>x座標(px)</td>
 </tr>
 <tr>
 <td>y</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
-<td>0</td>
+<td><code>0</code></td>
 <td>y座標(px)</td>
 </tr>
 <tr>
 <td>direction</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"horizontal"</td>
+<td><code>"horizontal"</code></td>
 <td>ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"</td>
 </tr>
 <tr>
 <td>system</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>false</td>
+<td><code>false</code></td>
 <td>システム用ボタンとする場合はtrue</td>
 </tr>
 <tr>
 <td>countpage</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>true</td>
+<td><code>true</code></td>
 <td>現在の位置を既読にするかどうか</td>
+</tr>
+<tr>
+<td>enterbuf</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>""</code></td>
+<td>マウスポインタが重なったタイミングで再生する音声の音声バッファ</td>
+</tr>
+<tr>
+<td>leavebuf</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>""</code></td>
+<td>マウスポインタが出て行ったタイミングで再生する音声の音声バッファ</td>
+</tr>
+<tr>
+<td>clickbuf</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>""</code></td>
+<td>ボタン押下時に再生する音声の音声バッファ</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定のレイヤーに、画像を用いたボタンを配置します。
+配置直後はボタンはロックされた状態となり、押下することはできません。
+<code>unlockbuttons</code> コマンドでロック状態を解除することで、押下できるようになります。</p>
 <h3 id="clearimagebuttons-clearimagebutton-clearimgbtn">clearimagebuttons, clearimagebutton, clearimgbtn</h3>
 <p>画像ボタンをクリアする</p>
 <table>
@@ -2534,21 +2815,21 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定されたレイヤーの画像ボタンをクリアします。</p>
 <h3 id="togglebutton-tglbtn">togglebutton, tglbtn</h3>
 <p>レイヤーにトグルボタンを配置する</p>
 <table>
@@ -2564,70 +2845,74 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 <tr>
 <td>exp</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
 <td></td>
 <td>ボタン押下時に実行するJavaScript</td>
 </tr>
 <tr>
 <td>imagefile</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>ボタンにする画像ファイル</td>
 </tr>
 <tr>
 <td>x</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
-<td>0</td>
+<td><code>0</code></td>
 <td>x座標(px)</td>
 </tr>
 <tr>
 <td>y</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
-<td>0</td>
+<td><code>0</code></td>
 <td>y座標(px)</td>
 </tr>
 <tr>
 <td>statevar</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>選択状態を格納する一時変数の名前</td>
 </tr>
 <tr>
 <td>direction</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"horizontal"</td>
+<td><code>"horizontal"</code></td>
 <td>ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"</td>
 </tr>
 <tr>
 <td>system</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>false</td>
+<td><code>false</code></td>
 <td>システム用ボタンとする場合はtrue</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定のレイヤーに、画像を用いたトグルボタンを配置します。
+配置直後はボタンはロックされた状態となり、押下することはできません。
+<code>unlockbuttons</code> コマンドでロック状態を解除することで、押下できるようになります。</p>
+<p>トグルボタンは通常のボタンと異なり、オン・オフの二種類の状態を持ちます。
+機能のオン・オフの切り替えなどに利用することがｄけいます。</p>
 <h3 id="cleartogglebuttons-cleartogglebutton-cleartglbtn">cleartogglebuttons, cleartogglebutton, cleartglbtn</h3>
 <p>トグルボタンをクリアする</p>
 <table>
@@ -2643,21 +2928,21 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定されたレイヤーのトグルボタンをクリアします。</p>
 <h3 id="lockbuttons-lockbutton-lock">lockbuttons, lockbutton, lock</h3>
 <p>ボタンをロックする</p>
 <table>
@@ -2673,21 +2958,21 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"all"</td>
+<td><code>"all"</code></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定されたレイヤーのボタンをロックし、押下できないようにします。</p>
 <h3 id="unlockbuttons-unlockbutton-unlock">unlockbuttons, unlockbutton, unlock</h3>
 <p>ボタンをアンロックする</p>
 <table>
@@ -2703,28 +2988,252 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"all"</td>
+<td><code>"all"</code></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定されたレイヤーのボタンのロックを解除し、押下できる状態にします。<br />
+このコマンドでボタンを押下可能にした後は、直後に<code>s</code> コマンドでスクリプトの実行を停止してください。</p>
 <h3 id="locksystembuttons-locksystembutton-locksystem">locksystembuttons, locksystembutton, locksystem</h3>
 <p>システムボタンをロックする</p>
-<p>TODO タグの説明文</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>"all"</code></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>"current"</code></td>
+<td>対象ページ</td>
+</tr>
+</tbody>
+</table>
+<p>指定されたレイヤーのシステムボタンをロックし、押下できないようにします。</p>
 <h3 id="unlocksystembuttons-unlocksystembutton-unlocksystem">unlocksystembuttons, unlocksystembutton, unlocksystem</h3>
 <p>システムボタンをアンロックする</p>
-<p>TODO タグの説明文</p>
-<h2 id="_22">アニメーション</h2>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>"all"</code></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>"current"</code></td>
+<td>対象ページ</td>
+</tr>
+</tbody>
+</table>
+<p>指定されたレイヤーのシステムボタンのロックを解除し、押下できる状態にします。</p>
+<h3 id="slider">slider</h3>
+<p>レイヤーにスライダーを配置する</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>文字列(String)</td>
+<td>〇</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>"current"</code></td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>onchange</td>
+<td>文字列(String)</td>
+<td></td>
+<td></td>
+<td>値変更時に実行する関数</td>
+</tr>
+<tr>
+<td>x</td>
+<td>数値(Number)</td>
+<td></td>
+<td><code>0</code></td>
+<td>x座標(px)</td>
+</tr>
+<tr>
+<td>y</td>
+<td>数値(Number)</td>
+<td></td>
+<td><code>0</code></td>
+<td>y座標(px)</td>
+</tr>
+<tr>
+<td>exp</td>
+<td>undefined</td>
+<td></td>
+<td><code>""</code></td>
+<td>スライダーの値が変わったときに実行するJavaScript</td>
+</tr>
+<tr>
+<td>value</td>
+<td>数値(Number)</td>
+<td></td>
+<td><code>0</code></td>
+<td>初期値(0.0～1.0)</td>
+</tr>
+<tr>
+<td>back</td>
+<td>文字列(String)</td>
+<td>〇</td>
+<td></td>
+<td>スライダーの背景用画像のファイルパス</td>
+</tr>
+<tr>
+<td>fore</td>
+<td>文字列(String)</td>
+<td>〇</td>
+<td></td>
+<td>スライダーの表面画像のファイルパス</td>
+</tr>
+<tr>
+<td>button</td>
+<td>文字列(String)</td>
+<td>〇</td>
+<td></td>
+<td>スライダーの表面画像のファイルパス</td>
+</tr>
+<tr>
+<td>enterbuf</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>""</code></td>
+<td>マウスポインタがスライダーに重なったタイミングで再生する音声の音声バッファ</td>
+</tr>
+<tr>
+<td>leavebuf</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>""</code></td>
+<td>マウスポインタがスライダーから出て行ったタイミングで再生する音声の音声バッファ</td>
+</tr>
+<tr>
+<td>clickbuf</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>""</code></td>
+<td>スライダー押下時に再生する音声の音声バッファ</td>
+</tr>
+</tbody>
+</table>
+<p>指定のレイヤーに、画像を用いたスライダーを配置します。
+配置直後はロックされた状態となり、押下することはできません。
+<code>unlockslider</code> コマンドでロック状態を解除することで、押下できるようになります。</p>
+<h3 id="locksliders-lockslider">locksliders, lockslider</h3>
+<p>スライダーをロックする</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>"all"</code></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>"current"</code></td>
+<td>対象ページ</td>
+</tr>
+</tbody>
+</table>
+<p>指定レイヤーのスライダーをロックし、押下できない状態にします。</p>
+<h3 id="unlocksliders-unlockslider">unlocksliders, unlockslider</h3>
+<p>スライダーをアンロックする</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>"all"</code></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>"current"</code></td>
+<td>対象ページ</td>
+</tr>
+</tbody>
+</table>
+<p>指定レイヤーのスライダーのロックを解除し、押下できる状態にします。</p>
+<h2 id="_21">アニメーション</h2>
 <h3 id="frameanim-fanim">frameanim, fanim</h3>
 <p>フレームアニメーションを設定する</p>
 <table>
@@ -2740,56 +3249,57 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 <tr>
 <td>loop</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>false</td>
+<td><code>false</code></td>
 <td>アニメーションをループさせるかどうか</td>
 </tr>
 <tr>
 <td>time</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>1フレームの時間</td>
 </tr>
 <tr>
 <td>width</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>1フレームの幅</td>
 </tr>
 <tr>
 <td>height</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>1フレームの高さ</td>
 </tr>
 <tr>
 <td>frames</td>
-<td>array</td>
-<td>○</td>
+<td>配列(Array)</td>
+<td>〇</td>
 <td></td>
 <td>フレーム指定</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定レイヤーにフレームアニメーションを設定します。<br />
+フレームアニメーションの詳細については <a href="" title="../frameanim/">フレームアニメーション</a> を参照してください。</p>
 <h3 id="startframeanim-startfanim">startframeanim, startfanim</h3>
 <p>フレームアニメーションを開始する</p>
 <table>
@@ -2805,21 +3315,21 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定レイヤーに読み込まれたフレームアニメーションを再生開始します。</p>
 <h3 id="stopframeanim-stopfanim">stopframeanim, stopfanim</h3>
 <p>フレームアニメーションを停止する</p>
 <table>
@@ -2835,21 +3345,23 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定レイヤーのフレームアニメーションを停止します。<br />
+停止したアニメーションをもう一度再生したい場合は、
+改めて <code>frameanim</code> コマンドで設定してから <code>startframeanim</code> コマンドを実行てください。</p>
 <h3 id="waitframeanim-waitfanim">waitframeanim, waitfanim</h3>
 <p>フレームアニメーションの終了を待つ</p>
 <table>
@@ -2865,28 +3377,29 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 <tr>
 <td>canskip</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>true</td>
+<td><code>true</code></td>
 <td>スキップ可能かどうか</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定レイヤーのフレームアニメーションの終了を待ちます。<br />
+実行されているフレームアニメーションが無い場合やループ再生の場合は何もしません。</p>
 <h3 id="startmove-move">startmove, move</h3>
 <p>自動移動を開始する</p>
 <table>
@@ -2902,56 +3415,64 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 <tr>
 <td>time</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>自動移動させる時間</td>
 </tr>
 <tr>
 <td>delay</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
-<td>0</td>
+<td><code>0</code></td>
 <td>開始までの遅延時間(ms)</td>
 </tr>
 <tr>
 <td>path</td>
-<td>array</td>
-<td>○</td>
+<td>配列(Array)</td>
+<td>〇</td>
 <td></td>
 <td>自動移動させる位置を指定</td>
 </tr>
 <tr>
 <td>type</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"linear"</td>
-<td>自動移動のタイプ。"linear" | "bezier2" | "bezier3" | "catmullrom"</td>
+<td><code>"linear"</code></td>
+<td>自動移動のタイプ。"linear"</td>
 </tr>
 <tr>
 <td>ease</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"none"</td>
-<td>自動移動の入り・抜きの指定。"none" | "in" | "out" | "both"</td>
+<td><code>"none"</code></td>
+<td>自動移動の入り・抜きの指定。"none"</td>
+</tr>
+<tr>
+<td>loop</td>
+<td>真偽値(Boolean)</td>
+<td></td>
+<td></td>
+<td>自動移動をループさせるかどうか。タイプが "linear" か "catmullrom" の場合のみ有効</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>レイヤーの自動移動を開始します。
+自動移動に関しては <a href="../automove/">自動移動</a> のページを参照してください。</p>
 <h3 id="stopmove">stopmove</h3>
 <p>自動移動を停止する</p>
 <table>
@@ -2967,21 +3488,22 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"all"</td>
+<td><code>"all"</code></td>
 <td>対象レイヤー</td>
 </tr>
 <tr>
 <td>page</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"current"</td>
+<td><code>"current"</code></td>
 <td>対象ページ</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>レイヤーの自動移動を停止します。<br />
+停止後、レイヤーの状態は自動移動が終わった時点の状態になります。</p>
 <h3 id="waitmove-wm">waitmove, wm</h3>
 <p>自動移動の終了を待つ</p>
 <table>
@@ -2997,14 +3519,176 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>canskip</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>true</td>
+<td><code>true</code></td>
 <td>スキップ可能かどうか</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>レイヤーの自動移動の終了を待ちます。<br />
+自動移動中のレイヤーが無い場合やループ再生の場合はなにもしません。</p>
+<h2 id="_22">レイヤーフィルタ</h2>
+<h3 id="clearfilter">clearfilter</h3>
+<p>フィルタをクリアする</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>文字列(String)</td>
+<td>〇</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>"current"</code></td>
+<td>対象ページ</td>
+</tr>
+</tbody>
+</table>
+<p>指定レイヤーに設定されたすべてのフィルタをクリアします。</p>
+<h3 id="blur">blur</h3>
+<p>ぼかしフィルタ</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>文字列(String)</td>
+<td>〇</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>"current"</code></td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>blurx</td>
+<td>数値(Number)</td>
+<td></td>
+<td><code>4</code></td>
+<td>x軸方向のぼかし</td>
+</tr>
+<tr>
+<td>blury</td>
+<td>数値(Number)</td>
+<td></td>
+<td><code>4</code></td>
+<td>y軸方向のぼかし</td>
+</tr>
+<tr>
+<td>quality</td>
+<td>数値(Number)</td>
+<td></td>
+<td><code>4</code></td>
+<td>ぼかしの品質</td>
+</tr>
+</tbody>
+</table>
+<p>レイヤーにぼかしフィルタを設定します。</p>
+<h3 id="colorfilter">colorfilter</h3>
+<p>色補正フィルタ</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>値の種類</th>
+<th>必須</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lay</td>
+<td>文字列(String)</td>
+<td>〇</td>
+<td></td>
+<td>対象レイヤー</td>
+</tr>
+<tr>
+<td>page</td>
+<td>文字列(String)</td>
+<td></td>
+<td><code>"current"</code></td>
+<td>対象ページ</td>
+</tr>
+<tr>
+<td>gamma</td>
+<td>数値(Number)</td>
+<td></td>
+<td></td>
+<td>ガンマ値補正</td>
+</tr>
+<tr>
+<td>saturation</td>
+<td>数値(Number)</td>
+<td></td>
+<td></td>
+<td>彩度</td>
+</tr>
+<tr>
+<td>contrast</td>
+<td>数値(Number)</td>
+<td></td>
+<td></td>
+<td>コントラスト</td>
+</tr>
+<tr>
+<td>brightness</td>
+<td>数値(Number)</td>
+<td></td>
+<td></td>
+<td>輝度</td>
+</tr>
+<tr>
+<td>red</td>
+<td>数値(Number)</td>
+<td></td>
+<td></td>
+<td>色調（赤）</td>
+</tr>
+<tr>
+<td>green</td>
+<td>数値(Number)</td>
+<td></td>
+<td></td>
+<td>色調（緑）</td>
+</tr>
+<tr>
+<td>blue</td>
+<td>数値(Number)</td>
+<td></td>
+<td></td>
+<td>色調（青）</td>
+</tr>
+</tbody>
+</table>
+<p>レイヤーに色補正フィルタを設定します。</p>
 <h2 id="_23">サウンド</h2>
 <h3 id="bufalias">bufalias</h3>
 <p>バッファ番号エイリアスを作成する</p>
@@ -3021,15 +3705,15 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>name</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>エイリアス名</td>
 </tr>
 <tr>
 <td>buf</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>対象レイヤー</td>
 </tr>
@@ -3060,13 +3744,14 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>name</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>エイリアス名</td>
 </tr>
 </tbody>
 </table>
+<p>バッファ番号エイリアスを削除します。</p>
 <h3 id="loadsound-sound">loadsound, sound</h3>
 <p>音声をロードする</p>
 <table>
@@ -3082,21 +3767,21 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>buf</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>読み込み先バッファ番号</td>
 </tr>
 <tr>
 <td>file</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>読み込む音声ファイルパス</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定の音声バッファに音声ファイルを読み込みます。</p>
 <h3 id="freesound-unloadsound">freesound, unloadsound</h3>
 <p>音声を開放する</p>
 <table>
@@ -3112,14 +3797,15 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>buf</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>読み込み先バッファ番号</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定の音声バッファの音声を解放します。
+使用が終わった音声はこのコマンドで解放するようにしてください。</p>
 <h3 id="soundopt">soundopt</h3>
 <p>音声の設定</p>
 <table>
@@ -3135,42 +3821,42 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>buf</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>バッファ番号</td>
 </tr>
 <tr>
 <td>volume</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>音量(0.0〜1.0)</td>
 </tr>
 <tr>
-<td>volume2</td>
-<td>number</td>
+<td>gvolume</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
-<td>音量2(0.0〜1.0)</td>
+<td>グローバル音量(0.0〜1.0)</td>
 </tr>
 <tr>
 <td>seek</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
 <td></td>
 <td>シーク位置(ms)</td>
 </tr>
 <tr>
 <td>loop</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
 <td></td>
 <td>ループ再生するかどうか</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>音声に関して設定します。</p>
 <h3 id="playsound">playsound</h3>
 <p>音声を再生する</p>
 <table>
@@ -3186,14 +3872,14 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>buf</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>読み込み先バッファ番号</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定の音声バッファに読み込まれた音声を再生します。</p>
 <h3 id="stopsound">stopsound</h3>
 <p>音声を停止する</p>
 <table>
@@ -3209,14 +3895,14 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>buf</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>読み込み先バッファ番号</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定の音声バッファの再生を停止します。</p>
 <h3 id="fadesound">fadesound</h3>
 <p>音声をフェードする</p>
 <table>
@@ -3232,35 +3918,36 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>buf</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>読み込み先バッファ番号</td>
 </tr>
 <tr>
 <td>volume</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>フェード後の音量(0.0〜1.0)</td>
 </tr>
 <tr>
 <td>time</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>フェード時間(ms)</td>
 </tr>
 <tr>
 <td>autostop</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>false</td>
+<td><code>false</code></td>
 <td>フェード終了後に再生停止するか</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定の音声バッファの音量をフェードします。<br />
+このコマンドではフェード完了まで待ちません。フェードを待つ場合は <code>waitfade</code> コマンドを使用してください。</p>
 <h3 id="fadeoutsound-fadeout">fadeoutsound, fadeout</h3>
 <p>音声をフェードアウトして再生停止する</p>
 <table>
@@ -3276,28 +3963,29 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>buf</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>読み込み先バッファ番号</td>
 </tr>
 <tr>
 <td>time</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>フェード時間(ms)</td>
 </tr>
 <tr>
 <td>autostop</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>false</td>
-<td>フェード終了後に再生停止するか</td>
+<td><code>true</code></td>
+<td>フェード終了後に自動的に再生停止するか</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定の音声バッファをフェードアウトします。<br />
+このコマンドではフェード完了まで待ちません。フェードを待つ場合は <code>waitfade</code> コマンドを使用してください。</p>
 <h3 id="fadeinsound-fadein">fadeinsound, fadein</h3>
 <p>音声をフェードインで再生開始する</p>
 <table>
@@ -3313,28 +4001,29 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>buf</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>読み込み先バッファ番号</td>
 </tr>
 <tr>
 <td>volume</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>フェード後の音量(0.0〜1.0)</td>
 </tr>
 <tr>
 <td>time</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>フェード時間(ms)</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定の音声バッファをフェードインしながら再生開始します。
+このコマンドではフェード完了まで待ちません。フェードを待つ場合は <code>waitfade</code> コマンドを使用してください。</p>
 <h3 id="waitsoundstop-waitsound">waitsoundstop, waitsound</h3>
 <p>音声の再生終了を待つ</p>
 <table>
@@ -3350,21 +4039,22 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>buf</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>読み込み先バッファ番号</td>
 </tr>
 <tr>
 <td>canskip</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>true</td>
+<td><code>true</code></td>
 <td>スキップ可能かどうか</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定の音声バッファの音声が最後まで再生されるのを待ちます。<br />
+再生中でない場合やループ再生中の場合はなにもしません。</p>
 <h3 id="waitsoundfade-waitfade">waitsoundfade, waitfade</h3>
 <p>音声のフェード終了を待つ</p>
 <table>
@@ -3380,21 +4070,21 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>buf</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>読み込み先バッファ番号</td>
 </tr>
 <tr>
 <td>canskip</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>true</td>
+<td><code>true</code></td>
 <td>スキップ可能かどうか</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定の音声バッファのフェードが完了するのを待ちます。</p>
 <h3 id="endfadesound-endfade">endfadesound, endfade</h3>
 <p>音声のフェードを終了する</p>
 <table>
@@ -3410,17 +4100,18 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>buf</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>読み込み先バッファ番号</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定の音声バッファのフェードを終了します。<br />
+音声バッファの音量は即座にフェード後の音量になります。</p>
 <h2 id="_24">トランジション</h2>
 <h3 id="backlay">backlay</h3>
-<p>表レイヤを裏レイヤにコピーする</p>
+<p>表レイヤーを裏レイヤーにコピーする</p>
 <table>
 <thead>
 <tr>
@@ -3434,14 +4125,14 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>lay</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"all"</td>
+<td><code>"all"</code></td>
 <td>対象レイヤー</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>表レイヤーの状態を裏レイヤーにコピーします。</p>
 <h3 id="copylay">copylay</h3>
 <p>レイヤ情報をコピーする</p>
 <table>
@@ -3457,35 +4148,35 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>srclay</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>コピー元レイヤー</td>
 </tr>
 <tr>
 <td>destlay</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>コピー先レイヤー</td>
 </tr>
 <tr>
 <td>srcpage</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"fore"</td>
+<td><code>"fore"</code></td>
 <td>コピー元ページ</td>
 </tr>
 <tr>
 <td>destpage</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"fore"</td>
+<td><code>"fore"</code></td>
 <td>コピー先ページ</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p><code>srclay</code> のレイヤーの状態を <code>destlay</code> のレイヤーにコピーします。</p>
 <h3 id="currentpage">currentpage</h3>
 <p>操作対象ページを変更する</p>
 <table>
@@ -3501,17 +4192,23 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>page</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
-<td>操作対象ページを指定</td>
+<td>操作対象ページ（"fore"</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>操作対象ページを変更します。</p>
+<p>通常、操作対象ページは表ページ（画面に見えている側）になっていますが、
+トランジションを利用する場合は裏ページを操作します。
+その際に各コマンドで <code>page: "back"</code> と指定しても良いですが、
+このコマンドで操作対象ページを <code>"back"</code> に設定すれば、
+以後 <code>trans</code> コマンドが実行されるまで裏ページが操作対象になります。</p>
 <h3 id="preparetrans-pretrans">preparetrans, pretrans</h3>
 <p>トランジションの前準備</p>
-<p>TODO タグの説明文</p>
+<p>表レイヤーの情報を裏レイヤーにコピーし、操作対象を裏ページに変更します。<br />
+<code>backlay</code> コマンドと <code>currentpage page: "back"</code> コマンドを実行したのと同じ状態となります。</p>
 <h3 id="trans">trans</h3>
 <p>トランジションを実行する</p>
 <table>
@@ -3527,38 +4224,41 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>time</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>トランジションの時間(ms)</td>
 </tr>
 <tr>
 <td>method</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>"crossfade"</td>
+<td><code>"crossfade"</code></td>
 <td>トランジションの種類</td>
 </tr>
 <tr>
 <td>rule</td>
-<td>string</td>
+<td>文字列(String)</td>
 <td></td>
-<td>""</td>
-<td>ユニバーサルトランジションのルールファイル名</td>
+<td><code>""</code></td>
+<td>自動移動をループさせるかどうか。タイプが "linear" か "catmullrom" の場合のみ有効</td>
 </tr>
 <tr>
 <td>vague</td>
-<td>number</td>
+<td>数値(Number)</td>
 <td></td>
-<td>0.25</td>
+<td><code>0.25</code></td>
 <td>あいまい値</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>トランジションを実行します。<br />
+トランジションの詳細は <a href="../transition">トランジション</a> のページを参照してください。</p>
+<p>このコマンドはトランジションの完了を待ちません。終了するまで待つ場合は <code>waittrans</code> コマンドを使用してください。</p>
 <h3 id="stoptrans">stoptrans</h3>
 <p>トランジションを停止する</p>
-<p>TODO タグの説明文</p>
+<p>トランジションを即座に停止します。
+各レイヤーの状態は、通常通りトランジションが完了したのと同じ状態になります。</p>
 <h3 id="waittrans-wt">waittrans, wt</h3>
 <p>トランジションの終了を待つ</p>
 <table>
@@ -3574,14 +4274,16 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>canskip</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>true</td>
+<td><code>true</code></td>
 <td>スキップ可能かどうか</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>トランジションが完了するのを待ちます。<br />
+<code>canskip: false</code> とした場合、スキップ処理やクリック等でスキップできなくなります。
+イベントシーンなどでは <code>false</code> にしたほうが良いでしょう。</p>
 <h2 id="_25">メッセージ履歴</h2>
 <h3 id="historyopt">historyopt</h3>
 <p>メッセージ履歴を設定する</p>
@@ -3598,24 +4300,24 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>output</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
 <td></td>
 <td>メッセージレイヤに文字を出力するかどうか</td>
 </tr>
 <tr>
 <td>enabled</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
 <td></td>
 <td>メッセージレイヤを表示できるかどうか</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>メッセージ履歴に関して設定します。</p>
 <h3 id="showhistory-history">showhistory, history</h3>
 <p>メッセージ履歴を表示する</p>
-<p>TODO タグの説明文</p>
+<p>メッセージ履歴を表示します。</p>
 <h3 id="historych-hch">historych, hch</h3>
 <p>メッセージ履歴にテキストを出力する</p>
 <table>
@@ -3631,17 +4333,17 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>text</td>
-<td>string</td>
-<td>○</td>
+<td>文字列(String)</td>
+<td>〇</td>
 <td></td>
 <td>出力する文字</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>メッセージ履歴に指定のテキストを出力します。</p>
 <h3 id="hbr">hbr</h3>
 <p>メッセージ履歴を改行する</p>
-<p>TODO タグの説明文</p>
+<p>メッセージ履歴のテキストを改行します。</p>
 <h2 id="_26">セーブ／ロード</h2>
 <h3 id="save">save</h3>
 <p>最新状態をセーブする</p>
@@ -3658,14 +4360,15 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>num</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>セーブ番号</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>最後に通過したセーブポイントの状態をセーブします。
+セーブ／ロードの詳細は <a href="../save-and-load/">セーブ／ロード</a>を参照してください。</p>
 <h3 id="load">load</h3>
 <p>セーブデータから復元する</p>
 <table>
@@ -3681,14 +4384,14 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>num</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>セーブ番号</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>指定のセーブデータをロードします。</p>
 <h3 id="tempsave">tempsave</h3>
 <p>一時セーブする</p>
 <table>
@@ -3704,14 +4407,18 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>num</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>セーブ番号</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
+<p>一時領域に、このコマンドを実行したときの状態を保存します。  </p>
+<p>ここで保存したセーブデータは通常のセーブデータとは別に保持されます。
+また、あくまで一時領域に保存するだけなので、ゲームが終了するときに破棄されます。</p>
+<p>右クリックサブルーチンの開始時にこのコマンドで状態を保存しておき、
+右クリックサブルーチンが終わったときに <code>tempload</code> でまとめて復元する、というような用途で使用します。</p>
 <h3 id="tempload">tempload</h3>
 <p>一時セーブデータから復元する</p>
 <table>
@@ -3727,32 +4434,38 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>num</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>セーブ番号</td>
 </tr>
 <tr>
 <td>sound</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>false</td>
+<td><code>false</code></td>
 <td>音声もロードするかどうか</td>
 </tr>
 <tr>
 <td>toback</td>
-<td>boolean</td>
+<td>真偽値(Boolean)</td>
 <td></td>
-<td>false</td>
+<td><code>false</code></td>
 <td>表レイヤーを裏レイヤーとして復元するかどうか</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
-<h3 id="screenshot">screenshot</h3>
-<p>現在の画面のスクリーンショットを取る</p>
-<p>現在の画面の状態でスクリーンショットを取ります。
-取得されたスクリーンショットは [save] で保存されます。</p>
+<p><code>tempsave</code> で保存した一時セーブデータをロードします。</p>
+<p><code>toback: true</code> を指定したときは、一時セーブデータの表レイヤ―の情報を
+裏レイヤー側に復元します。レイヤーの状態をトランジションで復元したい場合などに利用します。</p>
+<h3 id="lockscreenshot">lockscreenshot</h3>
+<p>現在の画面でスクリーンショットを固定する</p>
+<p>現在の画面の状態でスクリーンショットを取ります。<br />
+取得されたスクリーンショットは <code>save</code> コマンドで保存されます。<br />
+セーブ画面に入った直後にこのコマンドでスクリーンショットの状態を固定し、
+セーブ画面から抜けるときに <code>unlockscreenshot</code> で解除する、というような使い方をします。</p>
+<h3 id="unlockscreenshot">unlockscreenshot</h3>
+<p>スクリーンショットの固定を解除する</p>
 <h3 id="copysavedata-copysave">copysavedata, copysave</h3>
 <p>セーブデータをコピーする</p>
 <table>
@@ -3768,21 +4481,20 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>srcnum</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>コピー元のセーブ番号</td>
 </tr>
 <tr>
 <td>destnum</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>コピー先のセーブ番号</td>
 </tr>
 </tbody>
 </table>
-<p>TODO タグの説明文</p>
 <h3 id="deletesavedata-delsavedata-delsave">deletesavedata, delsavedata, delsave</h3>
 <p>セーブデータを削除する</p>
 <table>
@@ -3798,14 +4510,13 @@ indexvarで指定した名前の一時変数にループ回数が格納されま
 <tbody>
 <tr>
 <td>num</td>
-<td>number</td>
-<td>○</td>
+<td>数値(Number)</td>
+<td>〇</td>
 <td></td>
 <td>セーブ番号</td>
 </tr>
 </tbody>
-</table>
-<p>TODO タグの説明文</p></div>
+</table></div>
         </div>
 
         <footer class="col-md-12">

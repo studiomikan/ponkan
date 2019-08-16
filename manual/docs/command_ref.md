@@ -13,6 +13,8 @@ Ponkan3 のスクリプトで使用できる全てのコマンドの解説です
 |------------|------|
 | [laycount](#laycount) | レイヤーの数を変更する |
 | [raiseerror](#raiseerror) | エラーを発生させるかどうかの設定 |
+| [lockgame](#lockgame) | Ponkanのイベント処理を一時的にロックする |
+| [unlockgame](#unlockgame) | Ponkanのイベント処理ロックを解除する |
 | [clearsysvar](#clearsysvar) | システム変数をクリア |
 | [cleargamevar](#cleargamevar) | ゲーム変数をクリア |
 | [cleartmpvar](#cleartmpvar) | 一時変数をクリア |
@@ -61,6 +63,7 @@ Ponkan3 のスクリプトで使用できる全てのコマンドの解説です
 |------------|------|
 | [messageopt, mesopt](#messageopt-mesopt) | テキストの設定 |
 | [ch](#ch) | 文字を出力する |
+| [ruby](#ruby) | 改行する |
 | [br](#br) | 改行する |
 | [clear, c](#clear-c) | テキストをクリアする |
 | [textspeed](#textspeed) | 文字出力のインターバルを設定 |
@@ -94,6 +97,7 @@ Ponkan3 のスクリプトで使用できる全てのコマンドの解説です
 | コマンド名 | 内容 |
 |------------|------|
 | [textbutton, txtbtn](#textbutton-txtbtn) | レイヤーにテキストボタンを配置する |
+| [textbuttonopt, txtbtnopt](#textbuttonopt-txtbtnopt) | テキストボタンの設定を変更する |
 | [clearbuttons, clearbutton, clearbtn](#clearbuttons-clearbutton-clearbtn) | すべてのボタンをクリアする |
 | [cleartextbuttons, cleartextbutton, cleartxtbtn](#cleartextbuttons-cleartextbutton-cleartxtbtn) | テキストボタンをクリアする |
 | [imagebutton, imgbtn](#imagebutton-imgbtn) | レイヤーに画像ボタンを配置する |
@@ -104,6 +108,9 @@ Ponkan3 のスクリプトで使用できる全てのコマンドの解説です
 | [unlockbuttons, unlockbutton, unlock](#unlockbuttons-unlockbutton-unlock) | ボタンをアンロックする |
 | [locksystembuttons, locksystembutton, locksystem](#locksystembuttons-locksystembutton-locksystem) | システムボタンをロックする |
 | [unlocksystembuttons, unlocksystembutton, unlocksystem](#unlocksystembuttons-unlocksystembutton-unlocksystem) | システムボタンをアンロックする |
+| [slider](#slider) | レイヤーにスライダーを配置する |
+| [locksliders, lockslider](#locksliders-lockslider) | スライダーをロックする |
+| [unlocksliders, unlockslider](#unlocksliders-unlockslider) | スライダーをアンロックする |
 
 ### アニメーション
 
@@ -123,6 +130,7 @@ Ponkan3 のスクリプトで使用できる全てのコマンドの解説です
 |------------|------|
 | [clearfilter](#clearfilter) | フィルタをクリアする |
 | [blur](#blur) | ぼかしフィルタ |
+| [colorfilter](#colorfilter) | 色補正フィルタ |
 
 ### サウンド
 
@@ -204,6 +212,20 @@ Ponkan3初期化時のレイヤー数は40です。40では多すぎる場合・
 | unknowncommand | 真偽値(Boolean) |  |  | `true` の場合、存在しないコマンドを実行したときにエラーにする |
 
 各種エラーを発生させるか・無視するかの設定を行います。
+
+### lockgame
+
+Ponkanのイベント処理を一時的にロックする
+
+Ponkanが行うマウス・タップ・キーボードイベント処理を一時的にロックします。
+HTMLで作成したコンフィグ画面などを表示するときなどは、このコマンドで
+イベント処理をロックするようにしてください。
+
+### unlockgame
+
+Ponkanのイベント処理ロックを解除する
+
+`lockgame` によるロックを解除します。
 
 ### clearsysvar
 
@@ -524,7 +546,7 @@ forループから抜ける
 | page | 文字列(String) |  | `"current"` | 対象ページ |
 | fontfamily | 配列(Array) |  |  | フォント名の配列 |
 | fontsize | 数値(Number) |  |  | フォントサイズ(px) |
-| fontweight | 文字列(String) |  |  | フォントウェイト。"normal" | "bold" |
+| fontweight | 文字列(String) |  |  | フォントウェイト |
 | color | 数値(Number) |  |  | 文字色(0xRRGGBB) |
 | margint | 数値(Number) |  |  | テキスト描画のマージン　上 |
 | marginr | 数値(Number) |  |  | テキスト描画のマージン　右 |
@@ -542,6 +564,9 @@ forループから抜ける
 | shadowdistance | 数値(Number) |  |  | 影の距離(px) |
 | edgewidth | 数値(Number) |  |  | 縁取りの太さ(px)。0で非表示になる |
 | edgecolor | 数値(Number) |  |  | 縁取りの色(0xRRGGBB) |
+| rubysize | 数値(Number) |  |  | ルビのフォントファイズ(px) |
+| rubypitch | 数値(Number) |  |  | ルビの文字間(px) |
+| rubyoffset | 数値(Number) |  |  | ルビのオフセット(px) |
 
 テキストに関する設定を行います。
 
@@ -557,6 +582,18 @@ forループから抜ける
 
 指定したレイヤーに文字を出力します。  
 デフォルトではカレントメッセージレイヤーが操作対象です。
+
+### ruby
+
+改行する
+
+| パラメータ名 | 値の種類 | 必須 | デフォルト値 | 説明 |
+|--------------|----------|------|--------------|------|
+| lay | 文字列(String) |  | `"message"` | 出力する先のレイヤー |
+| page | 文字列(String) |  | `"current"` | 対象ページ |
+| text | 文字列(String) |  |  | ルビ |
+
+次に出力する文字にルビ（ふりがな）を設定します。
 
 ### br
 
@@ -853,6 +890,7 @@ nowaitを終了する
 |--------------|----------|------|--------------|------|
 | lay | 文字列(String) | 〇 |  | 対象レイヤー |
 | page | 文字列(String) |  | `"current"` | 対象ページ |
+| btnname | 文字列(String) |  |  | ボタンの名前 |
 | jump | 真偽値(Boolean) |  | `true` | ボタン押下時にjumpする場合はtrue |
 | call | 真偽値(Boolean) |  |  | ボタン押下時にcallする場合はtrue |
 | file | 文字列(String) |  |  | ボタン押下時にjumpまたはcallするスクリプトファイル名 |
@@ -866,17 +904,34 @@ nowaitを終了する
 | bgcolors | 配列(Array) | 〇 |  | 背景色の配列(0xRRGGBB)。通常時、マウスオーバー時、マウス押下時の順。例：[0xFF0000, 0x00FF00, 0x0000FF] |
 | bgalphas | 配列(Array) |  | `[1` | 背景色のAlphaの配列(0.0〜1.0)。通常時、マウスオーバー時、マウス押下時の順 |
 | system | 真偽値(Boolean) |  | `false` | システム用ボタンとする場合はtrue |
-| margint | 数値(Number) |  | `0` | テキスト描画のマージン　上 |
-| marginr | 数値(Number) |  | `0` | テキスト描画のマージン　右 |
-| marginb | 数値(Number) |  | `0` | テキスト描画のマージン　下 |
-| marginl | 数値(Number) |  | `0` | テキスト描画のマージン　左 |
-| marginl | 数値(Number) |  | `0` | テキスト描画のマージン　左 |
+| margint | 数値(Number) |  | `0` | テキスト描画のマージン（上）。 |
+| marginr | 数値(Number) |  | `0` | テキスト描画のマージン（右）。 |
+| marginb | 数値(Number) |  | `0` | テキスト描画のマージン（下）。 |
+| marginl | 数値(Number) |  | `0` | テキスト描画のマージン（左）。 |
 | align | 文字列(String) |  | `"center"` | テキスト寄せの方向。"left" | "center" | "right" |
 | countpage | 真偽値(Boolean) |  | `true` | 現在の位置を既読にするかどうか |
+| enterbuf | 文字列(String) |  | `""` | マウスポインタが重なったタイミングで再生する音声の音声バッファ |
+| leavebuf | 文字列(String) |  | `""` | マウスポインタが出て行ったタイミングで再生する音声の音声バッファ |
+| clickbuf | 文字列(String) |  | `""` | ボタン押下時に再生する音声の音声バッファ |
 
 指定のレイヤーに、テキストと背景色を用いたボタンを配置します。
 配置直後はボタンはロックされた状態となり、押下することはできません。
 `unlockbuttons` コマンドでロック状態を解除することで、押下できるようになります。
+
+### textbuttonopt, txtbtnopt
+
+テキストボタンの設定を変更する
+
+| パラメータ名 | 値の種類 | 必須 | デフォルト値 | 説明 |
+|--------------|----------|------|--------------|------|
+| lay | 文字列(String) | 〇 |  | 対象レイヤー |
+| page | 文字列(String) |  | `"current"` | 対象ページ |
+| btnname | 文字列(String) | 〇 |  | 対象のボタンの名前 |
+| bgcolors | 配列(Array) |  |  | 背景色の配列(0xRRGGBB)。通常時、マウスオーバー時、マウス押下時の順。例：[0xFF0000, 0x00FF00, 0x0000FF] |
+| bgalphas | 配列(Array) |  |  | 背景色のAlphaの配列(0.0〜1.0)。通常時、マウスオーバー時、マウス押下時の順 |
+
+指定されたレイヤーのテキストボタンの設定を変更します。
+変更対象のテキストボタンは、ボタンの名前（`textbutton` の `btnname` で設定した名前）で指定します。
 
 ### clearbuttons, clearbutton, clearbtn
 
@@ -919,6 +974,9 @@ nowaitを終了する
 | direction | 文字列(String) |  | `"horizontal"` | ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び" |
 | system | 真偽値(Boolean) |  | `false` | システム用ボタンとする場合はtrue |
 | countpage | 真偽値(Boolean) |  | `true` | 現在の位置を既読にするかどうか |
+| enterbuf | 文字列(String) |  | `""` | マウスポインタが重なったタイミングで再生する音声の音声バッファ |
+| leavebuf | 文字列(String) |  | `""` | マウスポインタが出て行ったタイミングで再生する音声の音声バッファ |
+| clickbuf | 文字列(String) |  | `""` | ボタン押下時に再生する音声の音声バッファ |
 
 指定のレイヤーに、画像を用いたボタンを配置します。
 配置直後はボタンはロックされた状態となり、押下することはできません。
@@ -996,13 +1054,69 @@ nowaitを終了する
 
 システムボタンをロックする
 
+| パラメータ名 | 値の種類 | 必須 | デフォルト値 | 説明 |
+|--------------|----------|------|--------------|------|
+| lay | 文字列(String) |  | `"all"` | 対象レイヤー |
+| page | 文字列(String) |  | `"current"` | 対象ページ |
+
 指定されたレイヤーのシステムボタンをロックし、押下できないようにします。
 
 ### unlocksystembuttons, unlocksystembutton, unlocksystem
 
 システムボタンをアンロックする
 
+| パラメータ名 | 値の種類 | 必須 | デフォルト値 | 説明 |
+|--------------|----------|------|--------------|------|
+| lay | 文字列(String) |  | `"all"` | 対象レイヤー |
+| page | 文字列(String) |  | `"current"` | 対象ページ |
+
 指定されたレイヤーのシステムボタンのロックを解除し、押下できる状態にします。
+
+### slider
+
+レイヤーにスライダーを配置する
+
+| パラメータ名 | 値の種類 | 必須 | デフォルト値 | 説明 |
+|--------------|----------|------|--------------|------|
+| lay | 文字列(String) | 〇 |  | 対象レイヤー |
+| page | 文字列(String) |  | `"current"` | 対象ページ |
+| onchange | 文字列(String) |  |  | 値変更時に実行する関数 |
+| x | 数値(Number) |  | `0` | x座標(px) |
+| y | 数値(Number) |  | `0` | y座標(px) |
+| exp | undefined |  | `""` | スライダーの値が変わったときに実行するJavaScript |
+| value | 数値(Number) |  | `0` | 初期値(0.0～1.0) |
+| back | 文字列(String) | 〇 |  | スライダーの背景用画像のファイルパス |
+| fore | 文字列(String) | 〇 |  | スライダーの表面画像のファイルパス |
+| button | 文字列(String) | 〇 |  | スライダーの表面画像のファイルパス |
+| enterbuf | 文字列(String) |  | `""` | マウスポインタがスライダーに重なったタイミングで再生する音声の音声バッファ |
+| leavebuf | 文字列(String) |  | `""` | マウスポインタがスライダーから出て行ったタイミングで再生する音声の音声バッファ |
+| clickbuf | 文字列(String) |  | `""` | スライダー押下時に再生する音声の音声バッファ |
+
+指定のレイヤーに、画像を用いたスライダーを配置します。
+配置直後はロックされた状態となり、押下することはできません。
+`unlockslider` コマンドでロック状態を解除することで、押下できるようになります。
+
+### locksliders, lockslider
+
+スライダーをロックする
+
+| パラメータ名 | 値の種類 | 必須 | デフォルト値 | 説明 |
+|--------------|----------|------|--------------|------|
+| lay | 文字列(String) |  | `"all"` | 対象レイヤー |
+| page | 文字列(String) |  | `"current"` | 対象ページ |
+
+指定レイヤーのスライダーをロックし、押下できない状態にします。
+
+### unlocksliders, unlockslider
+
+スライダーをアンロックする
+
+| パラメータ名 | 値の種類 | 必須 | デフォルト値 | 説明 |
+|--------------|----------|------|--------------|------|
+| lay | 文字列(String) |  | `"all"` | 対象レイヤー |
+| page | 文字列(String) |  | `"current"` | 対象ページ |
+
+指定レイヤーのスライダーのロックを解除し、押下できる状態にします。
 
 ## アニメーション
 
@@ -1110,9 +1224,7 @@ nowaitを終了する
 | パラメータ名 | 値の種類 | 必須 | デフォルト値 | 説明 |
 |--------------|----------|------|--------------|------|
 | lay | 文字列(String) | 〇 |  | 対象レイヤー |
-| blurx | 数値(Number) |  | `4` | x軸方向のぼかし |
-| blury | 数値(Number) |  | `4` | y軸方向のぼかし |
-| quality | 数値(Number) |  | `4` | ぼかしの品質 |
+| page | 文字列(String) |  | `"current"` | 対象ページ |
 
 指定レイヤーに設定されたすべてのフィルタをクリアします。
 
@@ -1123,11 +1235,30 @@ nowaitを終了する
 | パラメータ名 | 値の種類 | 必須 | デフォルト値 | 説明 |
 |--------------|----------|------|--------------|------|
 | lay | 文字列(String) | 〇 |  | 対象レイヤー |
+| page | 文字列(String) |  | `"current"` | 対象ページ |
 | blurx | 数値(Number) |  | `4` | x軸方向のぼかし |
 | blury | 数値(Number) |  | `4` | y軸方向のぼかし |
 | quality | 数値(Number) |  | `4` | ぼかしの品質 |
 
 レイヤーにぼかしフィルタを設定します。
+
+### colorfilter
+
+色補正フィルタ
+
+| パラメータ名 | 値の種類 | 必須 | デフォルト値 | 説明 |
+|--------------|----------|------|--------------|------|
+| lay | 文字列(String) | 〇 |  | 対象レイヤー |
+| page | 文字列(String) |  | `"current"` | 対象ページ |
+| gamma | 数値(Number) |  |  | ガンマ値補正 |
+| saturation | 数値(Number) |  |  | 彩度 |
+| contrast | 数値(Number) |  |  | コントラスト |
+| brightness | 数値(Number) |  |  | 輝度 |
+| red | 数値(Number) |  |  | 色調（赤） |
+| green | 数値(Number) |  |  | 色調（緑） |
+| blue | 数値(Number) |  |  | 色調（青） |
+
+レイヤーに色補正フィルタを設定します。
 
 ## サウンド
 

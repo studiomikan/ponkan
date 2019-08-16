@@ -9,6 +9,8 @@
 ;layalias name: "chara1", lay: "1"
 ;layalias name: "chara2", lay: "2"
 ;layalias name: "button", lay: "3"
+;layalias name: "rule1", lay: "4"
+;layalias name: "rule2", lay: "5"
 ;layalias name: "sysbtn", lay: "&tv.layer.systembutton"
 ;commandshortcut ch: "$", command: "br"
 
@@ -23,7 +25,7 @@
 ;layopt lay: "sysbtn", visible: true
 ;clear
 
-#;jump file: "scenario/fork.pon"
+;jump file: "scenario/sound.pon"
 
 ###########################
 # あいさつ
@@ -73,11 +75,11 @@
 }
 ;textbutton {
   lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
-  text: "・トランジション"
+  text: "・トランジション", exp: "tv.jump_target_file = 'scenario/trans.pon'"
 }
 ;textbutton {
   lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
-  text: "・サウンド"
+  text: "・サウンド", exp: "tv.jump_target_file = 'scenario/sound.pon'"
 }
 ;textbutton {
   lay: "message", x: 70, y: "&tv.y+=50", width: "&tv.width", height: 40, bgcolors: [0xFFFFFF,0xFFFFFF,0xFFFFFF], bgalphas: [0, 0.2, 0.3], margint: 5, marginl: 5, align: "left", jump: true, label: "on_click_menu",
@@ -99,6 +101,7 @@
 ;layopt lay: "sysbtn", visible: false
 ;layopt lay: "message", visible: true
 ;layopt lay: "chara1, chara2", visible: false
+;layopt lay: "rule1, rule2", visible: false
 ;freeimage lay: "chara1, chara2"
 ;historyopt enabled: false
 ;lockbuttons
