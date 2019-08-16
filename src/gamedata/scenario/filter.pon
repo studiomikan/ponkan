@@ -43,6 +43,9 @@
 ;blur lay: "chara1"
 ;colorfilter lay: "chara1", gamma: 0.5
 ;colorfilter lay: "chara1", contrast: 1.5
+;lbrbr
+
+フィルターは今後も追加予定です。
 ;p
 
 ;clearfilter lay: "chara1"

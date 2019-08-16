@@ -54,6 +54,6 @@ BGMをフェードイン再生。
 BGMをフェードアウト。
 ;fadeout buf: "bgm", time: 3000, autostop: true
 ;waitfade buf: "bgm", canskip: false
-;p
+;lbr
 
 ;jump file: "scenario/sample-game.pon", label: "show_menu"
