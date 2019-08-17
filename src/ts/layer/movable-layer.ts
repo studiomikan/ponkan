@@ -69,14 +69,14 @@ export class MovableLayer extends SliderLayer {
 
     // this.movePosList = this.clonePath(path);
     // this.movePosList.unshift({ x: this.x, y: this.y, alpha: this.alpha });
-    let posList = this.clonePath(path);
+    const posList = this.clonePath(path);
     posList.unshift({ x: this.x, y: this.y, alpha: this.alpha, scalex: this.scaleX, scaley: this.scaleY });
     for (let i = 1; i < posList.length; i++) {
       const p0 = posList[i - 1];
       const p = posList[i];
       if (p.x == null) { p.x = p0.x; }
       if (p.y == null) { p.y = p0.y; }
-      if (p.alpha == null) { p.y = p0.y; }
+      if (p.alpha == null) { p.alpha = p0.alpha; }
       if (p.scalex == null) { p.scalex = p0.scalex; }
       if (p.scaley == null) { p.scaley = p0.scaley; }
     }
