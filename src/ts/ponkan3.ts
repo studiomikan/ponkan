@@ -747,8 +747,8 @@ export class Ponkan3 extends PonGame {
       return this.getTargetLayers(pageLayers, this.layerAlias[lay]);
     } else {
       const layerNum: number = parseInt(lay, 10);
-      if (layerNum < 0 || this.layerCount <= layerNum) {
-        throw new Error(`レイヤ指定が範囲外です(${lay})`);
+      if (isNaN(layerNum) || layerNum < 0 || this.layerCount <= layerNum) {
+        throw new Error(`レイヤー指定が存在しないエイリアスか、または範囲外です(${lay})`);
       }
       targetLayers.push(pageLayers[layerNum]);
     }
