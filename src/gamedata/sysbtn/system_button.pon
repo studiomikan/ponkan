@@ -124,13 +124,11 @@ tv.systembutton = {
 # スキップ
 *act_skip
 ;startskip
-;unlocksystembuttons
 ;return forcestart: true
 
 # オート
 *act_auto
 ;startautomode
-;unlocksystembuttons
 ;return forcestart: true
 
 # ログ
