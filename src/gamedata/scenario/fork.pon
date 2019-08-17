@@ -46,7 +46,7 @@ Ponkan3で分岐を実現する方法は2通りあります。
 }
 ;imagebutton {
   lay: "message",
-  imagefile: "image/image-button.png",
+  imagefile: "image/image_button.png",
   direction: "vertical",
   x: 50, y: 220,
   jump: true, label: "onclick_imagebutton",

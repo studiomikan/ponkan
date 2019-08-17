@@ -84,8 +84,8 @@
   y: 500,
   value: 0.5,
   exp: function(v) {console.log(v, tv)},
-  back: "image/slider-back.png",
-  fore: "image/slider-fore.png",
+  back: "image/slider_back.png",
+  fore: "image/slider_fore.png",
   button: "image/slider-button.png",
 }
 ;unlockslider
