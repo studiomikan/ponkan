@@ -82,6 +82,7 @@ tv.systembutton = {
   fontfamily:   ["GenShinGothic", "monospace"],
   lineheight:   16, fontsize:     16,
   fontweight:   "normal",
+  fontstyle:   "normal",
   color:        "&tv.systembutton.color",
   margint:      2,
   marginr:      2,

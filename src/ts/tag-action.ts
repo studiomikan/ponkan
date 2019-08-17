@@ -829,6 +829,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("fontsize", "number", false, null),
         /// @param フォントウェイト
         new TagValue("fontweight", "string", false, null),
+        /// @param フォントスタイル。"normal" | "italic"
+        new TagValue("fontstyle", "string", false, null),
         /// @param 文字色(0xRRGGBB)
         new TagValue("color", "number", false, null),
         /// @param テキスト描画のマージン　上
@@ -875,6 +877,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           if (values.fontfamily != null) { layer.textFontFamily = values.fontfamily; }
           if (values.fontsize != null) { layer.textFontSize = values.fontsize; }
           if (values.fontweight != null) { layer.textFontWeight = values.fontweight; }
+          if (values.fontstyle != null) { layer.textFontStyle = values.fontstyle; }
           if (values.color != null) { layer.textColor = values.color; }
           if (values.margint != null) { layer.textMarginTop = values.margint; }
           if (values.marginr != null) { layer.textMarginRight = values.marginr; }

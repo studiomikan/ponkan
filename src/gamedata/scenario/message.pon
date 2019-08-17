@@ -21,11 +21,14 @@ Ponkan3のメッセージテキストには、様々な効果をかけること�
 ;l
 ;mesopt edgewidth: 0, fontweight: "bold"
 太字にしたり、
+;l
+;mesopt edgewidth: 0, fontweight: "normal", fontstyle: "italic"
+斜体にしたり、
 ;lbr
-;mesopt fontweight: "normal", fontsize: 40, lineheight: 40
+;mesopt fontstyle: "normal", fontsize: 40, lineheight: 40
 大きい文字や、
 ;l
-;mesopt fontweight: "normal", fontsize: 12
+;mesopt fontsize: 12
 小さい文字、
 ;l
 ;mesopt fontsize: 28

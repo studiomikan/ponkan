@@ -244,6 +244,7 @@ export class BaseLayer {
     fontFamily: ["GenShinGothic", "monospace"],
     fontSize: 24,
     fontWeight: "normal",
+    fontStyle: "normal",
     fill: 0xffffff,
     textBaseline: "alphabetic",
     dropShadow: false,
@@ -271,6 +272,8 @@ export class BaseLayer {
   public get textFontSize(): number { return +this.textStyle.fontSize; }
   public set textFontWeight(fontWeight: string) { this.textStyle.fontWeight = fontWeight; }
   public get textFontWeight(): string { return this.textStyle.fontWeight; }
+  public set textFontStyle(fontStyle: string) { this.textStyle.fontStyle = fontStyle; }
+  public get textFontStyle(): string { return this.textStyle.fontStyle; }
   public set textColor(color: number | string) { this.textStyle.fill = color; }
   public get textColor(): number | string {
     if (typeof this.textStyle.fill === "number") {
@@ -1068,6 +1071,7 @@ export class BaseLayer {
     "textFontFamily",
     "textFontSize",
     "textFontWeight",
+    "textFontStyle",
     "textColor",
     "textShadowVisible",
     "textShadowAlpha",

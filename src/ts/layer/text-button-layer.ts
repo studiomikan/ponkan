@@ -230,6 +230,7 @@ export class TextButtonLayer extends FrameAnimLayer {
       "textFontFamily",
       "textFontSize",
       "textFontWeight",
+      "textFontStyle",
       "textColor",
       "textShadowVisible",
       "textShadowAlpha",
