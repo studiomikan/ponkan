@@ -126,7 +126,7 @@
 ;image lay: "base", file: "image/bg01.jpg", visible: true
 ;layopt lay: "sysbtn", visible: false
 ;layopt lay: "message", visible: true
-;layopt lay: "button", visible: true
+;layopt lay: "button", visible: true, autohide: true
 ;layopt lay: "chara1, chara2", visible: false
 ;layopt lay: "rule1, rule2", visible: false
 ;freeimage lay: "chara1, chara2"

@@ -104,6 +104,10 @@ export class Script {
     }
   }
 
+  /**
+   * 現在実行中のタグを取得する。
+   * @return 実行中のタグ。終端の場合はnull
+   */
   public getCurrentTag(): Tag | null {
     if (this.macroStack.length === 0) {
       const tags = this.parser.tags;
@@ -139,7 +143,7 @@ export class Script {
       }
     } else {
       const macro: Macro = this.macroStack[this.macroStack.length - 1];
-      const tag: Tag | null = macro.getNextTag();
+      const tag: Tag | null = this.latestTagBuffer = macro.getNextTag();
       if (tag != null) {
         if (this.resource.hasMacro(tag.name)) {
           this.callMacro(tag);

@@ -363,8 +363,11 @@ export class PonGame implements IConductorEvent {
     this.conductorStack.pop();
     this.onReturnSubroutin(forceStart);
     if (forceStart) {
-      this.conductor.clearAllEventHandler();
-      this.conductor.start();
+      const latestTag = this.conductor.script.getLatestTag();
+      if (latestTag != null && latestTag.name !== "s") {
+        this.conductor.clearAllEventHandler();
+        this.conductor.start();
+      }
     }
     this.conductor.trigger("return_subroutin");
     // console.log("AFTER", this.conductor.name, this.conductor.status);
