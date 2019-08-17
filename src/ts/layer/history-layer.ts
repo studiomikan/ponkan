@@ -1,13 +1,66 @@
+import { AsyncCallbacks } from "../base/async-callbacks";
 import { AsyncTask } from "../base/async-task";
 import { BaseLayer } from "../base/base-layer";
-import { Logger } from "../base/logger";
-import { PonEventHandler } from "../base/pon-event-handler";
 import { PonGame } from "../base/pon-game";
 import { PonMouseEvent } from "../base/pon-mouse-event";
 import { PonWheelEvent } from "../base/pon-wheel-event";
 import { Resource } from "../base/resource";
 import * as Util from "../base/util";
 import { Ponkan3 } from "../ponkan3";
+import { Button } from "./button";
+import { ImageButtonLayer } from "./image-button-layer";
+
+export class HistoryButton extends Button {
+  private callbacks: any;
+
+  public initHistoryButton(imagePath: string): AsyncCallbacks {
+    return this.loadImage(imagePath).done(() => {
+      this.initButton();
+      this.width = Math.floor(this.imageWidth / 3);
+      this.setButtonStatus("normal");
+    });
+  }
+
+  public clearHistoryButton() {
+    this.clearButton();
+    this.freeImage();
+  }
+
+  public setButtonStatus(status: "normal" | "over" | "on" | "disabled") {
+    super.setButtonStatus(status);
+
+    switch (status) {
+      case "normal":
+      case "disabled":
+        this.imageX = 0;
+        break;
+      case "over":
+        this.imageX = -Math.floor(this.imageWidth / 3);
+        break;
+      case "on":
+        this.imageX = -Math.floor(this.imageWidth / 3 * 2);
+        break;
+    }
+  }
+
+  public setCallbacks(callbacks: any): void {
+    this.callbacks = callbacks;
+  }
+
+  public onMouseDown(e: PonMouseEvent): void {
+    super.onMouseDown(e);
+    if (this.isInsideEvent(e) && this.callbacks.onMouseDown) {
+      this.callbacks.onMouseDown(e);
+    }
+  }
+
+  public onMouseUp(e: PonMouseEvent): void {
+    super.onMouseUp(e);
+    if (this.isInsideEvent(e) && this.callbacks.onMouseUp) {
+      this.callbacks.onMouseUp(e);
+    }
+  }
+}
 
 class SimpleButton extends BaseLayer {
   protected bgColors: number[] = [0xFF0000, 0x00FF00, 0x0000FF];
@@ -98,9 +151,11 @@ class ScrollBarButton extends SimpleButton {
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
 
-    this.down = true;
-    this.downX = e.y;
-    this.downY = e.y;
+    if (this.isInsideEvent(e)) {
+      this.down = true;
+      this.downX = e.y;
+      this.downY = e.y;
+    }
   }
 
   public onMouseMove(e: PonMouseEvent): void {
@@ -117,7 +172,7 @@ class ScrollBarButton extends SimpleButton {
 
 class ScrollBar extends BaseLayer {
 
-  protected minHeight: number = 16;
+  protected minHeight: number = 30;
   protected bar: ScrollBarButton;
   public onChangeCallback: (sender: ScrollBar) => void = () => {
     return;
@@ -198,7 +253,9 @@ class ScrollBar extends BaseLayer {
   public onMouseMove(e: PonMouseEvent): void {
     super.onMouseMove(e);
 
-    this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
+    if (this.bar.down || this.isInsideEvent(e)) {
+      this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
+    }
     if (this.bar.down) {
       this.setBarY(e.y - this.bar.downY);
       this.onChangeCallback(this);
@@ -208,12 +265,15 @@ class ScrollBar extends BaseLayer {
 
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
-
     if (!e.isLeft) { return; }
-    this.setBarY(e.y - (this.bar.height / 2));
-    this.onChangeCallback(this);
-    // FIXME eの中身がおかしいが、現状使ってないのでこのまま
-    this.bar.onMouseUp(new PonMouseEvent(0, 0, 0));
+
+    if (this.bar.down || this.isInsideEvent(e)) {
+      this.setBarY(e.y - (this.bar.height / 2));
+      this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
+      this.onChangeCallback(this);
+      // FIXME eの中身がおかしいが、現状使ってないのでこのまま
+      this.bar.onMouseUp(new PonMouseEvent(0, 0, 0));
+    }
     e.stopPropagation();
   }
 
@@ -245,6 +305,7 @@ class ScrollBar extends BaseLayer {
 class HistoryTextLayer extends BaseLayer {
 
   protected lines: string[][] = [[]];
+  protected maxLinesCount: number = 10000;
   protected indentPoints: number[] = [-1];
   protected clearIndentPoints: number[] = [-1];
   public get currentLine(): string[] { return this.lines[this.lines.length - 1]; }
@@ -260,7 +321,7 @@ class HistoryTextLayer extends BaseLayer {
   public init(config: any): void {
     this.width = config.width;
     this.height = config.height;
-    this.textAutoReturn = true;
+    this.textAutoReturn = false;
 
     if (config.history != null && config.history.text) {
       this.applyConfig(config.history.text);
@@ -276,6 +337,14 @@ class HistoryTextLayer extends BaseLayer {
     this.clearIndentPoints = [-1];
   }
 
+  public get historyText(): string {
+    let text = "";
+    this.lines.forEach((line) => {
+      text += line.join("") + "\n";
+    });
+    return text;
+  }
+
   public add(ch: string): void {
     this.currentLine.push(ch);
   }
@@ -284,6 +353,9 @@ class HistoryTextLayer extends BaseLayer {
     this.lines.push([]);
     this.indentPoints.push(-1);
     this.clearIndentPoints.push(-1);
+    if (this.lines.length > this.maxLinesCount) {
+      this.lines.shift();
+    }
   }
 
   public setHistoryIndentPoint(): void {
@@ -391,20 +463,20 @@ export class HistoryLayer extends BaseLayer {
 
   protected config: any;
   protected textLayer: HistoryTextLayer;
-  protected upButton: SimpleButton;
-  protected downButton: SimpleButton;
+  protected upButton: HistoryButton;
+  protected downButton: HistoryButton;
   protected scrollBar: ScrollBar;
-  protected closeButton: SimpleButton;
+  protected closeButton: HistoryButton;
   public wheelScrollCount: number = 3;
   public outputFlag: boolean = true;
 
   public constructor(name: string, resource: Resource, owner: PonGame) {
     super(name, resource, owner);
     this.textLayer = new HistoryTextLayer("HistoryText", resource, owner);
-    this.upButton = new SimpleButton("ScrollUpButton", resource, owner);
-    this.downButton = new SimpleButton("ScrollDownButton", resource, owner);
+    this.upButton = new HistoryButton("ScrollUpButton", resource, owner);
+    this.downButton = new HistoryButton("ScrollDownButton", resource, owner);
     this.scrollBar = new ScrollBar("ScrollBar", resource, owner);
-    this.closeButton = new SimpleButton("CloseButton", resource, owner);
+    this.closeButton = new HistoryButton("CloseButton", resource, owner);
   }
 
   public init(config: any = {}, asyncTask: AsyncTask) {
@@ -446,40 +518,23 @@ export class HistoryLayer extends BaseLayer {
   }
 
   protected initScrollButtons(config: any): void {
-    // TODO サイズ等を設定できるように
-    const init = (button: SimpleButton, conf: any) => {
+
+    const init = (button: HistoryButton, conf: any) => {
       if (conf.bgColors == null) { conf.bgColors = [0x4286f4, 0x4286f4, 0x4286f4]; }
       if (conf.bgAlphas == null) { conf.bgAlphas = [0.7, 0.8, 0.9]; }
+      button.applyConfig(conf);
       button.visible = true;
-      button.width = 32;
-      button.height = 32;
-      button.initButton(conf.bgColors, conf.bgAlphas);
-      button.textColor = 0xFFFFFF;
-      button.textFontFamily = ["GenShinGothic", "monospace"];
-      button.textFontSize = 16;
-      button.textLineHeight = 16;
-      button.textMarginLeft = 0;
-      button.textMarginRight = 0;
-      button.textMarginTop = 6;
-      button.textAlign = "center";
+      button.initHistoryButton(conf.imageFile);
       this.addChild(button);
     };
     init(this.upButton, config.history.upButton); // ;
     init(this.downButton, config.history.downButton);
-
-    this.upButton.x = config.width - 32 - 20;
-    this.upButton.y = 20;
-    this.upButton.mouseUp = () => { this.scrollUpPage(); };
-    this.upButton.applyConfig(config.history.upButton);
-    if (config.history.upButton.text == null) { config.history.upButton.text = "▲"; }
-    this.upButton.addChar(config.history.upButton.text);
-
-    this.downButton.x = config.width - 32 - 20;
-    this.downButton.y = config.height - 32 - 20;
-    this.downButton.mouseUp = () => { this.scrollDownPage(); };
-    this.downButton.applyConfig(config.history.downButton);
-    if (config.history.downButton.text == null) { config.history.downButton.text = "▼"; }
-    this.downButton.addChar(config.history.downButton.text);
+    this.upButton.setCallbacks({
+      onMouseUp: () => { this.scrollUpPage(); },
+    });
+    this.downButton.setCallbacks({
+      onMouseUp: () => { this.scrollDownPage(); },
+    });
   }
 
   protected initScrollBar(config: any): void {
@@ -520,24 +575,16 @@ export class HistoryLayer extends BaseLayer {
     c = Util.objExtend({
       x: config.width - 40 - 30,
       y: 15,
-      width: 40,
-      height: 40,
-      textFontFamily: ["GenShinGothic", "monospace"],
-      textFontSize: 36,
-      textLineHeight: 36,
-      textAlign: "center",
-      textColor: 0xFFFFFF,
-      textMarginTop: 0,
-      textMarginRight: 0,
-      textMarginBottom: 0,
-      textMarginLeft: 0,
-      bgColors: [0x000000, 0x000000, 0x000000],
-      bgAlphas: [0.0, 0.0, 0.0],
     }, c);
-    this.closeButton.initButton(c.bgColors, c.bgAlphas);
     this.closeButton.applyConfig(c);
-    this.closeButton.addChar("×");
-    this.closeButton.mouseUp = () => { this.hide(); };
+    this.closeButton.initHistoryButton(c.imageFile);
+    this.closeButton.setCallbacks({
+      onMouseUp: () => {
+        this.hide();
+        this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
+      },
+    });
+    this.closeButton.visible = true;
 
     this.addChild(this.closeButton);
   }
