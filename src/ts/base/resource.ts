@@ -179,7 +179,7 @@ export class Resource {
    */
   public loadScript(filePath: string): AsyncCallbacks {
     const cb = new AsyncCallbacks();
-    if (this.enabledScriptCache && this.scriptCache[filePath] != null) {
+    if (this.enableResourceCache && this.enabledScriptCache && this.scriptCache[filePath] != null) {
       // キャッシュから
       window.setTimeout(() => {
         cb.callDone(this.scriptCache[filePath].clone());
