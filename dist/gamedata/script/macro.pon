@@ -1,3 +1,70 @@
 # マクロ定義
 
+######################################
+# l + br
+######################################
+;macro name: "lbr"
+  ;l
+  ;br
+;endmacro
+
+######################################
+# l + br + br
+######################################
+;macro name: "lbrbr"
+  ;l
+  ;br
+  ;br
+;endmacro
+
+######################################
+# p + clear
+######################################
+;macro name: "pcl"
+  ;p
+  ;clear
+;endmacro
+
+######################################
+# 全画面のメッセージレイヤに設定
+######################################
+;macro name: "full_mes"
+  ;layopt lay: "message", x: 0, y: 0, width: 1280, height: 720
+  ;mesopt {
+    lay: "message",
+    fontsize: 28,
+    lineheight: 28,
+    linepitch: 10,
+    weight: "normal",
+    color: "0xFFFFFF",
+    margint: 50,
+    marginr: 50,
+    marginb: 50,
+    marginl: 50,
+  }
+  ;fillcolor lay: "message", color: 0x000000, alpha: 0.4
+  ;clear lay: "message"
+;endmacro
+
+######################################
+# ウィンドウ形式のメッセージレイヤに設定
+######################################
+;macro name: "win_mes"
+  ;layopt lay: "message", x: 240, y: 490, width: 800, height: 200
+  ;messageopt {
+    lay: "message",
+    fontsize: 28,
+    lineheight: 28,
+    linepitch: 10,
+    weight: "normal",
+    color: "0xFFFFFF",
+    margint: 20,
+    marginr: 20,
+    marginb: 20,
+    marginl: 20
+  }
+  ;image lay: "message", file: "image/message.png"
+  ;clear lay: "message"
+;endmacro
+
 ;return

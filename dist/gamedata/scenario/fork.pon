@@ -1,0 +1,113 @@
+#################################################################
+# 分岐（ボタン、条件分岐）
+#################################################################
+*start
+|分岐（ボタン、条件分岐）
+
+;full_mes
+;layopt lay: "message", visible: true
+
+【分岐（ボタン、条件分岐）】
+;lbrbr
+
+ノベルゲームでは、プレイヤーの選択や乱数によって、シナリオを分岐させることがあります。
+;lbrbr
+Ponkan3で分岐を実現する方法は2通りあります。
+;pcl
+
+1つ目は、ボタンを利用する方法です。
+;lbrbr
+このサンプルゲームのメニューのように、ボタンを押下したときに任意のシナリオの位置へジャンプさせることができます。
+;lbr
+また、ボタン押下時には任意のJavaScriptを実行することもできます。
+;lbrbr
+
+ボタンには、$$
+・テキストと背景色のみ指定できる「テキストボタン」$
+・画像を用いて自由に作成できる「画像ボタン」$$
+の2種類があります。$
+それぞれtextbuttonコマンドとimagebuttonコマンドで表示できます。
+;pcl
+
+サンプルのボタンを表示してみます。$
+どちらかのボタンを押してみてください。
+;lbrbr
+;pretrans
+;textbutton {
+  lay: "message",
+  text: "テキストボタンのサンプル",
+  x: 50, y: 160,
+  width: 500, height: 40,
+  bgcolors: [0x33B6FF, 0x3D82FF ,0x474FFF], bgalphas: [1, 1, 1],
+  margint: 5, marginl: 5,
+  align: "center",
+  jump: true, label: "onclick_textbutton",
+  exp: "console.log('テキストボタンを押した！')",
+}
+;imagebutton {
+  lay: "message",
+  imagefile: "image/image_button.png",
+  direction: "vertical",
+  x: 50, y: 220,
+  jump: true, label: "onclick_imagebutton",
+  exp: "console.log('画像ボタンを押した！')",
+}
+;trans time: 0
+;unlockbuttons
+;s
+
+*onclick_textbutton
+;lockbuttons
+;locate y: 300
+テキストボタンを押しましたね。
+;lbr
+;jump label: "after_button_sample"
+
+*onclick_imagebutton
+;lockbuttons
+;locate y: 300
+画像ボタンを押しましたね。
+;lbr
+;jump label: "after_button_sample"
+
+*after_button_sample
+……と、このようにボタンによって分岐をすることができます。
+;pcl
+;clearbuttons lay: "message"
+
+ボタンとは別のもう一つの方法が、ifコマンドとJavaScriptを用いる方法です。
+;lbrbr
+ifコマンドでは、任意のJavaScriptを実行した結果によって処理を分岐することができます。
+;lbrbr
+JavaScriptのif文と同じように、評価結果が真(true)の場合に、if～endifで囲われた部分のスクリプトが実行されます。
+;lbrbr
+評価結果が偽(false)だった場合の処理を記述するelseコマンドや、$
+偽だった場合にさらに条件判定するelsifコマンドもあります。
+;lbrbr
+またボタンの説明で述べた通り、ボタン押下時には任意のJavaScriptが実行できるため、ボタンと組み合わせて使用することもできます。
+;pcl
+
+ここではサンプルとして、簡単な乱数による分岐を試してみます。
+;lbr
+ジャンケンのグー、チョキ、パーがランダムに表示されます。
+;lbrbr
+
+ジャン！　ケン！　
+- tv.random = Math.random();
+;if exp: "tv.random < 0.33"
+  グー！
+;elsif exp: "tv.random < 0.66"
+  チョキ！
+;else
+  パー！
+;endif
+;lbrbr
+
+……といった風に、if/else/elsif/endifコマンドでは、$
+JavaScriptによる柔軟な分岐処理が可能です。
+;lbrbr
+すべてを使いこなすにはプログラミングの知識も必要となってきますが、$
+まずは簡単な分岐から使ってみてください。
+;p
+
+;jump file: "scenario/sample-game.pon", label: "show_menu"

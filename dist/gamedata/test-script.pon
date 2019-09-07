@@ -32,21 +32,34 @@
   "direction": "vertical",
   "x": 20,
   "y": 70,
-  "exp": "alert('onClickImageButton');"
+  "exp": "console.log('onClickImageButton');",
+}
+#;loadsound "buf": 1, "file": "sound/pekowave1.wav"
+#;soundopt "buf": 1, "volume": 0.1, loop: false
+#;unlockbuttons
+#;s
+
+;textbutton {
+  lay:    3,
+  text:   "ボタン",
+  btnname: "testbutton",
+  x:  20,
+  y:  20,
+  width:  200,
+  height: 32,
+  bgcolors: ["0xFF0000", "0x00FF00", "0x0000FF"],
+  exp:    "alert('onClickTextButton')",
+  calllabel:  "button-action-call",
+  align: "left",
+}
+;textbuttonopt {
+  lay: 3,
+  height: 100,
+  btnname: "testbutton",
+  bgcolors: ["0xFFFF00", "0x00FFFF", "0xFF00FF"],
+  bgalphas: [0.8, 0.8, 0.8]
 }
 
-#;textbutton {
-#  lay:    3,
-#  text:   "ボタン",
-#  x:  20,
-#  y:  20,
-#  width:  200,
-#  height: 32,
-#  bgcolors: ["0xFF0000", "0x00FF00", "0x0000FF"],
-#  exp:    "alert('onClickTextButton')",
-#  calllabel:  "button-action-call",
-#  align: "left",
-#}
 #;togglebutton {
 #  "lay": 3,
 #  "imagefile": "image/sample-toggle-button.png",
@@ -58,10 +71,24 @@
 ## ;layopt "lay": 4, "x": 100, "y": 50, "visible": true
 ## ;image lay: 4, file: "image/okayu.jpg"
 #;childimage lay: 1, file: "image/okayu.jpg", x: 100, y: 100
-#;unlockbuttons
-#;unlocksystembuttons
+;unlockbuttons
+;unlocksystembuttons
 #
 ## ;rclick jump: true, label: "jump-target-label"
+
+#|save_point
+
+;slider {
+  lay: 0,
+  x: 550,
+  y: 500,
+  value: 0.5,
+  exp: function(v) {console.log(v, tv)},
+  back: "image/slider_back.png",
+  fore: "image/slider_fore.png",
+  button: "image/slider-button.png",
+}
+;unlockslider
 
 *trans_loop
 ;clear
@@ -106,8 +133,8 @@
 ;backlay
 ;layopt "lay": 1, "visible": false
 ;image "lay": 0, "file": "image/bg1.png", "visible": true, "x": 0, "y": 0
-;lockbutton
-;locksystembutton
+#;lockbutton
+#;locksystembutton
 preparetrans
 ;p
 ;trans "time": 3000, "method": "univ", "rule": "rule/rule_around.png"

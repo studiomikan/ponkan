@@ -1,0 +1,96 @@
+#################################################################
+# トランジション
+#################################################################
+*start
+|トランジション
+
+;full_mes
+;layopt lay: "message", visible: true
+
+【トランジション】
+;lbrbr
+
+トランジションとは、フェードインやフェードアウト、ブラインド表示など、$
+エフェクトをかけながら場面を入れ替える効果のことです。
+;lbrbr
+
+Ponkan3は吉里吉里/KAG3と似た仕組みを採用しており、$
+トランジションは表レイヤーと裏レイヤーを入れ替える操作になります。
+;lbr
+表レイヤーと裏レイヤーについては少々複雑な概念のため、ここでは触れません。$
+詳細はマニュアルを参照してください。
+;pcl
+
+では、いくつかのトランジションを試してみます。
+;lbr
+
+夕方にフェード。
+;pretrans
+  ;image lay: "base", file: "image/bg02.jpg"
+  ;trans time: 1000
+  ;waittrans canskip: false
+;lbr
+
+キャラクターをフェード表示。
+;pretrans
+  ;image lay: "chara1", file: "image/chara01.png", visible: true, x: (1280-244)/2, y: 720-600
+  ;trans time: 300
+  ;waittrans canskip: false
+;lbr
+
+場所を移動したっぽい演出。
+;pretrans
+  ;layopt lay: "chara1", visible: false
+  ;trans time: 300
+  ;waittrans canskip: false
+;pretrans
+  ;image lay: "base", file: "image/bg00.png"
+  ;trans time: 1000, method: "univ", rule: "rule/move.png"
+  ;waittrans canskip: false
+;pretrans
+  ;image lay: "base", file: "image/bg01.jpg"
+  ;trans time: 1000, method: "univ", rule: "rule/move.png"
+  ;waittrans canskip: false
+;lbr
+
+時間が経過したっぽい演出。
+;pretrans
+  ;image lay: "base", file: "image/bg00.png"
+  ;trans time: 1000, method: "univ", rule: "rule/time.png", vague: 128
+  ;waittrans canskip: false
+;pretrans
+  ;image lay: "base", file: "image/bg02.jpg"
+  ;trans time: 1000, method: "univ", rule: "rule/time.png", vague: 128
+  ;waittrans canskip: false
+;lbrbr
+
+「移動っぽい演出」や「時間が経過したっぽい演出」では、$
+ユニバーサルトランジションを使用しています。
+;lbr
+ユニバーサルトランジションは、指定されたルール画像に従ってトランジションします。
+;lbrbr
+
+今回使用したルール画像は、これ
+;pretrans
+  ;image lay: "rule1", file: "rule/move.png"
+  ;image lay: "rule2", file: "rule/time.png"
+  ;layopt lay: "rule1", scalex: 0.3, scaley: 0.3, x: 1280-(1280*0.3)-20, y: 20, visible: true
+  ;layopt lay: "rule2", scalex: 0.3, scaley: 0.3, x: 1280-(1280*0.3)-20, y: 40+(720*0.3), visible: true
+  ;trans time: 500
+  ;waittrans canskip: false
+です。
+;lbrbr
+
+ユニバーサルトランジションはルール画像次第で色々な演出ができますので、
+ぜひ使ってみてください。
+;p
+
+;pretrans
+  ;layopt lay: "rule1", scalex: 1, scaley: 1, visible: false
+  ;layopt lay: "rule2", scalex: 1, scaley: 1, visible: false
+  ;layopt lay: "base", visible: false
+  ;layopt lay: "message", visible: false
+  ;trans time: 250, method: "univ", rule: "rule/shutter.png"
+  ;waittrans canskip: false
+
+;jump file: "scenario/sample-game.pon", label: "show_menu"

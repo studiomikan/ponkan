@@ -1,6 +1,7 @@
 # init_system
 
-;raiseerror {"unknowncommand": true}
+# 存在しないコマンドはエラーにする
+;raiseerror unknowncommand: true
 
 #=============================================
 # 設定
@@ -35,64 +36,69 @@ tv.layer = {
   // ロード画面
   // 注意：組み込みのロード画面はここで指定したレイヤーを含めて3レイヤー使用する。
   //       たとえば20を指定した場合、20〜22
-  load: 28,
+  load: 25,
 
   // コンフィグ画面
   // 注意：組み込みのコンフィグ画面はここで指定したレイヤーを含めて3レイヤー使用する。
   //       たとえば20を指定した場合、20〜22
-  config: 31,
+  config: 25,
 
   // ダイアログ
-  dialog: 35,
+  dialog: 39,
 }
 ---
 
+#=============================================
+# 音声バッファの設定
+#=============================================
+;bufalias name: "bgm", buf: 0
+;bufalias name: "system", buf: 1
+;bufalias name: "se", buf: 2
 
 #=============================================
 # レイヤーの設定
 #=============================================
 # レイヤーの数
-;laycount "count": "&tv.layerCount"
+;laycount count: "&tv.layerCount"
 
 #=============================================
 # メッセージレイヤーの設定
 #=============================================
 ;messagelay "lay": "&tv.layer.message"
 ;layopt {
-  "lay": "message",
-  "x": 20,
-  "y": "&576-20-200",
-  "width": "&1024-20-20-500",
-  "height": 200,
-  "visible": true
+  lay: "message",
+  x: 240,
+  y: 490,
+  width: 800,
+  height: 200,
+  visible: false
 }
 ;messageopt {
-  "lay": "message",
-  "fontfamily": ["GenShinGothic", "monospace"],
-  "fontsize": 24,
-  "weight": "normal",
-  "color": "0xFFFFFF",
-  "pitch": 0,
-  "lineheight": 24,
-  "linepitch": 5,
-  "align": "left",
-  "shadow": true,
-  "shadowalpha": 0.7,
-  "shadowangle": 0.5,
-  "shadowblur": 5,
-  "shadowcolor": "0x000000",
-  "shadowdistance": 2,
-  "edgewidth": 0,
-  "edgecolor": "0x000000",
-  "autoreturn": true,
-  "margint": 10,
-  "marginr": 10,
-  "marginb": 10,
-  "marginl": 10
+  lay: "message",
+  fontfamily: ["GenShinGothic", "monospace"],
+  fontsize: 26,
+  weight: "normal",
+  color: "0xFFFFFF",
+  pitch: 0,
+  lineheight: 26,
+  linepitch: 10,
+  align: "left",
+  shadow: true,
+  shadowalpha: 0.7,
+  shadowangle: 0.5,
+  shadowblur: 5,
+  shadowcolor: "0x000000",
+  shadowdistance: 2,
+  edgewidth: 0,
+  edgecolor: "0x000000",
+  autoreturn: true,
+  margint: 20,
+  marginr: 20,
+  marginb: 20,
+  marginl: 20
 }
-;fillcolor "lay": "mes", "color": "0x4286f4", "alpha": 0.7
-;textspeed "unread": 20, "read": 20
-
+;image lay: "mes", file: "image/message.png"
+;textspeed unread: 20, read: 20
 
 
 # 行末グリフの設定
@@ -103,11 +109,11 @@ for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
 ---
 ;lbglyph "lay": "&tv.layer.line", "pos": "eol"
 ;image {
-  "lay": "linebreak",
-  "file": "image/linebreak.png",
-  "visible": false,
-  "x": 0,
-  "y": 0
+  lay: "linebreak",
+  file: "image/linebreak.png",
+  visible: false,
+  x: 0,
+  y: 0
 }
 ;frameanim {
   "lay": "linebreak",
@@ -146,19 +152,19 @@ for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
 ;automodeopt "lay": "&tv.layer.auto"
 ;layopt {
   "lay": "automode",
-  "x": 0,
-  "y": 0,
+  "x": 10,
+  "y": 10,
   "width": 50,
   "height": 50,
   "visible": false
 }
-;fillcolor "lay": "automode", "color": "0x00FFFF", "alpha": 1.0
+;image lay: "automode", file: "image/automode.png"
 
 
 #=============================================
 # システムボタン
 #=============================================
-;call "file": "script/system_button.pon"
+;call "file": "sysbtn/system_button.pon"
 
 
 #=============================================

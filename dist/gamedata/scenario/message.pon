@@ -1,0 +1,65 @@
+#################################################################
+# メッセージ表示
+#################################################################
+*start
+|メッセージ表示
+
+;full_mes
+;layopt lay: "message", visible: true
+
+【メッセージ表示】
+;lbrbr
+
+Ponkan3のメッセージテキストには、様々な効果をかけることができます。
+;lbrbr
+
+;mesopt color: 0xFFFF00, lineheight: 40
+色を変えたり、
+;l
+;mesopt color: 0xFFFFFF, fontweight: "normal", edgewidth: 2, edgecolor: 0xFF0000
+縁取りしたり、
+;l
+;mesopt edgewidth: 0, fontweight: "bold"
+太字にしたり、
+;l
+;mesopt edgewidth: 0, fontweight: "normal", fontstyle: "italic"
+斜体にしたり、
+;lbr
+;mesopt fontstyle: "normal", fontsize: 40, lineheight: 40
+大きい文字や、
+;l
+;mesopt fontsize: 12
+小さい文字、
+;l
+;mesopt fontsize: 28
+;ruby text: "かん"
+漢
+;ruby text: "じ"
+字にルビを振ったりなど。
+;lbrbr
+
+;mesopt fontsize: 28, lineheight: 28
+;mesopt align: "center"
+中央揃えのメッセージや、
+;lbr
+;mesopt align: "right"
+右揃えのメッセージ。
+;lbrbr
+
+;mesopt align: "left"
+「
+;indent
+こんな風に、カギカッコで$
+インデントして表示することも$
+できます」
+;pcl
+
+;win_mes
+このサンプルゲームの冒頭のように、ウィンドウ形式で表示することもできます。$
+ウィンドウ背景には画像が使用できます。
+;pcl
+
+色々な効果を使ってみてくださいね！
+;p
+
+;jump file: "scenario/sample-game.pon", label: "show_menu"

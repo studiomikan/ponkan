@@ -1,0 +1,79 @@
+#################################################################
+# フレームアニメーション
+#################################################################
+*start
+|フレームアニメーション
+
+;full_mes
+;layopt lay: "message", visible: true
+
+【フレームアニメーション】
+;lbrbr
+
+フレームアニメーションは、パラパラ漫画のような形式でアニメーションを実現する機能です。
+;lbrbr
+
+;image lay: "chara1", file: "image/explosion.png", visible: true, x: 1280-256*3, y: 0
+たとえば、右のような一枚の画像を用意します。
+;lbr
+
+この画像は、アニメーションの各フレームを並べて1枚にしたものです。
+;lbrbr
+
+このような画像からフレームを順番に表示してアニメーションさせるのが、フレームアニメーションです。
+;lbrbr
+
+実際にやってみると、
+;lbr
+
+---
+let frames = tv.frames = [
+  {x: 0,   y: 0,    alpha: 1},
+  {x: 256, y: 0,    alpha: 1},
+  {x: 512, y: 0,    alpha: 1},
+  {x: 0,   y: 256,  alpha: 1},
+  {x: 256, y: 256,  alpha: 1},
+  {x: 512, y: 256,  alpha: 1},
+  {x: 0,   y: 512,  alpha: 1},
+  {x: 256, y: 512,  alpha: 1},
+  {x: 512, y: 512,  alpha: 1},
+  {x: 0,   y: 768,  alpha: 1},
+  {x: 256, y: 768,  alpha: 1},
+  {x: 512, y: 768,  alpha: 1},
+  {x: 0,   y: 1024, alpha: 1},
+  {x: 256, y: 1024, alpha: 1},
+  {x: 512, y: 1024, alpha: 1},
+  {x: 0,   y: 0,    alpha: 0},
+];
+---
+;frameanim lay: "chara1", loop: false, time: 32, width: 256, height: 256, frames: "&tv.frames"
+;layopt lay: "chara1", visible: true, x: (1280-256)/2, y: (720-256)/2
+;startframeanim lay: "chara1"
+;waitframeanim lay: "chara1", canskip: false
+#;layopt lay: "chara1", visible: false
+
+……と、こんな形になります。
+;pcl
+
+アニメーションはループ再生することもできます。
+;lbr
+
+;frameanim lay: "chara1", loop: true, time: 32, width: 256, height: 256, frames: "&tv.frames"
+;startframeanim lay: "chara1"
+;wait time: 2000, canskip: false
+
+こんな感じです。
+;lbrbr
+
+;stopframeanim lay: "chara1"
+;layopt lay: "chara1", visible: false
+
+ちなみに、クリック待ちのときに表示されている矢印も、フレームアニメーションでアニメーションさせています。
+これです→
+;lbrbr
+
+目パチ、口パクなどにも活用できるでしょう。$
+色々試してみてください。
+;p
+
+;jump file: "scenario/sample-game.pon", label: "show_menu"

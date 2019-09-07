@@ -1,0 +1,149 @@
+#################################################################
+# レイヤー移動
+#################################################################
+*start
+|レイヤー移動
+
+;full_mes
+;layopt lay: "message", visible: true
+
+【レイヤー移動】
+;lbrbr
+
+;pretrans
+;image lay: "chara1", file: "image/chara01.png", visible: true, x: (1280-244)/2, y: 720-600
+;trans time: 300
+;waittrans canskip: false
+
+レイヤーの位置は自由に移動することができます。
+;lbr
+;layopt lay: "chara1", x: 0
+左端に行ったり、
+;lbr
+;layopt lay: "chara1", x: 1280-244
+右端に行ったり、
+;lbr
+;layopt lay: "chara1", x: (1280-244)/2
+中央に行ったりなどなど。
+;pcl
+
+瞬時に移動させるのではなく、なめらかに移動させることもできます。
+;lbrbr
+移動はmoveコマンドで行います。$
+moveコマンドでは、指定したパス（座標）を順番に移動していきます。
+;lbr
+こんな風に、
+;move {
+  lay: "chara1",
+  time: 500,
+  path: [
+    { x: 0, y: 720-600 },
+    { x: 1280-244, y: 720-600 },
+    { x: (1280-244)/2, y: 720-600 },
+  ]
+}
+;waitmove canskip: false
+なめらかに左右に移動させられます。
+;lbrbr
+
+等速に移動するだけでなく、
+;lbr
+;move {
+  lay: "chara1", time: 500,
+  path: [ { x: 0, y: 720-600 } ],
+  ease: "in"
+}
+;waitmove canskip: false
+緩やかに開始(ease:"in")したり、
+;lbr
+;move {
+  lay: "chara1", time: 500,
+  path: [ { x: 1280-244, y: 720-600 } ],
+  ease: "out"
+}
+;waitmove canskip: false
+緩やかに停止(ease:"out")したり、
+;lbr
+;move {
+  lay: "chara1", time: 500,
+  path: [ { x: (1280-244)/2, y: 720-600 } ],
+  ease: "both"
+}
+;waitmove canskip: false
+開始・停止の両方を緩やかに(ease:"both")したりできます。
+;pcl
+
+移動するパスも、直線だけではなく曲線も指定できます。
+;lbr
+パスの種類としては、$$
+・linear：線形（直線）$
+・bezier2：2次ベジェ曲線$
+・bezier3：3次ベジェ曲線$
+・catmullrom：Catmull-Romスプライン曲線$$
+が利用できます。
+;lbrbr
+
+2次ベジェ曲線だと、
+;move {
+  lay: "chara1", time: 1000,
+  path: [
+    { x: (1280-244)/2 - 300, y: 720-600+300 },
+    { x: 0, y: 720-600 },
+  ],
+  type: "bezier2",
+  ease: "none"
+}
+;waitmove canskip: false
+こんな感じです。
+;lbr
+
+Catmull-Romスプライン曲線は、指定した座標を必ず通過するので便利です。
+;move {
+  lay: "chara1", time: 500,
+  path: [
+    { x: 259,  y: 120+300 },
+    { x: 520,  y: 120+0 },
+    { x: 780,  y: 120+300 },
+    { x: 1036, y: 120+0 },
+  ],
+  type: "catmullrom",
+  ease: "none"
+}
+;waitmove canskip: false
+;br
+こんな感じです。
+;pcl
+
+;move {
+  lay: "chara1", time: 500,
+  path: [ { x: (1280-244)/2, y: 720-600 } ],
+  ease: "both"
+}
+;waitmove canskip: false
+
+移動は、ループ再生することができます。
+;lbr
+;nowait
+ループ再生中……
+;endnowait
+;move {
+  lay: "chara1", time: 200,
+  path: [
+    { x: (1280-244)/2 - 100, y: 720-600 },
+    { x: (1280-244)/2,       y: 720-600 },
+    { x: (1280-244)/2 + 100, y: 720-600 },
+  ],
+  loop: true,
+}
+;wait time: 3000, canskip: false
+と、こんな感じです。
+;lbrbr
+
+;stopmove lay: "chara1"
+;layopt lay: "chara1", x: (1280-244)/2
+
+moveコマンドの詳細については、$
+コマンドリファレンス等を参照してください。
+;p
+
+;jump file: "scenario/sample-game.pon", label: "show_menu"

@@ -1,0 +1,59 @@
+#################################################################
+# サウンド
+#################################################################
+*start
+|サウンド
+
+;full_mes
+;layopt lay: "message", visible: true
+
+【サウンド】
+;lbrbr
+
+BGM、効果音の再生ができます。
+;lbr
+注意事項として、一般的に音声ファイルはファイルサイズが大きく、
+Web版では読み込みに時間がかかります。
+;lbr
+読み込み時間が不自然な場合は、再生するタイミングよりも前にあらかじめ読み込んでおくなどの工夫が必要です。
+;pcl
+
+では、いくつかのサウンド再生を試してみます。
+;lbr
+
+効果音を音量100%で再生。
+;loadsound "buf": "se", file: "sound/pekowave1.wav"
+;soundopt buf: "se", volume: 1.0
+;playsound buf: "se"
+;waitsound buf: "se", canskip: false
+;lbr
+
+効果音を音量50%で再生。
+;soundopt buf: "se", volume: 0.5
+;playsound buf: "se"
+;waitsound buf: "se", canskip: false
+;lbr
+
+BGMを音量100%で再生。
+;loadsound buf: "bgm", file: "sound/ohka_japan.mp3"
+;soundopt buf: "bgm", volume: 1.0, loop: true
+;playsound buf: "bgm"
+;wait time: 3000, canskip: false
+;lbr
+
+BGMを停止。
+;stopsound buf: "bgm"
+;lbr
+
+BGMをフェードイン再生。
+;soundopt buf: "bgm", volume: 1.0, loop: true
+;fadein buf: "bgm", time: 5000, volume: 1.0
+;waitfade buf: "bgm", canskip: false
+;lbr
+
+BGMをフェードアウト。
+;fadeout buf: "bgm", time: 3000, autostop: true
+;waitfade buf: "bgm", canskip: false
+;lbr
+
+;jump file: "scenario/sample-game.pon", label: "show_menu"

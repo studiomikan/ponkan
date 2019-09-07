@@ -1,0 +1,148 @@
+# システムボタンの初期化
+
+---
+tv.systembutton = {
+  x:            (1280 - 630) / 2,
+  y:            720 - 40,
+  width:        1000,
+  height:       40,
+
+  buttons: [
+    {
+      text:  "Save",
+      image: "sysbtn/save.png",
+      file:  "script/save.pon",
+      label: "save_start",
+      exp:   "",
+      x:     0,
+      y:     0,
+    },
+    {
+      text:  "Load",
+      image: "sysbtn/load.png",
+      file:  "script/load.pon",
+      label: "load_start",
+      exp:   "",
+      x:     100,
+      y:     0,
+    },
+    {
+      text:  "Skip",
+      image: "sysbtn/skip.png",
+      file:  "script/system_button.pon",
+      label: "act_skip",
+      exp:   "",
+      x:     200,
+      y:     0,
+    },
+    {
+      text:  "Auto",
+      image: "sysbtn/auto.png",
+      file:  "script/system_button.pon",
+      label: "act_auto",
+      exp:   "",
+      x:     300,
+      y:     0,
+    },
+    {
+      text:  "Log",
+      image: "sysbtn/log.png",
+      file:  "script/system_button.pon",
+      label: "act_log",
+      exp:   "",
+      x:     400,
+      y:     0,
+    },
+    {
+      text:  "Config",
+      image: "sysbtn/config.png",
+      file:  "script/config.pon",
+      label: "config_start",
+      exp:   "",
+      x:     500,
+      y:     0,
+    },
+    {
+      text:  "x",
+      image: "sysbtn/close.png",
+      file:  "script/system_button.pon",
+      label: "act_close",
+      exp:   "",
+      x:     600,
+      y:     0,
+    },
+  ]
+}
+---
+
+# 親レイヤ指定
+;layopt {
+  lay:          "&tv.layer.systembutton",
+  x:            "&tv.systembutton.x",
+  y:            "&tv.systembutton.y",
+  width:        "&tv.systembutton.width",
+  height:       "&tv.systembutton.height",
+  visible:      true,
+  autohide:     true,
+}
+---
+---
+
+- tv.x = 0
+;for loops: "&tv.systembutton.buttons.length", indexvar: "i"
+  ---
+  tv.button = tv.systembutton.buttons[tv.i];
+  ---
+  ;imagebutton {
+    lay:          "&tv.layer.systembutton",
+    imagefile:    "&tv.button.image",
+    x:            "&tv.button.x",
+    y:            "&tv.button.y",
+    exp:          "&tv.button.exp",
+    jump:         false,
+    call:         true,
+    file:         "&tv.button.file",
+    label:        "&tv.button.label",
+    system:       true
+  }
+;endfor
+
+;return countpage: true
+;s
+
+
+# セーブ
+*act_save
+- alert('save');
+;return
+
+# ロード
+*act_load
+- alert('load');
+;return
+
+# スキップ
+*act_skip
+;startskip
+;return forcestart: true
+
+# オート
+*act_auto
+;startautomode
+;return forcestart: true
+
+# ログ
+*act_log
+;showhistory
+;return
+
+# コンフィグ
+*act_config
+- alert('config');
+;return
+
+# メッセージレイヤを隠す
+*act_close
+;hidemessages
+;return
+

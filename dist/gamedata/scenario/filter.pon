@@ -1,0 +1,52 @@
+#################################################################
+# レイヤーフィルター
+#################################################################
+*start
+|レイヤーフィルター
+
+;full_mes
+;layopt lay: "message", visible: true
+
+【レイヤーフィルター】
+;lbrbr
+
+レイヤーに対して、様々なフィルターをかけることができます。
+;lbrbr
+
+;pretrans
+  ;image lay: "chara1", file: "image/chara01.png", visible: true, x: (1280-244)/2, y: 720-600
+  ;trans time: 300
+  ;waittrans canskip: false
+
+いくつかのフィルターを試してみます。
+;lbr
+ブラー（ぼかし）。
+;blur lay: "chara1"
+;lbr
+ガンマ値補正。
+;clearfilter lay: "chara1"
+;colorfilter lay: "chara1", gamma: 0.5
+;lbr
+彩度補正。
+;clearfilter lay: "chara1"
+;colorfilter lay: "chara1", saturation: 0.5
+;lbr
+コントラスト補正。
+;clearfilter lay: "chara1"
+;colorfilter lay: "chara1", contrast: 1.5
+;lbrbr
+
+複数のフィルタを同時にかけることもできます。
+;lbr
+これはブラー＋ガンマ値補正＋コントラスト補正です。
+;clearfilter lay: "chara1"
+;blur lay: "chara1"
+;colorfilter lay: "chara1", gamma: 0.5
+;colorfilter lay: "chara1", contrast: 1.5
+;lbrbr
+
+フィルターは今後も追加予定です。
+;p
+
+;clearfilter lay: "chara1"
+;jump file: "scenario/sample-game.pon", label: "show_menu"

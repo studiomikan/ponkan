@@ -10,3 +10,4 @@ manual/scripts_tmp
 tags
 .DS_Store
 .vscode
+.ctags
