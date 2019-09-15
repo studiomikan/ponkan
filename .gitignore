@@ -8,6 +8,7 @@ dist_test/
 manual/scripts/tmp
 manual/scripts_tmp
 game_template/node_modules/
+games/
 tags
 .DS_Store
 .vscode
