@@ -37,6 +37,10 @@ module.exports = {
       [ { from: '', to: '', ignore: '!*.js' }, ],
       { context: path.join(__dirname, 'src') }
     ),
+    new CopyWebpackPlugin(
+      [ { from: '', to: '', ignore: '!*.ico' }, ],
+      { context: path.join(__dirname, 'src') }
+    ),
     new WriteFilePlugin(),
   ]
 }
