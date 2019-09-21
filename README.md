@@ -1,5 +1,11 @@
 # Ponkan3
 
+Ponkan3 is novel-game-engine for web.
+
+## Demo (sample game)
+
+[Ponkan3 sample game](http://okayumoka.github.io/ponkan3-samplegame)
+
 ## build (main programs)
 
 ```bash

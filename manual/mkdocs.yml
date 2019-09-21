@@ -1,3 +1,15 @@
 site_name: Ponkan3 マニュアル
+theme:
+  name: 'material'
+  language: 'ja'
+extra:
+  search:
+    language: 'jp'
 nav:
-  - ホーム: index.md
+  - 目次: '/#index'
+  - チュートリアル:
+    - 開発の準備（セットアップ）: basic/setup.md
+    # - Node.js導入（Windows）: basic/setup_nodejs_win.md
+    - メッセージ（文章）の表示: basic/message.md
+  - リファレンス:
+    - コマンドリファレンス: command_ref.md

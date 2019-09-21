@@ -1,13 +1,11 @@
-Ponkan3.Logger.level = Ponkan3.Logger.LEVEL_DEBUG;
-var width = 1280;
-var height = 720;
-var ponkan = new Ponkan3("game", {
+window.PONKAN3_SETTINGS = {
+
   gameVersion: "0.0.0",
   gameDataDir: "./gamedata",
   developMode: true,
   saveDataPrefix: "ponkan-sample",
-  width: width,
-  height: height,
+  width: 1280,
+  height: 720,
   soundBufferCount: 5,
 
   screenShot: {
@@ -51,19 +49,19 @@ var ponkan = new Ponkan3("game", {
     },
     // 上スクロールボタン
     upButton: {
-      x: width - 58,
+      x: 1280 - 58,
       y: 100,
       imageFile: "image/history_up.png",
     },
     // 下スクロールボタン
     downButton: {
-      x: width - 58,
+      x: 1280 - 58,
       y: 130 + 500 + 2,
       imageFile: "image/history_down.png",
     },
     // スクロールバー
     scrollBar: {
-      x: width - 58,
+      x: 1280 - 58,
       y: 130 + 1,
       width: 30,
       height: 500,
@@ -75,21 +73,9 @@ var ponkan = new Ponkan3("game", {
     },
     // 閉じるボタン
     closeButton: {
-      x: width - 30 - 24,
+      x: 1280 - 30 - 24,
       y: 23,
       imageFile: "image/close_button.png",
     }
   }
-});
-WebFont.load({
-  classes: false,
-  custom: { families: ["GenShinGothic"] },
-  active: function () {
-    console.log("WebFont: ", "active.");
-    ponkan.start();
-  },
-  inactive: function () {
-    console.log("WebFont: ", "inactive.");
-    alert("フォントの読み込みに失敗");
-  },
-});
+};
