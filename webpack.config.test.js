@@ -8,17 +8,16 @@ module.exports = {
     test: './test/ponkan3.test.ts'
   },
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.join(__dirname, 'dist_test'),
     publicPath: '/assets',
     filename: '[name].js'
   },
   devServer: {
-    contentBase: path.join(__dirname, 'dist')
+    contentBase: path.join(__dirname, 'dist_test')
   },
   module: {
     rules: [
-      { test: /\.ts$/, loader:'ts-loader', exclude: /node_modules/ },
-      { test: /\.html$/, loader:'html-loader' },
+      { test: /\.ts$/, loader:'ts-loader', exclude: /node_modules/ }
     ]
   },
   resolve: {

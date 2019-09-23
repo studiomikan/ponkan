@@ -1,16 +1,17 @@
-import { BaseLayer } from "../base/base-layer";
 import { AsyncCallbacks } from "../base/async-callbacks";
 import { AsyncTask } from "../base/async-task";
-import { Resource } from "../base/resource";
+import { BaseLayer } from "../base/base-layer";
 import { PonGame } from "../base/pon-game";
-import { FrameAnimLayer } from "./frame-anim-layer";
-import { TextButtonLayer } from "./text-button-layer";
-import { ImageButtonLayer } from "./image-button-layer";
-import { ToggleButtonLayer } from "./toggle-button-layer";
-import { MovableLayer } from "./movable-layer";
+import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
+import { FilteredLayer } from "./filtered-layer";
+import { FrameAnimLayer } from "./frame-anim-layer";
+import { ImageButtonLayer } from "./image-button-layer";
+import { MovableLayer } from "./movable-layer";
+import { TextButtonLayer } from "./text-button-layer";
+import { ToggleButtonLayer } from "./toggle-button-layer";
 
-export class PonLayer extends MovableLayer {
+export class PonLayer extends FilteredLayer {
 
   public autoHideWithMessage: boolean = false;
   public visibleBuffer: boolean;
@@ -26,7 +27,7 @@ export class PonLayer extends MovableLayer {
    */
   public addChar(ch: string): void {
     super.addChar(ch);
-    if (ch.length == 1) {
+    if (ch.length === 1) {
       (this.owner as Ponkan3).onAddChar(this, ch);
     }
   }
@@ -47,13 +48,13 @@ export class PonLayer extends MovableLayer {
    * @param alpha アルファ値
    */
   public loadChildImage(filePath: string, x: number, y: number, alpha: number): AsyncCallbacks {
-    let child: BaseLayer = new BaseLayer(`ChildImage (filePath)`, this.resource, this.owner);
+    const child: BaseLayer = new BaseLayer(`ChildImage (filePath)`, this.resource, this.owner);
     this.addChild(child);
     this.childImages.push(child);
 
     child.x = x;
     child.y = y;
-    let cb = child.loadImage(filePath);
+    const cb = child.loadImage(filePath);
     cb.done(() => {
       child.alpha = alpha;
       child.visible = true;
@@ -76,7 +77,7 @@ export class PonLayer extends MovableLayer {
 
   protected static ponLayerStoreParams: string[] = [
     "autoHideWithMessage",
-    "visibleBuffer"
+    "visibleBuffer",
   ];
 
   public storeVisible(): void {
@@ -88,17 +89,17 @@ export class PonLayer extends MovableLayer {
   }
 
   public store(tick: number): any {
-    let data: any = super.store(tick);
-    let me: any = this as any;
-    PonLayer.ponLayerStoreParams.forEach(p => data[p] = me[p]);
-    data.childImages = this.childImages.map(ci => ci.store(tick));
+    const data: any = super.store(tick);
+    const me: any = this as any;
+    PonLayer.ponLayerStoreParams.forEach((p) => data[p] = me[p]);
+    data.childImages = this.childImages.map((ci) => ci.store(tick));
     return data;
   }
 
   public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
     super.restore(asyncTask, data, tick, clear);
-    let me: any = this as any;
-    PonLayer.ponLayerStoreParams.forEach(p => me[p] = data[p]);
+    const me: any = this as any;
+    PonLayer.ponLayerStoreParams.forEach((p) => me[p] = data[p]);
 
     if (data.childImages.length > 0) {
       if (data.childImages.length === this.childImages.length) {
@@ -110,7 +111,7 @@ export class PonLayer extends MovableLayer {
         // 数が合わない場合は一度破棄して作り直す
         this.freeChildImages();
         data.childImages.forEach((childImageData: any) => {
-          let ci = new BaseLayer(childImageData.name, this.resource, this.owner);
+          const ci = new BaseLayer(childImageData.name, this.resource, this.owner);
           this.addChild(ci);
           this.childImages.push(ci);
           ci.restore(asyncTask, childImageData, tick, clear);
@@ -134,13 +135,13 @@ export class PonLayer extends MovableLayer {
 
   public copyTo(dest: PonLayer): void {
     super.copyTo(dest);
-    let me: any = this as any;
-    let you: any = dest as any;
-    PonLayer.ponLayerStoreParams.forEach(p => you[p] = me[p]);
+    const me: any = this as any;
+    const you: any = dest as any;
+    PonLayer.ponLayerStoreParams.forEach((p) => you[p] = me[p]);
 
     dest.freeChildImages();
     this.childImages.forEach((srcImage) => {
-      let destImage = new BaseLayer(srcImage.name, this.resource, this.owner);
+      const destImage = new BaseLayer(srcImage.name, this.resource, this.owner);
       dest.addChild(destImage);
       dest.childImages.push(destImage);
       srcImage.copyTo(destImage);

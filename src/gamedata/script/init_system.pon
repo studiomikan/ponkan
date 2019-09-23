@@ -1,168 +1,143 @@
-# init_system
+#==================================================================
+# Ponkanの初期設定
+#==================================================================
 
-;raiseerror {"unknowntag": true}
+# 存在しないコマンドはエラーにする
+;raiseerror unknowncommand: true
+
 
 #=============================================
-# 設定
+# 使用レイヤー設定
 #=============================================
 ---
-//============================================
-// 使用するレイヤーの設定
-//============================================
-
 // レイヤーの総数
 tv.layerCount = 40
 
 // 各画面で使用するレイヤーの指定
 tv.layer = {
-  // メッセージレイヤ
-  message: 20,
   // 行末グリフ
   line: 21,
   // ページ末グリフ
   page: 22,
   // オートモード状態表示
-  auto: 23,
-
-  // システムボタン
-  systembutton: 24,
-
-  // セーブ画面
-  // 注意：組み込みのセーブ画面はここで指定したレイヤーを含めて3レイヤー使用する。
-  //       たとえば20を指定した場合、20〜22
-  save: 25,
-
-  // ロード画面
-  // 注意：組み込みのロード画面はここで指定したレイヤーを含めて3レイヤー使用する。
-  //       たとえば20を指定した場合、20〜22
-  load: 28,
-
-  // コンフィグ画面
-  // 注意：組み込みのコンフィグ画面はここで指定したレイヤーを含めて3レイヤー使用する。
-  //       たとえば20を指定した場合、20〜22
-  config: 31,
-
-  // ダイアログ
-  dialog: 35,
+  auto: 23
 }
 ---
+
+#=============================================
+# 音声バッファのエイリアス設定
+#=============================================
+;bufalias name: "bgm", buf: 0
+;bufalias name: "system", buf: 1
+;bufalias name: "se", buf: 2
 
 
 #=============================================
 # レイヤーの設定
 #=============================================
 # レイヤーの数
-;laycount "count": "&tv.layerCount"
+;laycount count: 40
+
 
 #=============================================
 # メッセージレイヤーの設定
 #=============================================
-;messagelay "lay": "&tv.layer.message"
+;messagelay "lay": 20
 ;layopt {
-  "lay": "message",
-  "x": 20,
-  "y": "&576-20-200",
-  "width": "&1024-20-20-500",
-  "height": 200,
-  "visible": true
+  lay: "message",
+  x: 20,
+  y: 20,
+  width: 1240,
+  height: 680,
+  visible: true
 }
 ;messageopt {
-  "lay": "message",
-  "fontfamily": ["mplus-1p-regular", "monospace"],
-  "fontsize": 24,
-  "weight": "normal",
-  "color": "0xFFFFFF",
-  "lineheight": 24,
-  "linepitch": 5,
-  "align": "left",
-  "shadow": true,
-  "shadowalpha": 0.7,
-  "shadowangle": 0.5,
-  "shadowblur": 5,
-  "shadowcolor": "0x000000",
-  "shadowdistance": 2,
-  "edgewidth": 0,
-  "edgecolor": "0x000000",
-  "autoreturn": true,
-  "margint": 10,
-  "marginr": 10,
-  "marginb": 10,
-  "marginl": 10
+  lay: "message",
+  fontfamily: ["GenShinGothic", "monospace"],
+  fontsize: 26,
+  weight: "normal",
+  color: "0xFFFFFF",
+  pitch: 0,
+  lineheight: 26,
+  linepitch: 10,
+  align: "left",
+  shadow: true,
+  shadowalpha: 0.7,
+  shadowangle: 0.5,
+  shadowblur: 5,
+  shadowcolor: "0x000000",
+  shadowdistance: 2,
+  edgewidth: 0,
+  edgecolor: "0x000000",
+  autoreturn: true,
+  margint: 20,
+  marginr: 20,
+  marginb: 20,
+  marginl: 20
 }
-;fillcolor "lay": "mes", "color": "0x4286f4", "alpha": 0.7
-;textspeed "unread": 20, "read": 20
+#;image lay: "mes", file: "image/message.png"
+;fillcolor lay: "message", color: 0x000000, alpha: 0.75
+;textspeed unread: 20, read: 20
+;clear lay: "all"
 
 
-
+#=============================================
 # 行末グリフの設定
+#=============================================
 ---
 let frames = tv.lineBreakFrames = [];
-for (var i = 0; i < 16; i++) { frames.push({"x": 24 * i, "y": 0}); }
-for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
+for (var i = 0; i < 16; i++) { frames.push({x: 24 * i, y: 0}); }
+for (var i = 1; i < 15; i++) { frames.push({x: 360 - 24 * i, y: 0}); }
 ---
-;lbglyph "lay": "&tv.layer.line", "pos": "eol"
+;lbglyph "lay": 21, "pos": "eol"
 ;image {
-  "lay": "linebreak",
-  "file": "image/linebreak.png",
-  "visible": false,
-  "x": 0,
-  "y": 0
+  lay: "linebreak",
+  file: "image/linebreak.png"
 }
 ;frameanim {
-  "lay": "linebreak",
-  "loop": true,
-  "time": 50,
-  "width": 24,
-  "height": 24,
-  "frames": "&tv.lineBreakFrames"
+  lay: "linebreak",
+  loop: true,
+  time: 50,
+  width: 24,
+  height: 24,
+  frames: "&tv.lineBreakFrames"
 }
 
+
+#=============================================
 # ページ末グリフの設定
+#=============================================
 ---
 let frames = tv.pageBreakFrames = [];
 for (var i = 0; i < 16; i++) { frames.push({"x": 24 * i, "y": 0}); }
 for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
 ---
-;pbglyph "lay": "&tv.layer.page", "pos": "eol"
+;pbglyph lay: 22, pos: "eol"
 ;image {
-  "lay": "pagebreak",
-  "file": "image/pagebreak.png",
-  "visible": false,
-  "x": 0,
-  "y": 0
+  lay: "pagebreak",
+  file: "image/pagebreak.png"
 }
 ;frameanim {
-  "lay": "pagebreak",
-  "loop": true,
-  "time": 50,
-  "width": 24,
-  "height": 24,
-  "frames": "&tv.pageBreakFrames"
+  lay: "pagebreak",
+  loop: true,
+  time: 50,
+  width: 24,
+  height: 24,
+  frames: "&tv.pageBreakFrames"
 }
+
+
 #=============================================
 # オートモード表示レイヤの設定
 #=============================================
-;automodeopt "lay": "&tv.layer.auto"
+;automodeopt lay: 23
 ;layopt {
-  "lay": "automode",
-  "x": 0,
-  "y": 0,
-  "width": 50,
-  "height": 50,
-  "visible": false
+  lay: "automode",
+  x: 10,
+  y: 10,
+  visible: false
 }
-;fillcolor "lay": "automode", "color": "0x00FFFF", "alpha": 1.0
+;image lay: "automode", file: "image/automode.png"
 
-
-#=============================================
-# システムボタン
-#=============================================
-;call "file": "script/system_button.pon"
-
-
-#=============================================
-# マクロ定義
-#=============================================
-;call "file": "script/macro.pon"
 
 ;return

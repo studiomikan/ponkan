@@ -1,28 +1,34 @@
-import { BaseLayer } from "../base/base-layer";
 import { AsyncCallbacks } from "../base/async-callbacks";
 import { AsyncTask } from "../base/async-task";
-import { Resource } from "../base/resource";
+import { BaseLayer } from "../base/base-layer";
 import { PonGame } from "../base/pon-game";
-import { ToggleButtonLayer } from "./toggle-button-layer";
+import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
+import { SliderLayer } from "./slider-layer";
 
 export interface IMovePos {
   x: number;
   y: number;
   alpha: number;
+  scalex: number;
+  scaley: number;
 }
 
-export class MovableLayer extends ToggleButtonLayer {
+export class MovableLayer extends SliderLayer {
 
   protected _isMoving: boolean = false;
-  public get isMoving(): boolean { return this._isMoving; }
   protected moveType: "linear" | "bezier2" | "bezier3" | "catmullrom" = "linear";
   protected moveEase: "none" | "in" | "out" | "both" = "none";
   protected movePosList: IMovePos[] = [];
   protected movePoint: number = 0;
   protected moveTime: number = 0;
+  protected moveDelay: number = 0;
+  protected moveLoop: boolean = false;
   protected moveTotalTime: number = 0;
   protected moveStartTick: number = -1;
+  protected moveDelayStartTick: number = -1;
+  public get isMoving(): boolean { return this._isMoving; }
+  public get isLoopMoving(): boolean { return this.moveLoop; }
 
   public constructor(name: string, resource: Resource, owner: Ponkan3) {
     super(name, resource, owner);
@@ -31,9 +37,11 @@ export class MovableLayer extends ToggleButtonLayer {
   public startMove(
     tick: number,
     time: number,
+    delay: number,
     path: IMovePos[],
     type: "linear" | "bezier2" | "bezier3" | "catmullrom",
     ease: "none" | "in" | "out" | "both",
+    loop: boolean,
   ): void {
 
     if (type === "bezier2" && path.length !== 2) {
@@ -45,17 +53,35 @@ export class MovableLayer extends ToggleButtonLayer {
     if (type === "catmullrom" && path.length < 2) {
       throw new Error("catmullromではpathを2点以上指定する必要があります。");
     }
-
-    path.unshift({ x: this.x, y: this.y, alpha: this.alpha });
+    if (loop && !(type === "linear" || type === "catmullrom")) {
+      throw new Error("自動移動をループできるのはlinearまたはcatmullromの場合のみです。");
+    }
 
     this._isMoving = true;
     this.moveType = type;
     this.moveEase = ease;
-    this.movePosList = path;
     this.movePoint = 0;
     this.moveTime = time;
+    this.moveDelay = delay;
+    this.moveLoop = loop;
     this.moveTotalTime = time * (path.length - 1);
     this.moveStartTick = -1; // この時点では-1としておき、初めてのupdate時に設定する
+
+    // this.movePosList = this.clonePath(path);
+    // this.movePosList.unshift({ x: this.x, y: this.y, alpha: this.alpha });
+    const posList = this.clonePath(path);
+    posList.unshift({ x: this.x, y: this.y, alpha: this.alpha, scalex: this.scaleX, scaley: this.scaleY });
+    for (let i = 1; i < posList.length; i++) {
+      const p0 = posList[i - 1];
+      const p = posList[i];
+      if (p.x == null) { p.x = p0.x; }
+      if (p.y == null) { p.y = p0.y; }
+      if (p.alpha == null) { p.alpha = p0.alpha; }
+      if (p.scalex == null) { p.scalex = p0.scalex; }
+      if (p.scaley == null) { p.scaley = p0.scaley; }
+    }
+    this.movePosList = posList;
+
 
     // bezier2、bezier3のときはmoveTime == moveTotalTimeとする
     if (type === "bezier2" || type === "bezier3") {
@@ -63,33 +89,52 @@ export class MovableLayer extends ToggleButtonLayer {
     }
   }
 
-  public stopMove(): void {
+  public stopMove(triggerEvent: boolean = true): void {
     if (this._isMoving) {
-      let lastPos: IMovePos = this.movePosList[this.movePosList.length - 1];
+      const lastPos: IMovePos = this.movePosList[this.movePosList.length - 1];
       this.x = lastPos.x;
       this.y = lastPos.y;
       this.alpha = lastPos.alpha;
+      this.scaleX = lastPos.scalex;
+      this.scaleY = lastPos.scaley;
       this._isMoving = false;
       this.movePosList = [];
-      this.owner.conductor.trigger("move");
+      this.moveLoop = false;
+      if (triggerEvent) {
+        this.owner.conductor.trigger("move");
+      }
     }
+  }
+
+  private clonePath(orgPath: IMovePos[]): IMovePos[] {
+    const path: IMovePos[] = [];
+    orgPath.forEach((p: any) => {
+      const obj: any = {};
+      Object.keys(p).forEach((key) => {
+        obj[key] = p[key];
+      })
+      path.push(obj);
+    });
+    return path;
   }
 
   // [override]
   public update(tick: number): void {
-    super.update(tick)
+    super.update(tick);
     if (this._isMoving) {
+      if (this.moveDelayStartTick === -1) { this.moveDelayStartTick = tick; }
+      if (tick - this.moveDelayStartTick < this.moveDelay) { return; }
+
       if (this.moveStartTick === -1) {
         this.moveStartTick = tick;
       }
-
       let phase: number = (tick - this.moveStartTick) / this.moveTime;
 
       // easeの処理
       switch (this.moveEase) {
-        case 'in': phase = this.moveEaseIn(phase); break;
-        case 'out': phase = this.moveEaseOut(phase); break;
-        case 'both': phase = this.moveEaseInOut(phase); break;
+        case "in": phase = this.moveEaseIn(phase); break;
+        case "out": phase = this.moveEaseOut(phase); break;
+        case "both": phase = this.moveEaseInOut(phase); break;
         // case 'none': phase = phase; break;
       }
       if (phase > 1) {
@@ -97,9 +142,9 @@ export class MovableLayer extends ToggleButtonLayer {
       }
       // 移動
       switch (this.moveType) {
-        case 'bezier2': this.moveBezierCurve2(tick, phase); break;
-        case 'bezier3': this.moveBezierCurve3(tick, phase); break;
-        case 'catmullrom': this.moveCatmullRom(tick, phase); break;
+        case "bezier2": this.moveBezierCurve2(tick, phase); break;
+        case "bezier3": this.moveBezierCurve3(tick, phase); break;
+        case "catmullrom": this.moveCatmullRom(tick, phase); break;
         default: this.moveLinear(tick, phase); break;
       }
     }
@@ -111,7 +156,7 @@ export class MovableLayer extends ToggleButtonLayer {
    * @return 補正後のフェーズ（0～1の値）
    */
   protected moveEaseIn(phase: number): number {
-    return phase * phase
+    return phase * phase;
   }
 
   /**
@@ -120,7 +165,7 @@ export class MovableLayer extends ToggleButtonLayer {
    * @return 補正後のフェーズ（0～1の値）
    */
   protected moveEaseOut(phase: number): number {
-    return phase * (2 - phase)
+    return phase * (2 - phase);
   }
 
   /**
@@ -130,7 +175,7 @@ export class MovableLayer extends ToggleButtonLayer {
    */
   protected moveEaseInOut(phase: number): number {
     // v(t) = -2t^3 + 3t^2 = t^2(3-2t)
-    return (phase * phase) * (3 - (2 * phase))
+    return (phase * phase) * (3 - (2 * phase));
   }
 
   /**
@@ -140,21 +185,38 @@ export class MovableLayer extends ToggleButtonLayer {
    */
   protected moveLinear(tick: number, phase: number): void {
     // 移動
-    let startPos: IMovePos = this.movePosList[this.movePoint];
-    let endPos: IMovePos = this.movePosList[this.movePoint + 1]
-    this.x = Math.floor(startPos.x + (endPos.x - startPos.x) * phase)
-    this.y = Math.floor(startPos.y + (endPos.y - startPos.y) * phase)
-    this.alpha = startPos.alpha + (endPos.alpha - startPos.alpha) * phase
+    const startPos: IMovePos = this.movePosList[this.movePoint];
+    let endPos: IMovePos;
+    if (this.movePoint + 1 < this.movePosList.length) {
+      endPos = this.movePosList[this.movePoint + 1];
+    } else {
+      endPos = this.movePosList[0];
+    }
+    this.x = Math.floor(startPos.x + (endPos.x - startPos.x) * phase);
+    this.y = Math.floor(startPos.y + (endPos.y - startPos.y) * phase);
+    this.alpha = startPos.alpha + (endPos.alpha - startPos.alpha) * phase;
+    this.scaleX = startPos.scalex + (endPos.scalex - startPos.scalex) * phase;
+    this.scaleY = startPos.scaley + (endPos.scaley - startPos.scaley) * phase;
     // 終了判定
     if (tick - this.moveStartTick >= this.moveTime) {
       this.movePoint++;
-      if (this.movePoint + 1 < this.movePosList.length) {
-        this.moveStartTick += this.moveTime
-        let startPos: IMovePos = this.movePosList[this.movePoint];
-        this.x = startPos.x;
-        this.y = startPos.y;
+      if (this.moveLoop) {
+        if (this.movePoint >= this.movePosList.length) {
+          this.movePoint = 0;
+        }
+        this.moveStartTick += this.moveTime;
+        const nextStartPos: IMovePos = this.movePosList[this.movePoint];
+        this.x = nextStartPos.x;
+        this.y = nextStartPos.y;
       } else {
-        this.stopMove();
+        if (this.movePoint + 1 < this.movePosList.length) {
+          this.moveStartTick += this.moveTime;
+          const nextStartPos: IMovePos = this.movePosList[this.movePoint];
+          this.x = nextStartPos.x;
+          this.y = nextStartPos.y;
+        } else {
+          this.stopMove();
+        }
       }
     }
   }
@@ -166,13 +228,15 @@ export class MovableLayer extends ToggleButtonLayer {
    */
   protected moveBezierCurve2(tick: number, phase: number): void {
     // 移動
-    let p0: IMovePos = this.movePosList[0];
-    let p1: IMovePos = this.movePosList[1];
-    let p2: IMovePos = this.movePosList[2];
-    let t = phase;
+    const p0: IMovePos = this.movePosList[0];
+    const p1: IMovePos = this.movePosList[1];
+    const p2: IMovePos = this.movePosList[2];
+    const t = phase;
     this.x = (1 - t) * (1 - t) * p0.x + 2 * (1 - t) * t * p1.x + t * t * p2.x;
     this.y = (1 - t) * (1 - t) * p0.y + 2 * (1 - t) * t * p1.y + t * t * p2.y;
     this.alpha = p0.alpha + (p2.alpha - p0.alpha) * phase;
+    this.scaleX = p0.scalex + (p2.scalex - p0.scalex) * phase;
+    this.scaleY = p0.scaley + (p2.scaley - p0.scaley) * phase;
     // 終了判定
     if (tick - this.moveStartTick >= this.moveTime) {
       this.stopMove();
@@ -184,16 +248,20 @@ export class MovableLayer extends ToggleButtonLayer {
    * @param tick 時刻
    * @param phase フェーズ（0～1の値）
    */
-  protected moveBezierCurve3 (tick: number, phase: number): void {
+  protected moveBezierCurve3(tick: number, phase: number): void {
     // 移動
-    let p0: IMovePos = this.movePosList[0];
-    let p1: IMovePos = this.movePosList[1];
-    let p2: IMovePos = this.movePosList[2];
-    let p3: IMovePos = this.movePosList[3];
-    let t = phase;
+    const p0: IMovePos = this.movePosList[0];
+    const p1: IMovePos = this.movePosList[1];
+    const p2: IMovePos = this.movePosList[2];
+    const p3: IMovePos = this.movePosList[3];
+    const t = phase;
+    // tslint:disable
     this.x = (1 - t) * (1 - t) * (1 - t) * p0.x + 3 * (1 - t) * (1 - t) * t * p1.x + 3 * (1 - t) * t * t * p2.x + t * t * t * p3.x;
     this.y = (1 - t) * (1 - t) * (1 - t) * p0.y + 3 * (1 - t) * (1 - t) * t * p1.y + 3 * (1 - t) * t * t * p2.y + t * t * t * p3.y;
+    // tslint:enable
     this.alpha = p0.alpha + (p3.alpha - p0.alpha) * phase;
+    this.scaleX = p0.scalex + (p3.scalex - p0.scalex) * phase;
+    this.scaleY = p0.scaley + (p3.scaley - p0.scaley) * phase;
     // 終了判定
     if (tick - this.moveStartTick >= this.moveTime) {
       this.stopMove();
@@ -205,44 +273,66 @@ export class MovableLayer extends ToggleButtonLayer {
    * @param tick 時刻
    * @param phase フェーズ（0～1の値）
    */
-  protected moveCatmullRom (tick: number, phase: number) {
-    let n: number = this.movePoint;
-    let p: IMovePos[] = this.movePosList;
-    let p0: IMovePos, p1: IMovePos, p2: IMovePos, p3: IMovePos;
+  protected moveCatmullRom(tick: number, phase: number) {
+    const n: number = this.movePoint;
+    const p: IMovePos[] = this.movePosList;
+    let p0: IMovePos;
+    let p1: IMovePos;
+    let p2: IMovePos;
+    let p3: IMovePos;
     // let t = phase
 
-    if (n === 0) {
-      // 始点
-      p0 = p[n];
+    if (this.moveLoop) {
+      p0 = (n - 1) < 0 ? p[p.length - 1] : p[n - 1];
       p1 = p[n];
-      p2 = p[n + 1];
-      p3 = p[n + 2];
-    } else if (n + 2 >= p.length) {
-      // 終点
-      p0 = p[n - 1];
-      p1 = p[n];
-      p2 = p[n + 1];
-      p3 = p[n + 1];
+      p2 = p[((n + 1) % p.length)];
+      p3 = p[((n + 2) % p.length)];
     } else {
-      p0 = p[n - 1];
-      p1 = p[n];
-      p2 = p[n + 1];
-      p3 = p[n + 2];
+      if (n === 0) {
+        // 始点
+        p0 = p[n];
+        p1 = p[n];
+        p2 = p[n + 1];
+        p3 = p[n + 2];
+      } else if (n + 2 >= p.length) {
+        // 終点
+        p0 = p[n - 1];
+        p1 = p[n];
+        p2 = p[n + 1];
+        p3 = p[n + 1];
+      } else {
+        p0 = p[n - 1];
+        p1 = p[n];
+        p2 = p[n + 1];
+        p3 = p[n + 2];
+      }
     }
 
     this.x = this.catmullRom(p0.x, p1.x, p2.x, p3.x, phase);
     this.y = this.catmullRom(p0.y, p1.y, p2.y, p3.y, phase);
     this.alpha = p1.alpha + (p2.alpha - p1.alpha) * phase;
+    this.scaleX = p1.scalex + (p2.scalex - p1.scalex) * phase;
+    this.scaleY = p1.scaley + (p2.scaley - p1.scaley) * phase;
 
     if (tick - this.moveStartTick >= this.moveTime) {
       this.movePoint++;
-      if (this.movePoint + 1 < this.movePosList.length) {
+      if (this.moveLoop) {
+        if (this.movePoint >= this.movePosList.length) {
+          this.movePoint = 0;
+        }
         this.moveStartTick += this.moveTime;
-        let startPos: IMovePos= this.movePosList[this.movePoint];
+        const startPos: IMovePos = this.movePosList[this.movePoint];
         this.x = startPos.x;
         this.y = startPos.y;
       } else {
-        this.stopMove();
+        if (this.movePoint + 1 < this.movePosList.length) {
+          this.moveStartTick += this.moveTime;
+          const startPos: IMovePos = this.movePosList[this.movePoint];
+          this.x = startPos.x;
+          this.y = startPos.y;
+        } else {
+          this.stopMove();
+        }
       }
     }
   }
@@ -256,43 +346,70 @@ export class MovableLayer extends ToggleButtonLayer {
    * @param t 時間
    * @return 補間後の点
    */
-  protected catmullRom (p0: number, p1: number, p2: number, p3: number, t: number): number {
-    let v0 = (p2 - p0) / 2;
-    let v1 = (p3 - p1) / 2;
-    let t2 = t * t;
-    let t3 = t2 * t;
+  protected catmullRom(p0: number, p1: number, p2: number, p3: number, t: number): number {
+    const v0 = (p2 - p0) / 2;
+    const v1 = (p3 - p1) / 2;
+    const t2 = t * t;
+    const t3 = t2 * t;
     return (2 * p1 - 2 * p2 + v0 + v1) * t3 +
            (-3 * p1 + 3 * p2 - 2 * v0 - v1) * t2 + v0 * t + p1;
   }
 
-  public store(tick: number): any {
-    let data: any = super.store(tick);
-    // 自動移動中だった場合、自動移動が終わったものとして保存する。
-    if (this.isMoving) {
-      let endPos = this.movePosList[this.movePosList.length - 1];
-      data.x = endPos.x;
-      data.y = endPos.y;
-      data.alpha = endPos.alpha;
-    }
-    return data;
-  }
-
-  protected static movableLayerCopyParams: string[] = [
+  protected static movableLayerStoreParams: string[] = [
     "_isMoving",
     "moveType",
     "moveEase",
     "movePosList",
     "movePoint",
     "moveTime",
+    "moveDelay",
+    "moveLoop",
     "moveTotalTime",
     "moveStartTick",
+    "moveDelayStartTick",
   ];
+
+  public store(tick: number): any {
+    const data: any = super.store(tick);
+    const me: any = this as any;
+
+    if (this.isMoving) {
+      if (this.moveLoop) {
+        // ループする場合、保存する
+        MovableLayer.movableLayerStoreParams.forEach((param: string) => {
+          data[param] = me[param];
+        });
+      } else {
+        // ループしない場合、自動移動が終わったものとして保存する。
+        const endPos = this.movePosList[this.movePosList.length - 1];
+        data.x = endPos.x;
+        data.y = endPos.y;
+        data.alpha = endPos.alpha;
+      }
+    }
+    return data;
+  }
+
+  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+    this.stopMove(false);
+    super.restore(asyncTask, data, tick, clear);
+
+    if (data.moveLoop) {
+      const me: any = this as any;
+      MovableLayer.movableLayerStoreParams.forEach((param: string) => {
+        me[param] = data[param];
+      });
+      this.moveDelay = 0; // delayは不要。いきなり始める。
+      this.moveDelayStartTick = -1;
+      this.moveStartTick = -1;
+    }
+  }
 
   public copyTo(dest: MovableLayer): void {
     super.copyTo(dest);
-    let me: any = this as any;
-    let you: any = dest as any;
-    MovableLayer.movableLayerCopyParams.forEach(p => you[p] = me[p]);
+    const me: any = this as any;
+    const you: any = dest as any;
+    MovableLayer.movableLayerStoreParams.forEach((p) => you[p] = me[p]);
   }
 
 }

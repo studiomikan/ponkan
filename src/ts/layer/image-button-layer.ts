@@ -1,13 +1,13 @@
-import { Logger } from "../base/logger";
-import { AsyncTask } from "../base/async-task";
 import { AsyncCallbacks } from "../base/async-callbacks";
-import { Resource } from "../base/resource";
+import { AsyncTask } from "../base/async-task";
+import { Logger } from "../base/logger";
 import { PonMouseEvent } from "../base/pon-mouse-event";
-import { Button } from "./button";
-import { TextButtonLayer } from "./text-button-layer";
+import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
+import { CommandButton } from "./button";
+import { TextButtonLayer } from "./text-button-layer";
 
-export class ImageButton extends Button {
+export class CommandImageButton extends CommandButton {
   protected direction: "horizontal" | "vertical" = "horizontal";
 
   public initImageButton(
@@ -20,13 +20,17 @@ export class ImageButton extends Button {
     exp: string | null = null,
     file: string,
     direction: "horizontal" | "vertical",
+    onEnterSoundBuf: string,
+    onLeaveSoundBuf: string,
+    onClickSoundBuf: string,
   ): AsyncCallbacks {
-    let cb = new AsyncCallbacks();
+    const cb = new AsyncCallbacks();
 
-    this.resetButton();
+    this.clearCommandButton();
     this.freeImage();
 
-    this.initButton(jump, call, filePath, label, countPage, isSystemButton, exp);
+    this.initCommandButton(jump, call, filePath, label, countPage, isSystemButton, exp,
+                    onEnterSoundBuf, onLeaveSoundBuf, onClickSoundBuf);
     this.direction = direction;
 
     this.loadImage(file).done(() => {
@@ -45,8 +49,8 @@ export class ImageButton extends Button {
     return cb;
   }
 
-  public resetButton(): void {
-    super.resetButton();
+  public clearCommandButton(): void {
+    super.clearCommandButton();
     this.direction = "horizontal";
   }
 
@@ -87,9 +91,9 @@ export class ImageButton extends Button {
   ];
 
   public store(tick: number): any {
-    let data: any = super.store(tick);
-    let me: any = this as any;
-    ImageButton.imageButtonStoreParams.forEach((param: string) => {
+    const data: any = super.store(tick);
+    const me: any = this as any;
+    CommandImageButton.imageButtonStoreParams.forEach((param: string) => {
       data[param] = me[param];
     });
     return data;
@@ -100,19 +104,19 @@ export class ImageButton extends Button {
   }
 
   public restoreAfterLoadImage(data: any, tick: number): void {
-    let me: any = this as any;
-    ImageButton.imageButtonStoreParams.forEach((param: string) => {
+    const me: any = this as any;
+    CommandImageButton.imageButtonStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
     super.restoreAfterLoadImage(data, tick);
   }
 
-  public copyTo(dest: ImageButton): void {
+  public copyTo(dest: CommandImageButton): void {
     super.copyTo(dest);
 
-    let me: any = this as any;
-    let you: any = dest as any;
-    ImageButton.imageButtonStoreParams.forEach((param: string) => {
+    const me: any = this as any;
+    const you: any = dest as any;
+    CommandImageButton.imageButtonStoreParams.forEach((param: string) => {
       you[param] = me[param];
     });
   }
@@ -120,7 +124,7 @@ export class ImageButton extends Button {
 
 export class ImageButtonLayer extends TextButtonLayer {
 
-  private imageButtons: ImageButton[] = [];
+  private imageButtons: CommandImageButton[] = [];
 
   public addImageButton(
     jump: boolean = true,
@@ -134,9 +138,12 @@ export class ImageButtonLayer extends TextButtonLayer {
     y: number,
     direction: "horizontal" | "vertical",
     isSystemButton: boolean,
+    onEnterSoundBuf: string,
+    onLeaveSoundBuf: string,
+    onClickSoundBuf: string,
   ): AsyncCallbacks {
-    let name = `ImageButton ${this.imageButtons.length}`;
-    let btn = new ImageButton(name, this.resource, this.owner);
+    const name = `ImageButton ${this.imageButtons.length}`;
+    const btn = new CommandImageButton(name, this.resource, this.owner);
     this.addChild(btn);
     this.imageButtons.push(btn);
 
@@ -152,12 +159,15 @@ export class ImageButtonLayer extends TextButtonLayer {
       exp,
       file,
       direction,
+      onEnterSoundBuf,
+      onLeaveSoundBuf,
+      onClickSoundBuf,
     );
   }
 
   public clearImageButtons(): void {
     this.imageButtons.forEach((imageButton) => {
-      imageButton.resetButton();
+      imageButton.clearCommandButton();
       imageButton.destroy();
       this.deleteChildLayer(imageButton);
     });
@@ -193,10 +203,10 @@ export class ImageButtonLayer extends TextButtonLayer {
   }
 
   public store(tick: number): any {
-    let data: any = super.store(tick);
-    let me: any = this as any;
+    const data: any = super.store(tick);
+    const me: any = this as any;
 
-    data.imageButtons = this.imageButtons.map(imageButton => imageButton.store(tick));
+    data.imageButtons = this.imageButtons.map((imageButton) => imageButton.store(tick));
 
     return data;
   }
@@ -212,7 +222,7 @@ export class ImageButtonLayer extends TextButtonLayer {
         // 数が合わない場合は一度破棄して作り直す
         this.clearImageButtons();
         data.imageButtons.forEach((imageButtonData: any) => {
-          let btn = new ImageButton(imageButtonData.name, this.resource, this.owner);
+          const btn = new CommandImageButton(imageButtonData.name, this.resource, this.owner);
           this.addChild(btn);
           this.imageButtons.push(btn);
           btn.restore(asyncTask, imageButtonData, tick, clear);
@@ -238,7 +248,7 @@ export class ImageButtonLayer extends TextButtonLayer {
 
     dest.clearImageButtons();
     this.imageButtons.forEach((srcBtn) => {
-      let destBtn = new ImageButton(srcBtn.name, dest.resource, dest.owner);
+      const destBtn = new CommandImageButton(srcBtn.name, dest.resource, dest.owner);
       dest.addChild(destBtn);
       dest.imageButtons.push(destBtn);
       srcBtn.copyTo(destBtn);
@@ -246,4 +256,3 @@ export class ImageButtonLayer extends TextButtonLayer {
   }
 
 }
-

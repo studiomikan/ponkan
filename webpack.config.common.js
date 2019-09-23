@@ -1,5 +1,4 @@
 const path = require('path')
-const merge = require('webpack-merge')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const WriteFilePlugin = require('write-file-webpack-plugin');
 
@@ -31,8 +30,16 @@ module.exports = {
       { context: path.join(__dirname, 'src/fonts') }
     ),
     new CopyWebpackPlugin(
-      [ { from: '', to: '', }, ],
-      { context: path.join(__dirname, 'src/index.html') }
+      [ { from: '', to: '', ignore: '!*.html' }, ],
+      { context: path.join(__dirname, 'src') }
+    ),
+    new CopyWebpackPlugin(
+      [ { from: '', to: '', ignore: '!*.js' }, ],
+      { context: path.join(__dirname, 'src') }
+    ),
+    new CopyWebpackPlugin(
+      [ { from: '', to: '', ignore: '!*.ico' }, ],
+      { context: path.join(__dirname, 'src') }
     ),
     new WriteFilePlugin(),
   ]

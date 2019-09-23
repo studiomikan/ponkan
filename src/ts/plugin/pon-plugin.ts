@@ -18,6 +18,7 @@ export class PonPlugin {
    * プラグインを破棄するときに呼ばれる
    */
   public destroy(): void {
+    return;
   }
 
   /**
@@ -25,6 +26,7 @@ export class PonPlugin {
    * @param data 保存先のオブジェクト
    */
   public onStore(data: any, tick: number): void {
+    return;
   }
 
   /**
@@ -34,7 +36,7 @@ export class PonPlugin {
    * @param tick 復元時の時間
    * @param clear メッセージをクリアする場合はtrue
    * @param sound 音声を復元する場合はtrue
-   * @param toBack 表レイヤーを裏レイヤーに復元する場合はtrue
+   * @param toBack 表ページを裏ページに復元する場合はtrue
    */
   public onRestore(
     asyncTask: AsyncTask,
@@ -43,6 +45,7 @@ export class PonPlugin {
     clear: boolean,
     sound: boolean,
     toBack: boolean): void {
+      return;
   }
 
   /**
@@ -50,6 +53,7 @@ export class PonPlugin {
    * @param isStable 安定していればtrue
    */
   public onChangeStable(isStable: boolean): void {
+      return;
   }
 
   /**
@@ -57,6 +61,7 @@ export class PonPlugin {
    * @param visible 隠すときfalse、表示するときtrue
    */
   public onChangeMessageVisible(visible: boolean): void {
+      return;
   }
 
   /**
@@ -64,6 +69,7 @@ export class PonPlugin {
    * @param toback 表→裏へのコピーならtrue、それ以外はfalse
    */
   public onCopyLayer(toback: boolean): void {
+      return;
   }
 
   /**
@@ -74,12 +80,13 @@ export class PonPlugin {
    * ここで入れ替える必要がある。
    */
   public onFlipLayers(): void {
+      return;
   }
 
   /**
    * システム変数（sv）を保存する直前に呼ばれる
    */
   public onSaveSystemVariables(): void {
+      return;
   }
 }
-

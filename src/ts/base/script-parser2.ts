@@ -42,9 +42,9 @@ export class ScriptParser2 {
     while (true) {
       this.skipWhiteSpace();
       // let ch0: string = this.getChar();
-      let ch0: string = this.readChar();
+      const ch0: string = this.readChar();
       if (ch0 === "") { break; }
-      
+
       switch (ch0) {
         case "#":
           // コメント
@@ -83,17 +83,17 @@ export class ScriptParser2 {
   }
 
   private parseCommand(): void {
-    let trash = this.getChar(); // "[" 読み捨て
+    const trash = this.getChar(); // "[" 読み捨て
 
     // コマンド名取得
     this.skipWhiteSpace();
-    let commandName = this.getWord();
+    const commandName = this.getWord();
     if (commandName === "" || commandName === "]") {
       throw new Error(`文法エラー：コマンド名がありません(line:${this.currentLineNum})`);
     }
 
     let body: string = `[${commandName}` ;
-    let values: any = {};
+    const values: any = {};
 
     while (true) {
       this.skipWhiteSpace();
@@ -104,20 +104,20 @@ export class ScriptParser2 {
       }
       // 値の名前
       this.skipWhiteSpace();
-      let valueName = this.getWord();
+      const valueName = this.getWord();
       if (valueName === "" || valueName === "") {
         throw new Error(`文法エラー：値名がありません(line:${this.currentLineNum})`);
       }
       // イコール
       this.skipWhiteSpace();
-      let equal = this.getChar();
+      const equal = this.getChar();
       if (equal !== "=") {
         throw new Error(
           `文法エラー：=がありません(name:${commandName})(line:${this.currentLineNum})`);
       }
       // 値
       this.skipWhiteSpace();
-      let value = this.getWord();
+      const value = this.getWord();
       if (value === "" || value === "") {
         throw new Error(
           `文法エラー：値がありません(name:${commandName})(line:${this.currentLineNum})`);
@@ -140,17 +140,17 @@ export class ScriptParser2 {
   private parseSaveMark(): void {
     const line = this.readUntilLineBreak();
     const body = line.substring(1).trim();
-    let p: number = body.indexOf(":");
+    const p: number = body.indexOf(":");
     if (p !== -1) {
-      let name: string = body.substring(0, p);
-      let comment: string = body.substring(p);
-      this.addTag("__save_mark__", { __body__: body, name: name, comment: comment });
+      const name: string = body.substring(0, p);
+      const comment: string = body.substring(p);
+      this.addTag("__save_mark__", { __body__: body, name, comment });
     } else if (body.length > 0) {
-      let name: string = `__save_mark_${this.currentLineNum}__`;
-      this.addTag("__save_mark__", { __body__: body, name: name, comment: body });
+      const name: string = `__save_mark_${this.currentLineNum}__`;
+      this.addTag("__save_mark__", { __body__: body, name, comment: body });
     } else {
-      let name: string = `__save_mark_${this.currentLineNum}__`;
-      this.addTag("__save_mark__", { __body__: body, name: name, comment: "" });
+      const name: string = `__save_mark_${this.currentLineNum}__`;
+      this.addTag("__save_mark__", { __body__: body, name, comment: "" });
     }
   }
 
@@ -159,14 +159,14 @@ export class ScriptParser2 {
       this.readUntilLineBreak(); // "---" を読み捨てる
       let js: string = "";
       while (true) {
-        let tmp: string  = this.readUntilLineBreak();
+        const tmp: string  = this.readUntilLineBreak();
         if (tmp === "" || tmp.trim() === "---") { break; }
         js += tmp + "\n";
       }
       this.addTag("__js__", { __body__: js, print: false });
     } else {
-      let line = this.readUntilLineBreak();
-      let body = line.substring(1).trim();
+      const line = this.readUntilLineBreak();
+      const body = line.substring(1).trim();
       this.addTag("__js__", { __body__: body, print: false });
     }
   }
@@ -183,7 +183,7 @@ export class ScriptParser2 {
 
   private dropUntilLineBreak(): void {
     while (true) {
-      let ch: string = this.getChar();
+      const ch: string = this.getChar();
       if (ch === "" || this.isLineBreak(ch)) {
         break;
       }
@@ -193,7 +193,7 @@ export class ScriptParser2 {
   private readUntilLineBreak(): string {
     let str = "";
     while (true) {
-      let ch: string = this.getChar();
+      const ch: string = this.getChar();
       if (ch === "" || this.isLineBreak(ch)) {
         break;
       }
@@ -203,25 +203,31 @@ export class ScriptParser2 {
   }
 
   private getWord(): string {
-    let ch0 = this.getChar();
+    const ch0 = this.getChar();
     if (ch0 === "") { return ""; }
-    
+
     if (ch0 === "\"" || ch0 === "\'") {
       let word = "";
       let escapeFlag = false;
       while (true) {
-        let ch = this.getChar();
-        if (ch === "") { break; }
-        else if (escapeFlag) { word += ch; }
-        else if (ch === ch0) { break; }
-        else if (ch === "\\") { escapeFlag = true; }
-        else { word += ch; }
+        const ch = this.getChar();
+        if (ch === "") {
+          break;
+        } else if (escapeFlag) {
+          word += ch;
+        } else if (ch === ch0) {
+          break;
+        } else if (ch === "\\") {
+          escapeFlag = true;
+        } else {
+          word += ch;
+        }
       }
       return word;
     } else {
       let word = ch0;
       while (true) {
-        let ch = this.readChar();
+        const ch = this.readChar();
         switch (ch) {
           case "": case "\"": case "\'":
           case "\r": case "\n": case "\t": case " ":
@@ -236,7 +242,7 @@ export class ScriptParser2 {
   }
 
   private getChar(): string {
-    let ch: string = this.scriptText.charAt(this.parsePoint++);
+    const ch: string = this.scriptText.charAt(this.parsePoint++);
     if (ch === "\n") {
       this.currentLineNum++;
     }
@@ -248,8 +254,8 @@ export class ScriptParser2 {
   }
 
   private read3Char(): string {
-    let script = this.scriptText;
-    let point = this.parsePoint;
+    const script = this.scriptText;
+    const point = this.parsePoint;
     return script.charAt(point) +
            script.charAt(point + 1) +
            script.charAt(point + 2);
@@ -257,7 +263,7 @@ export class ScriptParser2 {
 
   private skipWhiteSpace() {
     while (true) {
-      let ch: string = this.readChar();
+      const ch: string = this.readChar();
       if (ch === "") {
         return;
       } else if (this.isWhiteSpace(ch)) {

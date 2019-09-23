@@ -1,7 +1,7 @@
-import { Logger } from "../base/logger";
 import { AsyncTask } from "../base/async-task";
-import { Resource } from "../base/resource";
 import { BaseLayer } from "../base/base-layer";
+import { Logger } from "../base/logger";
+import { Resource } from "../base/resource";
 
 // TODO pauseもできるようにする
 export class FrameAnimLayer extends BaseLayer {
@@ -20,7 +20,7 @@ export class FrameAnimLayer extends BaseLayer {
     time: number,
     width: number,
     height: number,
-    frames: any[]
+    frames: any[],
   ): void {
     this.stopFrameAnim(false);
     this._frameAnimLoop = loop;
@@ -75,17 +75,17 @@ export class FrameAnimLayer extends BaseLayer {
         this.frameAnimStartTick = tick;
       }
 
-      let start = this.frameAnimStartTick;
-      let time = this.frameAnimTime;
-      let frames = this.frameAnimFrames;
+      const start = this.frameAnimStartTick;
+      const time = this.frameAnimTime;
+      const frames = this.frameAnimFrames;
 
       if (!this._frameAnimLoop && tick - start > frames.length * time) {
-        let frame = frames[frames.length - 1]
+        const frame = frames[frames.length - 1];
         this.applyFrameAnim(frame);
         this.stopFrameAnim();
       } else {
-        let s = Math.floor((tick - start) / time) % frames.length;
-        let frame = frames[s];
+        const s = Math.floor((tick - start) / time) % frames.length;
+        const frame = frames[s];
         this.applyFrameAnim(frame);
         // console.log(this.name, frame);
       }
@@ -114,8 +114,8 @@ export class FrameAnimLayer extends BaseLayer {
   ];
 
   public store(tick: number): any {
-    let data: any = super.store(tick);
-    let me: any = <any> this;
+    const data: any = super.store(tick);
+    const me: any = this as any;
 
     FrameAnimLayer.frameAnimLayerStoreParams.forEach((param: string) => {
       data[param] = me[param];
@@ -130,8 +130,8 @@ export class FrameAnimLayer extends BaseLayer {
   }
 
   protected restoreAfterLoadImage(data: any, tick: number): void {
-    let me: any = this as any;
-    let ignore: string[] = [];
+    const me: any = this as any;
+    const ignore: string[] = [];
     FrameAnimLayer.frameAnimLayerStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
@@ -148,9 +148,9 @@ export class FrameAnimLayer extends BaseLayer {
     super.copyTo(dest);
 
     // その他のパラメータのコピー
-    let me: any = this as any;
-    let you: any = dest as any;
-    FrameAnimLayer.frameAnimLayerStoreParams.forEach(p => you[p] = me[p]);
+    const me: any = this as any;
+    const you: any = dest as any;
+    FrameAnimLayer.frameAnimLayerStoreParams.forEach((p) => you[p] = me[p]);
   }
 
 }

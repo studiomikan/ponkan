@@ -2,6 +2,8 @@ export class PonMouseEvent {
   public readonly x: number;
   public readonly y: number;
   public readonly button: number;
+  private _stopPropagationFlag: boolean = false;
+  private _forceStopFlag: boolean = false;
 
   public constructor(x: number, y: number, button: number);
   public constructor(e: MouseEvent);
@@ -32,4 +34,21 @@ export class PonMouseEvent {
   public get isRight(): boolean {
     return this.button === 2;
   }
+
+  public stopPropagation(): void {
+    this._stopPropagationFlag = true;
+  }
+
+  public get stopPropagationFlag(): boolean {
+    return this._stopPropagationFlag;
+  }
+
+  public forceStop(): void {
+    this._forceStopFlag = true;
+  }
+
+  public get forceStopFlag(): boolean {
+    return this._forceStopFlag;
+  }
+
 }

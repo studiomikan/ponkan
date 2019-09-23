@@ -1,12 +1,12 @@
-import { Logger } from "../base/logger";
-import { AsyncTask } from "../base/async-task";
 import { AsyncCallbacks } from "../base/async-callbacks";
-import { Resource } from "../base/resource";
-import { PonMouseEvent } from "../base/pon-mouse-event";
-import { ToggleButton } from "./toggle-button";
+import { AsyncTask } from "../base/async-task";
 import { BaseLayer } from "../base/base-layer";
-import { ImageButtonLayer } from "./image-button-layer";
+import { Logger } from "../base/logger";
+import { PonMouseEvent } from "../base/pon-mouse-event";
+import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
+import { ImageButtonLayer } from "./image-button-layer";
+import { ToggleButton } from "./toggle-button";
 
 export class ImageToggleButton extends ToggleButton {
   protected direction: "horizontal" | "vertical" = "horizontal";
@@ -18,11 +18,10 @@ export class ImageToggleButton extends ToggleButton {
     exp: string | null,
     direction: "horizontal" | "vertical",
   ): AsyncCallbacks {
-    let cb = new AsyncCallbacks();
+    const cb = new AsyncCallbacks();
 
-    this.resetToggleButton();
+    this.clearToggleButton();
     this.freeImage();
-
 
     this.loadImage(filePath).done(() => {
       this.direction = direction;
@@ -41,8 +40,8 @@ export class ImageToggleButton extends ToggleButton {
     return cb;
   }
 
-  public resetToggleButton(): void {
-    super.resetToggleButton();
+  public clearToggleButton(): void {
+    super.clearToggleButton();
     this.direction = "horizontal";
   }
 
@@ -69,8 +68,8 @@ export class ImageToggleButton extends ToggleButton {
   ];
 
   public store(tick: number): any {
-    let data: any = super.store(tick);
-    let me: any = this as any;
+    const data: any = super.store(tick);
+    const me: any = this as any;
     ImageToggleButton.imageToggleButtonStoreParams.forEach((param: string) => {
       data[param] = me[param];
     });
@@ -82,7 +81,7 @@ export class ImageToggleButton extends ToggleButton {
   }
 
   public restoreAfterLoadImage(data: any, tick: number): void {
-    let me: any = this as any;
+    const me: any = this as any;
     ImageToggleButton.imageToggleButtonStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
@@ -92,8 +91,8 @@ export class ImageToggleButton extends ToggleButton {
   public copyTo(dest: ImageToggleButton): void {
     super.copyTo(dest);
 
-    let me: any = this as any;
-    let you: any = dest as any;
+    const me: any = this as any;
+    const you: any = dest as any;
     ImageToggleButton.imageToggleButtonStoreParams.forEach((param: string) => {
       you[param] = me[param];
     });
@@ -113,8 +112,8 @@ export class ToggleButtonLayer extends ImageButtonLayer {
     exp: string | null,
     direction: "horizontal" | "vertical",
   ): AsyncCallbacks {
-    let name = `ImageToggleButton ${this.imageToggleButtons.length}`;
-    let btn = new ImageToggleButton(name, this.resource, this.owner);
+    const name = `ImageToggleButton ${this.imageToggleButtons.length}`;
+    const btn = new ImageToggleButton(name, this.resource, this.owner);
     this.addChild(btn);
     this.imageToggleButtons.push(btn);
 
@@ -125,13 +124,13 @@ export class ToggleButtonLayer extends ImageButtonLayer {
       varName,
       isSystemButton,
       exp,
-      direction
+      direction,
     );
   }
 
   public clearToggleButtons(): void {
     this.imageToggleButtons.forEach((toggleButton) => {
-      toggleButton.resetToggleButton();
+      toggleButton.clearToggleButton();
       toggleButton.destroy();
       this.deleteChildLayer(toggleButton);
     });
@@ -167,11 +166,11 @@ export class ToggleButtonLayer extends ImageButtonLayer {
   }
 
   public store(tick: number): any {
-    let data: any = super.store(tick);
-    let me: any = this as any;
+    const data: any = super.store(tick);
+    const me: any = this as any;
 
     data.imageToggleButtons =
-      this.imageToggleButtons.map(toggleButton => toggleButton.store(tick));
+      this.imageToggleButtons.map((toggleButton) => toggleButton.store(tick));
 
     return data;
   }
@@ -186,7 +185,7 @@ export class ToggleButtonLayer extends ImageButtonLayer {
       } else {
         this.clearToggleButtons();
         data.imageToggleButtons.forEach((toggleButtonData: any) => {
-          let btn = new ImageToggleButton(toggleButtonData.name, this.resource, this.owner);
+          const btn = new ImageToggleButton(toggleButtonData.name, this.resource, this.owner);
           this.addChild(btn);
           this.imageToggleButtons.push(btn);
           btn.restore(asyncTask, toggleButtonData, tick, clear);
@@ -212,7 +211,7 @@ export class ToggleButtonLayer extends ImageButtonLayer {
 
     dest.clearToggleButtons();
     this.imageToggleButtons.forEach((srcBtn) => {
-      let destBtn = new ImageToggleButton(name, dest.resource, dest.owner);
+      const destBtn = new ImageToggleButton(name, dest.resource, dest.owner);
       dest.addChild(destBtn);
       dest.imageToggleButtons.push(destBtn);
       srcBtn.copyTo(destBtn);
@@ -220,4 +219,3 @@ export class ToggleButtonLayer extends ImageButtonLayer {
   }
 
 }
-

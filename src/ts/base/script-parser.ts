@@ -29,7 +29,7 @@ export class ScriptParser {
 
   private getLine(): string | null {
     if (this.currentLineNum < this.lines.length) {
-      return this.lines[this.currentLineNum++].trim();
+      return this.lines[this.currentLineNum++].replace(/^[ \t]+|[ \t]+$/g, "");
     } else {
       return null;
     }
@@ -47,7 +47,10 @@ export class ScriptParser {
     while (true) {
       const line: string | null = this.getLine();
       if (line === null) { break; }
-      if (line === "") { continue; }
+      if (line === "") {
+        this.addLinebreak(); // 最後に改行を付与
+        continue;
+      }
 
       const ch0 = line.charAt(0);
       const body = line.substring(1).trim();
@@ -102,7 +105,7 @@ export class ScriptParser {
       let tagName: string;
       let valuesStr: string;
       let values: any;
-      let reg = /[{ ]/.exec(body);
+      const reg = /[{ ]/.exec(body);
       if (reg == null) {
         tagName = body.substring(0).trim();
         values = {};
@@ -111,11 +114,11 @@ export class ScriptParser {
         valuesStr = body.substring(reg.index).trim();
         if (valuesStr.indexOf("{") !== 0) {
           // { を省略しているとき
-          valuesStr = `{${valuesStr}}`
+          valuesStr = `{${valuesStr}}`;
         } else {
           // { を省略していないとき
           while (valuesStr.charAt(valuesStr.length - 1) !== "}") {
-            let line: string | null = this.getLine();
+            const line: string | null = this.getLine();
             if (line === null) { break; }
             valuesStr += " " + line.trim();
           }
@@ -127,6 +130,7 @@ export class ScriptParser {
       this.addTag(tagName, values);
     } catch (e) {
       Logger.error(e);
+      console.error(body);
       throw new Error(`コマンド行の文法エラーです(行:${this.currentLineNum})`);
     }
   }
@@ -136,17 +140,17 @@ export class ScriptParser {
   }
 
   private parseSaveMark(body: string): void {
-    let p: number = body.indexOf(":");
+    const p: number = body.indexOf(":");
     if (p !== -1) {
-      let name: string = body.substring(0, p);
-      let comment: string = body.substring(p + 1);
-      this.addTag("__save_mark__", { __body__: body, name: name, comment: comment });
+      const name: string = body.substring(0, p);
+      const comment: string = body.substring(p + 1);
+      this.addTag("__save_mark__", { __body__: body, name, comment });
     } else if (body.length > 0) {
-      let name: string = `__save_mark_${this.saveMarkCount}__`;
-      this.addTag("__save_mark__", { __body__: body, name: name, comment: body });
+      const name: string = `__save_mark_${this.saveMarkCount}__`;
+      this.addTag("__save_mark__", { __body__: body, name, comment: body });
     } else {
-      let name: string = `__save_mark_${this.saveMarkCount}__`;
-      this.addTag("__save_mark__", { __body__: body, name: name, comment: "" });
+      const name: string = `__save_mark_${this.saveMarkCount}__`;
+      this.addTag("__save_mark__", { __body__: body, name, comment: "" });
     }
     this.saveMarkCount++;
   }
@@ -163,13 +167,13 @@ export class ScriptParser {
     for (let i = 0; i < line.length; i++) {
       const ch = line.charAt(i);
       if (ch === "") { continue; }
-
-      if (ch === "$") {
-        this.addTag("br", { __body__: line});
-      } else {
-        this.addTag("ch", { __body__: ch, text: ch});
-      }
+      this.addTag("ch", { __body__: ch, text: ch});
     }
+    this.addLinebreak(); // 最後に改行を付与
+  }
+
+  private addLinebreak(): void {
+    this.addTag("__line_break__", { __body__: "\n" });
   }
 
   private addTag(name: string, values: object) {

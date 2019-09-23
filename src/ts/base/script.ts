@@ -1,11 +1,11 @@
-import { Logger } from "./logger";
-import { Resource } from "./resource";
+import { applyJsEntity, castTagValues } from "../tag-action";
 import { AsyncCallbacks } from "./async-callbacks";
+import { Logger } from "./logger";
+import { Macro } from "./macro";
+import { Resource } from "./resource";
 import { ScriptParser } from "./script-parser";
 import { Tag } from "./tag";
-import { Macro } from "./macro";
 import * as Util from "./util";
-import { applyJsEntity, castTagValues } from "../tag-action";
 
 export interface IForLoopInfo {
   startTagPoint: number;
@@ -45,7 +45,7 @@ export class Script {
   }
 
   public clone(): Script {
-    let script: Script = new Script(this.resource, this.filePath, null);
+    const script: Script = new Script(this.resource, this.filePath, null);
     script.parser = this.parser;
     return script;
   }
@@ -74,7 +74,7 @@ export class Script {
   public goToLabel(label: string): void {
     this.goToStart();
     while (true) {
-      let tag: Tag | null = this.getNextTag()
+      const tag: Tag | null = this.getNextTag();
       if (tag == null) {
         throw new Error(`${this.filePath}内に、ラベル ${label} が見つかりませんでした`);
       }
@@ -94,7 +94,7 @@ export class Script {
   public goToSaveMark(saveMarkName: string): void {
     this.goToStart();
     while (true) {
-      let tag: Tag | null = this.getNextTag()
+      const tag: Tag | null = this.getNextTag();
       if (tag == null) {
         throw new Error(`${this.filePath}内に、セーブマーク ${saveMarkName} が見つかりませんでした`);
       }
@@ -104,6 +104,10 @@ export class Script {
     }
   }
 
+  /**
+   * 現在実行中のタグを取得する。
+   * @return 実行中のタグ。終端の場合はnull
+   */
   public getCurrentTag(): Tag | null {
     if (this.macroStack.length === 0) {
       const tags = this.parser.tags;
@@ -113,7 +117,7 @@ export class Script {
         return tags[this.tagPoint];
       }
     } else {
-      let macro: Macro = this.macroStack[this.macroStack.length - 1];
+      const macro: Macro = this.macroStack[this.macroStack.length - 1];
       return macro.getCurrentTag();
     }
   }
@@ -129,7 +133,7 @@ export class Script {
       if (tags.length <= this.tagPoint) {
         return null;
       } else {
-        let tag: Tag = this.latestTagBuffer = tags[this.tagPoint++];
+        const tag: Tag = this.latestTagBuffer = tags[this.tagPoint++];
         if (this.resource.hasMacro(tag.name)) {
           this.callMacro(tag);
           return this.getNextTag();
@@ -138,34 +142,48 @@ export class Script {
         }
       }
     } else {
-      let macro: Macro = this.macroStack[this.macroStack.length - 1];
-      let tag: Tag | null = macro.getNextTag();
+      const macro: Macro = this.macroStack[this.macroStack.length - 1];
+      const tag: Tag | null = this.latestTagBuffer = macro.getNextTag();
       if (tag != null) {
         if (this.resource.hasMacro(tag.name)) {
           this.callMacro(tag);
           return this.getNextTag();
         } else {
-          console.log(macro.params);
           this.resource.setMacroParams(macro.params);
           return tag;
         }
       } else {
         this.macroStack.pop();
-        this.resource.resetMacroParams();
+        this.resource.clearMacroParams();
         return this.getNextTag();
       }
     }
   }
 
   protected callMacro(tag: Tag): void {
-    let macro: Macro = this.resource.getMacro(tag.name).clone();
-    macro.resetTagPoint();
+    const macro: Macro = this.resource.getMacro(tag.name).clone();
+    macro.clearTagPoint();
+    applyJsEntity(this.resource, tag.values);
     macro.params = Util.objClone(tag.values);
     this.macroStack.push(macro);
   }
 
   public isInsideOfMacro(): boolean {
     return this.macroStack.length !== 0;
+  }
+
+  public callCommandShortcut(orgTag: Tag, commandName: string): Tag {
+    const tag: Tag = new Tag(commandName, {}, orgTag.line);
+    if (this.resource.hasMacro(tag.name)) {
+      this.callMacro(tag);
+      const nextTag: Tag | null = this.getNextTag();
+      if (nextTag == null) {
+        throw new Error("コマンドショートカットの呼び出しに失敗しました");
+      }
+      return nextTag;
+    } else {
+      return tag;
+    }
   }
 
   /**
@@ -179,9 +197,9 @@ export class Script {
    * マクロ定義を開始する
    */
   public defineMacro(name: string): Macro {
-    let tags: Tag[] = [];
+    const tags: Tag[] = [];
     while (true) {
-      let tag: Tag | null = this.getNextTag();
+      const tag: Tag | null = this.getNextTagForDefineMacro();
       if (tag === null) {
         throw new Error("マクロ定義エラー。macroとendmacroの対応が取れていません");
       } else if (tag.name === "__label__") {
@@ -198,6 +216,18 @@ export class Script {
       throw new Error(`マクロ定義の中身が空です`);
     }
     return new Macro(name, tags);
+  }
+
+  /**
+   * 次のタグを取得する。マクロの呼び出しを行わない。
+   */
+  protected getNextTagForDefineMacro(): Tag | null {
+    const tags = this.parser.tags;
+    if (tags.length <= this.tagPoint) {
+      return null;
+    } else {
+      return tags[this.tagPoint++];
+    }
   }
 
   /**
@@ -219,7 +249,7 @@ export class Script {
   protected goToElseFromIf(tagActions: any): void {
     let depth: number = 0;
     while (true) {
-      let tag: Tag | null = this.getNextTag();
+      const tag: Tag | null = this.getNextTag();
       if (tag === null) {
         throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
       }
@@ -241,9 +271,9 @@ export class Script {
         }
       } else if (tag.name === "elsif") {
         if (depth === 0) {
-          let tag2: Tag = tag.clone();
+          const tag2: Tag = tag.clone();
           applyJsEntity(this.resource, tag2.values);
-          castTagValues(tag2, tagActions["elsif"]);
+          castTagValues(tag2, tagActions.elsif);
           if (this.resource.evalJs(tag2.values.exp)) {
             break;
           }
@@ -279,7 +309,7 @@ export class Script {
   protected goToEndifFromElse() {
     let depth: number = 0;
     while (true) {
-      let tag: Tag | null = this.getNextTag();
+      const tag: Tag | null = this.getNextTag();
       if (tag === null) {
         throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
         break;
@@ -313,11 +343,11 @@ export class Script {
    * @param indexVarName indexを格納する一時変数の名前。
    */
   public startForLoop(loops: number, indexVarName: string = "__index__"): void {
-    let loopInfo: IForLoopInfo = {
+    const loopInfo: IForLoopInfo = {
       startTagPoint: this.tagPoint,
-      indexVarName: indexVarName,
-      loops: loops,
-      count: 0
+      indexVarName,
+      loops,
+      count: 0,
     };
     this.forLoopStack.push(loopInfo);
     this.resource.evalJs(`tv["${loopInfo.indexVarName}"] = ${loopInfo.count};`);
@@ -327,7 +357,7 @@ export class Script {
    * forLoopの終わり
    */
   public endForLoop(): void {
-    let loopInfo = this.forLoopStack[this.forLoopStack.length - 1];
+    const loopInfo = this.forLoopStack[this.forLoopStack.length - 1];
     if (loopInfo == null) {
       throw new Error("予期しないendforです。forとendforの対応が取れていません");
     }
@@ -346,7 +376,7 @@ export class Script {
   public breakForLoop(): void {
     let depth: number = 0;
     while (true) {
-      let tag: Tag | null = this.getNextTag();
+      const tag: Tag | null = this.getNextTag();
       if (tag === null) {
         throw new Error("breakforの動作エラー。forとendforの対応が取れていません");
         break;

@@ -1,8 +1,8 @@
-import { Howl, Howler } from 'howler';
-import { Logger } from './logger';
-import { Resource } from './resource';
-import { AsyncCallbacks } from './async-callbacks';
+import { Howl, Howler } from "howler";
+import { AsyncCallbacks } from "./async-callbacks";
 import { AsyncTask } from "./async-task";
+import { Logger } from "./logger";
+import { Resource } from "./resource";
 
 export interface ISoundBufferCallbacks {
   onStop(bufferNum: number): void;
@@ -15,7 +15,7 @@ export enum SoundState {
   Pause,
   Fade,
   Fadein,
-  Fadeout
+  Fadeout,
 }
 
 export class SoundBuffer {
@@ -28,12 +28,12 @@ export class SoundBuffer {
 
   protected _state: SoundState = SoundState.Stop;
   protected _volume: number = 1.0;
-  protected _volume2: number = 1.0;
+  protected _gvolume: number = 1.0;
   protected _seek: number = 0;
-  protected _loop: boolean = true;
+  protected _loop: boolean = false;
   protected fadeStartVolume: number = 0;
   protected fadeTargetVolume: number = 0;
-  protected fadeTime : number = 0;
+  protected fadeTime: number = 0;
   protected stopAfterFade: boolean = false;
 
   public constructor(resource: Resource, bufferNum: number, callback: ISoundBufferCallbacks) {
@@ -85,7 +85,9 @@ export class SoundBuffer {
         throw new Error(`音声の再生に失敗しました(${this.filePath})`);
       });
       this.howl.off("end").on("end", () => {
-        this.stop();
+        if (!this.loop) {
+          this.stop();
+        }
       });
       this.howl.off("fade").on("fade", () => {
         this.onFade();
@@ -96,7 +98,7 @@ export class SoundBuffer {
   protected setHowlerOptions(): void {
     if (this.howl != null) {
       this.volume = this.volume;
-      this.volume2 =this.volume2;
+      this.gvolume = this.gvolume;
       this.seek = this.seek;
       this.loop = this.loop;
     }
@@ -108,15 +110,15 @@ export class SoundBuffer {
   public set volume(volume: number) {
     this._volume = volume;
     if (this.howl != null) {
-      this.howl.volume(this.volume * this.volume2);
+      this.howl.volume(this.volume * this.gvolume);
     }
   }
 
-  public get volume2(): number { return this._volume2; }
-  public set volume2(volume2: number) {
-    this._volume2 = volume2;
+  public get gvolume(): number { return this._gvolume; }
+  public set gvolume(gvolume: number) {
+    this._gvolume = gvolume;
     if (this.howl != null) {
-      this.howl.volume(this.volume * this.volume2);
+      this.howl.volume(this.volume * this.gvolume);
     }
   }
 
@@ -129,14 +131,11 @@ export class SoundBuffer {
 
   public get loop(): boolean { return this._loop; }
   public set loop(loop: boolean) {
+    this._loop = loop;
     if (this.howl != null) {
       this.howl.loop(loop);
     }
   }
-
-
-
-
 
   public get playing(): boolean {
     return this._state === SoundState.Play ||
@@ -155,8 +154,12 @@ export class SoundBuffer {
     if (this.howl == null) {
       throw new Error("音声が読み込まれていません");
     }
+    if (this.playing) {
+      this.stop();
+    }
     // this.seek = 0;
     this.setHowlerEvent();
+    this.setHowlerOptions();
     this.howl.play();
     this._state = SoundState.Play;
   }
@@ -193,8 +196,9 @@ export class SoundBuffer {
     this.fadeTime = time;
     this.stopAfterFade = autoStop;
     this.setHowlerEvent();
-    this.howl.fade(this.fadeStartVolume * this.volume2,
-                   this.fadeTargetVolume * this.volume2, time);
+    this.setHowlerOptions();
+    this.howl.fade(this.fadeStartVolume * this.gvolume,
+                   this.fadeTargetVolume * this.gvolume, time);
     this._state = SoundState.Fade;
   }
 
@@ -211,8 +215,8 @@ export class SoundBuffer {
     this.howl.once("play", () => {
       this.setHowlerEvent();
       if (this.howl != null) {
-        this.howl.fade(this.fadeStartVolume * this.volume2,
-                       this.fadeTargetVolume * this.volume2, time);
+        this.howl.fade(this.fadeStartVolume * this.gvolume,
+                       this.fadeTargetVolume * this.gvolume, time);
       }
     });
     this.volume = this.fadeStartVolume;
@@ -229,8 +233,8 @@ export class SoundBuffer {
     this.fadeTime = time;
     this.stopAfterFade = autoStop;
     this.setHowlerEvent();
-    this.howl.fade(this.fadeStartVolume * this.volume2,
-                   this.fadeTargetVolume * this.volume2, time);
+    this.howl.fade(this.fadeStartVolume * this.gvolume,
+                   this.fadeTargetVolume * this.gvolume, time);
     this._state = SoundState.Fadein;
   }
 
@@ -255,7 +259,7 @@ export class SoundBuffer {
     "seek",
     "loop",
     "volume",
-    "volume2",
+    // "gvolume",
     "fadeStartVolume",
     "fadeTargetVolume",
     "fadeTime",
@@ -263,8 +267,8 @@ export class SoundBuffer {
   ];
 
   public store(tick: number): any {
-    let data: any = {};
-    let me: any = <any> this;
+    const data: any = {};
+    const me: any = this as any;
 
     SoundBuffer.soundBufferStoreParams.forEach((param: string) => {
       data[param] = me[param];
@@ -274,12 +278,12 @@ export class SoundBuffer {
   }
 
   public restore(asyncTask: AsyncTask, data: any, tick: number): void {
-    let me: any = this as any;
-    let ignore: string[] = [
+    const me: any = this as any;
+    const ignore: string[] = [
       "hasSound",
       "state",
     ];
-    let restoreParams = SoundBuffer.soundBufferStoreParams.filter(param => ignore.indexOf(param) == -1);
+    const restoreParams = SoundBuffer.soundBufferStoreParams.filter((param) => ignore.indexOf(param) === -1);
     restoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
@@ -288,7 +292,7 @@ export class SoundBuffer {
 
     if (data.hasSound) {
       asyncTask.add((params: any, index: number): AsyncCallbacks => {
-        let cb = this.loadSound(data.filePath);
+        const cb = this.loadSound(data.filePath);
         cb.done((sound) => {
           this.restoreAfterLoad(data, tick);
         });
@@ -312,5 +316,15 @@ export class SoundBuffer {
     }
   }
 
-}
+  public storeSystem(): any {
+    return {
+      gvolume: this.gvolume,
+    };
+  }
 
+  public restoreSystem(asyncTask: AsyncTask, data: any): any {
+    if (data != null && data.gvolume != null) {
+      this.gvolume = data.gvolume;
+    }
+  }
+}

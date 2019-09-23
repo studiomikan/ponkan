@@ -1,15 +1,15 @@
-import { Logger } from "../base/logger";
 import { AsyncTask } from "../base/async-task";
-import { Resource } from "../base/resource";
 import { BaseLayer } from "../base/base-layer";
+import { Logger } from "../base/logger";
 import { PonMouseEvent } from "../base/pon-mouse-event";
+import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
 
 /**
  * トグルボタン機能
  */
 export class ToggleButton extends BaseLayer {
-  protected insideFlag : boolean = false;
+  protected insideFlag: boolean = false;
   protected buttonStatus: "enabled" | "disabled" = "disabled";
   protected varName: string = "toggle-button-value";
   protected exp: string | null = null;
@@ -19,7 +19,7 @@ export class ToggleButton extends BaseLayer {
   public initToggleButton(
     varName: string,
     isSystemButton: boolean,
-    exp: string | null
+    exp: string | null,
   ): void {
     this.insideFlag = false;
     this.varName = varName;
@@ -30,7 +30,7 @@ export class ToggleButton extends BaseLayer {
     this.visible = true;
   }
 
-  public resetToggleButton(): void {
+  public clearToggleButton(): void {
     this.setButtonStatus("disabled");
     this.insideFlag = false;
     this.varName = "toggle-button-value";
@@ -82,43 +82,41 @@ export class ToggleButton extends BaseLayer {
     }
   }
 
-  public onMouseEnter(e: PonMouseEvent): boolean {
-    if (!super.onMouseEnter(e)) { return false; }
+  public onMouseEnter(e: PonMouseEvent): void {
+    super.onMouseEnter(e);
+
     if (this.buttonStatus !== "disabled") {
       this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
     }
     this.insideFlag = true;
-    return true;
   }
 
-  public onMouseLeave(e: PonMouseEvent): boolean {
-    if (!super.onMouseLeave(e)) { return false; }
+  public onMouseLeave(e: PonMouseEvent): void {
+    super.onMouseLeave(e);
+
     if (this.buttonStatus !== "disabled") {
       this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
     }
     this.insideFlag = false;
-    return true;
   }
 
-  public onMouseDown(e: PonMouseEvent): boolean {
-    if (!super.onMouseDown(e)) { return false; }
+  public onMouseDown(e: PonMouseEvent): void {
+    super.onMouseDown(e);
+
     if (this.buttonStatus !== "disabled") {
       this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.on;
     }
-    return true;
   }
 
-  public onMouseUp(e: PonMouseEvent): boolean {
-    if (!super.onMouseUp(e)) { return false; }
-    if (!e.isLeft) { return true; }
+  public onMouseUp(e: PonMouseEvent): void {
+    super.onMouseUp(e);
+    if (!e.isLeft) { return; }
+
     if (this.buttonStatus !== "disabled") {
       this.setValue(!this.getValue());
       if (this.exp !== null && this.exp !== "") {
         this.resource.evalJs(this.exp);
       }
-      return false;
-    } else {
-      return true;
     }
   }
 
@@ -132,8 +130,8 @@ export class ToggleButton extends BaseLayer {
   ];
 
   public store(tick: number): any {
-    let data: any = super.store(tick);
-    let me: any = this as any;
+    const data: any = super.store(tick);
+    const me: any = this as any;
     ToggleButton.toggleButtonStoreParams.forEach((param: string) => {
       data[param] = me[param];
     });
@@ -141,26 +139,26 @@ export class ToggleButton extends BaseLayer {
   }
 
   public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
-    this.resetToggleButton();
+    this.clearToggleButton();
     super.restore(asyncTask, data, tick, clear);
   }
 
   public restoreAfterLoadImage(data: any, tick: number): void {
     super.restoreAfterLoadImage(data, tick);
-    let me: any = this as any;
+    const me: any = this as any;
     ToggleButton.toggleButtonStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
     this.insideFlag = false;
-    this.setButtonStatus(data["buttonStatus"]);
+    this.setButtonStatus(data.buttonStatus);
     this.setValue(this.getValue());
   }
 
   public copyTo(dest: ToggleButton): void {
     super.copyTo(dest);
 
-    let me: any = this as any;
-    let you: any = dest as any;
+    const me: any = this as any;
+    const you: any = dest as any;
     ToggleButton.toggleButtonStoreParams.forEach((param: string) => {
       you[param] = me[param];
     });

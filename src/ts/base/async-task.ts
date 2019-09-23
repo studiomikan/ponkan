@@ -1,17 +1,13 @@
-import { Logger } from "./logger";
 import { AsyncCallbacks } from "./async-callbacks";
+import { Logger } from "./logger";
 
 export class AsyncTask {
-  private tasks: ((params: any, index: number) => AsyncCallbacks)[] = [];
+  private tasks: Array<(params: any, index: number) => AsyncCallbacks> = [];
   private completeCallbacks: AsyncCallbacks = new AsyncCallbacks();
-  private completeCount: number = 0; 
+  private completeCount: number = 0;
   private _status: "new" | "run" | "abort" | "done" | "fail" = "new";
 
   public get status(): "new" | "run" | "abort" | "done" | "fail" { return this._status; }
-
-  constructor() {
-  }
-
   public get count(): number { return this.tasks.length; }
 
   public add(task: (params: any, index: number) => AsyncCallbacks): void {
@@ -23,7 +19,7 @@ export class AsyncTask {
       Logger.error(this);
       throw new Error("タスクが重複して実行されました");
     }
-    if (this.tasks.length == 0) {
+    if (this.tasks.length === 0) {
       // 擬似的に非同期のタスクを用意して実行
       setTimeout(() => {
         this.onTaskDone(0);
@@ -31,11 +27,13 @@ export class AsyncTask {
     } else {
       this._status = "run";
       this.tasks.forEach((task, index: number) => {
-        task(index, params).done((data) => {
-          this.onTaskDone(index);
-        }).fail(() => {
-          this.onTaskFailed(index);
-        });
+        setTimeout(() => {
+          task(index, params).done((data) => {
+            this.onTaskDone(index);
+          }).fail(() => {
+            this.onTaskFailed(index);
+          });
+        }, 0);
       });
     }
     return this.completeCallbacks;

@@ -1,8 +1,4 @@
-# ゲームの開始スクリプト
-|game_start_mark:ゲーム開始
+# ゲーム開始スクリプト
 ;call file: "script/init_system.pon"
 
-# テスト用スクリプトの呼び出し
-;jump file: "test-script.pon"
-
-;s
+こんにちは。

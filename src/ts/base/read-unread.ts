@@ -11,7 +11,7 @@ export class ReadUnread {
   }
 
   public pass(script: Script, saveMarkName: string): void {
-    let s = this.systemVar;
+    const s = this.systemVar;
 
     if (s.trail == null) {
       s.trail = {};
@@ -28,7 +28,7 @@ export class ReadUnread {
   }
 
   public isPassed(script: Script, label: string): boolean {
-    let s = this.systemVar;
+    const s = this.systemVar;
     return s.trail != null &&
            s.trail[script.filePath] != null &&
            s.trail[script.filePath][label] != null &&

@@ -1,12 +1,14 @@
-import { Howl, Howler } from 'howler';
-import * as Util from "./util";
+import { Howl, Howler } from "howler";
 import { AsyncCallbacks } from "./async-callbacks";
 import { Logger } from "./logger";
-import { PonGame } from "./pon-game";
 import { Macro } from "./macro";
+import { PonGame } from "./pon-game";
 import { Script } from "./script";
+import * as Util from "./util";
 
 export class Resource {
+  public gameVersion: string = "";
+  public enableResourceCache: boolean = true;
   private ponGame: PonGame;
   private basePath: string;
   public tmpVar: any = {};
@@ -17,11 +19,11 @@ export class Resource {
   private scriptCache: any = {};
 
   public cursor: any = {
-    "disabled": "auto",
-    "normal": "auto",
-    "over": "pointer",
-    "on": "pointer"
-  }
+    disabled: "auto",
+    normal: "auto",
+    over: "pointer",
+    on: "pointer",
+  };
 
   public readonly macroInfo: any = {};
   public macroParams: object | null = null;
@@ -29,17 +31,18 @@ export class Resource {
   private bufferCanvas: HTMLCanvasElement;
   private bufferCanvasContext: CanvasRenderingContext2D;
 
-  public constructor(ponGame: PonGame, basePath: string = "") {
+  public constructor(ponGame: PonGame, basePath: string = "", gameVersion: string) {
     this.ponGame = ponGame;
     this.basePath = this.fixPath(basePath);
+    this.gameVersion = gameVersion;
 
     Howler.usingWebAudio = true;
 
-    this.bufferCanvas = <HTMLCanvasElement> document.createElement('canvas');
+    this.bufferCanvas = document.createElement("canvas") as HTMLCanvasElement;
     this.bufferCanvas.width = ponGame.width;
     this.bufferCanvas.height = ponGame.height;
 
-    let context: CanvasRenderingContext2D | null = this.bufferCanvas.getContext("2d");
+    const context: CanvasRenderingContext2D | null = this.bufferCanvas.getContext("2d");
     if (context === null) {
       throw new Error("Canvasの初期化に失敗しました。");
     }
@@ -68,7 +71,7 @@ export class Resource {
 
   public loadSystemData(saveDataPrefix: string): void {
     try {
-      let str: string = this.restoreFromLocalStorage(`${saveDataPrefix}_sys`);
+      const str: string = this.restoreFromLocalStorage(`${saveDataPrefix}_sys`);
       if (str != null) {
         Util.objExtend(this.systemVar, JSON.parse(str));
       }
@@ -106,12 +109,13 @@ export class Resource {
       return eval(js);
     })();
   }
+  // tslint:enable
 
   public setMacroParams(params: any): void {
     this.macroParams = params;
   }
 
-  public resetMacroParams(): void {
+  public clearMacroParams(): void {
     this.macroParams = null;
   }
 
@@ -127,7 +131,13 @@ export class Resource {
    * @param filePath ファイルパス（basePathからの相対パス）
    */
   public getPath(filePath: string) {
-    return `${this.basePath}/${filePath}`;
+    let path = `${this.basePath}/${filePath}`;
+    if (this.enableResourceCache) {
+      path += `?v=${this.gameVersion}`;
+    } else {
+      path += `?x=${Math.random().toString(36).slice(-8)}`;
+    }
+    return path;
   }
 
   public hasMacro(name: string): boolean {
@@ -169,7 +179,7 @@ export class Resource {
    */
   public loadScript(filePath: string): AsyncCallbacks {
     const cb = new AsyncCallbacks();
-    if (this.enabledScriptCache && this.scriptCache[filePath] != null) {
+    if (this.enableResourceCache && this.enabledScriptCache && this.scriptCache[filePath] != null) {
       // キャッシュから
       window.setTimeout(() => {
         cb.callDone(this.scriptCache[filePath].clone());
@@ -190,7 +200,7 @@ export class Resource {
           cb.callFail(e);
         }
       }).fail(() => {
-        cb.callFail();
+        cb.callFail(new Error(`ファイルが読み込めませんでした(${filePath})`));
       });
     }
     return cb;
@@ -234,7 +244,7 @@ export class Resource {
   ): AsyncCallbacks {
     const cb = new AsyncCallbacks();
 
-    let h: Howl = new Howl({
+    const h: Howl = new Howl({
       src: [this.getPath(filePath)],
       loop: true,
       volume: 1,
@@ -244,7 +254,7 @@ export class Resource {
       },
       onloaderror: () => {
         cb.callFail(filePath);
-      }
+      },
     });
 
     return cb;
@@ -264,7 +274,7 @@ export class Resource {
   }
 
   public restoreFromLocalStorage(name: string): string {
-    let data: string | null = window.localStorage.getItem(name);
+    const data: string | null = window.localStorage.getItem(name);
     if (data != null) {
       return data;
     } else {
@@ -274,7 +284,7 @@ export class Resource {
 
   public copyLocalStorage(srcName: string, destName: string): boolean {
     try {
-      let srcData: string = this.restoreFromLocalStorage(srcName);
+      const srcData: string = this.restoreFromLocalStorage(srcName);
       this.storeToLocalStorage(destName, srcData);
       return true;
     } catch (e) {
@@ -313,6 +323,5 @@ export class Resource {
   //   return JSON.parse(dataStr)
   // }
   //
-
 
 }

@@ -1,12 +1,12 @@
-import { Logger } from "./logger";
-import { AsyncTask } from "./async-task";
 import { AsyncCallbacks } from "./async-callbacks";
-import { Resource } from "./resource";
+import { AsyncTask } from "./async-task";
+import { Logger } from "./logger";
 import { PonGame } from "./pon-game";
+import { Resource } from "./resource";
 
 class CrossFadeFilter extends PIXI.Filter<any> {
   public constructor() {
-    var fragmentShader = `
+    const fragmentShader = `
       varying vec2 vTextureCoord;
       uniform sampler2D uSampler;
       uniform sampler2D subSampler;
@@ -27,14 +27,14 @@ class CrossFadeFilter extends PIXI.Filter<any> {
         subSampler: { type: "sampler2D", value: 1 },
         foreAlpha: { type: "float", value: 1.0 },
         backAlpha: { type: "float", value: 1.0 },
-      }
+      },
     );
   }
 }
 
 class UnivTransFilter extends PIXI.Filter<any> {
   public constructor() {
-    var fragmentShader = `
+    const fragmentShader = `
       varying vec2 vTextureCoord;
       uniform sampler2D uSampler;
       uniform sampler2D subSampler;
@@ -88,14 +88,14 @@ class UnivTransFilter extends PIXI.Filter<any> {
         vague: { type: "float", value: 1 },
         phase: { type: "float", value: 1 },
         phaseMax: { type: "float", value: 1 },
-      }
+      },
     );
   }
 }
 
 export class TransManager {
   private game: PonGame;
-  private resource : Resource;
+  private resource: Resource;
 
   private startTick: number = -1;
   private time: number = 1000;
@@ -111,7 +111,7 @@ export class TransManager {
   private ruleSprite: PIXI.Sprite | null = null;
   private vague: number = 0.25;
   private table: number[] = [];
-  private status: "stop" | "run" = "stop"
+  private status: "stop" | "run" = "stop";
 
   private filters: any;
   private filter: PIXI.Filter<any>;
@@ -126,21 +126,21 @@ export class TransManager {
       "scroll-to-top": null,
       "scroll-to-bottom": null,
       "univ": new UnivTransFilter(),
-      "crossfade": new CrossFadeFilter()
+      "crossfade": new CrossFadeFilter(),
     };
-    this.filter = this.filters["crossfade"];
+    this.filter = this.filters.crossfade;
   }
 
-  public initTrans (
+  public initTrans(
     time: number,
     method: "scroll-to-right" |
             "scroll-to-left" |
             "scroll-to-top" |
             "scroll-to-bottom" |
             "univ" |
-            "crossfade"
+            "crossfade",
   ): AsyncCallbacks {
-    let cb = new AsyncCallbacks();
+    const cb = new AsyncCallbacks();
     if (this.isRunning) {
       this.stop();
     }
@@ -161,7 +161,7 @@ export class TransManager {
     return cb;
   }
 
-  public initUnivTrans (
+  public initUnivTrans(
     time: number,
     ruleFilePath: string,
     vague: number = 0.25,
@@ -174,17 +174,17 @@ export class TransManager {
     if (vague > 1.0) { vague = 1.0; }
     this.vague = vague;
 
-    let width = this.game.width;
-    let height = this.game.height;
+    const width = this.game.width;
+    const height = this.game.height;
 
-    let cb = this.resource.loadImage(ruleFilePath);
+    const cb = this.resource.loadImage(ruleFilePath);
     cb.done((ruleImage: HTMLImageElement) => {
       this.ruleImage = ruleImage;
       this.ruleSprite = PIXI.Sprite.from(ruleImage);
       this.ruleSprite.width = width;
       this.ruleSprite.height = height;
 
-      let maskSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
+      const maskSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
       maskSprite.width = width;
       maskSprite.height = height;
       this.ruleSprite.mask = maskSprite;
@@ -208,7 +208,7 @@ export class TransManager {
 
     this.status = "stop";
     this.ruleFilePath = null;
-    // 表レイヤと一緒に描画するのをやめる
+    // 表ページと一緒に描画するのをやめる
     this.game.foreRenderer.delOtherRenderer();
     this.game.backRenderer.delOtherRenderer();
     // レンダラーの入れ替え
@@ -242,7 +242,7 @@ export class TransManager {
     }
 
     // 終了判定
-    let elapsedTime = tick - this.startTick;
+    const elapsedTime = tick - this.startTick;
     if (elapsedTime > this.time) {
       this.stop();
       this.game.foreRenderer.draw(tick);
@@ -265,21 +265,21 @@ export class TransManager {
   }
 
   public drawScrollHorizontal(tick: number, elapsedTime: number, to: "left" | "right"): void {
-    let width: number = this.game.width;
+    const width: number = this.game.width;
     let d: number = width * (elapsedTime / this.time);
     if (d < 0) { d = 0; }
     if (d > width) { d = width; }
 
-    this.game.backRenderer.sprite.x = (to === "right") ? (d - width) : (width - d)
+    this.game.backRenderer.sprite.x = (to === "right") ? (d - width) : (width - d);
   }
 
   public drawScrollVertical(tick: number, elapsedTime: number, to: "top" | "bottom"): void {
-    let height: number = this.game.height;
+    const height: number = this.game.height;
     let d: number = height * (elapsedTime / this.time);
     if (d < 0) { d = 0; }
     if (d > height) { d = height; }
 
-    this.game.backRenderer.sprite.y = (to === "bottom") ? (d - height) : (height - d)
+    this.game.backRenderer.sprite.y = (to === "bottom") ? (d - height) : (height - d);
   }
 
   public drawCrossFade(tick: number, elapsedTime: number): void {
@@ -287,14 +287,14 @@ export class TransManager {
     if (alpha < 0) { alpha = 0; }
     if (alpha > 1.0) { alpha = 1.0; }
 
-    let uniforms = (this.filter.uniforms as any);
+    const uniforms = (this.filter.uniforms as any);
     uniforms.backAlpha = 1.0 - alpha;
     uniforms.foreAlpha = alpha;
     uniforms.subSampler = this.game.backRenderer.texture;
   }
 
   public drawUniv(tick: number, elapsedTime: number): void {
-    let uniforms = (this.filter.uniforms as any);
+    const uniforms = (this.filter.uniforms as any);
 
     uniforms.subSampler = this.game.backRenderer.texture;
     uniforms.ruleSampler = (this.ruleSprite as PIXI.Sprite).texture;
@@ -309,4 +309,3 @@ export class TransManager {
     uniforms.phase = (elapsedTime * uniforms.phaseMax / this.time) - this.vague;
   }
 }
-

@@ -1,12 +1,192 @@
 import * as PIXI from "pixi.js";
-import { PonGame } from "./pon-game";
-import { PonMouseEvent } from "./pon-mouse-event";
-import { PonWheelEvent } from "./pon-wheel-event";
 import { AsyncCallbacks } from "./async-callbacks";
 import { AsyncTask } from "./async-task";
 import { Logger } from "./logger";
+import { PonGame } from "./pon-game";
+import { PonMouseEvent } from "./pon-mouse-event";
 import { IPonSpriteCallbacks, PonSprite } from "./pon-sprite";
+import { PonWheelEvent } from "./pon-wheel-event";
 import { Resource } from "./resource";
+
+export interface IBaseLayerEventListener {
+  // onLabel(labelName: string, line: number, tick: number): "continue" | "break";
+  onChangeX(sender: BaseLayer, x: number): void;
+  onChangeY(sender: BaseLayer, y: number): void;
+}
+
+export class BaseLayerChar {
+  public readonly ch: string;
+  public readonly sp: PonSprite;
+  public constructor(ch: string, sp: PonSprite) {
+    this.ch = ch;
+    this.sp = sp;
+  }
+
+  public clone(spriteCallbacks: IPonSpriteCallbacks): BaseLayerChar {
+    const sp = new PonSprite(spriteCallbacks);
+    sp.createText(this.ch, this.sp.textStyle as PIXI.TextStyle, this.sp.textPitch);
+    sp.x = this.sp.x;
+    sp.y = this.sp.y;
+    return new BaseLayerChar(this.ch, sp);
+  }
+
+  public destroy(): void {
+    this.sp.destroy();
+  }
+}
+
+export class BaseLayerTextLine {
+  public readonly container: PIXI.Container;
+  public readonly spriteCallbacks: IPonSpriteCallbacks;
+  public readonly chList: BaseLayerChar[] = [];
+  public readonly rubyList: BaseLayerChar[] = [];
+
+  private _textX: number = 0;
+
+  private rubyText: string = "";
+  private rubyFontSize: number = 2;
+  private rubyOffset: number = 2;
+  private rubyPitch: number = 2;
+
+  public constructor() {
+    this.container = new PIXI.Container();
+    this.spriteCallbacks = {
+      pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
+        this.container.addChild(child);
+      },
+      pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
+        this.container.removeChild(child);
+      },
+    };
+  }
+
+  public forEach(func: (ch: BaseLayerChar, index: number) => void): void {
+    this.chList.forEach(func);
+  }
+
+  /**
+   * このテキスト行を破棄する。
+   * 以後、テキストを追加したりするとエラーになる。
+   */
+  public destroy(): void {
+    this.chList.forEach((blc) => {
+      blc.destroy();
+    });
+    this.chList.splice(0, this.chList.length);
+    this.container.destroy();
+  }
+
+  /**
+   * このテキスト行の文字をすべてクリアする。
+   */
+  public clear(): void {
+    this.chList.forEach((blc) => {
+      blc.destroy();
+    });
+    this.chList.splice(0, this.chList.length);
+  }
+
+  public get x() { return this.container.x; }
+  public set x(x: number) { this.container.x = x; }
+  public get y() { return this.container.y; }
+  public set y(y: number) { this.container.y = y; }
+  public get textX() { return this._textX; }
+  public get text() {
+    let str = "";
+    this.chList.forEach((blc) => {
+      str += blc.ch;
+    });
+    return str;
+  }
+  public get tailChar(): string { return this.chList[this.chList.length - 1].ch; }
+  public get length() { return this.chList.length; }
+  public get width(): number {
+    if (this.chList.length === 0) {
+      return 0;
+    }
+    let width = 0;
+    this.chList.forEach((blc) => {
+      width += blc.sp.textWidth;
+    });
+    return width;
+  }
+
+  public addChar(ch: string, textStyle: PIXI.TextStyle, pitch: number, lineHeight: number): void {
+    const sp: PonSprite = new PonSprite(this.spriteCallbacks);
+    sp.createText(ch, textStyle, pitch);
+    sp.x = this._textX;
+    sp.y = lineHeight - (+textStyle.fontSize);
+    this._textX += sp.textWidth;
+    this.chList.push(new BaseLayerChar(ch, sp));
+
+    // TODO ルビがあったら追加する
+    if (this.rubyText !== "") {
+      this.addRubyText(sp, textStyle);
+      this.rubyText = "";
+    }
+  }
+
+  private addRubyText(targetSp: PonSprite, srcTextStyle: PIXI.TextStyle): void {
+    const rubyStyle = srcTextStyle.clone();
+    rubyStyle.fontSize = this.rubyFontSize;
+
+    const rubyText = this.rubyText;
+    const pitch = this.rubyPitch;
+    const center = targetSp.x + targetSp.textWidth / 2;
+    const tmpRubyList: BaseLayerChar[] = [];
+    let rubyWidthSum: number = 0;
+
+    for (let i = 0; i < rubyText.length; i++) {
+      const sp: PonSprite = new PonSprite(this.spriteCallbacks);
+      sp.createText(rubyText.charAt(i), rubyStyle, pitch);
+      tmpRubyList.push(new BaseLayerChar(this.rubyText, sp));
+      rubyWidthSum += sp.textWidth;
+    }
+    rubyWidthSum -= pitch; // 最後の一文字のpitchは幅に含めない
+
+    // 追加対象の文字に対して中央揃えとなるように配置する
+    const rubyY = targetSp.y - this.rubyFontSize - this.rubyOffset;
+    let rubyX = center - rubyWidthSum / 2;
+    tmpRubyList.forEach((ruby: BaseLayerChar) => {
+      ruby.sp.y = rubyY;
+      ruby.sp.x = rubyX;
+      rubyX += ruby.sp.textWidth;
+      this.rubyList.push(ruby);
+    });
+  }
+
+  public reserveRubyText(rubyText: string, rubyFontSize: number, rubyOffset: number, rubyPitch: number) {
+    this.rubyText = rubyText;
+    this.rubyFontSize = rubyFontSize;
+    this.rubyOffset = rubyOffset;
+    this.rubyPitch = rubyPitch;
+  }
+
+  public getCh(index: number): BaseLayerChar {
+    return this.chList[index];
+  }
+
+  public getTailCh(): BaseLayerChar {
+    return this.chList[this.chList.length - 1];
+  }
+
+  public backspace(): void {
+    this.chList[this.chList.length - 1].destroy();
+    this.chList.splice(this.chList.length - 1, 1);
+  }
+
+  public copyFrom(src: BaseLayerTextLine): void {
+    this.clear();
+    src.chList.forEach((srcBlc: BaseLayerChar) => {
+      const newBlc = srcBlc.clone(this.spriteCallbacks);
+      this.chList.push(newBlc);
+    });
+    this.x = src.x;
+    this.y = src.y;
+    this._textX = src._textX;
+  }
+}
+
 
 /**
  * 基本レイヤ。PIXI.Containerをラップしたもの
@@ -32,11 +212,9 @@ export class BaseLayer {
   protected _backgroundAlpha: number = 1.0;
 
   protected textContainer: PIXI.Container;
-  protected textSpriteCallbacks: IPonSpriteCallbacks;
-
+  // protected textSpriteCallbacks: IPonSpriteCallbacks;
   protected childContainer: PIXI.Container;
   protected childSpriteCallbacks: IPonSpriteCallbacks;
-
   protected imageContainer: PIXI.Container;
   protected imageSpriteCallbacks: IPonSpriteCallbacks;
 
@@ -50,6 +228,8 @@ export class BaseLayer {
 
   // 子レイヤ
   private _children: BaseLayer[] = [];
+  // イベントリスナ
+  private eventListenerList: IBaseLayerEventListener[] = [];
 
   /** イベント遮断フラグ。trueにするとマウスイベントの伝播を遮断する。 */
   public blockLeftClickFlag: boolean = false;
@@ -59,11 +239,12 @@ export class BaseLayer {
   public blockWheelFlag: boolean = false;
 
   // 文字関係
-  protected textLines: PonSprite[][] = [[]];
+  protected textLines: BaseLayerTextLine[] = [new BaseLayerTextLine()];
   public textStyle: PIXI.TextStyle = new PIXI.TextStyle({
-    fontFamily: ["mplus-1p-regular", "monospace"],
+    fontFamily: ["GenShinGothic", "monospace"],
     fontSize: 24,
     fontWeight: "normal",
+    fontStyle: "normal",
     fill: 0xffffff,
     textBaseline: "alphabetic",
     dropShadow: false,
@@ -74,6 +255,7 @@ export class BaseLayer {
     dropShadowDistance: 2,
     stroke: 0x000000,
     strokeThickness: 0,
+    trim: false,
   });
   public set textFontFamily(fontFamily: string[]) { this.textStyle.fontFamily = fontFamily; }
   public get textFontFamily(): string[] {
@@ -90,12 +272,14 @@ export class BaseLayer {
   public get textFontSize(): number { return +this.textStyle.fontSize; }
   public set textFontWeight(fontWeight: string) { this.textStyle.fontWeight = fontWeight; }
   public get textFontWeight(): string { return this.textStyle.fontWeight; }
+  public set textFontStyle(fontStyle: string) { this.textStyle.fontStyle = fontStyle; }
+  public get textFontStyle(): string { return this.textStyle.fontStyle; }
   public set textColor(color: number | string) { this.textStyle.fill = color; }
   public get textColor(): number | string {
     if (typeof this.textStyle.fill === "number") {
       return this.textStyle.fill;
     } else {
-      return <string> this.textStyle.fill;
+      return this.textStyle.fill as string;
     }
   }
   public set textShadowVisible(visible: boolean) { this.textStyle.dropShadow = visible; }
@@ -111,7 +295,7 @@ export class BaseLayer {
     if (typeof this.textStyle.dropShadowColor === "number") {
       return this.textStyle.dropShadowColor;
     } else {
-      return <string> this.textStyle.dropShadowColor;
+      return this.textStyle.dropShadowColor as string;
     }
   }
   public set textShadowDistance(distance: number) { this.textStyle.dropShadowDistance = distance; }
@@ -122,7 +306,7 @@ export class BaseLayer {
     if (typeof this.textStyle.stroke === "number") {
       return this.textStyle.stroke;
     } else {
-      return <string> this.textStyle.stroke;
+      return this.textStyle.stroke as string;
     }
   }
   public set textEdgeWidth(width: number) { this.textStyle.strokeThickness = width; }
@@ -133,22 +317,40 @@ export class BaseLayer {
   public textMarginBottom: number  = 10;
   public textMarginLeft: number  = 10;
   /** 次の文字を描画する予定の位置。予定であって、自動改行等が発生した場合は次の行になるため注意。 */
-  public textX: number = NaN;
+  // public textX: number = NaN;
   /** 次の文字を描画する予定の位置。予定であって、自動改行等が発生した場合は次の行になるため注意。 */
-  public textY: number = NaN;
-  public textLineHeight: number  = 24;
-  public textLinePitch: number  = 5;
+  // public textY: number = NaN;
+  public textPitch: number = 0;
+  public textLineHeight: number = 24;
+  public textLinePitch: number = 5;
   public textAutoReturn: boolean = true;
-  public textLocatePoint: number = 0;
-  public textIndentPoint: number = 0;
-  public reservedTextIndentPoint: number = 0;
+  public textLocatePoint: number | null = null;
+  public textIndentPoint: number | null = null;
+  public reservedTextIndentPoint: number | null = null;
+  public reservedTextIndentClear: boolean = false;
   public textAlign: "left" | "center" | "right" = "left";
+  public rubyFontSize: number = 10;
+  public rubyOffset: number = 2;
+  public rubyPitch: number = 2;
+
+  /** 禁則文字（行頭禁則文字） */
+  public static headProhibitionChar: string =
+    "%),:;]}｡｣ﾞﾟ。，、．：；゛゜ヽヾゝ\"ゞ々’”）〕］｝〉》」』】°′″℃￠％‰" +
+    "!.?､･ｧｨｩｪｫｬｭｮｯｰ・？！ーぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ";
+  /** 禁則文字（行末禁則文字） */
+  public static tailProhibitionChar: string = "\\$([{｢‘“（〔［｛〈《「『【￥＄￡";
 
   public get children(): BaseLayer[] { return this._children; }
   public get x(): number { return this.container.x; }
-  public set x(x) { this.container.x = x; }
+  public set x(x) {
+    this.container.x = x;
+    this.callEventListener("onChangeX", [x]);
+  }
   public get y(): number { return this.container.y; }
-  public set y(y) { this.container.y = y; }
+  public set y(y) {
+    this.container.y = y;
+    this.callEventListener("onChangeY", [y]);
+  }
   public get width(): number { return this.maskSprite.width; }
   public set width(width: number) {
     this.maskSprite.width = this.backgroundSprite.width = width;
@@ -176,14 +378,21 @@ export class BaseLayer {
   public get imageY(): number { return this.imageSprite === null ? 0 : this.imageSprite.y; }
   public set imageY(imageY: number) { if (this.imageSprite !== null) { this.imageSprite.y = imageY; } }
 
+  public get scaleX(): number { return this.container.scale.x; }
+  public set scaleX(scaleX: number) {
+    this.container.scale.x = scaleX;
+  }
+  public get scaleY(): number { return this.container.scale.y; }
+  public set scaleY(scaleY: number) {
+    this.container.scale.y = scaleY;
+  }
+
   public constructor(name: string, resource: Resource, owner: PonGame) {
     this.name = name;
     this.resource = resource;
     this.owner = owner;
 
     this._container = new PIXI.Container();
-    // this._container.width = 32;
-    // this._container.height = 32;
 
     this.maskSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
     this.maskSprite.width = 32;
@@ -199,21 +408,23 @@ export class BaseLayer {
       },
       pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
         this.imageContainer.removeChild(child);
-      }
+      },
     };
 
     this.backgroundSprite = new PonSprite(this.imageSpriteCallbacks);
 
     this.textContainer = new PIXI.Container();
     this.container.addChild(this.textContainer);
-    this.textSpriteCallbacks = {
-      pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
-        this.textContainer.addChild(child);
-      },
-      pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
-        this.textContainer.removeChild(child);
-      }
-    };
+    this.textContainer.addChild(this.currentTextLine.container);
+    // this.textSpriteCallbacks = {
+    //   pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
+    //     this.textContainer.addChild(child);
+    //   },
+    //   pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
+    //     this.textContainer.removeChild(child);
+    //   },
+    // };
+    this.clearText();
 
     this.childContainer = new PIXI.Container();
     this.container.addChild(this.childContainer);
@@ -223,7 +434,7 @@ export class BaseLayer {
       },
       pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
         this.childContainer.removeChild(child);
-      }
+      },
     };
 
     this.visible = false;
@@ -283,6 +494,30 @@ export class BaseLayer {
     return this.children[index];
   }
 
+  public addEventListener(listener: IBaseLayerEventListener): void {
+    if (this.eventListenerList.indexOf(listener) === -1) {
+      this.eventListenerList.push(listener);
+    }
+  }
+
+  public delEventListener(listener: IBaseLayerEventListener): void {
+    const index = this.eventListenerList.indexOf(listener);
+    if (index !== -1) {
+      this.eventListenerList.splice(index, 1);
+    }
+  }
+
+  public clearEventListener(): void {
+    this.eventListenerList = [];
+  }
+
+  private callEventListener(method: string, args: any[]) {
+    args.unshift(this);
+    this.eventListenerList.forEach((listener: any) => {
+      listener[method].apply(listener, args);
+    });
+  }
+
   public update(tick: number): void {
     this.children.forEach((child) => {
       child.update(tick);
@@ -290,24 +525,30 @@ export class BaseLayer {
   }
 
   /**
-   * 座標が、指定の子レイヤーの内側かどうかを調査する
+   * 座標が、指定のレイヤーの内側かどうかを調査する
    */
-  protected isInsideOfChildLayer(child: BaseLayer, x: number, y: number): boolean {
-    let top: number = child.y;
-    let right: number = child.x + child.width;
-    let bottom: number = child.y + child.height;
-    let left: number = child.x;
+  public static isInsideOfLayer(layer: BaseLayer, x: number, y: number): boolean {
+    const top: number = layer.y;
+    const right: number = layer.x + layer.width;
+    const bottom: number = layer.y + layer.height;
+    const left: number = layer.x;
     return left <= x && x <= right && top <= y && y <= bottom;
+  }
+
+  protected isInsideEvent(e: PonMouseEvent): boolean {
+    const x = e.x;
+    const y = e.y;
+    return 0 <= x && x <= this.width && 0 <= y && y <= this.height;
   }
 
   protected isBlockedEvent(e: PonMouseEvent | PonWheelEvent, eventName: string): boolean {
     if (e instanceof PonMouseEvent) {
-      if (eventName == "down" || eventName == "up") {
+      if (eventName === "down" || eventName === "up") {
         if (this.blockLeftClickFlag && e.isLeft) { return true; }
         if (this.blockRightClickFlag && e.isRight) { return true; }
         if (this.blockCenterClickFlag && e.isCenter) { return true; }
       }
-      if (eventName == "move") {
+      if (eventName === "move") {
         if (this.blockMouseMove) { return true; }
       }
     } else {
@@ -316,86 +557,126 @@ export class BaseLayer {
     return false;
   }
 
-  public onMouseEnter(e: PonMouseEvent): boolean {
-    // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる
-    if (!this.callChildrenMouseEnterLeave(e)) { return false; }
-    if (!this.isBlockedEvent(e, "move")) { return false; }
-    return true;
+  // MEMO マウスイベントについて
+  //
+  // 基本的にイベントは子レイヤー→親レイヤーの順番で処理することとする。
+  // 同レベルの子レイヤーはレイヤー番号の降順に呼ばれる。
+  // このルールを守るため、すべてのレイヤはイベント処理の最初で以下の処理を実行するべき。
+  //   ```
+  //   super.onMouseXXXXX(e);
+  //   if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+  //   ```
+  //
+  // e.forceStop();
+  //    以降のすべてのイベント処理をキャンセルする。
+  //    これが呼ばれると e.forceStopFlag が true になっているので、
+  //    同レベルの子レイヤーのイベント呼び出しなどもキャンセルする。
+  // e.stopPropagation();
+  //    イベント伝播を停止する。
+  //    これが呼ばれると e.stopPropagationFlag が true になっているので、
+  //    その場合は親レイヤーのイベント処理をしてはいけない。
+
+  public onMouseEnter(e: PonMouseEvent): void { /* empty */ }
+  public _onMouseEnter(e: PonMouseEvent): void {
+    // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる。
+    this.callChildrenMouseEnterLeave(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+    this.onMouseEnter(e);
   }
 
-  public onMouseLeave(e: PonMouseEvent): boolean {
+  public onMouseLeave(e: PonMouseEvent): void { /* empty */ }
+  public _onMouseLeave(e: PonMouseEvent): void {
     // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる
-    if (!this.callChildrenMouseEnterLeave(e)) { return false; }
-    if (!this.isBlockedEvent(e, "move")) { return false; }
-    return true;
+    this.callChildrenMouseEnterLeave(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+    this.onMouseLeave(e);
   }
 
   /** onMouseEnter等を発生させるためのバッファ */
   protected isInsideBuffer: boolean = false;
-  public onMouseMove(e: PonMouseEvent): boolean {
+  public onMouseMove(e: PonMouseEvent): void { /* empty */ }
+  public _onMouseMove(e: PonMouseEvent): void {
     // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる
-    if (!this.callChildrenMouseEnterLeave(e)) { return false; }
+    this.callChildrenMouseEnterLeave(e);
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
 
-    // mousemove
+    // 子レイヤーのmousemove
     for (let i = this.children.length - 1; i >= 0; i--) {
-      let child: BaseLayer = this.children[i];
+      const child: BaseLayer = this.children[i];
       if (!child.visible) { continue; }
-      let isInside = this.isInsideOfChildLayer(child, e.x, e.y)
-      if (isInside) {
-        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
-        if (!child.onMouseMove(e2)) { return false; }
-      }
-      child.isInsideBuffer = isInside;
+      child.isInsideBuffer = BaseLayer.isInsideOfLayer(child, e.x, e.y);
+      const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
+      child._onMouseMove(e2);
+      if (e2.stopPropagationFlag) { e.stopPropagation(); }
+      if (e2.forceStopFlag) { e.forceStop(); return; }
     }
-    if (this.isBlockedEvent(e, "move")) { return false; }
-    return true;
+
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+    this.onMouseMove(e);
   }
 
   // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる
-  private callChildrenMouseEnterLeave(e: PonMouseEvent): boolean {
+  private callChildrenMouseEnterLeave(e: PonMouseEvent): void {
     for (let i = this.children.length - 1; i >= 0; i--) {
-      let child: BaseLayer = this.children[i];
+      const child: BaseLayer = this.children[i];
       if (!child.visible) { continue; }
-      let isInside = this.isInsideOfChildLayer(child, e.x, e.y)
-      let result: boolean = true;
-      if (isInside != child.isInsideBuffer) {
-        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
-        result = isInside ? child.onMouseEnter(e2) : child.onMouseLeave(e2);
+      const isInside = BaseLayer.isInsideOfLayer(child, e.x, e.y);
+      if (isInside !== child.isInsideBuffer) {
+        const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
+        if (isInside) {
+          child._onMouseEnter(e2);
+        } else {
+          child._onMouseLeave(e2);
+        }
+        child.isInsideBuffer = isInside;
+        if (e2.stopPropagationFlag) { e.stopPropagation(); }
+        if (e2.forceStopFlag) { e.forceStop(); return; }
+      } else {
+        child.isInsideBuffer = isInside;
       }
-      child.isInsideBuffer = isInside;
-      if (!result) { return false; }
     }
-    if (this.isBlockedEvent(e, "move")) {
-      return false;
-    }
-    return true;
   }
 
-  public onMouseDown(e: PonMouseEvent): boolean {
+  public onMouseDown(e: PonMouseEvent): void { /* empty */ }
+  public _onMouseDown(e: PonMouseEvent): void {
     for (let i = this.children.length - 1; i >= 0; i--) {
-      let child: BaseLayer = this.children[i];
+      const child: BaseLayer = this.children[i];
       if (!child.visible) { continue; }
-      if (this.isInsideOfChildLayer(child, e.x, e.y)) {
-        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
-        if (!child.onMouseDown(e2)) { return false; }
-      }
+      const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
+      child._onMouseDown(e2);
+      if (e2.stopPropagationFlag) { e.stopPropagation(); }
+      if (e2.forceStopFlag) { e.forceStop(); return; }
     }
-    Logger.debug("onMouseDown", this.name, e);
-    if (this.isBlockedEvent(e, "down")) { return false; }
-    return true;
+
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+    this.onMouseDown(e);
   }
 
-  public onMouseUp(e: PonMouseEvent): boolean {
+  public onMouseUp(e: PonMouseEvent): void { /* empty */ }
+  public _onMouseUp(e: PonMouseEvent): void {
     for (let i = this.children.length - 1; i >= 0; i--) {
-      let child: BaseLayer = this.children[i];
+      const child: BaseLayer = this.children[i];
       if (!child.visible) { continue; }
-      if (this.isInsideOfChildLayer(child, e.x, e.y)) {
-        let e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
-        if (!child.onMouseUp(e2)) { return false; }
-      }
+      const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
+      child._onMouseUp(e2);
+      if (e2.stopPropagationFlag) { e.stopPropagation(); }
+      if (e2.forceStopFlag) { e.forceStop(); return; }
     }
-    Logger.debug("onMouseUp", this.name, e);
-    if (this.isBlockedEvent(e, "up")) { return false; }
+
+    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+    this.onMouseUp(e);
+  }
+
+  public onMouseWheel(e: PonWheelEvent) {
+    for (let i = this.children.length - 1; i >= 0; i--) {
+      const child: BaseLayer = this.children[i];
+      if (!child.visible) { continue; }
+      child.onMouseWheel(e);
+      // TODO 伝播をきちんとする
+      // if (e.stopPropagationFlag) { e.stopPropagation(); }
+      // if (e.forceStopFlag) { return; }
+    }
+    if (this.isBlockedEvent(e, "wheel")) { return false; }
     return true;
   }
 
@@ -405,22 +686,13 @@ export class BaseLayer {
     }
   }
 
-  public onMouseWheel(e: PonWheelEvent): boolean {
-    for (let i = this.children.length - 1; i >= 0; i--) {
-      let child: BaseLayer = this.children[i];
-      if (!child.visible) { continue; }
-      if (!child.onMouseWheel(e)) { return false; }
-    }
-    if (this.isBlockedEvent(e, "wheel")) { return false; }
-    return true;
-  }
-
   /**
    * 背景色を設定する
    * @param color 色 0xRRGGBB
    * @param alpha アルファ値 0.0〜1.0
    */
   public setBackgroundColor(color: number, alpha: number = 1.0): void {
+    this.freeImage();
     this.backgroundSprite.fillColor(color, alpha);
     this._backgroundColor = color;
     this._backgroundAlpha = alpha;
@@ -435,25 +707,42 @@ export class BaseLayer {
     this.hasBackgroundColor = false;
   }
 
-  public get currentTextLine(): PonSprite[] {
+  public get preTextLine(): BaseLayerTextLine {
+    return this.textLines[this.textLines.length - 2];
+  }
+
+  public get currentTextLine(): BaseLayerTextLine {
     return this.textLines[this.textLines.length - 1];
   }
 
-  public get currentTextStylesBuf(): PonSprite[] {
-    return this.textLines[this.textLines.length - 1];
+  private createBaseLayerTextLine(): BaseLayerTextLine {
+    const line = new BaseLayerTextLine();
+    this.textContainer.addChild(line.container);
+    return line;
+  }
+
+  private deleteBaseLayerTextLine(line: BaseLayerTextLine): void {
+    line.destroy();
+    this.textContainer.removeChild(line.container);
   }
 
   public get text(): string {
     let str = "";
-    this.textLines.forEach((textLine: PonSprite[]) => {
+    this.textLines.forEach((textLine: BaseLayerTextLine) => {
       if (str !== "") {
         str += "\n";
       }
-      textLine.forEach((sp) => {
-        str += sp.text;
-      });
+      str += textLine.text;
     });
     return str;
+  }
+
+  /**
+   * 表示しているテキストの内容を文字列で取得
+   * @return テキスト
+   */
+  public get messageText(): string {
+    return this.text;
   }
 
   /**
@@ -474,36 +763,37 @@ export class BaseLayer {
     if (ch.length > 1) {
       return this.addText(ch);
     }
-
-    if (isNaN(this.textX)) { this.textX = this.textMarginLeft; }
-    if (isNaN(this.textY)) { this.textY = this.textMarginTop; }
-
     if (ch === "\n" || ch === "\r") {
       this.addTextReturn();
       return;
     }
-    const sp: PonSprite = new PonSprite(this.textSpriteCallbacks);
-    const fontSize: number = +this.textStyle.fontSize;
-    sp.createText(ch, this.textStyle);
 
-    let pos = this.getNextTextPos(sp.width);
-    sp.x = pos.x;
-    sp.y = pos.y;
-    this.currentTextLine.push(sp);
-    this.textX = pos.x + sp.width;
-    // this.textY = pos.y;
-  }
+    // いったん、現在の行に文字を追加する
+    const currentLine =  this.currentTextLine;
+    const tail = currentLine.getTailCh();
 
-  public getCurrentLineWidth() {
-    let line = this.currentTextLine;
-    if (line.length === 0) {
-      return 0;
+    currentLine.addChar(ch, this.textStyle, this.textPitch, this.textLineHeight);
+    this.alignCurrentTextLine();
+
+    // 自動改行判定
+    let newLineFlag = this.textAutoReturn && this.shouldBeNewTextLine();
+    if (newLineFlag && tail != null && BaseLayer.tailProhibitionChar.indexOf(tail.ch) !== -1) {
+      // 改行すると行末禁止文字で終わってしまう場合は改行しない。
+      newLineFlag = false;
     }
-    let width: number = 0;
-    line.forEach((sp) => {
-      width += sp.width;
-    });
-    return width;
+    if (newLineFlag && BaseLayer.headProhibitionChar.indexOf(ch) !== -1) {
+      // 改行すると行頭禁止文字から始まってしまう場合は、自動改行しない。
+      newLineFlag = false;
+    }
+    if (newLineFlag) {
+      // 一度文字を追加してしまっているので、削除して行揃えし直す。
+      this.currentTextLine.backspace();
+      this.alignCurrentTextLine();
+      // 改行して、改めて文字を追加する。
+      this.addTextReturn();
+      this.currentTextLine.addChar(ch, this.textStyle, this.textPitch, this.textLineHeight);
+      this.alignCurrentTextLine();
+    }
   }
 
   /**
@@ -511,111 +801,162 @@ export class BaseLayer {
    * @param chWidth 追加しようとしている文字の横幅
    * @return 表示位置
    */
-  public getNextTextPos(chWidth: number, chHeight: number = this.textFontSize): {x: number, y: number} {
-    // 自動改行の判定
-    let lineWidth = this.getCurrentLineWidth();
-    let totalMargin = this.textMarginLeft + this.textMarginRight;
-    let indentOrLocate: number = 0;
-    if (this.textLocatePoint !== 0) {
-      switch (this.textAlign) {
-        case "left": case "center":
-          totalMargin = this.textIndentPoint + this.textMarginRight;
-          break;
-        case "right":
-          totalMargin = (this.width - this.textLocatePoint) - this.textMarginLeft;
-          break;
-      }
-    } else if (this.textIndentPoint !== 0) {
-      switch (this.textAlign) {
-        case "left": case "center":
-          totalMargin = this.textIndentPoint + this.textMarginRight;
-          break;
-        case "right":
-          totalMargin = (this.width - this.textIndentPoint) + this.textMarginLeft;
-          break;
-      }
-    }
-    if (this.textAutoReturn && (lineWidth + chWidth + totalMargin) > this.width) {
-      this.addTextReturn();
-    }
-
-    // 追加する1文字に合わせて、既存の文字の位置を調整＆次の文字位置の算出
-    let newLineWidth = this.getCurrentLineWidth() + chWidth;
-    let leftMargin: number = 0;
-    let startX: number = 0;
+  public getNextTextPos(chWidth: number): { x: number, y: number, newLineFlag: boolean } {
+    const currentLine = this.currentTextLine;
+    const right = currentLine.x + currentLine.width;
+    let x = 0;
+    let y = currentLine.y;
+    let newLineFlag = false;
     switch (this.textAlign) {
       case "left":
-        leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft + this.textLocatePoint;
-        startX = leftMargin;
+        if (this.shouldBeNewTextLine(chWidth)) {
+          x = this.getTextLineBasePoint();
+          y = this.currentTextLine.y + this.textLineHeight + this.textLinePitch;
+          newLineFlag = true;
+        } else {
+          x = right;
+          y = currentLine.y;
+        }
         break;
       case "center":
-        leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft + this.textLocatePoint;
-        let center = leftMargin + (this.width - leftMargin - this.textMarginRight) / 2;
-        startX = center - (newLineWidth / 2);
+        if (this.shouldBeNewTextLine(chWidth)) {
+          x = this.getTextLineBasePoint() - chWidth / 2;
+          y = this.currentTextLine.y + this.textLineHeight + this.textLinePitch;
+          newLineFlag = true;
+        } else {
+          x = right + chWidth / 2;
+          y = currentLine.y;
+        }
         break;
       case "right":
-        let right: number;
-        if (this.textLocatePoint !== 0) {
-          right = this.textLocatePoint;
-        } else if (this.textIndentPoint !== 0) {
-          right = this.textIndentPoint;
+        x = right;
+        y = currentLine.y;
+        if (this.shouldBeNewTextLine(chWidth)) {
+          x = this.getTextLineBasePoint() - chWidth;
+          y = this.currentTextLine.y + this.textLineHeight + this.textLinePitch;
+          newLineFlag = true;
         } else {
-          right = this.width - this.textMarginRight;
+          x = right;
+          y = currentLine.y;
         }
-        startX = right - newLineWidth;
         break;
     }
-    let x = startX;
-    let list: number[] = [];
-    this.currentTextLine.forEach((sp) => {
-      list.push(x);
-      sp.x = x;
-      x += sp.width;
-    });
+    return {x, y, newLineFlag};
+  }
 
-    let y = this.textY + this.textLineHeight - chHeight;
-    return {x: x, y: y};
+  /**
+   * 改行が必要かどうかを返す（自動改行の判定用）
+   * @param chWidth 追加する文字の幅
+   * @return 改行が必要ならtrue
+   */
+  protected shouldBeNewTextLine(chWidth: number = 0): boolean {
+    const currentLine = this.currentTextLine;
+    const left = currentLine.x;
+    const right = currentLine.x + currentLine.width;
+    let x = 0;
+    switch (this.textAlign) {
+      case "left":
+        return right + chWidth > this.width - this.textMarginRight;
+      case "center":
+        x = right + chWidth / 2;
+        return (left - (chWidth / 2)) < this.textMarginLeft ||
+               (right + (chWidth / 2) > this.width - this.textMarginRight);
+      case "right":
+        return left - chWidth < this.textMarginLeft;
+    }
   }
 
   /**
    * テキストを改行する
    */
   public addTextReturn(): void {
-    this.textY += this.textLineHeight + this.textLinePitch;
-    this.textLines.push([]);
-    this.textLocatePoint = 0;
-    if (this.reservedTextIndentPoint !== 0) {
+    const preLineY = this.currentTextLine.y;
+    this.textLines.push(this.createBaseLayerTextLine());
+
+    if (this.reservedTextIndentPoint != null) {
       this.textIndentPoint = this.reservedTextIndentPoint;
+    } else if (this.reservedTextIndentClear) {
+      this.textIndentPoint = null;
+      this.reservedTextIndentClear = false;
+    }
+    this.textLocatePoint = null;
+
+    this.alignCurrentTextLine();
+    this.currentTextLine.y = preLineY + this.textLineHeight + this.textLinePitch;
+  }
+
+  /**
+   * 現在描画中のテキスト行をの位置をtextAlignにそろえる
+   */
+  public alignCurrentTextLine(): void {
+    switch (this.textAlign) {
+      case "left":
+        this.currentTextLine.x = this.getTextLineBasePoint();
+        break;
+      case "center":
+        this.currentTextLine.x = this.getTextLineBasePoint() - (this.currentTextLine.width / 2);
+        break;
+      case "right":
+        this.currentTextLine.x = this.getTextLineBasePoint() - this.currentTextLine.width;
+        break;
+    }
+  }
+
+  /**
+   * テキスト行の描画時、ベースとなる点(x)を取得する。
+   * 左揃えの時: 左端の位置
+   * 中央揃えの時：中央の位置
+   * 右揃えの時：右端の位置
+   */
+  protected getTextLineBasePoint(): number {
+    if (this.textLocatePoint != null) {
+      return this.textLocatePoint;
+    }
+    switch (this.textAlign) {
+      case "left":
+        return this.textIndentPoint == null ? this.textMarginLeft : this.textIndentPoint;
+      case "center":
+        return this.textIndentPoint == null ?
+          (this.width - this.textMarginLeft - this.textMarginRight) / 2 :
+          (this.width - this.textIndentPoint - this.textMarginRight) / 2;
+      case "right":
+        return this.textIndentPoint == null ?
+          (this.width - this.textMarginRight) :
+          this.textIndentPoint;
     }
   }
 
   /**
    * テキストの表示位置を指定する。
    * 内部的には、指定前とは別の行として扱われる。
-   * また、xとyの座標には、別途marginが考慮される。
    * @param x x座標
    * @param y y座標
    */
   public setCharLocate(x: number | null, y: number | null): void {
-    let line = this.currentTextLine;
-    let tmpY: number = this.textY;
-    let tmpX: number = line.length === 0 ? 0 : line[line.length - 1].x;
-    let tmpX2: number = line.length === 0 ? 0 : line[0].x;
-
+    const preLine = this.currentTextLine;
     this.addTextReturn();
+    const currentLine = this.currentTextLine;
     if (x != null) {
       this.textLocatePoint = x;
     } else {
-      if (this.textAlign !== "right") {
-        this.textLocatePoint = tmpX;
-      } else {
-        this.textLocatePoint = tmpX2;
+      // yだけ変えるときのxを自動算出
+      switch (this.textAlign) {
+        case "left":
+          this.textLocatePoint = preLine.x + preLine.width;
+          break;
+        case "center":
+          this.textLocatePoint = preLine.x + (preLine.width / 2);
+          break;
+        case "right":
+          this.textLocatePoint = preLine.x;
+          break;
       }
     }
     if (y != null) {
-      this.textY = y + this.textMarginTop;
+      currentLine.y = y;
     } else {
-      this.textY = tmpY;
+      // xだけ変えるときのy
+      currentLine.y = preLine.y;
     }
   }
 
@@ -623,23 +964,14 @@ export class BaseLayer {
    * 現在のテキスト描画位置でインデントするように設定する
    */
   public setIndentPoint(): void {
+    const currentLine = this.currentTextLine;
     switch (this.textAlign) {
       case "left":
-        let leftMargin = this.textIndentPoint !== 0 ? this.textIndentPoint : this.textMarginLeft + this.textLocatePoint;
-        this.reservedTextIndentPoint = leftMargin + this.getCurrentLineWidth();
-        break;
       case "center":
-        this.reservedTextIndentPoint = this.textX;
+        this.reservedTextIndentPoint = currentLine.x + currentLine.width;
         break;
       case "right":
-        let rightMargin: number = 0;
-        if (this.textLocatePoint !== 0) {
-          this.reservedTextIndentPoint = this.textLocatePoint - this.getCurrentLineWidth();
-        } else if (this.textIndentPoint !== 0) {
-          this.reservedTextIndentPoint = this.textIndentPoint - this.getCurrentLineWidth();
-        } else {
-          this.reservedTextIndentPoint = this.width - this.textMarginRight - this.getCurrentLineWidth();
-        }
+        this.reservedTextIndentPoint = currentLine.x;
         break;
     }
   }
@@ -648,8 +980,12 @@ export class BaseLayer {
    * インデント位置をクリアする
    */
   public clearIndentPoint(): void {
-    this.textIndentPoint = 0;
-    this.reservedTextIndentPoint = 0;
+    this.reservedTextIndentPoint = null;
+    this.reservedTextIndentClear = true;
+  }
+
+  public reserveRubyText(rubyText: string): void {
+    this.currentTextLine.reserveRubyText(rubyText, this.rubyFontSize, this.rubyOffset, this.rubyPitch);
   }
 
   /**
@@ -659,33 +995,17 @@ export class BaseLayer {
    * インデント位置は初期化される。
    */
   public clearText(): void {
-    this.textLines.forEach((textLine: PonSprite[]) => {
-      textLine.forEach((sp) => {
-        sp.destroy();
-      });
+    this.textLines.forEach((textLine: BaseLayerTextLine) => {
+      this.deleteBaseLayerTextLine(textLine);
     });
-    this.textLines = [[]];
-    this.textX = this.textMarginLeft;
-    this.textY = this.textMarginTop;
-    this.textLocatePoint = 0;
-    this.clearIndentPoint();
-  }
+    this.textLines = [this.createBaseLayerTextLine()];
+    this.textLocatePoint = null;
+    this.textIndentPoint = null;
+    this.reservedTextIndentPoint = null;
+    this.reservedTextIndentClear = false;
 
-  /**
-   * 表示しているテキストの内容を文字列で取得
-   * @return テキスト
-   */
-  public get messageText(): string {
-    let message: string = "";
-    this.textLines.forEach((textLine: PonSprite[], index: number) => {
-      if (index > 0 ) {
-        message += "\n"
-      }
-      textLine.forEach((sp) => {
-        message += sp.text;
-      });
-    });
-    return message;
+    this.currentTextLine.x = this.getTextLineBasePoint();
+    this.currentTextLine.y = this.textMarginTop;
   }
 
   /**
@@ -697,17 +1017,18 @@ export class BaseLayer {
     // Logger.debug("BaseLayer.loadImage call: ", filePath);
     const cb = new AsyncCallbacks();
 
+    this.clearBackgroundColor();
     this.freeImage();
     const width = this.width;
     const height = this.height;
     this.resource.loadImage(filePath).done((image) => {
       // Logger.debug("BaseLayer.loadImage success: ", image);
-      this.image = <HTMLImageElement> image;
+      this.image = image as HTMLImageElement;
       this.imageFilePath = filePath;
       this.imageSprite = new PonSprite(this.imageSpriteCallbacks);
       this.imageSprite.setImage(image);
-      this.width = image.width;
-      this.height = image.height;
+      this.width = this.imageSprite.width;
+      this.height = this.imageSprite.height;
       this.imageX = 0;
       this.imageY = 0;
       cb.callDone(this);
@@ -735,6 +1056,8 @@ export class BaseLayer {
     "name",
     "x",
     "y",
+    "scaleX",
+    "scaleY",
     "width",
     "height",
     "visible",
@@ -748,6 +1071,7 @@ export class BaseLayer {
     "textFontFamily",
     "textFontSize",
     "textFontWeight",
+    "textFontStyle",
     "textColor",
     "textShadowVisible",
     "textShadowAlpha",
@@ -761,8 +1085,7 @@ export class BaseLayer {
     "textMarginRight",
     "textMarginBottom",
     "textMarginLeft",
-    "textX",
-    "textY",
+    "textPitch",
     "textLineHeight",
     "textLinePitch",
     "textAutoReturn",
@@ -770,6 +1093,9 @@ export class BaseLayer {
     "textIndentPoint",
     "reservedTextIndentPoint",
     "textAlign",
+    "rubyFontSize",
+    "rubyOffset",
+    "rubyPitch",
   ];
 
   protected static baseLayerIgnoreParams: string[] = [
@@ -783,9 +1109,9 @@ export class BaseLayer {
    * 子レイヤーの状態は保存されないことに注意が必要。
    */
   public store(tick: number): any {
-    let data: any = {};
-    let me: any = this as any;
-    BaseLayer.baseLayerStoreParams.forEach(p => data[p] = me[p]);
+    const data: any = {};
+    const me: any = this as any;
+    BaseLayer.baseLayerStoreParams.forEach((p) => data[p] = me[p]);
     return data;
   }
 
@@ -795,11 +1121,11 @@ export class BaseLayer {
    * 継承先で子レイヤーを使用している場合は、継承先で独自に復元処理を実装する
    */
   public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
-    let storeParams = () => {
-      let me: any = this as any;
-      let restoreParams = BaseLayer.baseLayerStoreParams.filter(
-        param => BaseLayer.baseLayerIgnoreParams.indexOf(param) == -1);
-      restoreParams.forEach(p => me[p] = data[p]);
+    const storeParams = () => {
+      const me: any = this as any;
+      const restoreParams = BaseLayer.baseLayerStoreParams.filter(
+        (param) => BaseLayer.baseLayerIgnoreParams.indexOf(param) === -1);
+      restoreParams.forEach((p) => me[p] = data[p]);
     };
 
     // テキストはクリアする
@@ -819,7 +1145,7 @@ export class BaseLayer {
         data.imageFilePath !== this.imageFilePath) {
       this.freeImage();
       asyncTask.add((params: any, index: number): AsyncCallbacks => {
-        let cb = this.loadImage(data.imageFilePath);
+        const cb = this.loadImage(data.imageFilePath);
         cb.done(() => {
           storeParams();
           this.restoreAfterLoadImage(data, tick);
@@ -839,23 +1165,12 @@ export class BaseLayer {
   public copyTo(dest: BaseLayer): void {
     // テキストのコピー
     dest.clearText();
-    this.textLines.forEach((textLine: PonSprite[], index: number) => {
+    this.textLines.forEach((srcTextLine: BaseLayerTextLine, index: number) => {
       if (dest.textLines.length !== 0) {
-        dest.textLines.push([]);
+        dest.textLines.push(dest.createBaseLayerTextLine());
       }
-      let destTextLine: PonSprite[] = dest.textLines[dest.textLines.length - 1];
-      textLine.forEach((srcSp: PonSprite, index: number) => {
-        let ch: string | null = srcSp.text;
-        let style: PIXI.TextStyle | null = srcSp.textStyle;
-        if (ch === null || style === null) {
-          return;
-        }
-        let destSp: PonSprite = new PonSprite(dest.textSpriteCallbacks);
-        destSp.createText(ch, style);
-        destSp.x = srcSp.x;
-        destSp.y = srcSp.y;
-        destTextLine.push(destSp);
-      });
+      const destTextLine: BaseLayerTextLine = dest.textLines[dest.textLines.length - 1];
+      destTextLine.copyFrom(srcTextLine);
     });
 
     // 背景色のコピー
@@ -873,11 +1188,11 @@ export class BaseLayer {
     }
 
     // その他のパラメータのコピー
-    let me: any = this as any;
-    let you: any = dest as any;
-    let params = BaseLayer.baseLayerStoreParams.filter(
-      param => BaseLayer.baseLayerIgnoreParams.indexOf(param) == -1);
-    params.forEach(p => you[p] = me[p]);
+    const me: any = this as any;
+    const you: any = dest as any;
+    const params = BaseLayer.baseLayerStoreParams.filter(
+      (param) => BaseLayer.baseLayerIgnoreParams.indexOf(param) === -1);
+    params.forEach((p) => you[p] = me[p]);
   }
 
   /**
@@ -887,7 +1202,7 @@ export class BaseLayer {
    */
   public applyConfig(config: any): void {
     if (config != null) {
-      let me = (this as any);
+      const me = (this as any);
       Object.keys(config).forEach((key) => {
         me[key] = config[key];
       });
