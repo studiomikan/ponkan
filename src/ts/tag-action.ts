@@ -2787,7 +2787,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         if (values.time <= 0) {
           p.flip();
           p.onCompleteTrans();
-          return "break";
+          return "continue";
         } else {
           if (values.method === "univ") {
             p.transManager.initUnivTrans(values.time, values.rule, values.vague).done(() => {
@@ -2820,7 +2820,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           return "continue";
         } else {
           p.transManager.stop();
-          return "break";
+          return "continue";
         }
       },
     ),
@@ -2856,6 +2856,22 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           }, "waittrans"));
           return p.conductor.stop();
         }
+      },
+    ),
+    /// @category トランジション
+    /// @description 表ページを裏ページを即座に入れ替える
+    /// @details
+    ///   表ページと裏ページを即座に入れ替えます。\n
+    ///   トランジションとは違い、なんの効果（演出）も無しで即適用されます。
+    new TagAction(
+      ["flip"],
+      "トランジション",
+      "表ページを裏ページを即座に入れ替える",
+      [],
+      (values, tick) => {
+        p.flip();
+        p.onCompleteTrans();
+        return "continue";
       },
     ),
     // ======================================================================
