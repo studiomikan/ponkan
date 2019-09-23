@@ -26,21 +26,15 @@ export class TagValue {
 
 export class TagAction {
   public readonly names: string[];
-  public readonly group: string;
-  public readonly comment: string;
   public readonly values: TagValue[];
   public readonly action: (values: any, tick: number) => "continue" | "break";
 
   public constructor(
     names: string[],
-    group: string,
-    comment: string,
     values: TagValue[],
     action: (val: any, tick: number) => "continue" | "break",
   ) {
     this.names = names;
-    this.group = group;
-    this.comment = comment;
     this.values = values;
     this.action = action;
   }
@@ -134,8 +128,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   ゲーム開始時に必要なレイヤー数に設定し、以後は変更しないという使い方をしてください。
     new TagAction(
       ["laycount"],
-      "その他",
-      "レイヤーの数を変更する",
       [
         /// @param レイヤー数
         new TagValue("count", "number", true, null),
@@ -151,8 +143,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   各種エラーを発生させるか・無視するかの設定を行います。
     new TagAction(
       ["raiseerror"],
-      "その他",
-      "エラーを発生させるかどうかの設定",
       [
         /// @param `true` の場合、存在しないコマンドを実行したときにエラーにする
         new TagValue("unknowncommand", "boolean", false, null),
@@ -170,8 +160,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   イベント処理をロックするようにしてください。
     new TagAction(
       ["lockgame"],
-      "その他",
-      "Ponkanのイベント処理を一時的にロックする",
       [],
       (values, tick) => {
         p.lock();
@@ -184,8 +172,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   `lockgame` によるロックを解除します。
     new TagAction(
       ["unlockgame"],
-      "その他",
-      "Ponkanのイベント処理ロックを解除する",
       [],
       (values, tick) => {
         p.unlock();
@@ -203,8 +189,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   システム変数は、セーブ時やゲーム終了時に自動で保存され、ゲーム起動時に自動で復元されます。
     new TagAction(
       ["clearsysvar"],
-      "その他",
-      "システム変数をクリア",
       [],
       (values, tick) => {
         p.resource.systemVar = {};
@@ -219,8 +203,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   ゲーム変数はセーブデータごとに保存させる変数です。シナリオの進行管理などに利用します。
     new TagAction(
       ["cleargamevar"],
-      "その他",
-      "ゲーム変数をクリア",
       [],
       (values, tick) => {
         p.resource.gameVar = {};
@@ -235,8 +217,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   一時変数はセーブデータ等に保存されません。一時的な値（計算の途中の値など）を保持するのに利用します。
     new TagAction(
       ["cleartmpvar"],
-      "その他",
-      "一時変数をクリア",
       [],
       (values, tick) => {
         p.resource.tmpVar = {};
@@ -251,8 +231,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   このコマンドを利用して明示的に保存することもできます。
     new TagAction(
       ["savesysvar"],
-      "その他",
-      "システム変数を保存する",
       [],
       (values, tick) => {
         p.saveSystemData();
@@ -266,8 +244,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   クリックスキップとは、テキスト表示途中にクリックすると行末・ページ末までスキップする機能のことです。
     new TagAction(
       ["clickskipopt", "clickskip"],
-      "その他",
-      "クリックスキップの設定",
       [
         /// @param 有効ならtrue、無効ならfalseを指定
         new TagValue("enabled", "boolean", true, null),
@@ -285,8 +261,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   画面揺れ効果が終わるまで処理を止めたい場合は、`waitquake` を使用してください。
     new TagAction(
       ["quake"],
-      "その他",
-      "画面揺れ効果の開始",
       [
         /// @param 画面揺れの時間
         new TagValue("time", "number", true, null),
@@ -307,8 +281,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   画面揺れ効果が実行されていない場合には何もしません。
     new TagAction(
       ["stopquake"],
-      "その他",
-      "画面揺れ効果の停止",
       [],
       (values, tick) => {
         p.stopQuake();
@@ -323,8 +295,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///    イベントシーンなどでは `false` にしたほうが良いでしょう。
     new TagAction(
       ["waitquake"],
-      "その他",
-      "画面揺れ効果の終了待ち",
       [
         /// @param スキップ可能かどうか
         new TagValue("canskip", "boolean", false, true),
@@ -360,8 +330,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   call を true に設定した場合、file と label で指定した場所でサブルーチンを呼び出します。\n
     new TagAction(
       ["rightclick", "rclick"],
-      "その他",
-      "右クリック時の動作を設定する",
       [
         /// @param 右クリック時にjumpする場合はtrue
         new TagValue("jump", "boolean", false, null),
@@ -389,8 +357,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   コマンドショートカットを設定します。
     new TagAction(
       ["commandshortcut", "cmdsc"],
-      "その他",
-      "コマンドショートカットを設定する",
       [
         /// @param ショートカットの文字
         new TagValue("ch", "string", true, null),
@@ -408,8 +374,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   コマンドショートカットを削除します。
     new TagAction(
       ["delcommandshortcut", "delcmdsc"],
-      "その他",
-      "コマンドショートカットを削除する",
       [
         /// @param ショートカットの文字
         new TagValue("ch", "string", true, null),
@@ -429,8 +393,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   ボタン（選択肢）の押下待ちなどで使用します。
     new TagAction(
       ["s"],
-      "スクリプト制御",
-      "スクリプトの実行を停止する",
       [],
       (values, tick) => {
         p.conductor.passLatestSaveMark();
@@ -449,8 +411,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   同じスクリプトファイル内の移動は問題ありません。
     new TagAction(
       ["jump"],
-      "スクリプト制御",
-      "スクリプトファイルを移動する",
       [
         /// @param 移動先のスクリプトファイル名。省略時は現在のファイル内で移動する
         new TagValue("file", "string", false, null),
@@ -480,8 +440,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   同じスクリプトファイル内の移動は問題ありません。
     new TagAction(
       ["call"],
-      "スクリプト制御",
-      "サブルーチンを呼び出す",
       [
         /// @param 移動先のスクリプトファイル名。省略時は現在のファイル内で移動する
         new TagValue("file", "string", false, null),
@@ -512,8 +470,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   ただし `s` コマンドでスクリプトが完全に停止していた場合は停止したままです。
     new TagAction(
       ["return"],
-      "スクリプト制御",
-      "サブルーチンをから戻る",
       [
         /// @param 戻った後、強制的にシナリオを再開する
         new TagValue("forcestart", "boolean", false, false),
@@ -529,8 +485,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @details
     new TagAction(
       ["if"],
-      "スクリプト制御",
-      "条件によって分岐する",
       [
         /// @param 条件式(JavaScript)
         new TagValue("exp", "string", true, null),
@@ -545,8 +499,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @details
     new TagAction(
       ["elseif", "elsif"],
-      "スクリプト制御",
-      "条件によって分岐する",
       [],
       (values, tick) => {
         p.conductor.script.elsifJump();
@@ -558,8 +510,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @details
     new TagAction(
       ["else"],
-      "スクリプト制御",
-      "条件によって分岐する",
       [],
       (values, tick) => {
         p.conductor.script.elseJump();
@@ -571,8 +521,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @details
     new TagAction(
       ["endif"],
-      "スクリプト制御",
-      "条件分岐の終了",
       [],
       (values, tick) => {
         return "continue";
@@ -586,8 +534,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   ループ回数は `0` から始まるため、 `0` 〜 `loops - 1` の値をとります。
     new TagAction(
       ["for"],
-      "スクリプト制御",
-      "指定回数繰り返す",
       [
         /// @param 繰り替えし回数
         new TagValue("loops", "number", true, null),
@@ -604,8 +550,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @details
     new TagAction(
       ["endfor"],
-      "スクリプト制御",
-      "forループの終端",
       [],
       (values, tick) => {
         p.conductor.script.endForLoop();
@@ -619,8 +563,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   `if` コマンドなどと組み合わせて、条件によってループを抜けるときに使います。
     new TagAction(
       ["breakfor"],
-      "スクリプト制御",
-      "forループから抜ける",
       [],
       (values, tick) => {
         p.conductor.script.breakForLoop();
@@ -633,8 +575,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   スキップ処理を開始します。
     new TagAction(
       ["startskip", "skip"],
-      "スクリプト制御",
-      "スキップを開始する",
       [],
       (values, tick) => {
         p.startSkipByTag();
@@ -647,8 +587,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   スキップ処理を停止します。
     new TagAction(
       ["stopskip"],
-      "スクリプト制御",
-      "スキップを停止する",
       [],
       (values, tick) => {
         p.stopSkip();
@@ -661,8 +599,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   オートモードを開始します。
     new TagAction(
       ["startautomode", "startauto", "auto"],
-      "スクリプト制御",
-      "オートモードを開始する",
       [],
       (values, tick) => {
         p.startAutoMode();
@@ -675,8 +611,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   オートモードを停止します。
     new TagAction(
       ["stopautomode", "stopauto"],
-      "スクリプト制御",
-      "オートモードを停止する",
       [],
       (values, tick) => {
         p.stopAutoMode();
@@ -692,8 +626,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   オートモード中は、ここで指定したレイヤーが強制的に表示状態になります。
     new TagAction(
       ["automodeopt", "autoopt"],
-      "スクリプト制御",
-      "オートモードの設定",
       [
         /// @param オートモード状態表示に使用するレイヤー
         new TagValue("lay", "number", false, null),
@@ -714,8 +646,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///    イベントシーンなどでは `false` にしたほうが良いでしょう。
     new TagAction(
       ["wait"],
-      "スクリプト制御",
-      "指定時間を待つ",
       [
         /// @param 停止時間(ms)
         new TagValue("time", "number", true, null),
@@ -744,8 +674,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///    イベントシーンなどでは `false` にしたほうが良いでしょう。
     new TagAction(
       ["waitclick"],
-      "スクリプト制御",
-      "クリック待ちで停止する",
       [
         /// @param スキップ可能かどうか
         new TagValue("canskip", "boolean", false, true),
@@ -777,8 +705,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   マクロについての詳細は [マクロを利用する](../macro/) のページを参照にしてください。
     new TagAction(
       ["macro"],
-      "マクロ",
-      "マクロを定義する",
       [
         /// @param マクロの名前
         new TagValue("name", "string", true, null),
@@ -799,8 +725,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   マクロについての詳細は [マクロを利用する](../macro/) のページを参照にしてください。
     new TagAction(
       ["endmacro"],
-      "マクロ",
-      "マクロ定義の終わり",
       [],
       (values, tick) => {
         throw new Error("マクロ定義エラー。macroとendmacroの対応が取れていません");
@@ -816,8 +740,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   テキストに関する設定を行います。
     new TagAction(
       ["messageopt", "mesopt"],
-      "メッセージ",
-      "テキストの設定",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", false, "message"),
@@ -909,8 +831,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   デフォルトではカレントメッセージレイヤーが操作対象です。
     new TagAction(
       ["ch"],
-      "メッセージ",
-      "文字を出力する",
       [
         /// @param 出力する先のレイヤー
         new TagValue("lay", "string", false, "message"),
@@ -943,8 +863,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   次に出力する文字にルビ（ふりがな）を設定します。
     new TagAction(
       ["ruby"],
-      "メッセージ",
-      "次の文字にルビを設定する",
       [
         /// @param 出力する先のレイヤー
         new TagValue("lay", "string", false, "message"),
@@ -969,8 +887,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   デフォルトではカレントメッセージレイヤーが操作対象です。
     new TagAction(
       ["br"],
-      "メッセージ操作",
-      "改行する",
       [
         /// @param 出力する先のレイヤー
         new TagValue("lay", "string", false, "message"),
@@ -991,8 +907,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   デフォルトではカレントメッセージレイヤーが操作対象です。
     new TagAction(
       ["clear", "c"],
-      "メッセージ操作",
-      "テキストをクリアする",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", false, "message"),
@@ -1021,8 +935,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   このコマンドとは別に、一時的にインターバル時間を 0 にする [`nowait`](#nowait) コマンドがあります。
     new TagAction(
       ["textspeed"],
-      "メッセージ操作",
-      "文字出力のインターバルを設定",
       [
         /// @param インターバルのモード。"user" | "system"
         new TagValue("mode", "string", false, null),
@@ -1051,8 +963,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   もとに戻すときは `endnowait` コマンドを使用します。
     new TagAction(
       ["nowait"],
-      "メッセージ操作",
-      "一時的に文字出力インターバルを0にする",
       [],
       (values, tick) => {
         p.nowaitModeFlag = true;
@@ -1065,8 +975,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   `nowait` の効果を終了します。j
     new TagAction(
       ["endnowait"],
-      "メッセージ操作",
-      "nowaitを終了する",
       [],
       (values, tick) => {
         p.nowaitModeFlag = false;
@@ -1080,8 +988,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   以後のテキストは指定された位置からの表示となります。
     new TagAction(
       ["textlocate", "locate"],
-      "メッセージ操作",
-      "文字表示位置を指定する",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", false, "message"),
@@ -1106,8 +1012,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   インデント位置は `endindent` または `clear` でクリアされます。
     new TagAction(
       ["indent"],
-      "メッセージ操作",
-      "インデント位置を設定する",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", false, "message"),
@@ -1132,8 +1036,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   `indent` で設定したインデント位置をクリアします。
     new TagAction(
       ["endindent"],
-      "メッセージ操作",
-      "インデント位置をクリアする",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", false, "message"),
@@ -1157,8 +1059,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @details
     new TagAction(
       ["linebreak", "lb", "l"],
-      "メッセージ操作",
-      "行末クリック待ちで停止する",
       [],
       (values, tick) => {
         p.stopUntilClickSkip(); // クリック待ちまでのスキップを停止
@@ -1185,8 +1085,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @details
     new TagAction(
       ["pagebreak", "pb", "p"],
-      "メッセージ操作",
-      "行末クリック待ちで停止する",
       [],
       (values, tick) => {
         p.stopUntilClickSkip(); // クリック待ちまでのスキップを停止
@@ -1215,8 +1113,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   非表示中はスクリプトの実行が停止します。クリック等の操作で再開します。
     new TagAction(
       ["hidemessages"],
-      "メッセージ操作",
-      "メッセージレイヤを一時的に隠す",
       [],
       (values, tick) => {
         p.hideMessages();
@@ -1245,8 +1141,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   ```
     new TagAction(
       ["layalias"],
-      "レイヤー操作",
-      "レイヤー名エイリアスを作成する",
       [
         /// @param エイリアス名
         new TagValue("name", "string", true, null),
@@ -1264,8 +1158,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   [`layalias`](#layalias) で設定したレイヤー名エイリアスを削除します。
     new TagAction(
       ["dellayalias"],
-      "レイヤー操作",
-      "レイヤー名エイリアスを削除する",
       [
         /// @param エイリアス名
         new TagValue("name", "string", true, null),
@@ -1285,8 +1177,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   もしくは [`ch`](#ch) コマンドなどを使用して出力してください。
     new TagAction(
       ["messagelayer", "messagelay", "meslay", "meslay"],
-      "レイヤー操作",
-      "メッセージレイヤーを指定する",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "number", true, null),
@@ -1306,8 +1196,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   行末クリック待ち中に表示されるグリフに関して設定します。\n
     new TagAction(
       ["linebreakglyph", "lbglyph"],
-      "レイヤー操作",
-      "行末グリフに関して設定する",
       [
         /// @param グリフとして使用するレイヤー
         new TagValue("lay", "number", false, null),
@@ -1335,8 +1223,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   ページ末クリック待ち中に表示されるグリフに関して設定します。\n
     new TagAction(
       ["pagebreakglyph", "pbglyph"],
-      "レイヤー操作",
-      "ページ末グリフに関して設定する",
       [
         /// @param グリフとして使用するレイヤー
         new TagValue("lay", "number", false, null),
@@ -1364,8 +1250,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   指定されたレイヤーを単色で塗りつぶします。
     new TagAction(
       ["fillcolor", "fill"],
-      "レイヤー操作",
-      "レイヤーを塗りつぶす",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -1389,8 +1273,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///  [`fillcolor`](#fillcolor-fill) コマンドでのレイヤー塗りつぶしをクリアします。
     new TagAction(
       ["clearcolor"],
-      "レイヤー操作",
-      "レイヤー塗りつぶしをクリアする",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -1410,8 +1292,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   レイヤーに関して設定します。
     new TagAction(
       ["layopt"],
-      "レイヤー操作",
-      "レイヤーの設定",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -1473,8 +1353,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   画像読み込み後、レイヤーのサイズを画像と同じサイズに変更します。
     new TagAction(
       ["loadimage", "image"],
-      "レイヤー操作",
-      "レイヤーに画像を読み込む",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -1520,8 +1398,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   [`loadimage`](#loadimage-image) コマンドとは別に、追加で画像を読み込みます。
     new TagAction(
       ["loadchildimage", "childimage", ""],
-      "レイヤー操作",
-      "レイヤーに追加で画像を読み込む",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -1557,8 +1433,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   レイヤーに読み込まれた画像をすべて解放します。
     new TagAction(
       ["freeimage", "free", "unloadimage"],
-      "レイヤー操作",
-      "レイヤーの画像を開放する",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -1584,8 +1458,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   `unlockbuttons` コマンドでロック状態を解除することで、押下できるようになります。
     new TagAction(
       ["textbutton", "txtbtn"],
-      "ボタン",
-      "レイヤーにテキストボタンを配置する",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -1676,8 +1548,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   変更対象のテキストボタンは、ボタンの名前（`textbutton` の `btnname` で設定した名前）で指定します。
     new TagAction(
       ["textbuttonopt", "txtbtnopt"],
-      "ボタン",
-      "テキストボタンの設定を変更する",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -1704,8 +1574,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   指定されたレイヤーのテキストボタン、画像ボタン、トグルボタンをすべて解放します。
     new TagAction(
       ["clearbuttons", "clearbutton", "clearbtn"],
-      "ボタン",
-      "すべてのボタンをクリアする",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -1727,8 +1595,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   指定されたレイヤーのテキストボタンをクリアします。
     new TagAction(
       ["cleartextbuttons", "cleartextbutton", "cleartxtbtn"],
-      "ボタン",
-      "テキストボタンをクリアする",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -1750,8 +1616,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   `unlockbuttons` コマンドでロック状態を解除することで、押下できるようになります。
     new TagAction(
       ["imagebutton", "imgbtn"],
-      "ボタン",
-      "レイヤーに画像ボタンを配置する",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -1816,8 +1680,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   指定されたレイヤーの画像ボタンをクリアします。
     new TagAction(
       ["clearimagebuttons", "clearimagebutton", "clearimgbtn"],
-      "ボタン",
-      "画像ボタンをクリアする",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -1842,8 +1704,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   機能のオン・オフの切り替えなどに利用することがｄけいます。
     new TagAction(
       ["togglebutton", "tglbtn"],
-      "ボタン",
-      "レイヤーにトグルボタンを配置する",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -1887,8 +1747,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   指定されたレイヤーのトグルボタンをクリアします。
     new TagAction(
       ["cleartogglebuttons", "cleartogglebutton", "cleartglbtn"],
-      "ボタン",
-      "トグルボタンをクリアする",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -1908,8 +1766,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   指定されたレイヤーのボタンをロックし、押下できないようにします。
     new TagAction(
       ["lockbuttons", "lockbutton",  "lock"],
-      "ボタン",
-      "ボタンをロックする",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", false, "all"),
@@ -1930,8 +1786,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   このコマンドでボタンを押下可能にした後は、直後に`s` コマンドでスクリプトの実行を停止してください。
     new TagAction(
       ["unlockbuttons", "unlockbutton", "unlock"],
-      "ボタン",
-      "ボタンをアンロックする",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", false, "all"),
@@ -1949,8 +1803,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   指定されたレイヤーのシステムボタンをロックし、押下できないようにします。
     new TagAction(
       ["locksystembuttons", "locksystembutton", "locksystem"],
-      "ボタン",
-      "システムボタンをロックする",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", false, "all"),
@@ -1968,8 +1820,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   指定されたレイヤーのシステムボタンのロックを解除し、押下できる状態にします。
     new TagAction(
       ["unlocksystembuttons", "unlocksystembutton", "unlocksystem"],
-      "ボタン",
-      "システムボタンをアンロックする",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", false, "all"),
@@ -1989,8 +1839,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   `unlockslider` コマンドでロック状態を解除することで、押下できるようになります。
     new TagAction(
       ["slider"],
-      "ボタン",
-      "レイヤーにスライダーを配置する",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -2042,8 +1890,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   指定レイヤーのスライダーをロックし、押下できない状態にします。
     new TagAction(
       ["locksliders", "lockslider"],
-      "ボタン",
-      "スライダーをロックする",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", false, "all"),
@@ -2061,8 +1907,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   指定レイヤーのスライダーのロックを解除し、押下できる状態にします。
     new TagAction(
       ["unlocksliders", "unlockslider"],
-      "ボタン",
-      "スライダーをアンロックする",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", false, "all"),
@@ -2084,8 +1928,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   フレームアニメーションの詳細については [フレームアニメーション]("../frameanim/") を参照してください。
     new TagAction(
       ["frameanim", "fanim"],
-      "アニメーション",
-      "フレームアニメーションを設定する",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -2115,8 +1957,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   指定レイヤーに読み込まれたフレームアニメーションを再生開始します。
     new TagAction(
       ["startframeanim", "startfanim"],
-      "アニメーション",
-      "フレームアニメーションを開始する",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -2138,8 +1978,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   改めて `frameanim` コマンドで設定してから `startframeanim` コマンドを実行てください。
     new TagAction(
       ["stopframeanim", "stopfanim"],
-      "アニメーション",
-      "フレームアニメーションを停止する",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -2160,8 +1998,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   実行されているフレームアニメーションが無い場合やループ再生の場合は何もしません。
     new TagAction(
       ["waitframeanim", "waitfanim"],
-      "アニメーション",
-      "フレームアニメーションの終了を待つ",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -2198,8 +2034,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   自動移動に関しては [自動移動](../automove/) のページを参照してください。
     new TagAction(
       ["startmove", "move"],
-      "アニメーション",
-      "自動移動を開始する",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -2232,8 +2066,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   停止後、レイヤーの状態は自動移動が終わった時点の状態になります。
     new TagAction(
       ["stopmove"],
-      "アニメーション",
-      "自動移動を停止する",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", false, "all"),
@@ -2254,8 +2086,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   自動移動中のレイヤーが無い場合やループ再生の場合はなにもしません。
     new TagAction(
       ["waitmove", "wm"],
-      "アニメーション",
-      "自動移動の終了を待つ",
       [
         /// @param スキップ可能かどうか
         new TagValue("canskip", "boolean", false, true),
@@ -2289,8 +2119,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   指定レイヤーに設定されたすべてのフィルタをクリアします。
     new TagAction(
       ["clearfilters", "clearfilter"],
-      "レイヤーフィルタ",
-      "フィルタをクリアする",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -2310,8 +2138,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   レイヤーにぼかしフィルタを設定します。
     new TagAction(
       ["blur"],
-      "レイヤーフィルタ",
-      "ぼかしフィルタ",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -2341,8 +2167,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   レイヤーに色補正フィルタを設定します。
     new TagAction(
       ["colorfilter"],
-      "レイヤーフィルタ",
-      "色補正フィルタ",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -2389,8 +2213,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   ```
     new TagAction(
       ["bufalias"],
-      "サウンド",
-      "バッファ番号エイリアスを作成する",
       [
         /// @param エイリアス名
         new TagValue("name", "string", true, null),
@@ -2408,8 +2230,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   バッファ番号エイリアスを削除します。
     new TagAction(
       ["delbufalias"],
-      "サウンド",
-      "バッファ番号エイリアスを削除する",
       [
         /// @param エイリアス名
         new TagValue("name", "string", true, null),
@@ -2425,8 +2245,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   指定の音声バッファに音声ファイルを読み込みます。
     new TagAction(
       ["loadsound", "sound"],
-      "サウンド",
-      "音声をロードする",
       [
         /// @param 読み込み先バッファ番号
         new TagValue("buf", "string", true, null),
@@ -2449,8 +2267,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   使用が終わった音声はこのコマンドで解放するようにしてください。
     new TagAction(
       ["freesound", "unloadsound"],
-      "サウンド",
-      "音声を開放する",
       [
         /// @param 読み込み先バッファ番号
         new TagValue("buf", "string", true, null),
@@ -2466,8 +2282,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   音声に関して設定します。
     new TagAction(
       ["soundopt"],
-      "サウンド",
-      "音声の設定",
       [
         /// @param バッファ番号
         new TagValue("buf", "string", true, null),
@@ -2495,8 +2309,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   指定の音声バッファに読み込まれた音声を再生します。
     new TagAction(
       ["playsound"],
-      "サウンド",
-      "音声を再生する",
       [
         /// @param 読み込み先バッファ番号
         new TagValue("buf", "string", true, null),
@@ -2512,8 +2324,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   指定の音声バッファの再生を停止します。
     new TagAction(
       ["stopsound"],
-      "サウンド",
-      "音声を停止する",
       [
         /// @param 読み込み先バッファ番号
         new TagValue("buf", "string", true, null),
@@ -2530,8 +2340,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   このコマンドではフェード完了まで待ちません。フェードを待つ場合は `waitfade` コマンドを使用してください。
     new TagAction(
       ["fadesound"],
-      "サウンド",
-      "音声をフェードする",
       [
         /// @param 読み込み先バッファ番号
         new TagValue("buf", "string", true, null),
@@ -2554,8 +2362,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   このコマンドではフェード完了まで待ちません。フェードを待つ場合は `waitfade` コマンドを使用してください。
     new TagAction(
       ["fadeoutsound", "fadeout"],
-      "サウンド",
-      "音声をフェードアウトして再生停止する",
       [
         /// @param 読み込み先バッファ番号
         new TagValue("buf", "string", true, null),
@@ -2576,8 +2382,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   このコマンドではフェード完了まで待ちません。フェードを待つ場合は `waitfade` コマンドを使用してください。
     new TagAction(
       ["fadeinsound", "fadein"],
-      "サウンド",
-      "音声をフェードインで再生開始する",
       [
         /// @param 読み込み先バッファ番号
         new TagValue("buf", "string", true, null),
@@ -2598,8 +2402,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   再生中でない場合やループ再生中の場合はなにもしません。
     new TagAction(
       ["waitsoundstop", "waitsound"],
-      "サウンド",
-      "音声の再生終了を待つ",
       [
         /// @param 読み込み先バッファ番号
         new TagValue("buf", "string", true, null),
@@ -2633,8 +2435,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   指定の音声バッファのフェードが完了するのを待ちます。
     new TagAction(
       ["waitsoundfade", "waitfade"],
-      "サウンド",
-      "音声のフェード終了を待つ",
       [
         /// @param 読み込み先バッファ番号
         new TagValue("buf", "string", true, null),
@@ -2669,8 +2469,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   音声バッファの音量は即座にフェード後の音量になります。
     new TagAction(
       ["endfadesound", "endfade"],
-      "サウンド",
-      "音声のフェードを終了する",
       [
         /// @param 読み込み先バッファ番号
         new TagValue("buf", "string", true, null),
@@ -2689,8 +2487,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   表ページの状態を裏ページにコピーします。
     new TagAction(
       ["backlay"],
-      "トランジション",
-      "表ページを裏ページにコピーする",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", false, "all"),
@@ -2706,8 +2502,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   `srclay` のレイヤーの状態を `destlay` のレイヤーにコピーします。
     new TagAction(
       ["copylay"],
-      "トランジション",
-      "レイヤ情報をコピーする",
       [
         /// @param コピー元レイヤー
         new TagValue("srclay", "number", true, null),
@@ -2735,8 +2529,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   以後 `trans` コマンドが実行されるまで裏ページが操作対象になります。
     new TagAction(
       ["currentpage"],
-      "トランジション",
-      "操作対象ページを変更する",
       [
         /// @param 操作対象ページ（"fore" | "back" ）を指定
         new TagValue("page", "string", true, null),
@@ -2753,8 +2545,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   `backlay` コマンドと `currentpage page: "back"` コマンドを実行したのと同じ状態となります。
     new TagAction(
       ["preparetrans", "pretrans"],
-      "トランジション",
-      "トランジションの前準備",
       [],
       (values, tick) => {
         p.backlay("all");
@@ -2771,8 +2561,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   このコマンドはトランジションの完了を待ちません。終了するまで待つ場合は `waittrans` コマンドを使用してください。
     new TagAction(
       ["trans"],
-      "トランジション",
-      "トランジションを実行する",
       [
         /// @param トランジションの時間(ms)
         new TagValue("time", "number", true, null),
@@ -2812,8 +2600,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   各レイヤーの状態は、通常通りトランジションが完了したのと同じ状態になります。
     new TagAction(
       ["stoptrans"],
-      "トランジション",
-      "トランジションを停止する",
       [],
       (values, tick) => {
         if (!p.transManager.isRunning) {
@@ -2832,8 +2618,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   イベントシーンなどでは `false` にしたほうが良いでしょう。
     new TagAction(
       ["waittrans", "wt"],
-      "トランジション",
-      "トランジションの終了を待つ",
       [
         /// @param スキップ可能かどうか
         new TagValue("canskip", "boolean", false, true),
@@ -2865,8 +2649,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   トランジションとは違い、なんの効果（演出）も無しで即適用されます。
     new TagAction(
       ["flip"],
-      "トランジション",
-      "表ページを裏ページを即座に入れ替える",
       [],
       (values, tick) => {
         p.flip();
@@ -2883,8 +2665,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   メッセージ履歴に関して設定します。
     new TagAction(
       ["historyopt"],
-      "メッセージ履歴",
-      "メッセージ履歴を設定する",
       [
         /// @param メッセージレイヤに文字を出力するかどうか
         new TagValue("output", "boolean", false, null),
@@ -2903,8 +2683,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   メッセージ履歴を表示します。
     new TagAction(
       ["showhistory", "history"],
-      "メッセージ履歴",
-      "メッセージ履歴を表示する",
       [],
       (values, tick) => {
         p.showHistoryLayer();
@@ -2917,8 +2695,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   メッセージ履歴に指定のテキストを出力します。
     new TagAction(
       ["historych", "hch"],
-      "メッセージ履歴",
-      "メッセージ履歴にテキストを出力する",
       [
         /// @param 出力する文字
         new TagValue("text", "string", true, null),
@@ -2934,8 +2710,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   メッセージ履歴のテキストを改行します。
     new TagAction(
       ["hbr"],
-      "メッセージ履歴",
-      "メッセージ履歴を改行する",
       [],
       (values, tick) => {
         p.historyTextReturn();
@@ -2952,8 +2726,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   セーブ／ロードの詳細は [セーブ／ロード](../save-and-load/)を参照してください。
     new TagAction(
       ["save"],
-      "セーブ／ロード",
-      "最新状態をセーブする",
       [
         /// @param セーブ番号
         new TagValue("num", "number", true, null),
@@ -2969,8 +2741,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   指定のセーブデータをロードします。
     new TagAction(
       ["load"],
-      "セーブ／ロード",
-      "セーブデータから復元する",
       [
         /// @param セーブ番号
         new TagValue("num", "number", true, null),
@@ -2996,8 +2766,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   右クリックサブルーチンが終わったときに `tempload` でまとめて復元する、というような用途で使用します。
     new TagAction(
       ["tempsave"],
-      "セーブ／ロード",
-      "一時セーブする",
       [
         /// @param セーブ番号
         new TagValue("num", "number", true, null),
@@ -3016,8 +2784,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   裏ページ側に復元します。レイヤーの状態をトランジションで復元したい場合などに利用します。
     new TagAction(
       ["tempload"],
-      "セーブ／ロード",
-      "一時セーブデータから復元する",
       [
         /// @param セーブ番号
         new TagValue("num", "number", true, null),
@@ -3044,8 +2810,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   セーブ画面から抜けるときに `unlockscreenshot` で解除する、というような使い方をします。
     new TagAction(
       ["lockscreenshot"],
-      "セーブ／ロード",
-      "現在の画面でスクリーンショットを固定する",
       [],
       (values, tick) => {
         p.lockScreenShot();
@@ -3057,8 +2821,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @details
     new TagAction(
       ["unlockscreenshot"],
-      "セーブ／ロード",
-      "スクリーンショットの固定を解除する",
       [],
       (values, tick) => {
         p.unlockScreenShot();
@@ -3070,8 +2832,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @details
     new TagAction(
       ["copysavedata", "copysave"],
-      "セーブ／ロード",
-      "セーブデータをコピーする",
       [
         /// @param コピー元のセーブ番号
         new TagValue("srcnum", "number", true, null),
@@ -3088,8 +2848,6 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @details
     new TagAction(
       ["deletesavedata", "delsavedata", "delsave"],
-      "セーブ／ロード",
-      "セーブデータを削除する",
       [
         /// @param セーブ番号
         new TagValue("num", "number", true, null),
