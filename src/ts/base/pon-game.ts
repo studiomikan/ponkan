@@ -449,7 +449,7 @@ export class PonGame implements IConductorEvent {
 
   /**
    * レイヤの表と裏を入れ替える。
-   * レンダラーの入れ替えは実施しないため、これまで裏レイヤーだったものが画面に表示される状態となる。
+   * レンダラーの入れ替えは実施しないため、これまで裏ページだったものが画面に表示される状態となる。
    * トランジションが終わったらresetPrimaryLayersRendererを呼び、
    * レンダラーとの紐付けを正しい状態に戻すこと。
    */
@@ -491,7 +491,7 @@ export class PonGame implements IConductorEvent {
 
   /**
    * トランジション完了時にTransManagerから呼ばれる。
-   * この時点で表レイヤ・裏レイヤの入れ替えは完了している。
+   * この時点で表ページ・裏ページの入れ替えは完了している。
    */
   public onCompleteTrans(): boolean {
     this.conductor.trigger("trans");

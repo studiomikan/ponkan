@@ -1,47 +1,60 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8">
-    <title>Ponkan3 Sample</title>
-    <link rel="shortcut icon" href="favicon.ico">
-    <style>
-      @font-face {
-        font-family: 'GenShinGothic';
-        font-weight: 400;
-        src: url('./fonts/GenShinGothic-Monospace-Regular-sub.woff') format('woff')
-      }
-      @font-face {
-        font-family: 'GenShinGothic';
-        font-weight: 700;
-        src: url('./fonts/GenShinGothic-Monospace-Bold-sub.woff') format('woff')
-      }
-      html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        background: #000000;
-      }
-      .ponkan-game-wrapper {
-        position: relative;
-        display: block;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-      }
-      .ponkan-game-wrapper canvas {
-        position: absolute;
-        top: 0;
-        left: 0;
-        transform-origin: 0 0;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="game" class="ponkan-game-wrapper"></div>
-    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
-    <script src="./ponkan3.js"></script>
-    <script src="./sample-game.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <title>Ponkan3</title>
+  <link rel="shortcut icon" href="favicon.ico">
+  <style>
+    @font-face {
+      font-family: 'GenShinGothic';
+      font-weight: 400;
+      src: url('./fonts/GenShinGothic-Monospace-Regular-sub.woff') format('woff')
+    }
+    @font-face {
+      font-family: 'GenShinGothic';
+      font-weight: 700;
+      src: url('./fonts/GenShinGothic-Monospace-Bold-sub.woff') format('woff')
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #000000;
+    }
+    .ponkan-game-wrapper {
+      position: relative;
+      display: block;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .ponkan-game-wrapper canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: 0 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="ponkan3game" class="ponkan-game-wrapper"></div>
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+  <script src="./ponkan3.js"></script>
+  <script src="./settings.js"></script>
+  <script>
+    Ponkan3.Logger.level = Ponkan3.Logger.LEVEL_DEBUG;
+    var ponkan = new Ponkan3("ponkan3game", PONKAN3_SETTINGS);
+    WebFont.load({
+      classes: false,
+      custom: { families: ["GenShinGothic"] },
+      active: function () {
+        ponkan.start();
+      },
+      inactive: function () {
+        alert("フォントの読み込みに失敗しました。");
+      },
+    });
+  </script>
+</body>
 </html>
-

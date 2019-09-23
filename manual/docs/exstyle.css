@@ -1,0 +1,33 @@
+
+.note {
+  position: relative;
+  border: solid 1px #bbbbbb;
+  color: #555555;
+  font-size: 85%;
+  padding: 1.25em 1em 1em 1em;
+  margin-bottom: 1em;
+  margin: 1.5em 0 1em 0;
+}
+.note::before {
+  position: absolute;
+  display: block;
+  content: "Note";
+  top: -0.5em;
+  left: 1em;
+  font-size: 1em;
+  line-height: 1em;
+  padding: 0 0.5em;
+  background: #FFFFFF;
+  color: #555555;
+}
+
+code {
+  white-space: nowrap;
+  font-family: "Inconsolata","Noto Sans JP","Courier New",Courier,monospace;
+}
+pre code {
+  white-space: pre;
+  font-family: "Inconsolata","Noto Sans JP","Courier New",Courier,monospace;
+}
+li { margin-bottom: 0px !important; }
+.md-typeset { line-height: 1.5 !important; }

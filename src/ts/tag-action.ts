@@ -2684,13 +2684,13 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     // トランジション
     // ======================================================================
     /// @category トランジション
-    /// @description 表レイヤーを裏レイヤーにコピーする
+    /// @description 表ページを裏ページにコピーする
     /// @details
-    ///   表レイヤーの状態を裏レイヤーにコピーします。
+    ///   表ページの状態を裏ページにコピーします。
     new TagAction(
       ["backlay"],
       "トランジション",
-      "表レイヤを裏レイヤにコピーする",
+      "表ページを裏ページにコピーする",
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", false, "all"),
@@ -2749,7 +2749,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @category トランジション
     /// @description トランジションの前準備
     /// @details
-    ///   表レイヤーの情報を裏レイヤーにコピーし、操作対象を裏ページに変更します。\n
+    ///   表ページの情報を裏ページにコピーし、操作対象を裏ページに変更します。\n
     ///   `backlay` コマンドと `currentpage page: "back"` コマンドを実行したのと同じ状態となります。
     new TagAction(
       ["preparetrans", "pretrans"],
@@ -2996,8 +2996,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @details
     ///   `tempsave` で保存した一時セーブデータをロードします。
     ///
-    ///   `toback: true` を指定したときは、一時セーブデータの表レイヤ―の情報を
-    ///   裏レイヤー側に復元します。レイヤーの状態をトランジションで復元したい場合などに利用します。
+    ///   `toback: true` を指定したときは、一時セーブデータの表ページ―の情報を
+    ///   裏ページ側に復元します。レイヤーの状態をトランジションで復元したい場合などに利用します。
     new TagAction(
       ["tempload"],
       "セーブ／ロード",
@@ -3007,7 +3007,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("num", "number", true, null),
         /// @param 音声もロードするかどうか
         new TagValue("sound", "boolean", false, false),
-        /// @param 表レイヤーを裏レイヤーとして復元するかどうか
+        /// @param 表ページを裏ページとして復元するかどうか
         new TagValue("toback", "boolean", false, false),
       ],
       (values, tick) => {

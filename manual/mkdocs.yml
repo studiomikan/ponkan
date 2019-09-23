@@ -1,15 +1,36 @@
-site_name: Ponkan3 マニュアル
+site_name: 'Ponkan3 ドキュメント'
+site_description: 'Ponkan3 ドキュメント'
+site_author: 'okayu'
+copyright: '&copy; 2019 <a href="https://studiomikan.net/">Studio Mikan</a>'
 theme:
   name: 'material'
   language: 'ja'
+  font:
+    text: 'Noto Sans JP'
+    code: 'Inconsolata'
+  # feature:
+  #   tabs: true
+  palette:
+    primary: 'Deep Orange'
+    accent: 'Deep Orange'
 extra:
   search:
-    language: 'jp'
+    languaextra:
+  social:
+    - type: 'github'
+      link: 'https://github.com/okayumoka/ponkan3'
+extra_css:
+  - 'exstyle.css'
 nav:
   - 目次: '/#index'
   - チュートリアル:
     - 開発の準備（セットアップ）: basic/setup.md
     # - Node.js導入（Windows）: basic/setup_nodejs_win.md
     - メッセージ（文章）の表示: basic/message.md
+    - 画像の表示: basic/image.md
+    - レイヤーとページ: basic/layer.md
   - リファレンス:
-    - コマンドリファレンス: command_ref.md
+    - スクリプトファイル文法: ref/syntax.md
+    - コマンドリファレンス: ref/command_ref.md
+  - 応用（システム）:
+    - コマンドショートカット機能: advanced/command_shortcut.md

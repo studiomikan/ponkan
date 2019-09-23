@@ -2,4 +2,4 @@
 
 cd `dirname $0`
 cd ../
-mkdocs serve --dev-addr 0.0.0.0:8000
+mkdocs serve --dev-addr localhost:8000

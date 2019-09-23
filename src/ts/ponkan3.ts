@@ -1076,7 +1076,7 @@ export class Ponkan3 extends PonGame {
   /**
    * [override]
    * トランジション完了時にTransManagerから呼ばれる。
-   * この時点で表レイヤ・裏レイヤの入れ替えは完了している。
+   * この時点で表ページ・裏ページの入れ替えは完了している。
    */
   public onCompleteTrans(): boolean {
     this.currentPage = "fore";

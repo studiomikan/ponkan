@@ -1,0 +1,671 @@
+
+
+
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="クリップボードへコピー">
+      
+        <meta name="lang:clipboard.copied" content="コピーしました">
+      
+        <meta name="lang:search.language" content="jp">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="何も見つかりませんでした">
+      
+        <meta name="lang:search.result.one" content="1件見つかりました">
+      
+        <meta name="lang:search.result.other" content="#件見つかりました">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-　、。，．]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.4.2">
+    
+    
+      
+        <title>スクリプトファイルの文法 - Ponkan3 マニュアル</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.30686662.css">
+      
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.74668098.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+      <link rel="stylesheet" href="../../exstyle.css">
+    
+    
+      
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#_1" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="Ponkan3 マニュアル" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              Ponkan3 マニュアル
+            </span>
+            <span class="md-header-nav__topic">
+              
+                スクリプトファイルの文法
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            検索キーワードを入力してください
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="Ponkan3 マニュアル" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    Ponkan3 マニュアル
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="/#index" title="目次" class="md-nav__link">
+      目次
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      チュートリアル
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        チュートリアル
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../basic/setup/" title="開発の準備（セットアップ）" class="md-nav__link">
+      開発の準備（セットアップ）
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../basic/message/" title="メッセージ（文章）の表示" class="md-nav__link">
+      メッセージ（文章）の表示
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../basic/image/" title="画像の表示" class="md-nav__link">
+      画像の表示
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../basic/layer/" title="レイヤーとページ" class="md-nav__link">
+      レイヤーとページ
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      リファレンス
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        リファレンス
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../syntax.md" title="スクリプトファイル文法" class="md-nav__link">
+      スクリプトファイル文法
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../command_ref.md" title="コマンドリファレンス" class="md-nav__link">
+      コマンドリファレンス
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+    
+    <label class="md-nav__link" for="nav-4">
+      応用（システム）
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        応用（システム）
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../advanced/command_shortcut/" title="コマンドショートカット機能" class="md-nav__link">
+      コマンドショートカット機能
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">目次</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    スクリプトファイルの例
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    コメント行
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    コマンド行
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    ラベル行
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    セーブマーク行
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#javascript" class="md-nav__link">
+    JavaScript行
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#javascript_1" class="md-nav__link">
+    JavaScript部
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    変数の扱いについて
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    テキスト
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    インデントについて
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="_1">スクリプトファイルの文法</h1>
+<p>スクリプトファイル文法について説明します。</p>
+<h2 id="_2">スクリプトファイルの例</h2>
+<pre><code class="plain"># コメント行です。
+
+# 行頭が ; から始まる行はコマンド行です。
+;layopt { lay: 0, x: 100, y: 200 }
+;layopt {
+  lay: 0,
+  x: 100,
+  y: 200
+}
+# 一行で書くときは、{}を省略できます。
+;layopt lay: 0, x: 100, y: 200
+
+# 行頭が * から始まる行はラベル行です。
+*jump_target_label
+
+# 行頭が | から始まる行はセーブマーク行です。
+|save_mark_01:セーブポイント01
+
+# 行頭が - または = から始まる行はJavaScript行です。
+- alert(&quot;JavaScript行です。&quot;);
+= &quot;100 + 200 = &quot; + (100 + 200)
+
+# --- と --- で囲まれた部分はJavaScript部です。
+---
+const a = 100;
+const b = 200;
+let sum = a + b;
+alert(&quot;a + b = &quot; + sum);
+---
+
+# 上記以外のすべての文字はテキストになります
+こんにちは。
+</code></pre>
+
+<h2 id="_3">コメント行</h2>
+<p>行の先頭が<code>#</code>から始まっている行は、コメント行です。
+コメント行は、スクリプトファイルが実行されるときには無視されて、何も実行されません。</p>
+<p>コメント行は、スクリプトファイル中に記載された注釈文です。
+スクリプトファイルに書かれている内容について補足や解説を書くことができます。</p>
+<h2 id="_4">コマンド行</h2>
+<p>行の先頭が<code>;</code>から始まっている行は、コマンド行です。
+コマンド行は、Ponkan3の様々な機能を実行するための命令文です。</p>
+<pre><code class="plain">;layopt { lay: 0, x: 100, y: 200 }
+</code></pre>
+
+<p>コマンド行は、コマンド名とパラメータから成り立っています。
+上記の例では、<code>layopt</code>がコマンド名、<code>{ lay: 0, x: 100, y: 200 }</code>がパラメータです。</p>
+<p>パラメータは「パラメータ名: 値」という風に記述します。
+パラメータが複数ある場合はカンマ(<code>,</code>)で区切って記載します。</p>
+<p>パラメータは、コマンドの実行時に使われる具体的な値です。
+たとえば上記の<code>layopt</code>というコマンドは、レイヤーに関する設定を行うコマンドです。
+このコマンドに<code>lay: 0, x: 100, y: 200</code>の3つのパラメータが渡されているので、
+この場合は「レイヤー0番のx座標を100、y座標を200に設定する」という命令になります。</p>
+<p>パラメータは複数行にわたって記述することもできます。</p>
+<pre><code class="plain">;layopt {
+  lay: 0,
+  x: 100,
+  y: 200
+}
+</code></pre>
+
+<p>このように改行して書くことができるので、非常に見やすくなります。
+パラメータの数が多い場合には活用してください。</p>
+<p>コマンドを一行で書く場合は、パラメータの<code>{</code>と<code>}</code>を省略することができます。パラメータ中に改行したい場合は省略できません。
+以下の2つは全く同じ意味となります。</p>
+<pre><code class="plain"># 以下の2行は同じ意味
+;layopt { lay: 0, x: 100, y: 200 }
+;layopt lay: 0, x: 100, y: 200
+</code></pre>
+
+<div class="note">
+パラメータの部分の実態はJavaScriptのObjectリテラルです。<br>
+そのため、値は固定値だけではなく、式を記述することもできます。
+<pre><code>;layopt { lay: 0, x: 1280-20, y: 720-20 }</code></pre>
+</div>
+
+<p>コマンドの詳細については、<a href="../command_ref.md">コマンドリファレンス</a>に記載されています。
+ただ、数が膨大ですので、まずはこのマニュアルのチュートリアルを一通り体験してから参照するとよいでしょう。</p>
+<h2 id="_5">ラベル行</h2>
+<p>行の先頭が<code>*</code>から始まっている行は、ラベル行です。</p>
+<p>ラベルは<code>jump</code>コマンドと<code>call</code>コマンドと組み合わせて使用されます。
+<code>jump</code>はスクリプトファイルの移動、<code>call</code>はサブルーチンの呼び出しを行うコマンドですが、
+これらの呼び出し先を指定するためにラベルが使用されます。</p>
+<p>たとえば以下の<code>jump</code>コマンドの例では、<code>title.pon</code>スクリプトの中の<code>*jump_target</code>が書かれた位置に移動します。</p>
+<pre><code class="plain">;jump file: &quot;title.pon&quot;, label: &quot;jump_target&quot;
+</code></pre>
+
+<h2 id="_6">セーブマーク行</h2>
+<p>行の先頭が<code>|</code>から始まっている行は、セーブマーク行です。</p>
+<p>Ponkan3でのセーブ機能は、このセーブマーク行を記述することで可能になります。</p>
+<p>具体的な使い方については、<a href="basic/save_and_load.md">セーブ＆ロード機能</a>のページを参照してください。</p>
+<h2 id="javascript">JavaScript行</h2>
+<p>行の先頭が<code>-</code>または<code>=</code>から始まっている行は、JavaScript行です。</p>
+<p>記述したJavaScriptを実行することができます。</p>
+<p><code>-</code>の場合はJavaScriptを実行し、結果は捨てます。</p>
+<p><code>=</code>の場合は、実行した結果（評価値）を文字列としてメッセージレイヤーに出力します。</p>
+<pre><code># 計算を実行しますが、計算結果は捨てられます。
+- 100 + 200
+# 計算を実行して、結果を文字列としてメッセージレイヤーに出力します。
+# この場合は画面に300と表示されます。
+= 100 + 200
+</code></pre>
+
+<h2 id="javascript_1">JavaScript部</h2>
+<p><code>---</code>の行から<code>---</code>の行までの間は、JavaScript部です。</p>
+<pre><code class="plain">---
+// 自由にJavaScriptを記述できます。
+function getSum() {
+  let sum = 0;
+  for (let i = 0; i &lt; 10; i++) {
+    sum += i;
+  }
+  return sum;
+}
+tv.sum = getSum();
+---
+= tv.sum
+</code></pre>
+
+<p><code>-</code>から始まるJavaScript行では、JavaScriptを1行しか書けませんでしたが、
+JavaScript部では改行を含んだ複数行のJavaScriptを記述することができます。
+長い処理を記載する場合はこちらを利用したほうが良いでしょう。</p>
+<h3 id="_7">変数の扱いについて</h3>
+<p>JavaScript行やJavaScript部の内部で宣言した変数は、実行するたびにクリアされます。
+そのため、以下のように書くとエラーになります。</p>
+<pre><code class="plain">- var a = 100;
+= a + 200;  // 変数aは存在しないのでエラー
+
+---
+var b = 100;
+---
+---
+var c = b + 100;  // 変数bは存在しないのでエラー
+---
+</code></pre>
+
+<p>複数の計算結果を受け渡したい場合や、計算結果をコマンドで使用したい場合は、
+一時変数用のオブジェクト<code>tv</code>を使用します。
+変数の詳細については、<a href="basic/javascript.md">JavaScriptと変数</a></p>
+<h2 id="_8">テキスト</h2>
+<p>コメント、ラベル、セーブマーク、JavaScript以外すべての文字はテキストとして扱われます。</p>
+<p>テキストは、メッセージレイヤーに出力されます。</p>
+<h2 id="_9">インデントについて</h2>
+<p>Ponkan3のスクリプトファイルでは、
+行頭の半角スペースおよびタブ文字については無視されるため、
+インデントして読みやすくすることができます。</p>
+<pre><code class="plain"># インデントで読みやすくすることができます
+;macro name: &quot;lbr&quot;
+  ;l
+  ;br
+;endmacro
+
+;for loops: &quot;2&quot;, indexvar: &quot;i&quot;
+  ;for loops: &quot;5&quot;, indexvar: &quot;j&quot;
+    ---
+    tv.a = tv.i + 1;
+    tv.b = tv.j + 1;
+    tv.c = tv.a * tv.b;
+    ---
+    = tv.a + &quot;×&quot; + tv.b + &quot;=&quot; + tv.c
+    ;br
+  ;endfor
+  ;br
+;endfor
+</code></pre>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.c648116f.js"></script>
+      
+        
+        
+          
+          <script src="../../assets/javascripts/lunr/lunr.stemmer.support.js"></script>
+          
+            
+              
+              
+            
+          
+          
+        
+      
+      <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
+      
+    
+  </body>
+</html>

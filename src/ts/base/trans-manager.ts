@@ -208,7 +208,7 @@ export class TransManager {
 
     this.status = "stop";
     this.ruleFilePath = null;
-    // 表レイヤと一緒に描画するのをやめる
+    // 表ページと一緒に描画するのをやめる
     this.game.foreRenderer.delOtherRenderer();
     this.game.backRenderer.delOtherRenderer();
     // レンダラーの入れ替え
