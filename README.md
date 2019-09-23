@@ -1,10 +1,16 @@
 # Ponkan3
 
+![Ponkan3 logo](images/ponkan3-logo-landscape2.png)
+
 Ponkan3 is novel-game-engine for web.
 
 ## Demo (sample game)
 
 [Ponkan3 sample game](http://okayumoka.github.io/ponkan3-samplegame)
+
+## Documents
+
+[Ponkan3 Documents](http://okayumoka.github.io/ponkan3-docs)
 
 ## build (main programs)
 
