@@ -2206,10 +2206,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   たとえば以下のように、効果音を再生するバッファに se というようなエイリアスを作成することで、
     ///   スクリプト作成時の可読性が向上します。
     ///   ```
-    ///   # 背景画像はレイヤー 0 に作成するので、エイリアスを作成する
+    ///   # 効果音はバッファ 0 に作成するので、エイリアスを作成する
     ///   ;bufalias name: "se", buf: "0"
     ///   # 以後、効果音は以下のように読み込める
-    ///   ;loadsound "buf": "se", "file": "sound/pekowave1.wav"
+    ///   ;loadsound "buf": "se", "file": "sound/pekowave1.mp3"
     ///   ```
     new TagAction(
       ["bufalias"],

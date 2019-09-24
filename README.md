@@ -12,7 +12,7 @@ Ponkan3 is novel-game-engine for web.
 
 [Ponkan3 Documents](http://okayumoka.github.io/ponkan3-docs)
 
-## build (main programs)
+## Build
 
 ```bash
 # install packages
