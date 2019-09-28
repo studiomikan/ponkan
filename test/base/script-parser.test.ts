@@ -172,7 +172,17 @@ export function ScriptParserTest() {
           comment: "見出しテキスト",
         });
       });
-      it("全省略 ~", () => {
+      it("全省略1 ~|", () => {
+        const testScript = `~|`;
+        const sp = new ScriptParser(ponkan.resource, testScript);
+        assert.equal(sp.tags[0].name, "__save_mark__");
+        assert.deepEqual(sp.tags[0].values, {
+          __body__: "|",
+          name: "__save_mark_0__",
+          comment: "",
+        });
+      });
+      it("全省略2 ~", () => {
         const testScript = `~`;
         const sp = new ScriptParser(ponkan.resource, testScript);
         assert.equal(sp.tags[0].name, "__save_mark__");
