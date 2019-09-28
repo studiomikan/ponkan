@@ -48,7 +48,9 @@ export class ScriptParser {
       const line: string | null = this.getLine();
       if (line === null) { break; }
       if (line === "") {
-        this.addLinebreak(); // 最後に改行を付与
+        if (this.currentLineNum < this.lines.length) {
+          this.addLinebreak();
+        }
         continue;
       }
 
@@ -79,7 +81,7 @@ export class ScriptParser {
             // ラベル
             this.parseLabel(body);
             break;
-          case "|":
+          case "~":
             // セーブ更新マーク
             this.parseSaveMark(body);
             break;
@@ -140,7 +142,7 @@ export class ScriptParser {
   }
 
   private parseSaveMark(body: string): void {
-    const p: number = body.indexOf(":");
+    const p: number = body.indexOf("|");
     if (p !== -1) {
       const name: string = body.substring(0, p);
       const comment: string = body.substring(p + 1);

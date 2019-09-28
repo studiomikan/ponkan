@@ -1,12 +1,14 @@
 import { assert } from "chai";
 import { ScriptParser } from "../../src/ts/base/script-parser";
 import { Ponkan3 } from "../../src/ts/ponkan3";
+import { Ponkan3Settings } from "../settings";
 
-let testScript_01 = `#コメント行
+const testScript01 =
+`#コメント行
 ;layopt { "width":100, "height":200, "visible":true }
-;     layopt    {      "width"   :   100     , "height"   :   200 ,    "visible"   :   true    }     
+;     layopt    {      "width"   :   100     , "height"   :   200 ,    "visible"   :   true    }
 ;meslay{"width":100,"height":200,"visible":true,"file":"hogehoge.png"}
-## 22文字 
+## 22文字
 吾輩は猫である。名前はまだない。
 二行目だよ。
 
@@ -23,96 +25,170 @@ let testScript_01 = `#コメント行
   console.log(hoge);
 ---
 
+# セーブマーク
+~セーブ
+~save-mark|セーブ2
+~
+
 お
 わ
 り
 。
 `;
 
-let testScript_jspart = `
+const testScript02 =
+`# コメントはタグではない。あと改行は__line_break__のタグ。
+;layopt width: 100, height: 200
+;   layopt   {    width   :    100   , "height":200 }
+;layopt{width:100,height:200}
+;br
+*sample-label
+-console.log("hoge")
+=console.log("hoge")
 ---
+console.log("hoge")
+---
+~セーブ|
+あいうえお
+
+`;
+
+
+const testScriptJsPart =
+`---
   var hoge = 100;
   console.log(hoge);
 ---`;
 
-
 export function ScriptParserTest() {
   let ponkan: Ponkan3;
 
-  describe('ScriptParserのテスト', () => {
-    beforeEach(() => {
-      ponkan = new Ponkan3("game");
-    });
+  before(() => {
+    ponkan = new Ponkan3("ponkan3game", Ponkan3Settings);
+  });
 
-    it('一通りパースできるかどうか', () => {
-      let sp = new ScriptParser(ponkan.resource, testScript_01);
+  after(() => {
+    try {
+      ponkan.destroy();
+    } catch (e) {
+      console.error(e);
+    }
+  });
+
+  describe("ScriptParserのテスト", () => {
+
+    it("一通りパースできるかどうか", () => {
+      const sp = new ScriptParser(ponkan.resource, testScript01);
       assert.isNotNull(sp);
       // sp.debugPrint();
     });
-    it('タグ数', () => {
-      let sp = new ScriptParser(ponkan.resource, testScript_01);
+    it("タグ数", () => {
+      const sp = new ScriptParser(ponkan.resource, testScript02);
       assert.isNotNull(sp.tags);
       assert.isNotEmpty(sp.tags);
-      assert.equal(sp.tags.length, 3 + 22 + 4 + 4 + 1);
+      assert.equal(sp.tags.length, 17);  // 最後にsコマンドが自動追加されるのに注意
     });
-    it('タグ数の内容（簡易）', () => {
-      let sp = new ScriptParser(ponkan.resource, testScript_01);
+    it("タグの内容（簡易）", () => {
+      const sp = new ScriptParser(ponkan.resource, testScript02);
       let p = 0;
-      assert.equal(sp.tags[p++].name, 'layopt');
-      assert.equal(sp.tags[p++].name, 'layopt');
-      assert.equal(sp.tags[p++].name, 'meslay');
-      for (let i = 0; i < 22; i++) {
-        // 吾輩は猫である〜
-        assert.equal(sp.tags[p++].name, 'ch');
-      }
-      assert.equal(sp.tags[p++].name, '__label__');
-      assert.equal(sp.tags[p++].name, '__js__');
-      assert.equal(sp.tags[p++].name, '__js__');
-      assert.equal(sp.tags[p++].name, '__js__');
-      for (let i = 0; i < 4; i++) {
-        // おわり。
-        assert.equal(sp.tags[p++].name, 'ch');
-      }
-      assert.equal(sp.tags[p++].name, 's');
+      assert.equal(sp.tags[p++].name, "layopt");
+      assert.equal(sp.tags[p++].name, "layopt");
+      assert.equal(sp.tags[p++].name, "layopt");
+      assert.equal(sp.tags[p++].name, "br");
+      assert.equal(sp.tags[p++].name, "__label__");
+      assert.equal(sp.tags[p++].name, "__js__");
+      assert.equal(sp.tags[p++].name, "__js__");
+      assert.equal(sp.tags[p++].name, "__js__");
+      assert.equal(sp.tags[p++].name, "__save_mark__");
+      assert.equal(sp.tags[p++].name, "ch"); // あ
+      assert.equal(sp.tags[p++].name, "ch"); // い
+      assert.equal(sp.tags[p++].name, "ch"); // う
+      assert.equal(sp.tags[p++].name, "ch"); // え
+      assert.equal(sp.tags[p++].name, "ch"); // お
+      assert.equal(sp.tags[p++].name, "__line_break__"); // あいうえおの末尾
+      assert.equal(sp.tags[p++].name, "__line_break__"); // 空行
+      assert.equal(sp.tags[p++].name, "s");
     });
-    it('末尾にsタグ自動挿入', () => {
-      let sp = new ScriptParser(ponkan.resource, testScript_01);
-      assert.equal(sp.tags[sp.tags.length-1].name, 's');
+    it("末尾にsコマンド自動挿入", () => {
+      const sp = new ScriptParser(ponkan.resource, testScript01);
+      assert.equal(sp.tags[sp.tags.length - 1].name, "s");
     });
-    it('タグ', () => {
-      let testScript_tag = `;meslay{"width":100,"height":200,"visible":true,"file":"hogehoge.png"}`;
-      let sp = new ScriptParser(ponkan.resource, testScript_tag);
-      assert.equal(sp.tags[0].name, 'meslay');
+    it("コマンド", () => {
+      const testScript = `;meslay{"width":100,"height":200,"visible":true,"file":"hogehoge.png"}`;
+      const sp = new ScriptParser(ponkan.resource, testScript);
+      assert.equal(sp.tags[0].name, "meslay");
       assert.deepEqual(sp.tags[0].values, {
-        "width":100,
-        "height":200,
-        "visible":true,
-        "file":"hogehoge.png",
-        "__body__":`meslay{"width":100,"height":200,"visible":true,"file":"hogehoge.png"}`
+        width: 100,
+        height: 200,
+        visible: true,
+        file: "hogehoge.png",
+        __body__: `meslay{"width":100,"height":200,"visible":true,"file":"hogehoge.png"}`,
       });
     });
-    it('ラベル', () => {
-      let testScript_label = `*label-name`;
-      let sp = new ScriptParser(ponkan.resource, testScript_label);
-      assert.equal(sp.tags[0].name, '__label__');
-      assert.deepEqual(sp.tags[0].values, { "__body__":`label-name` });
+    it("ラベル", () => {
+      const testScript = `*label-name`;
+      const sp = new ScriptParser(ponkan.resource, testScript);
+      assert.equal(sp.tags[0].name, "__label__");
+      assert.deepEqual(sp.tags[0].values, { __body__: `label-name` });
     });
-    it('JavaScript', () => {
-      let testScript_js = `-console.log("TEST");`;
-      let sp = new ScriptParser(ponkan.resource, testScript_js);
-      assert.equal(sp.tags[0].name, '__js__');
-      assert.deepEqual(sp.tags[0].values, { "__body__":`console.log("TEST");`, print: false });
+    describe("セーブマーク", () => {
+      it("未省略 ~hoge|piyo", () => {
+        const testScript = `~save-mark-name|見出しテキスト`;
+        const sp = new ScriptParser(ponkan.resource, testScript);
+        assert.equal(sp.tags[0].name, "__save_mark__");
+        assert.deepEqual(sp.tags[0].values, {
+          __body__: "save-mark-name|見出しテキスト",
+          name: "save-mark-name",
+          comment: "見出しテキスト",
+        });
+      });
+      it("見出し省略 ~hoge:", () => {
+        const testScript = `~save-mark-name|`;
+        const sp = new ScriptParser(ponkan.resource, testScript);
+        assert.equal(sp.tags[0].name, "__save_mark__");
+        assert.deepEqual(sp.tags[0].values, {
+          __body__: "save-mark-name|",
+          name: "save-mark-name",
+          comment: "",
+        });
+      });
+      it("名前省略 ~piyo", () => {
+        const testScript = `~見出しテキスト`;
+        const sp = new ScriptParser(ponkan.resource, testScript);
+        assert.equal(sp.tags[0].name, "__save_mark__");
+        assert.deepEqual(sp.tags[0].values, {
+          __body__: "見出しテキスト",
+          name: "__save_mark_0__",
+          comment: "見出しテキスト",
+        });
+      });
+      it("全省略 ~", () => {
+        const testScript = `~`;
+        const sp = new ScriptParser(ponkan.resource, testScript);
+        assert.equal(sp.tags[0].name, "__save_mark__");
+        assert.deepEqual(sp.tags[0].values, {
+          __body__: "",
+          name: "__save_mark_0__",
+          comment: "",
+        });
+      });
     });
-    it('JavaScript出力', () => {
-      let testScript_jsp = `=100+200;`;
-      let sp = new ScriptParser(ponkan.resource, testScript_jsp);
-      assert.equal(sp.tags[0].name, '__js__');
-      assert.deepEqual(sp.tags[0].values, { "__body__":`100+200;`, print: true });
+    it("JavaScript", () => {
+      const testScript = `-console.log("TEST");`;
+      const sp = new ScriptParser(ponkan.resource, testScript);
+      assert.equal(sp.tags[0].name, "__js__");
+      assert.deepEqual(sp.tags[0].values, { __body__: `console.log("TEST");`, print: false });
     });
-    it('JavaScript部', () => {
-      let sp = new ScriptParser(ponkan.resource, testScript_jspart);
-      assert.equal(sp.tags[0].name, '__js__');
-      assert.deepEqual(sp.tags[0].values, { "__body__":"  var hoge = 100;\n  console.log(hoge);\n", print: false });
+    it("JavaScript出力", () => {
+      const testScript = `=100+200;`;
+      const sp = new ScriptParser(ponkan.resource, testScript);
+      assert.equal(sp.tags[0].name, "__js__");
+      assert.deepEqual(sp.tags[0].values, { __body__: `100+200;`, print: true });
+    });
+    it("JavaScript部", () => {
+      const sp = new ScriptParser(ponkan.resource, testScriptJsPart);
+      assert.equal(sp.tags[0].name, "__js__");
+      assert.deepEqual(sp.tags[0].values, { __body__: "  var hoge = 100;\n  console.log(hoge);\n", print: false });
     });
   });
 }
