@@ -5,9 +5,10 @@ node_modules/
 doc/
 dist_dev/
 dist_test/
-manual/scripts/tmp
-manual/scripts_tmp
 game_template/node_modules/
+game_template/public/*
+game_template/build/
+game_template/dist/
 games/
 tags
 .DS_Store
