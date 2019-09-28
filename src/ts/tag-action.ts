@@ -904,12 +904,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @description テキストをクリアする
     /// @details
     ///   指定したレイヤーのテキストをクリアします。
-    ///   デフォルトではカレントメッセージレイヤーが操作対象です。
+    ///   デフォルトでは全レイヤーが対象です。
     new TagAction(
       ["clear", "c"],
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", false, "message"),
+        new TagValue("lay", "string", false, "all"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
