@@ -142,7 +142,7 @@ export function ScriptParserTest() {
           comment: "見出しテキスト",
         });
       });
-      it("見出し省略 ~hoge:", () => {
+      it("見出し省略 ~hoge|", () => {
         const testScript = `~save-mark-name|`;
         const sp = new ScriptParser(ponkan.resource, testScript);
         assert.equal(sp.tags[0].name, "__save_mark__");
@@ -152,7 +152,17 @@ export function ScriptParserTest() {
           comment: "",
         });
       });
-      it("名前省略 ~piyo", () => {
+      it("名前省略1 ~|piyo", () => {
+        const testScript = `~|見出しテキスト`;
+        const sp = new ScriptParser(ponkan.resource, testScript);
+        assert.equal(sp.tags[0].name, "__save_mark__");
+        assert.deepEqual(sp.tags[0].values, {
+          __body__: "|見出しテキスト",
+          name: "__save_mark_0__",
+          comment: "見出しテキスト",
+        });
+      });
+      it("名前省略2 ~piyo", () => {
         const testScript = `~見出しテキスト`;
         const sp = new ScriptParser(ponkan.resource, testScript);
         assert.equal(sp.tags[0].name, "__save_mark__");

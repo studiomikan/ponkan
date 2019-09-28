@@ -144,8 +144,11 @@ export class ScriptParser {
   private parseSaveMark(body: string): void {
     const p: number = body.indexOf("|");
     if (p !== -1) {
-      const name: string = body.substring(0, p);
+      let name: string = body.substring(0, p);
       const comment: string = body.substring(p + 1);
+      if (name == null || name.length == 0) {
+        name = `__save_mark_${this.saveMarkCount}__`;
+      }
       this.addTag("__save_mark__", { __body__: body, name, comment });
     } else if (body.length > 0) {
       const name: string = `__save_mark_${this.saveMarkCount}__`;
