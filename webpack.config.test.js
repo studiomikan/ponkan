@@ -29,6 +29,14 @@ module.exports = {
       [ { from: '', to: '', }, ],
       { context: 'test/test.html' }
     ),
+    new CopyWebpackPlugin(
+      [ { from: '', to: 'gamedata/', }, ],
+      { context: path.join(__dirname, 'src/gamedata') }
+    ),
+    new CopyWebpackPlugin(
+      [ { from: '', to: 'fonts/', }, ],
+      { context: path.join(__dirname, 'src/fonts') }
+    ),
     new WriteFilePlugin(),
   ]
 }

@@ -1,14 +1,38 @@
 {
-  "name": "ponkan3-game-develop",
+  "name": "ponkan3-game-template",
   "version": "1.0.0",
-  "description": "ponkan3 develop tool",
-  "main": "ponkan3.js",
+  "description": "ponkan3 game template",
+  "main": "main.js",
+  "author": "okayu",
   "scripts": {
+    "pack": "electron-builder --dir",
+    "build": "electron-builder",
+    "build-win": "electron-builder --win",
+    "build-mac": "electron-builder --mac",
+    "start-win": "electron .",
     "start": "http-server -p 8080 -o http://localhost:8080/index.html"
   },
-  "author": "",
-  "license": "MIT",
+  "build": {
+    "appId": "net.studiomikan.ponkan3.template",
+    "productName": "Ponkan3Template",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "mac": {
+      "category": "your.app.category.type"
+    }
+  },
   "devDependencies": {
+    "electron": "^6.0.10",
+    "electron-builder": "^21.2.0",
     "http-server": "^0.11.1"
   }
 }

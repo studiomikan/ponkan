@@ -91,17 +91,13 @@ export function castTagValues(tag: Tag, tagAction: TagAction) {
           }
           break;
         case "array":
-          // Logger.debug(Array.isArray(value));
-          // Logger.debug(typeof value);
           if (!Array.isArray(value)) {
-            // Logger.debug(value);
             throw new Error(`${tag.name}タグの${def.name}は配列である必要があります`);
           }
           tag.values[def.name] = value;
           break;
         case "object":
           if (typeof value !== "object" || Array.isArray(value)) {
-            // Logger.debug(value);
             throw new Error(`${tag.name}タグの${def.name}はオブジェクトである必要があります`);
           }
           tag.values[def.name] = value;
@@ -120,7 +116,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @description レイヤーの数を変更する
     /// @details
     ///   レイヤーの総数を変更します。
-    ///j
+    ///
     ///   Ponkan3初期化時のレイヤー数は40です。40では多すぎる場合・足りない場合は、
     ///   このコマンドでレイヤー数を変更してください。
     ///
@@ -149,6 +145,18 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       (values, tick) => {
         if (values.unknowncommand != null) { p.raiseError.unknowncommand = values.unknowncommand; }
+        return "continue";
+      },
+    ),
+    /// @category その他
+    /// @description デバッグ情報をダンプ
+    /// @details
+    ///   デバッグ情報をブラウザのコンソールに出力します。
+    new TagAction(
+      ["dumpdebuginfo"],
+      [],
+      (values, tick) => {
+        p.dumpDebugInfo();
         return "continue";
       },
     ),
@@ -904,12 +912,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @description テキストをクリアする
     /// @details
     ///   指定したレイヤーのテキストをクリアします。
-    ///   デフォルトではカレントメッセージレイヤーが操作対象です。
+    ///   デフォルトでは全レイヤーが対象です。
     new TagAction(
       ["clear", "c"],
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", false, "message"),
+        new TagValue("lay", "string", false, "all"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
@@ -2206,10 +2214,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   たとえば以下のように、効果音を再生するバッファに se というようなエイリアスを作成することで、
     ///   スクリプト作成時の可読性が向上します。
     ///   ```
-    ///   # 背景画像はレイヤー 0 に作成するので、エイリアスを作成する
+    ///   # 効果音はバッファ 0 に作成するので、エイリアスを作成する
     ///   ;bufalias name: "se", buf: "0"
     ///   # 以後、効果音は以下のように読み込める
-    ///   ;loadsound "buf": "se", "file": "sound/pekowave1.wav"
+    ///   ;loadsound "buf": "se", "file": "sound/pekowave1.mp3"
     ///   ```
     new TagAction(
       ["bufalias"],

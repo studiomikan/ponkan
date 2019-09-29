@@ -4,7 +4,7 @@ export class PonKeyEvent {
 
   public constructor(e: KeyboardEvent) {
     this.e = e;
-    console.log(e, e.key);
+    // console.log(e, e.key);
   }
 
   public get key(): string {

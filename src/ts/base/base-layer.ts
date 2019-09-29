@@ -204,6 +204,25 @@ export class BaseLayer {
   public get container(): PIXI.Container { return this._container; }
   /** レイヤサイズでクリッピングするためのマスク */
   protected maskSprite: PIXI.Sprite;
+  /** デバッグ情報を出力するためのコンテナ */
+  protected debugContainer: PIXI.Container;
+  public set debugInfoVisible (visible: boolean) { this.debugContainer.visible = visible; }
+  public get debugInfoVisible(): boolean { return this.debugContainer.visible; }
+  /** デバッグ情報: ボーダー */
+  protected debugBorder: PIXI.Graphics;
+  /** デバッグ情報: テキスト情報 */
+  protected debugText : PIXI.Text;
+  /** デバッグ情報: テキスト情報のスタイル */
+  public debugTextStyle: PIXI.TextStyle = new PIXI.TextStyle({
+    fontFamily: ["GenShinGothic", "monospace"],
+    fontSize: 12,
+    fontWeight: "normal",
+    fontStyle: "normal",
+    fill: 0xFFFFFF,
+    stroke: 0x000000,
+    strokeThickness: 3,
+    trim: true,
+  });
 
   /** 背景色用スプライト */
   protected backgroundSprite: PonSprite;
@@ -245,7 +264,7 @@ export class BaseLayer {
     fontSize: 24,
     fontWeight: "normal",
     fontStyle: "normal",
-    fill: 0xffffff,
+    fill: 0xFFFFFF,
     textBaseline: "alphabetic",
     dropShadow: false,
     dropShadowAlpha: 0.7,
@@ -416,14 +435,6 @@ export class BaseLayer {
     this.textContainer = new PIXI.Container();
     this.container.addChild(this.textContainer);
     this.textContainer.addChild(this.currentTextLine.container);
-    // this.textSpriteCallbacks = {
-    //   pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
-    //     this.textContainer.addChild(child);
-    //   },
-    //   pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
-    //     this.textContainer.removeChild(child);
-    //   },
-    // };
     this.clearText();
 
     this.childContainer = new PIXI.Container();
@@ -436,6 +447,14 @@ export class BaseLayer {
         this.childContainer.removeChild(child);
       },
     };
+
+    this.debugContainer = new PIXI.Container();
+    this.debugContainer.visible = false;
+    this.container.addChild(this.debugContainer);
+    this.debugBorder = new PIXI.Graphics();
+    this.debugContainer.addChild(this.debugBorder);
+    this.debugText =  new PIXI.Text(this.name, this.debugTextStyle);
+    this.debugContainer.addChild(this.debugText);
 
     this.visible = false;
     // Logger.debug("new layer =>", this);
@@ -454,6 +473,7 @@ export class BaseLayer {
     this.textContainer.destroy();
     this.imageContainer.destroy();
     this.childContainer.destroy();
+    this.debugContainer.destroy();
     this.container.destroy();
 
     this.children.forEach((child) => {
@@ -521,6 +541,21 @@ export class BaseLayer {
   public update(tick: number): void {
     this.children.forEach((child) => {
       child.update(tick);
+    });
+  }
+
+  public beforeDraw(tick: number): void {
+    if (this.visible && this.debugContainer.visible) {
+      this.debugBorder.width = this.width;
+      this.debugBorder.height = this.height;
+      this.debugBorder.x = 0;
+      this.debugBorder.y = 0;
+      this.debugBorder.lineStyle(2, 0xFF0000);
+      this.debugBorder.drawRect(0, 0, this.debugBorder.width, this.debugBorder.height);
+      this.debugText.text = `${this.name}: x=${this.x} y=${this.y} width=${this.width} height=${this.height}`;
+    }
+    this.children.forEach((child) => {
+      child.beforeDraw(tick);
     });
   }
 

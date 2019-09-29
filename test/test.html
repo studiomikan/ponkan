@@ -1,13 +1,48 @@
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Mocha Tests</title>
+  <title>Ponkan3 Tests</title>
   <link href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css" rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'GenShinGothic';
+      font-weight: 400;
+      src: url('../src/fonts/GenShinGothic-Monospace-Regular-sub.woff') format('woff')
+    }
+    @font-face {
+      font-family: 'GenShinGothic';
+      font-weight: 700;
+      src: url('../src/fonts/GenShinGothic-Monospace-Bold-sub.woff') format('woff')
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      /* background: #000000; */
+    }
+    .ponkan-game-wrapper {
+      position: relative;
+      display: block;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .ponkan-game-wrapper canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: 0 0;
+    }
+  </style>
 </head>
 <body>
-  <h1>Mocha Test</h1>
+  <h1>Ponkan3 Tests</h1>
   <div id="mocha"></div>
-  <div id="game"></div>
+  <div style="display:none">
+    <div id="ponkan3game"></div>
+  </div>
 
   <script src="https://cdn.rawgit.com/jquery/jquery/2.1.4/dist/jquery.min.js"></script>
   <script src="https://cdn.rawgit.com/Automattic/expect.js/0.3.1/index.js"></script>

@@ -1,8 +1,8 @@
 # Ponkan3
 
-![Ponkan3 logo](images/ponkan3-logo-landscape2.png)
-
 Ponkan3 is novel-game-engine for web.
+
+![Ponkan3 logo](images/ponkan3-logo-landscape2.png)
 
 ## Demo (sample game)
 
@@ -12,24 +12,34 @@ Ponkan3 is novel-game-engine for web.
 
 [Ponkan3 Documents](http://okayumoka.github.io/ponkan3-docs)
 
-## build (main programs)
+## Build
 
 ```bash
 # install packages
 $ npm install
 
-# case of build only
-$ npm run build
 # case of develop
 $ npm start
+# case of build only
+$ npm run build
+# case of release build (to dist directory)
+$ npm run release
+
+# open http://localhost:8080/
 ```
+
+## Docker
+
+TODO
 
 ## External Libraries used by Ponkan3
 
 ### Libraries
 
-- [PixiJS](https://github.com/pixijs/pixi.js) is released under the MIT License
-- [HOWLER.js](https://github.com/goldfire/howler.js) is released under the MIT License
+- [PixiJS](https://github.com/pixijs/pixi.js) is licensed under the [MIT License](https://opensource.org/licenses/MIT)
+- [HOWLER.js](https://github.com/goldfire/howler.js) is licensed under the [MIT License](https://opensource.org/licenses/MIT)
+- [Web Font Loader](https://github.com/typekit/webfontloader) is licensed under the [Apache License, Version 2.0](https://opensource.org/licenses/Apache-2.0)
+  - Web Font Loader Copyright (c) 2010-2017 Adobe Systems Incorporated, Google Incorporated.
 
 ### Fonts
 
@@ -38,4 +48,4 @@ $ npm start
 
 ## License
 
-Ponkan3 is released under the MIT License.
+Ponkan3 is licensed under the [MIT License](https://opensource.org/licenses/MIT).
