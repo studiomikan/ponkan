@@ -209,6 +209,8 @@ export class Ponkan3 extends PonGame {
   }
 
   protected beforeDraw(tick: number): void  {
+    this.forePrimaryLayer.beforeDraw(tick);
+    this.backPrimaryLayer.beforeDraw(tick);
     this.quake(tick);
   }
 
@@ -225,6 +227,44 @@ export class Ponkan3 extends PonGame {
     }
 
     super.error(new Error(message));
+  }
+
+  // =========================================================
+  // デバッグ関連
+  // =========================================================
+
+  public showLayerDebugInfo(): void {
+    this.foreLayers.forEach((layer) => layer.debugInfoVisible = true);
+    this.backLayers.forEach((layer) => layer.debugInfoVisible = true);
+  }
+
+  public hideLayerDebugInfo(): void {
+    this.foreLayers.forEach((layer) => layer.debugInfoVisible = false);
+    this.backLayers.forEach((layer) => layer.debugInfoVisible = false);
+  }
+
+  public getDebugInfo(): any {
+    const tick = Date.now();
+    return {
+      latestSaveData: this.latestSaveData,
+      systemVar: this.systemVar,
+      foreLayers: this.foreLayers,
+      backLayers: this.backLayers,
+      foreLayerStoredData: this.forePrimaryLayer.store(tick),
+      backLayerStoredData: this.backPrimaryLayer.store(tick),
+    };
+  }
+
+  public dumpDebugInfo(): void {
+    const info = this.getDebugInfo();
+    console.info("=========================================");
+    console.info("latestSaveData", info.latestSaveData);
+    console.info("systemVar", info.systemVar);
+    console.info("foreLayers(current object)", info.foreLayers);
+    console.info("backLayers(current object)", info.backLayers);
+    console.info("foreLayers(stored data)", info.foreLayerStoredData);
+    console.info("backLayers(stored data)", info.backLayerStoredData);
+    console.info("=========================================");
   }
 
   // =========================================================

@@ -1,8 +1,8 @@
 # Ponkan3
 
-![Ponkan3 logo](images/ponkan3-logo-landscape2.png)
-
 Ponkan3 is novel-game-engine for web.
+
+![Ponkan3 logo](images/ponkan3-logo-landscape2.png)
 
 ## Demo (sample game)
 
@@ -18,10 +18,14 @@ Ponkan3 is novel-game-engine for web.
 # install packages
 $ npm install
 
-# case of build only
-$ npm run build
 # case of develop
 $ npm start
+# case of build only
+$ npm run build
+# case of release build (to dist directory)
+$ npm run release
+
+# open http://localhost:8080/
 ```
 
 ## External Libraries used by Ponkan3

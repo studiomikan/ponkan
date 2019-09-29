@@ -91,17 +91,13 @@ export function castTagValues(tag: Tag, tagAction: TagAction) {
           }
           break;
         case "array":
-          // Logger.debug(Array.isArray(value));
-          // Logger.debug(typeof value);
           if (!Array.isArray(value)) {
-            // Logger.debug(value);
             throw new Error(`${tag.name}タグの${def.name}は配列である必要があります`);
           }
           tag.values[def.name] = value;
           break;
         case "object":
           if (typeof value !== "object" || Array.isArray(value)) {
-            // Logger.debug(value);
             throw new Error(`${tag.name}タグの${def.name}はオブジェクトである必要があります`);
           }
           tag.values[def.name] = value;
@@ -120,7 +116,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     /// @description レイヤーの数を変更する
     /// @details
     ///   レイヤーの総数を変更します。
-    ///j
+    ///
     ///   Ponkan3初期化時のレイヤー数は40です。40では多すぎる場合・足りない場合は、
     ///   このコマンドでレイヤー数を変更してください。
     ///
@@ -149,6 +145,18 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       ],
       (values, tick) => {
         if (values.unknowncommand != null) { p.raiseError.unknowncommand = values.unknowncommand; }
+        return "continue";
+      },
+    ),
+    /// @category その他
+    /// @description デバッグ情報をダンプ
+    /// @details
+    ///   デバッグ情報をブラウザのコンソールに出力します。
+    new TagAction(
+      ["dumpdebuginfo"],
+      [],
+      (values, tick) => {
+        p.dumpDebugInfo();
         return "continue";
       },
     ),
