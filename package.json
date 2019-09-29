@@ -1,8 +1,19 @@
 {
   "name": "ponkan3",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Ponkan3 is novel-game-engine for web.",
+  "main": "dist/ponkan3.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/okayumoka/ponkan3"
+  },
+  "author": "okayu <studiomikan@gmail.com> (https://studiomikan.net/)",
+  "license": "MIT",
+  "homepage": "https://github.com/okayumoka/ponkan3",
+  "bugs": {
+    "url": "https://github.com/okayumoka/ponkan3/issues",
+    "email": "studiomikan@gmail.com"
+  },
   "scripts": {
     "release": "webpack --config webpack.config.prod.js",
     "build": "webpack --config webpack.config.dev.js",
@@ -14,8 +25,6 @@
     "start-test": "webpack-dev-server --config webpack.config.test.js --mode=development",
     "test": "npm run start-test"
   },
-  "author": "",
-  "license": "MIT",
   "devDependencies": {
     "@pixi/filter-adjustment": "^2.5.0",
     "@types/chai": "^4.1.7",
