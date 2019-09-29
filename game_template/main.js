@@ -13,9 +13,9 @@ function createWindow () {
     height: 720,
     useContentSize: true,
     titleBarStyle: "hidden",
-    webPreferences: {
-      preload: path.join(__dirname, 'public/preload.js')
-    }
+    // webPreferences: {
+    //   preload: path.join(__dirname, 'public/preload.js')
+    // }
   })
 
   // and load the index.html of the app.
