@@ -11,7 +11,7 @@ window.PONKAN3_SETTINGS = {
   screenShot: {
     width: 231,
     height: 130,
-    nodata: "image/nodata.png",
+    nodata: "sysimage/nodata.png",
   },
 
   // デフォルトのレイヤ設定
@@ -19,7 +19,7 @@ window.PONKAN3_SETTINGS = {
 
   // 履歴レイヤ
   history: {
-    backgroundImage: "image/history.png", // 背景画像
+    backgroundImage: "sysimage/history.png", // 背景画像
     wheelScrollCount: 3,   // マウスホイールのスクロール量
     // テキスト表示部分
     text: {
@@ -51,13 +51,13 @@ window.PONKAN3_SETTINGS = {
     upButton: {
       x: 1280 - 58,
       y: 100,
-      imageFile: "image/history_up.png",
+      imageFile: "sysimage/history_up.png",
     },
     // 下スクロールボタン
     downButton: {
       x: 1280 - 58,
       y: 130 + 500 + 2,
-      imageFile: "image/history_down.png",
+      imageFile: "sysimage/history_down.png",
     },
     // スクロールバー
     scrollBar: {
@@ -75,7 +75,7 @@ window.PONKAN3_SETTINGS = {
     closeButton: {
       x: 1280 - 30 - 24,
       y: 23,
-      imageFile: "image/close_button.png",
+      imageFile: "sysimage/close_button.png",
     }
   }
 };

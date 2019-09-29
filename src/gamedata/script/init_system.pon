@@ -75,7 +75,7 @@ tv.layer = {
   marginb: 20,
   marginl: 20
 }
-#;image lay: "mes", file: "image/message.png"
+#;image lay: "mes", file: "sysimage/message.png"
 ;fillcolor lay: "message", color: 0x000000, alpha: 0.75
 ;textspeed unread: 20, read: 20
 ;clear lay: "all"
@@ -92,7 +92,7 @@ for (var i = 1; i < 15; i++) { frames.push({x: 360 - 24 * i, y: 0}); }
 ;lbglyph "lay": 21, "pos": "eol"
 ;image {
   lay: "linebreak",
-  file: "image/linebreak.png"
+  file: "sysimage/linebreak.png"
 }
 ;frameanim {
   lay: "linebreak",
@@ -115,7 +115,7 @@ for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
 ;pbglyph lay: 22, pos: "eol"
 ;image {
   lay: "pagebreak",
-  file: "image/pagebreak.png"
+  file: "sysimage/pagebreak.png"
 }
 ;frameanim {
   lay: "pagebreak",
@@ -137,7 +137,7 @@ for (var i = 1; i < 15; i++) { frames.push({"x": 360 - 24 * i, "y": 0}); }
   y: 10,
   visible: false
 }
-;image lay: "automode", file: "image/automode.png"
+;image lay: "automode", file: "sysimage/automode.png"
 
 
 ;return
