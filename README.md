@@ -32,8 +32,10 @@ $ npm run release
 
 ### Libraries
 
-- [PixiJS](https://github.com/pixijs/pixi.js) is released under the MIT License
-- [HOWLER.js](https://github.com/goldfire/howler.js) is released under the MIT License
+- [PixiJS](https://github.com/pixijs/pixi.js) is licensed under the [MIT License](https://opensource.org/licenses/MIT)
+- [HOWLER.js](https://github.com/goldfire/howler.js) is licensed under the [MIT License](https://opensource.org/licenses/MIT)
+- [Web Font Loader](https://github.com/typekit/webfontloader) is licensed under the [Apache License, Version 2.0](https://opensource.org/licenses/Apache-2.0)
+  - Web Font Loader Copyright (c) 2010-2017 Adobe Systems Incorporated, Google Incorporated.
 
 ### Fonts
 
@@ -42,4 +44,4 @@ $ npm run release
 
 ## License
 
-Ponkan3 is released under the MIT License.
+Ponkan3 is licensed under the [MIT License](https://opensource.org/licenses/MIT).
