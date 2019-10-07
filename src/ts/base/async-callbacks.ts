@@ -16,7 +16,7 @@ export class AsyncCallbacks {
     return this;
   }
 
-  public callDone(data: any = null) {
+  public callDone(data: any = null): void {
     this.doneFuncs.forEach((doneFunc) => {
       if (doneFunc != null) { doneFunc(data); }
     });
@@ -24,7 +24,7 @@ export class AsyncCallbacks {
       if (alwaysFunc != null) { alwaysFunc(data); }
     });
   }
-  public callFail(data: any = null) {
+  public callFail(data: any = null): void {
     this.failFuncs.forEach((failFunc) => {
       if (failFunc != null) { failFunc(data); }
     });

@@ -22,16 +22,16 @@ export class AsyncTask {
     if (this.tasks.length === 0) {
       // 擬似的に非同期のタスクを用意して実行
       setTimeout(() => {
-        this.onTaskDone(0);
+        this.onTaskDone();
       }, 0);
     } else {
       this._status = "run";
       this.tasks.forEach((task, index: number) => {
         setTimeout(() => {
-          task(index, params).done((data) => {
-            this.onTaskDone(index);
+          task(index, params).done(() => {
+            this.onTaskDone();
           }).fail(() => {
-            this.onTaskFailed(index);
+            this.onTaskFailed();
           });
         }, 0);
       });
@@ -44,7 +44,7 @@ export class AsyncTask {
     this.completeCallbacks.callFail(this);
   }
 
-  private onTaskDone(index: number): void {
+  private onTaskDone(): void {
     this.completeCount++;
     if (this.completeCount >= this.tasks.length) {
       this._status = "done";
@@ -52,7 +52,7 @@ export class AsyncTask {
     }
   }
 
-  private onTaskFailed(index: number): void {
+  private onTaskFailed(): void {
     this._status = "fail";
     this.completeCallbacks.callFail(this);
   }

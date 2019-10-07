@@ -18,7 +18,7 @@ export class Tag {
   public clone(): Tag {
     const values2: any = {};
     for (const key in this.values) {
-      if (this.values.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(this.values, key)) {
         values2[key] = this.values[key];
       }
     }

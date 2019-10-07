@@ -8,13 +8,13 @@ export class Logger {
 
   public static level: number = Logger.LEVEL_INFO;
 
-  public static error(...messages: any[]) {
+  public static error(...messages: any[]): void {
     if (Logger.level <= Logger.LEVEL_ERROR) {
       console.error(...messages);
     }
   }
 
-  public static WARN(...messages: any[]) {
+  public static WARN(...messages: any[]): void {
     if (Logger.level <= Logger.LEVEL_WARN) {
       if (window.console.warn) {
         console.warn(...messages);
@@ -24,19 +24,19 @@ export class Logger {
     }
   }
 
-  public static info(...messages: any[]) {
+  public static info(...messages: any[]): void {
     if (Logger.level <= Logger.LEVEL_INFO) {
       console.log(...messages);
     }
   }
 
-  public static debug(...messages: any[]) {
+  public static debug(...messages: any[]): void {
     if (Logger.level <= Logger.LEVEL_DEBUG) {
       console.log(...messages);
     }
   }
 
-  public static trace(...messages: any[]) {
+  public static trace(...messages: any[]): void {
     if (Logger.level <= Logger.LEVEL_TRACE) {
       console.log(...messages);
     }

@@ -1,4 +1,3 @@
-import { Logger } from "./logger";
 import { Resource } from "./resource";
 import { Script } from "./script";
 

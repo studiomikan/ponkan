@@ -45,7 +45,7 @@ export class TagAction {
  */
 export function applyJsEntity(resource: Resource, values: any): void {
   for (const key in values) {
-    if (values.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(values, key)) {
       const value: string = "" + values[key] as string;
       if (value.indexOf("&") === 0 && value.length >= 2) {
         const js: string = value.substring(1);
@@ -61,7 +61,7 @@ export function applyJsEntity(resource: Resource, values: any): void {
  * @param tag タグ
  * @param tagAction タグ動作定義
  */
-export function castTagValues(tag: Tag, tagAction: TagAction) {
+export function castTagValues(tag: Tag, tagAction: TagAction): void {
   tagAction.values.forEach((def: TagValue) => {
     const value: any = tag.values[def.name];
     if (value === undefined || value === null) { return; }
@@ -107,6 +107,7 @@ export function castTagValues(tag: Tag, tagAction: TagAction) {
   });
 }
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 export function generateTagActions(p: Ponkan3): TagAction[] {
   return [
     // ======================================================================
@@ -128,7 +129,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param レイヤー数
         new TagValue("count", "number", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.layerCount = values.count;
         return "continue";
       },
@@ -143,7 +144,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param `true` の場合、存在しないコマンドを実行したときにエラーにする
         new TagValue("unknowncommand", "boolean", false, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         if (values.unknowncommand != null) { p.raiseError.unknowncommand = values.unknowncommand; }
         return "continue";
       },
@@ -155,7 +156,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["dumpdebuginfo"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.dumpDebugInfo();
         return "continue";
       },
@@ -169,7 +170,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["lockgame"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.lock();
         return "break";
       },
@@ -181,7 +182,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["unlockgame"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.unlock();
         return "break";
       },
@@ -198,7 +199,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["clearsysvar"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.resource.systemVar = {};
         return "continue";
       },
@@ -212,7 +213,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["cleargamevar"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.resource.gameVar = {};
         return "continue";
       },
@@ -226,7 +227,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["cleartmpvar"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.resource.tmpVar = {};
         return "continue";
       },
@@ -240,7 +241,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["savesysvar"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.saveSystemData();
         return "continue";
       },
@@ -256,7 +257,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 有効ならtrue、無効ならfalseを指定
         new TagValue("enabled", "boolean", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.clickSkipEnabled = values.enabled;
         return "continue";
       },
@@ -277,7 +278,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 縦方向の揺れの最大値
         new TagValue("y", "number", false, 20),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.startQuake(tick, values.time, values.x, values.y);
         return "continue";
       },
@@ -290,7 +291,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["stopquake"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.stopQuake();
         return "continue";
       },
@@ -307,7 +308,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param スキップ可能かどうか
         new TagValue("canskip", "boolean", false, true),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         if (!p.isQuaking) {
           return "continue";
         }
@@ -316,12 +317,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           return "break";
         } else {
           if (values.canskip) {
-            p.conductor.addEventHandler(new PonEventHandler("click", () => {
+            p.conductor.addEventHandler(new PonEventHandler("click", (): void => {
               p.stopQuake();
               p.conductor.start();
             }, "waitquake"));
           }
-          p.conductor.addEventHandler(new PonEventHandler("quake", () => {
+          p.conductor.addEventHandler(new PonEventHandler("quake", (): void => {
             p.conductor.start();
           }, "waitquake"));
           return p.conductor.stop();
@@ -350,7 +351,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 右クリックの有効無効
         new TagValue("enabled", "boolean", false, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         if (values.jump != null) { p.rightClickJump = values.jump; }
         if (values.call != null) { p.rightClickCall = values.call; }
         if (values.file != null) { p.rightClickFilePath = values.file; }
@@ -371,7 +372,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param コマンドの名前
         new TagValue("command", "string", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.addCommandShortcut(values.ch, values.command);
         return "continue";
       },
@@ -386,7 +387,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param ショートカットの文字
         new TagValue("ch", "string", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.delCommandShortcut(values.ch);
         return "continue";
       },
@@ -402,7 +403,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["s"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.conductor.passLatestSaveMark();
         p.conductor.stop();
         p.stopSkip();
@@ -427,7 +428,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 現在の位置を既読にするかどうか
         new TagValue("countpage", "boolean", false, true),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         if (values.file == null && values.label == null) {
           return "continue";
         } else {
@@ -456,7 +457,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 現在の位置を既読にするかどうか
         new TagValue("countpage", "boolean", false, false),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         if (values.file == null && values.label == null) {
           return "continue";
         } else {
@@ -484,7 +485,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 現在の位置を既読にするかどうか
         new TagValue("countpage", "boolean", false, true),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         return p.returnSubroutine(values.forcestart, values.countpage);
       },
     ),
@@ -497,7 +498,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 条件式(JavaScript)
         new TagValue("exp", "string", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.conductor.script.ifJump(values.exp, p.tagActions);
         return "continue";
       },
@@ -508,7 +509,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["elseif", "elsif"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.conductor.script.elsifJump();
         return "continue";
       },
@@ -519,7 +520,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["else"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.conductor.script.elseJump();
         return "continue";
       },
@@ -530,7 +531,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["endif"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         return "continue";
       },
     ),
@@ -548,7 +549,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param ループ中のインデックスを格納する変数名
         new TagValue("indexvar", "string", false, "__index__"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.conductor.script.startForLoop(values.loops, values.indexvar);
         return "continue";
       },
@@ -559,7 +560,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["endfor"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.conductor.script.endForLoop();
         return "continue";
       },
@@ -572,7 +573,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["breakfor"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.conductor.script.breakForLoop();
         return "continue";
       },
@@ -584,7 +585,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["startskip", "skip"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.startSkipByTag();
         return "continue";
       },
@@ -596,7 +597,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["stopskip"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.stopSkip();
         return "continue";
       },
@@ -608,7 +609,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["startautomode", "startauto", "auto"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.startAutoMode();
         return "continue";
       },
@@ -620,7 +621,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["stopautomode", "stopauto"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.stopAutoMode();
         return "continue";
       },
@@ -640,7 +641,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param オートモードのインターバル時間(ms)
         new TagValue("time", "number", false, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         if (values.lay) { p.autoModeLayerNum = values.lay; }
         if (values.time) { p.autoModeInterval = values.time; }
         return "continue";
@@ -660,12 +661,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param スキップ可能かどうか
         new TagValue("canskip", "boolean", false, true),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         if (p.isSkipping && values.canskip) {
           return "continue";
         } else {
           if (values.canskip) {
-            p.conductor.addEventHandler(new PonEventHandler("click", () => {
+            p.conductor.addEventHandler(new PonEventHandler("click", (): void => {
               p.conductor.start();
               p.stopUntilClickSkip(); // 次のlb,pbまで飛ばされるのを防ぐ
             }, "wait"));
@@ -686,14 +687,14 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param スキップ可能かどうか
         new TagValue("canskip", "boolean", false, true),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.stopUntilClickSkip(); // クリック待ちまでのスキップを停止
         if (p.isSkipping && values.canskip) {
           // UNTIL_CLICK_WAITが終わってもなおスキップ中なら、クリック待ちはしない
           // ただし改行条件等を通常と揃えるために一度グリフを表示して、すぐに非表示にする
           return "continue";
         } else {
-          p.conductor.addEventHandler(new PonEventHandler("click", () => {
+          p.conductor.addEventHandler(new PonEventHandler("click", (): void => {
             p.conductor.start();
           }, "waitclick"));
           if (p.autoModeFlag && values.canskip) {
@@ -717,7 +718,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param マクロの名前
         new TagValue("name", "string", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         if (p.resource.hasMacro(values.name)) {
           throw new Error(`${values.name}マクロはすでに登録されています`);
         }
@@ -734,7 +735,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["endmacro"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         throw new Error("マクロ定義エラー。macroとendmacroの対応が取れていません");
         return "continue";
       },
@@ -763,13 +764,13 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("fontstyle", "string", false, null),
         /// @param 文字色(0xRRGGBB)
         new TagValue("color", "number", false, null),
-        /// @param テキスト描画のマージン　上
+        /// @param テキスト描画のマージン 上
         new TagValue("margint", "number", false, null),
-        /// @param テキスト描画のマージン　右
+        /// @param テキスト描画のマージン 右
         new TagValue("marginr", "number", false, null),
-        /// @param テキスト描画のマージン　下
+        /// @param テキスト描画のマージン 下
         new TagValue("marginb", "number", false, null),
-        /// @param テキスト描画のマージン　左
+        /// @param テキスト描画のマージン 左
         new TagValue("marginl", "number", false, null),
         /// @param テキストの文字間(px)
         new TagValue("pitch", "number", false, null),
@@ -802,7 +803,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param ルビのオフセット(px)
         new TagValue("rubyoffset", "number", false, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer: PonLayer) => {
           if (values.fontfamily != null) { layer.textFontFamily = values.fontfamily; }
           if (values.fontsize != null) { layer.textFontSize = values.fontsize; }
@@ -847,7 +848,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 出力する文字
         new TagValue("text", "string", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.hideBreakGlyph();
         p.getLayers(values).forEach((layer) => {
           layer.addChar(values.text);
@@ -879,7 +880,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param ルビ
         new TagValue("text", "string", false, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         if (values.text != null) {
           p.getLayers(values).forEach((layer) => {
             layer.reserveRubyText(values.text);
@@ -901,7 +902,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.addTextReturn();
         });
@@ -921,7 +922,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.clearText();
         });
@@ -955,7 +956,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param システムモードでの既読文章のインターバル時間(ms)
         new TagValue("sysread", "number", false, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         if (values.move != null) { p.textSpeedMode = values.mode; }
         if (values.unread != null) { p.userUnreadTextSpeed = values.unread; }
         if (values.read != null) { p.userReadTextSpeed = values.read; }
@@ -972,7 +973,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["nowait"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.nowaitModeFlag = true;
         return "continue";
       },
@@ -984,7 +985,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["endnowait"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.nowaitModeFlag = false;
         return "continue";
       },
@@ -1006,7 +1007,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param x座標
         new TagValue("y", "number", false, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.setCharLocate(values.x, values.y);
         });
@@ -1028,7 +1029,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param メッセージ履歴もインデントするかどうか
         new TagValue("history", "boolean", false, true),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.setIndentPoint();
         });
@@ -1052,7 +1053,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param メッセージ履歴もインデント解除するか
         new TagValue("history", "boolean", false, true),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.clearIndentPoint();
         });
@@ -1068,7 +1069,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["linebreak", "lb", "l"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.stopUntilClickSkip(); // クリック待ちまでのスキップを停止
         if (p.isSkipping) {
           // UNTIL_CLICK_WAITが終わってもなおスキップ中なら、クリック待ちはしない
@@ -1079,7 +1080,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         } else {
           // クリック待ちへ移行
           p.showLineBreakGlyph(tick);
-          p.conductor.addEventHandler(new PonEventHandler("click", () => {
+          p.conductor.addEventHandler(new PonEventHandler("click", (): void => {
             p.conductor.start();
             p.hideBreakGlyph();
           }, "lb"));
@@ -1094,7 +1095,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["pagebreak", "pb", "p"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.stopUntilClickSkip(); // クリック待ちまでのスキップを停止
         p.historyTextReturn();
         if (p.isSkipping) {
@@ -1105,7 +1106,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           return "break"; // クリック待ちはしないが、一回描画する
         } else {
           p.showPageBreakGlyph(tick);
-          p.conductor.addEventHandler(new PonEventHandler("click", () => {
+          p.conductor.addEventHandler(new PonEventHandler("click", (): void => {
             p.conductor.start();
             p.hideBreakGlyph();
           }, "pb"));
@@ -1122,9 +1123,9 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["hidemessages"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.hideMessages();
-        p.conductor.addEventHandler(new PonEventHandler("click", () => {
+        p.conductor.addEventHandler(new PonEventHandler("click", (): void => {
           p.conductor.start();
           p.showMessages();
         }, "hidemessages"));
@@ -1155,7 +1156,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.layerAlias[values.name] = values.lay;
         return "continue";
       },
@@ -1170,7 +1171,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param エイリアス名
         new TagValue("name", "string", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         delete p.layerAlias[values.name];
         return "continue";
       },
@@ -1189,7 +1190,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象レイヤー
         new TagValue("lay", "number", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         const lay: number = +values.lay;
         if (lay < 0 || p.layerCount <= lay) {
           throw new Error("メッセージレイヤーの指定が範囲外です");
@@ -1217,7 +1218,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param グリフの表示位置（メッセージレイヤーからの相対位置）
         new TagValue("y", "number", false, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         if (values.lay != null) { p.lineBreakGlyphLayerNum = values.lay; }
         if (values.pos != null) { p.lineBreakGlyphPos = values.pos; }
         if (values.x != null) { p.lineBreakGlyphX = values.x; }
@@ -1244,7 +1245,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param グリフの表示位置（メッセージレイヤーからの相対位置）
         new TagValue("y", "number", false, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         if (values.lay != null) { p.pageBreakGlyphLayerNum = values.lay; }
         if (values.pos != null) { p.pageBreakGlyphPos = values.pos; }
         if (values.x != null) { p.pageBreakGlyphX = values.x; }
@@ -1268,7 +1269,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 塗りつぶしのAlpha(0.0〜1.0)
         new TagValue("alpha", "number", false, 1.0),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.setBackgroundColor(values.color, values.alpha);
         });
@@ -1287,7 +1288,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.clearBackgroundColor();
         });
@@ -1334,7 +1335,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param マウスホイールイベントを遮断するかどうか
         new TagValue("blockwheel", "boolean", false, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           if (values.visible != null) { layer.visible = values.visible; }
           if (values.x != null) { layer.x = values.x; }
@@ -1377,7 +1378,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param レイヤーのAlpha(0.0〜1.0)
         new TagValue("alpha", "number", false, 1.0),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         const task: AsyncTask = new AsyncTask();
         p.getLayers(values).forEach((layer) => {
           task.add(() => {
@@ -1420,7 +1421,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 表示非表示
         new TagValue("alpha", "number", false, 1.0),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         const task: AsyncTask = new AsyncTask();
         p.getLayers(values).forEach((layer) => {
           task.add(() => {
@@ -1447,7 +1448,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.freeImage();
           layer.freeChildImages();
@@ -1518,7 +1519,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param ボタン押下時に再生する音声の音声バッファ
         new TagValue("clickbuf", "string", false, ""),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.addTextButton(
             values.btnname,
@@ -1568,7 +1569,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 背景色のAlphaの配列(0.0〜1.0)。通常時、マウスオーバー時、マウス押下時の順
         new TagValue("bgalphas", "array", false, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           if (values.bgcolors) { layer.changeTextButtonColors(values.btnname, values.bgcolors); }
           if (values.bgalphas) { layer.changeTextButtonAlphas(values.btnname, values.bgalphas); }
@@ -1588,7 +1589,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.clearTextButtons();
           layer.clearImageButtons();
@@ -1609,7 +1610,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.clearTextButtons();
         });
@@ -1658,7 +1659,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param ボタン押下時に再生する音声の音声バッファ
         new TagValue("clickbuf", "string", false, ""),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.addImageButton(
             values.jump,
@@ -1694,7 +1695,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.clearImageButtons();
         });
@@ -1732,7 +1733,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param システム用ボタンとする場合はtrue
         new TagValue("system", "boolean", false, false),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.addToggleButton(
             values.imagefile,
@@ -1761,7 +1762,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.clearToggleButtons();
         });
@@ -1780,7 +1781,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.lockButtons();
         });
@@ -1800,7 +1801,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => { layer.unlockButtons(); });
         return "continue";
       },
@@ -1817,7 +1818,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => { layer.lockSystemButtons(); });
         return "continue";
       },
@@ -1834,7 +1835,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => { layer.unlockSystemButtons(); });
         return "continue";
       },
@@ -1875,7 +1876,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         // /// @param スライダー押下時に再生する音声の音声バッファ
         // new TagValue("clickbuf", "string", false, ""),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.addSlider(
             values.x,
@@ -1904,7 +1905,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => { layer.lockSliders(); });
         return "continue";
       },
@@ -1921,7 +1922,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => { layer.unlockSliders(); });
         return "continue";
       },
@@ -1952,7 +1953,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param フレーム指定
         new TagValue("frames", "array", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.initFrameAnim(values.loop, values.time, values.width, values.height, values.frames);
         });
@@ -1971,7 +1972,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.startFrameAnim(tick);
         });
@@ -1992,7 +1993,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.deleteFrameAnim();
         });
@@ -2014,7 +2015,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param スキップ可能かどうか
         new TagValue("canskip", "boolean", false, true),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         const layers = p.getLayers(values).filter((l) => l.frameAnimRunning && !l.frameAnimLoop);
         if (layers.length === 0) {
           return "continue";
@@ -2024,11 +2025,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           return "break";
         } else {
           if (values.canskip) {
-            p.conductor.addEventHandler(new PonEventHandler("click", () => {
+            p.conductor.addEventHandler(new PonEventHandler("click", (): void => {
               p.waitFrameAnimClickCallback(layers);
             }, "waitframeanim"));
           }
-          p.conductor.addEventHandler(new PonEventHandler("frameanim", () => {
+          p.conductor.addEventHandler(new PonEventHandler("frameanim", (): void => {
             p.waitFrameAnimCompleteCallback(layers);
           }, "waitframeanim"));
           return p.conductor.stop();
@@ -2060,7 +2061,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 自動移動をループさせるかどうか。タイプが "linear" か "catmullrom" の場合のみ有効
         new TagValue("loop", "boolean", false, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.startMove(tick, values.time, values.delay, values.path, values.type, values.ease, values.loop);
         });
@@ -2080,7 +2081,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.stopMove();
         });
@@ -2098,7 +2099,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param スキップ可能かどうか
         new TagValue("canskip", "boolean", false, true),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         if (!p.hasMovingLayer) {
           return "continue";
         }
@@ -2107,11 +2108,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           return "break";
         } else {
           if (values.canskip) {
-            p.conductor.addEventHandler(new PonEventHandler("click", () => {
+            p.conductor.addEventHandler(new PonEventHandler("click", (): void => {
               p.waitMoveClickCallback();
             }, "waitmove"));
           }
-          p.conductor.addEventHandler(new PonEventHandler("move", () => {
+          p.conductor.addEventHandler(new PonEventHandler("move", (): void => {
             p.waitMoveCompleteCallback();
           }, "waitmove"));
           return p.conductor.stop();
@@ -2133,7 +2134,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.clearFilters();
         });
@@ -2158,7 +2159,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param ぼかしの品質
         new TagValue("quality", "number", false, 4),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.addFilter("blur", {
             blurX: values.blurx,
@@ -2195,7 +2196,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 色調（青）
         new TagValue("blue", "number", false, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           layer.addFilter("color", values);
         });
@@ -2227,7 +2228,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象レイヤー
         new TagValue("buf", "string", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.soundBufferAlias[values.name] = values.buf;
         return "continue";
       },
@@ -2242,7 +2243,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param エイリアス名
         new TagValue("name", "string", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         delete p.soundBufferAlias[values.name];
         return "continue";
       },
@@ -2259,7 +2260,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 読み込む音声ファイルパス
         new TagValue("file", "string", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getSoundBuffer(values.buf).loadSound(values.file).done((sb) => {
           p.conductor.start();
         }).fail(() => {
@@ -2279,7 +2280,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 読み込み先バッファ番号
         new TagValue("buf", "string", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getSoundBuffer(values.buf).freeSound();
         return "continue";
       },
@@ -2302,7 +2303,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param ループ再生するかどうか
         new TagValue("loop", "boolean", false, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         const sb: SoundBuffer = p.getSoundBuffer(values.buf);
         if (values.volume != null) { sb.volume = values.volume; }
         if (values.gvolume != null) { sb.gvolume = values.gvolume; }
@@ -2321,7 +2322,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 読み込み先バッファ番号
         new TagValue("buf", "string", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getSoundBuffer(values.buf).play();
         return "continue";
       },
@@ -2336,7 +2337,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 読み込み先バッファ番号
         new TagValue("buf", "string", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getSoundBuffer(values.buf).stop();
         return "continue";
       },
@@ -2358,7 +2359,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param フェード終了後に再生停止するか
         new TagValue("autostop", "boolean", false, false),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getSoundBuffer(values.buf).fade(values.volume, values.time, values.autostop);
         return "continue";
       },
@@ -2378,7 +2379,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param フェード終了後に自動的に再生停止するか
         new TagValue("autostop", "boolean", false, true),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getSoundBuffer(values.buf).fadeout(values.time, values.autostop);
         return "continue";
       },
@@ -2398,7 +2399,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param フェード時間(ms)
         new TagValue("time", "number", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getSoundBuffer(values.buf).fadein(values.volume, values.time);
         return "continue";
       },
@@ -2416,7 +2417,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param スキップ可能かどうか
         new TagValue("canskip", "boolean", false, true),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         const s: SoundBuffer = p.getSoundBuffer(values.buf);
         if (!s.playing || s.loop) {
           return "continue";
@@ -2426,11 +2427,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           return "continue";
         } else {
           if (values.canskip) {
-            p.conductor.addEventHandler(new PonEventHandler("click", () => {
+            p.conductor.addEventHandler(new PonEventHandler("click", (): void => {
               p.waitSoundStopClickCallback(s);
             }, "waitsoundstop"));
           }
-          p.conductor.addEventHandler(new PonEventHandler("soundstop", () => {
+          p.conductor.addEventHandler(new PonEventHandler("soundstop", (): void => {
             p.waitSoundCompleteCallback(s);
           }, "waitsoundstop"));
           return p.conductor.stop();
@@ -2449,7 +2450,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param スキップ可能かどうか
         new TagValue("canskip", "boolean", false, true),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         const s: SoundBuffer = p.getSoundBuffer(values.buf);
         if (!s.fading) {
           return "continue";
@@ -2459,11 +2460,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           return "continue";
         } else {
           if (values.canskip) {
-            p.conductor.addEventHandler(new PonEventHandler("click", () => {
+            p.conductor.addEventHandler(new PonEventHandler("click", (): void => {
               p.waitSoundFadeClickCallback(s);
             }, "waitsoundfade"));
           }
-          p.conductor.addEventHandler(new PonEventHandler("soundfade", () => {
+          p.conductor.addEventHandler(new PonEventHandler("soundfade", (): void => {
             p.waitSoundFadeCompleteCallback(s);
           }, "waitsoundfade"));
           return p.conductor.stop();
@@ -2481,7 +2482,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 読み込み先バッファ番号
         new TagValue("buf", "string", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.getSoundBuffer(values.buf).endFade();
         return "continue";
       },
@@ -2499,7 +2500,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 対象レイヤー
         new TagValue("lay", "string", false, "all"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.backlay(values.lay);
         return "continue";
       },
@@ -2520,7 +2521,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param コピー先ページ
         new TagValue("destpage", "string", false, "fore"),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.copylay(values.srclay, values.destlay, values.srcpage, values.destpage);
         return "continue";
       },
@@ -2541,7 +2542,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 操作対象ページ（"fore" | "back" ）を指定
         new TagValue("page", "string", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.currentPage = values.page;
         return "continue";
       },
@@ -2554,7 +2555,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["preparetrans", "pretrans"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.backlay("all");
         p.currentPage = "back";
         return "continue";
@@ -2579,7 +2580,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param あいまい値
         new TagValue("vague", "number", false, 0.25),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         if (values.time <= 0) {
           p.flip();
           p.onCompleteTrans();
@@ -2609,7 +2610,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["stoptrans"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         if (!p.transManager.isRunning) {
           return "continue";
         } else {
@@ -2630,7 +2631,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param スキップ可能かどうか
         new TagValue("canskip", "boolean", false, true),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         if (!p.transManager.isRunning) {
           return "continue";
         }
@@ -2639,11 +2640,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           return "break";
         } else {
           if (values.canskip) {
-            p.conductor.addEventHandler(new PonEventHandler("click", () => {
+            p.conductor.addEventHandler(new PonEventHandler("click", (): void => {
               p.waitTransClickCallback();
             }, "waittrans"));
           }
-          p.conductor.addEventHandler(new PonEventHandler("trans", () => {
+          p.conductor.addEventHandler(new PonEventHandler("trans", (): void => {
             p.waitTransCompleteCallback();
           }, "waittrans"));
           return p.conductor.stop();
@@ -2658,7 +2659,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["flip"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.flip();
         p.onCompleteTrans();
         return "continue";
@@ -2679,7 +2680,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param メッセージレイヤを表示できるかどうか
         new TagValue("enabled", "boolean", false, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         if (values.output != null) { p.historyLayer.outputFlag = values.output; }
         if (values.enabled != null) { p.enabledHistory = values.enabled; }
         return "continue";
@@ -2692,7 +2693,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["showhistory", "history"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.showHistoryLayer();
         return "continue";
       },
@@ -2707,7 +2708,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 出力する文字
         new TagValue("text", "string", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.addTextToHistory(values.text);
         return "continue";
       },
@@ -2719,7 +2720,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["hbr"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.historyTextReturn();
         return "continue";
       },
@@ -2738,7 +2739,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param セーブ番号
         new TagValue("num", "number", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.save(tick, values.num);
         return "continue";
       },
@@ -2753,7 +2754,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param セーブ番号
         new TagValue("num", "number", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.load(tick, values.num).done(() => {
           p.conductor.start();
         }).fail(() => {
@@ -2778,7 +2779,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param セーブ番号
         new TagValue("num", "number", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.tempSave(tick, values.num);
         return "continue";
       },
@@ -2800,7 +2801,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param 表ページを裏ページとして復元するかどうか
         new TagValue("toback", "boolean", false, false),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.tempLoad(tick, values.num, values.sound, values.toback).done(() => {
           p.conductor.start();
         }).fail(() => {
@@ -2819,7 +2820,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["lockscreenshot"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.lockScreenShot();
         return "continue";
       },
@@ -2830,7 +2831,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     new TagAction(
       ["unlockscreenshot"],
       [],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.unlockScreenShot();
         return "continue";
       },
@@ -2846,7 +2847,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param コピー先のセーブ番号
         new TagValue("destnum", "number", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.copySaveData(values.srcnum, values.destnum);
         return "continue";
       },
@@ -2860,10 +2861,11 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         /// @param セーブ番号
         new TagValue("num", "number", true, null),
       ],
-      (values, tick) => {
+      (values: any, tick: number):  "continue" | "break" => {
         p.deleteSaveData(values.num);
         return "continue";
       },
     ),
   ];
 }
+/* eslint-enalble @typescript-eslint/no-unused-vars */

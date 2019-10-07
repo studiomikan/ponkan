@@ -6,9 +6,7 @@ import { PonMouseEvent } from "../base/pon-mouse-event";
 import { PonWheelEvent } from "../base/pon-wheel-event";
 import { Resource } from "../base/resource";
 import * as Util from "../base/util";
-import { Ponkan3 } from "../ponkan3";
 import { Button } from "./button";
-import { ImageButtonLayer } from "./image-button-layer";
 
 export class HistoryButton extends Button {
   private callbacks: any;
@@ -21,12 +19,12 @@ export class HistoryButton extends Button {
     });
   }
 
-  public clearHistoryButton() {
+  public clearHistoryButton(): void {
     this.clearButton();
     this.freeImage();
   }
 
-  public setButtonStatus(status: "normal" | "over" | "on" | "disabled") {
+  public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
     super.setButtonStatus(status);
 
     switch (status) {
@@ -85,7 +83,7 @@ class SimpleButton extends BaseLayer {
   public initButton(
     bgColors: number[],
     bgAlphas: number[],
-  ) {
+  ): void {
     this.bgColors = bgColors;
     this.bgAlphas = bgAlphas;
 
@@ -93,7 +91,7 @@ class SimpleButton extends BaseLayer {
     this.visible = true;
   }
 
-  public setStatus(status: "normal" | "over" | "on") {
+  public setStatus(status: "normal" | "over" | "on"): void {
     this.status = status;
     const c = { normal: 0, over: 1, on: 2 }[status];
     this.setBackgroundColor(this.bgColors[c], this.bgAlphas[c]);
@@ -207,7 +205,7 @@ class ScrollBar extends BaseLayer {
     maxPoint: number,
     linesCount: number,
     screenLineCount: number,
-  ) {
+  ): void {
     if (linesCount <= screenLineCount) {
       this.bar.visible = false;
       return;
@@ -366,12 +364,12 @@ class HistoryTextLayer extends BaseLayer {
     this.clearIndentPoints[this.clearIndentPoints.length - 1] = this.currentLine.length - 1;
   }
 
-  public scrollUp(count: number = 1): void {
+  public scrollUp(count = 1): void {
     this.point -= count;
     this.fixPoint();
   }
 
-  public scrollDown(count: number = 1): void {
+  public scrollDown(count = 1): void {
     this.point += count;
     this.fixPoint();
   }
@@ -393,7 +391,7 @@ class HistoryTextLayer extends BaseLayer {
     this.point = this.maxPoint;
   }
 
-  private fixPoint() {
+  private fixPoint(): void {
     if (this.point < 0) { this.point = 0; }
     if (this.point > this.maxPoint) { this.point = this.maxPoint; }
   }
@@ -479,7 +477,7 @@ export class HistoryLayer extends BaseLayer {
     this.closeButton = new HistoryButton("CloseButton", resource, owner);
   }
 
-  public init(config: any = {}, asyncTask: AsyncTask) {
+  public init(config: any = {}, asyncTask: AsyncTask): void {
     if (config.history == null) { config.history = {}; }
     if (config.history.text == null) { config.history.text = {}; }
     if (config.history.upButton == null) { config.history.upButton = {}; }
@@ -513,13 +511,11 @@ export class HistoryLayer extends BaseLayer {
 
     // 閉じるボタン
     this.initCloseButton(config);
-
-    const hc: any = config.history != null ? config.history : {};
   }
 
   protected initScrollButtons(config: any): void {
 
-    const init = (button: HistoryButton, conf: any) => {
+    const init = (button: HistoryButton, conf: any): void => {
       if (conf.bgColors == null) { conf.bgColors = [0x4286f4, 0x4286f4, 0x4286f4]; }
       if (conf.bgAlphas == null) { conf.bgAlphas = [0.7, 0.8, 0.9]; }
       button.applyConfig(conf);
@@ -559,7 +555,7 @@ export class HistoryLayer extends BaseLayer {
       c.minHeight,
     );
 
-    sb.onChangeCallback = () => {
+    sb.onChangeCallback = (): void => {
       const p: number = Math.floor(this.textLayer.maxPoint * sb.getBarPoint());
       if (this.textLayer.currentPoint !== p) {
         this.textLayer.goTo(p);
@@ -625,7 +621,7 @@ export class HistoryLayer extends BaseLayer {
     // this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
   }
 
-  public scrollUp(count: number = 1): void {
+  public scrollUp(count = 1): void {
     this.textLayer.scrollUp(count);
     this.textLayer.redraw();
     this.resetScrollBar();
@@ -637,7 +633,7 @@ export class HistoryLayer extends BaseLayer {
     this.resetScrollBar();
   }
 
-  public scrollDown(count: number = 1): void {
+  public scrollDown(count = 1): void {
     this.textLayer.scrollDown(count);
     this.textLayer.redraw();
     this.resetScrollBar();

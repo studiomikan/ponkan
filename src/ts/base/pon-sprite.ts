@@ -1,9 +1,7 @@
 import * as PIXI from "pixi.js";
-import { BaseLayer } from "./base-layer";
-import { PonRenderer } from "./pon-renderer";
 
-const DEFAULT_WIDTH: number = 32;
-const DEFAULT_HEIGHT: number = 32;
+const DEFAULT_WIDTH = 32;
+const DEFAULT_HEIGHT = 32;
 
 // 日本語フォントの上部が見切れてしまう問題の対処
 PIXI.TextMetrics.BASELINE_SYMBOL += "ぽン甘｜";
@@ -11,7 +9,7 @@ PIXI.TextMetrics.BASELINE_SYMBOL += "ぽン甘｜";
 /**
  * PonSpriteのコールバック
  */
-export interface IPonSpriteCallbacks {
+export interface PonSpriteCallbacks {
   /**
    * コンテナにスプライトを追加する
    * @param child 追加するスプライト
@@ -29,7 +27,7 @@ export interface IPonSpriteCallbacks {
  */
 export class PonSprite {
   /** コールバック */
-  private callbacks: IPonSpriteCallbacks;
+  private callbacks: PonSpriteCallbacks;
   private _x: number = 0;
   private _y: number = 0;
   private _width: number = DEFAULT_WIDTH;
@@ -118,7 +116,7 @@ export class PonSprite {
   /**
    * @param callbacks コールバック
    */
-  public constructor(callbacks: IPonSpriteCallbacks) {
+  public constructor(callbacks: PonSpriteCallbacks) {
     this.callbacks = callbacks;
   }
 
@@ -244,10 +242,12 @@ export class PonSprite {
     this.callbacks.pixiContainerAddChild(this.pixiSprite);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onUpdate(tick: number): void {
     // TODO 実装
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onDraw(tick: number): void {
     // TODO 実装
   }

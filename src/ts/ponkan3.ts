@@ -1,14 +1,13 @@
 import { AsyncCallbacks } from "./base/async-callbacks";
 import { AsyncTask } from "./base/async-task";
-import { BaseLayer, IBaseLayerEventListener } from "./base/base-layer";
-import { Conductor, ConductorState, IConductorEvent } from "./base/conductor";
+import { BaseLayer, BaseLayerEventListener } from "./base/base-layer";
+import { ConductorState } from "./base/conductor";
 import { Logger } from "./base/logger";
-import { PonEventHandler } from "./base/pon-event-handler";
 import { PonGame } from "./base/pon-game";
 import { PonKeyEvent } from "./base/pon-key-event";
 import { PonMouseEvent } from "./base/pon-mouse-event";
 import { PonWheelEvent } from "./base/pon-wheel-event";
-import { ISoundBufferCallbacks, SoundBuffer } from "./base/sound";
+import { SoundBufferCallbacks, SoundBuffer } from "./base/sound";
 import { Tag } from "./base/tag";
 import * as Util from "./base/util";
 import { HistoryLayer } from "./layer/history-layer";
@@ -78,21 +77,24 @@ export class Ponkan3 extends PonGame {
   public addCharWithBackFlag: boolean = false;
   public hideMessageFlag: boolean = false;
   public hideMessageByRlickFlag: boolean = false;
-  protected _messageLayerNum: number = 20;
+  protected _messageLayerNum: number = DEFAULT_MESSAGE_LAYER_NUM;
   public get messageLayerNum(): number { return this._messageLayerNum; }
   public set messageLayerNum(num: number) {
     if (this.messageLayerEventListener != null) {
       this.messageLayer.delEventListener(this.messageLayerEventListener);
     }
     this._messageLayerNum = num;
-    const _this = this;
-    this.messageLayerEventListener = {
-      onChangeX(sender: BaseLayer, x) { _this.onChangeMessageLayerPos(); },
-      onChangeY(sender: BaseLayer, y) { _this.onChangeMessageLayerPos(); }
-    };
-    this.messageLayer.addEventListener(this.messageLayerEventListener);
+    (function(self: Ponkan3): void {
+      self.messageLayerEventListener = {
+        /* eslint-disable @typescript-eslint/no-unused-vars */
+        onChangeX(sender: BaseLayer, x): void { self.onChangeMessageLayerPos(); },
+        onChangeY(sender: BaseLayer, y): void { self.onChangeMessageLayerPos(); },
+        /* eslint-enalble @typescript-eslint/no-unused-vars */
+      };
+      self.messageLayer.addEventListener(self.messageLayerEventListener);
+    })(this);
   }
-  public messageLayerEventListener: IBaseLayerEventListener | null = null;
+  public messageLayerEventListener: BaseLayerEventListener | null = null;
 
   protected _lineBreakGlyphLayerNum: number = DEFAULT_LINE_BREAK_LAYER_NUM;
   public get lineBreakGlyphLayerNum(): number { return this._lineBreakGlyphLayerNum; }
@@ -159,7 +161,7 @@ export class Ponkan3 extends PonGame {
     this.initSoundBuffers(config);
   }
 
-  public destroy() {
+  public destroy(): void {
     this.stop();
     this.forePrimaryLayer.destroy();
     this.backPrimaryLayer.destroy();
@@ -451,7 +453,7 @@ export class Ponkan3 extends PonGame {
   // =========================================================
   // タグ動作
   // =========================================================
-  private initTagAction() {
+  private initTagAction(): void {
     generateTagActions(this).forEach((tagAction) => {
       // Logger.debug(tagAction);
       tagAction.names.forEach((name) => {
@@ -461,14 +463,14 @@ export class Ponkan3 extends PonGame {
     // Logger.debug("TagActionMap: ", this.tagActions);
   }
 
-  public addCommandShortcut(ch: string, command: string) {
+  public addCommandShortcut(ch: string, command: string): void {
     if (ch.length !== 1) {
       throw new Error("コマンドショートカットには1文字しか指定できません");
     }
     this.conductor.commandShortcut[ch] = command;
   }
 
-  public delCommandShortcut(ch: string) {
+  public delCommandShortcut(ch: string): void {
     delete this.conductor.commandShortcut[ch];
   }
 
@@ -553,7 +555,7 @@ export class Ponkan3 extends PonGame {
     this.plugins.forEach((p) => p.onChangeStable(isStable));
   }
 
-  public onReturnSubroutin(forceStart: boolean = false): void {
+  public onReturnSubroutin(forceStart = false): void {
     this.conductor.trigger("return_subroutin");
     if (forceStart) {
       this.hideBreakGlyph();
@@ -622,12 +624,12 @@ export class Ponkan3 extends PonGame {
   // サウンド
   // =========================================================
 
-  private initSoundBuffers(config: any) {
+  private initSoundBuffers(config: any): void {
     if (config.soundBufferCount != null) {
       this.soundBufferCount = +config.soundBufferCount;
     }
 
-    const callbacks: ISoundBufferCallbacks = {
+    const callbacks: SoundBufferCallbacks = {
       onStop: (bufferNum: number) => {
         this.onSoundStop(bufferNum);
       },
@@ -661,11 +663,11 @@ export class Ponkan3 extends PonGame {
   //   }
   // }
 
-  public onSoundStop(bufferNum: number) {
+  public onSoundStop(bufferNum: number): void {
     this.conductor.trigger("soundstop");
   }
 
-  public onSoundFadeComplete(bufferNum: number) {
+  public onSoundFadeComplete(bufferNum: number): void {
     this.conductor.trigger("soundfade");
   }
 
@@ -695,7 +697,7 @@ export class Ponkan3 extends PonGame {
   // レイヤ
   // =========================================================
 
-  private initLayers(config: any) {
+  private initLayers(config: any): void {
     [this.forePrimaryLayer, this.backPrimaryLayer].forEach((primaryLayer: PonLayer) => {
       primaryLayer.x = 0;
       primaryLayer.y = 0;
@@ -744,7 +746,7 @@ export class Ponkan3 extends PonGame {
    * レイヤを作成する。
    * rendererへの追加は行わないので、他のレイヤの子レイヤにする必要がある。
    */
-  public createLayer(name: string) {
+  public createLayer(name: string): PonLayer {
     const layer = new PonLayer(name, this.resource, this);
     layer.visible = false;
     return layer;
@@ -819,19 +821,19 @@ export class Ponkan3 extends PonGame {
            this.backLayers.filter((layer) => layer.isMoving && !layer.isLoopMoving).length > 0;
   }
 
-  public waitMoveClickCallback() {
+  public waitMoveClickCallback(): void {
     this.conductor.clearEventHandlerByName("move");
     this.foreLayers.forEach((layer) => layer.stopMove());
     this.backLayers.forEach((layer) => layer.stopMove());
     this.conductor.start();
   }
 
-  public waitMoveCompleteCallback() {
+  public waitMoveCompleteCallback(): void {
     this.conductor.clearEventHandlerByName("click");
     this.conductor.start();
   }
 
-  public waitFrameAnimClickCallback(layers: PonLayer[]) {
+  public waitFrameAnimClickCallback(layers: PonLayer[]): void {
     this.conductor.clearEventHandlerByName("frameanim");
     layers.forEach((layer) => {
       layer.stopFrameAnim();
@@ -839,7 +841,7 @@ export class Ponkan3 extends PonGame {
     this.conductor.start();
   }
 
-  public waitFrameAnimCompleteCallback(layers: PonLayer[]) {
+  public waitFrameAnimCompleteCallback(layers: PonLayer[]): void {
     if (layers.filter((l) => l.frameAnimRunning).length === 0) {
       this.conductor.clearEventHandlerByName("click");
       this.conductor.start();
@@ -1027,7 +1029,7 @@ export class Ponkan3 extends PonGame {
     }
   }
 
-  private onChangeMessageLayerPos() {
+  private onChangeMessageLayerPos(): void {
     if (this.pageBreakGlyphPos === "eol" || this.pageBreakGlyphPos === "relative") {
       this.resetBreakGlyphPos(this.pageBreakGlyphLayer, this.pageBreakGlyphPos,
                               this.pageBreakGlyphX, this.pageBreakGlyphY);
@@ -1123,13 +1125,13 @@ export class Ponkan3 extends PonGame {
     return super.onCompleteTrans();
   }
 
-  public waitTransClickCallback() {
+  public waitTransClickCallback(): void {
     this.conductor.clearEventHandlerByName("trans");
     this.transManager.stop();
     this.conductor.start();
   }
 
-  public waitTransCompleteCallback() {
+  public waitTransCompleteCallback(): void {
     this.conductor.clearEventHandlerByName("click");
     this.conductor.start();
   }
@@ -1401,7 +1403,7 @@ export class Ponkan3 extends PonGame {
     return asyncTask.run();
   }
 
-  public tempLoad(tick: number, num: number, sound: boolean = false, toBack: boolean = false): AsyncCallbacks {
+  public tempLoad(tick: number, num: number, sound = false, toBack = false): AsyncCallbacks {
     const asyncTask = new AsyncTask();
     const me: any = this as any;
     const data: any = this.tempSaveData["" + num];
@@ -1501,7 +1503,7 @@ export class Ponkan3 extends PonGame {
     if (str == null || length == null || length < 1) {
       return splitedAry;
     }
-    let index: number = 0;
+    let index = 0;
     let start: number = index;
     let end: number = start + length;
     while (start < str.length) {

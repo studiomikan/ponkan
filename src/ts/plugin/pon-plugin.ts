@@ -1,7 +1,7 @@
-import { AsyncCallbacks } from "../base/async-callbacks";
 import { AsyncTask } from "../base/async-task";
 import { Ponkan3 } from "../ponkan3";
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * Ponkan3プラグインクラス。
  * すべてのプラグインはこのクラスを継承して作成する。
@@ -90,3 +90,4 @@ export class PonPlugin {
       return;
   }
 }
+/* eslint-enable @typescript-eslint/no-unused-vars */

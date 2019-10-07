@@ -1,9 +1,5 @@
 import { AsyncCallbacks } from "../base/async-callbacks";
 import { AsyncTask } from "../base/async-task";
-import { Logger } from "../base/logger";
-import { PonMouseEvent } from "../base/pon-mouse-event";
-import { Resource } from "../base/resource";
-import { Ponkan3 } from "../ponkan3";
 import { CommandButton } from "./button";
 import { TextButtonLayer } from "./text-button-layer";
 
@@ -11,12 +7,12 @@ export class CommandImageButton extends CommandButton {
   protected direction: "horizontal" | "vertical" = "horizontal";
 
   public initImageButton(
-    jump: boolean = true,
-    call: boolean = false,
+    jump = true,
+    call = false,
     filePath: string | null = null,
     label: string | null = null,
-    countPage: boolean = true,
-    isSystemButton: boolean = false,
+    countPage = true,
+    isSystemButton = false,
     exp: string | null = null,
     file: string,
     direction: "horizontal" | "vertical",
@@ -54,7 +50,7 @@ export class CommandImageButton extends CommandButton {
     this.direction = "horizontal";
   }
 
-  public setButtonStatus(status: "normal" | "over" | "on" | "disabled") {
+  public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
     super.setButtonStatus(status);
 
     if (this.direction === "vertical") {
@@ -127,11 +123,11 @@ export class ImageButtonLayer extends TextButtonLayer {
   private imageButtons: CommandImageButton[] = [];
 
   public addImageButton(
-    jump: boolean = true,
-    call: boolean = false,
+    jump = true,
+    call = false,
     filePath: string | null = null,
     label: string | null = null,
-    countPage: boolean = true,
+    countPage = true,
     exp: string | null = null,
     file: string,
     x: number,
@@ -204,7 +200,7 @@ export class ImageButtonLayer extends TextButtonLayer {
 
   public store(tick: number): any {
     const data: any = super.store(tick);
-    const me: any = this as any;
+    // const me: any = this as any;
 
     data.imageButtons = this.imageButtons.map((imageButton) => imageButton.store(tick));
 

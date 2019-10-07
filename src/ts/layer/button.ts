@@ -1,9 +1,6 @@
 import { AsyncTask } from "../base/async-task";
 import { BaseLayer } from "../base/base-layer";
-import { Logger } from "../base/logger";
-import { PonEventHandler } from "../base/pon-event-handler";
 import { PonMouseEvent } from "../base/pon-mouse-event";
-import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
 
 export class Button extends BaseLayer {
@@ -11,7 +8,7 @@ export class Button extends BaseLayer {
   protected buttonStatus: "normal" | "over" | "on" | "disabled" = "disabled";
   protected down: boolean = false;
 
-  public initButton() {
+  public initButton(): void {
     this.clearButton();
   }
 
@@ -22,7 +19,6 @@ export class Button extends BaseLayer {
   }
 
   public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
-    const cursor: string = "auto";
     this.buttonStatus = status;
     if (this.buttonStatus === "disabled") { this.down = false; }
     this.resource.getForeCanvasElm().style.cursor = this.resource.cursor[status];
@@ -114,16 +110,16 @@ export class CommandButton extends Button {
   protected systemButtonLocked: boolean = false;
 
   public initCommandButton(
-    jump: boolean = true,
-    call: boolean = false,
+    jump = true,
+    call = false,
     filePath: string | null = null,
     label: string | null = null,
-    countPage: boolean = true,
-    isSystemButton: boolean = false,
+    countPage = true,
+    isSystemButton = false,
     exp: string | null = null,
-    onEnterSoundBuf: string = "",
-    onLeaveSoundBuf: string = "",
-    onClickSoundBuf: string = "",
+    onEnterSoundBuf = "",
+    onLeaveSoundBuf = "",
+    onClickSoundBuf = "",
   ): void {
     this.initButton();
     this.jump = jump;

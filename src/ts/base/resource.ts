@@ -31,7 +31,7 @@ export class Resource {
   private bufferCanvas: HTMLCanvasElement;
   private bufferCanvasContext: CanvasRenderingContext2D;
 
-  public constructor(ponGame: PonGame, basePath: string = "./gamedata", gameVersion: string = "0.0.0") {
+  public constructor(ponGame: PonGame, basePath = "./gamedata", gameVersion = "0.0.0") {
     this.ponGame = ponGame;
     this.basePath = this.fixPath(basePath);
     this.gameVersion = gameVersion;
@@ -98,18 +98,18 @@ export class Resource {
     });
   }
 
-  // tslint:disable
   public evalJs(js: string): any {
-    let ponkan = this.ponGame;
-    let tv = this.tmpVar;
-    let gv = this.gameVar;
-    let sv = this.systemVar;
-    let mp = this.macroParams;
-    return (function() {
+    /* eslint-disable */
+    const ponkan = this.ponGame;
+    const tv = this.tmpVar;
+    const gv = this.gameVar;
+    const sv = this.systemVar;
+    const mp = this.macroParams;
+    /* eslint-enable */
+    return (function(): any{
       return eval(js);
     })();
   }
-  // tslint:enable
 
   public setMacroParams(params: any): void {
     this.macroParams = params;
@@ -129,8 +129,9 @@ export class Resource {
   /**
    * リソースのパスを取得する。
    * @param filePath ファイルパス（basePathからの相対パス）
+   * @return 補完後のパス
    */
-  public getPath(filePath: string) {
+  public getPath(filePath: string): string {
     let path = `${this.basePath}/${filePath}`;
     if (this.enableResourceCache) {
       path += `?v=${this.gameVersion}`;
@@ -157,7 +158,7 @@ export class Resource {
     const cb = new AsyncCallbacks();
     const xhr = new XMLHttpRequest();
 
-    xhr.onload = () => {
+    xhr.onload = (): void => {
       if (200 <= xhr.status && xhr.status < 300) {
         Logger.debug("AJAX SUCCESS: ", xhr);
         cb.callDone(xhr.responseText);
@@ -215,13 +216,13 @@ export class Resource {
     const cb = new AsyncCallbacks();
     const path: string = this.getPath(filePath);
     const image: HTMLImageElement = new Image();
-    let loaded: boolean = false;
+    let loaded = false;
 
-    image.onload = (e) => {
+    image.onload = (): void => {
       loaded = true;
       cb.callDone(image);
     };
-    image.onerror = (e) => {
+    image.onerror = (): void => {
       // 画像がキャッシュされているとき、サーバが302を返すことがある。
       // その時は、onloadとonerrorの両方が呼ばれてしまうので、
       // すでにonloadが呼ばれて読み込み済みだとわかっている場合はエラーを無視する。
@@ -238,10 +239,7 @@ export class Resource {
     return cb;
   }
 
-  public loadSoundHowler(
-    filePath: string,
-    bufferNum: number,
-  ): AsyncCallbacks {
+  public loadSoundHowler( filePath: string): AsyncCallbacks {
     const cb = new AsyncCallbacks();
 
     const h: Howl = new Howl({
@@ -249,10 +247,10 @@ export class Resource {
       loop: true,
       volume: 1,
       autoplay: false,
-      onload: () => {
+      onload: (): void => {
         cb.callDone(h);
       },
-      onloaderror: () => {
+      onloaderror: (): void => {
         cb.callFail(filePath);
       },
     });

@@ -49,13 +49,14 @@ export class PonRenderer {
     this._container.mask = maskSprite;
   }
 
-  public destroy() {
+  public destroy(): void {
     this.container.destroy();
     this.parentElm.removeChild(this.renderer.view);
     this.renderer.destroy();
   }
 
-  public draw(tick: number) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public draw(tick: number): void {
     if (this.renderer == null || this._container == null) { return; }
     if (this.otherRenderer !== null) {
       this.otherRenderer.texture.update();
@@ -63,22 +64,22 @@ export class PonRenderer {
     this.renderer.render(this._container);
   }
 
-  public addContainer(child: PIXI.Container) {
+  public addContainer(child: PIXI.Container): void {
     this._container.addChild(child);
   }
 
-  public removeContainer(child: PIXI.Container) {
+  public removeContainer(child: PIXI.Container): void {
     this._container.removeChild(child);
   }
 
-  public setOtherRenderer(renderer: PonRenderer) {
+  public setOtherRenderer(renderer: PonRenderer): void {
     this.delOtherRenderer();
 
     this.otherRenderer = renderer;
     this._container.addChild(renderer.sprite);
   }
 
-  public delOtherRenderer() {
+  public delOtherRenderer(): void {
     if (this.otherRenderer !== null) {
       this._container.removeChild(this.otherRenderer.sprite);
     }

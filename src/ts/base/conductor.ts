@@ -1,6 +1,6 @@
 import { AsyncCallbacks } from "./async-callbacks";
 import { AsyncTask } from "./async-task";
-import { Logger } from "./logger";
+// import { Logger } from "./logger";
 import { PonEventHandler } from "./pon-event-handler";
 import { ReadUnread } from "./read-unread";
 import { Resource } from "./resource";
@@ -74,7 +74,7 @@ export class Conductor {
    * @param label 移動先ラベル
    * @param countPage 既読処理をするかどうか
    */
-  public jump(filePath: string | null, label: string | null = null, countPage: boolean = true): AsyncCallbacks {
+  public jump(filePath: string | null, label: string | null = null, countPage = true): AsyncCallbacks {
     const cb = new AsyncCallbacks();
     if (countPage) {
       this.passLatestSaveMark();
@@ -180,7 +180,7 @@ export class Conductor {
 
   private applyJsEntity(values: any): void {
     for (const key in values) {
-      if (values.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(values, key)) {
         const v: any = values[key];
         if (typeof v !== "string") { continue; }
         const value: string = "" + v as string;
@@ -298,6 +298,8 @@ export class Conductor {
     "sleepSender",
   ];
 
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public store(saveMarkName: string, tick: number): any {
     const data: any = {};
     const me: any = this as any;
@@ -325,6 +327,8 @@ export class Conductor {
     return data;
   }
 
+
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   /**
    * 復元。ステータスの値は復元されるが、再スタートなどはしないので注意。
    */
@@ -335,6 +339,7 @@ export class Conductor {
     });
 
     // script
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     asyncTask.add((params: any, index: number): AsyncCallbacks => {
       const cb = this.loadScript(data.scriptFilePath);
       cb.done(() => {
@@ -343,5 +348,6 @@ export class Conductor {
       return cb;
     });
   }
+  /* eslint-enabled @typescript-eslint/no-unused-vars */
 
 }

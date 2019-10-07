@@ -1,7 +1,6 @@
 import { AsyncTask } from "../base/async-task";
 import { BaseLayer } from "../base/base-layer";
 import { Logger } from "../base/logger";
-import { Resource } from "../base/resource";
 
 // TODO pauseもできるようにする
 export class FrameAnimLayer extends BaseLayer {
@@ -38,6 +37,7 @@ export class FrameAnimLayer extends BaseLayer {
     return this.frameAnimState === "run";
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public startFrameAnim(tick: number): void {
     if (this.frameAnimFrames.length === 0) {
       throw new Error("アニメーション定義が未定義です");
@@ -46,7 +46,7 @@ export class FrameAnimLayer extends BaseLayer {
     this.frameAnimStartTick = -1; // この時点では-1としておき、初めてのupdate時に設定する
   }
 
-  public stopFrameAnim(triggerEvent: boolean = true): void {
+  public stopFrameAnim(triggerEvent = true): void {
     if (this.frameAnimState === "run") {
       this.frameAnimState = "stop";
       this.frameAnimStartTick = -1;
@@ -92,13 +92,13 @@ export class FrameAnimLayer extends BaseLayer {
     }
   }
 
-  private applyFrameAnim(frame: any) {
+  private applyFrameAnim(frame: any): void {
     if (frame.x != null) { this.imageX = -(+frame.x); }
     if (frame.y != null) { this.imageY = -(+frame.y); }
     if (frame.alpha != null) { this.alpha = +frame.alpha; }
   }
 
-  public freeImage() {
+  public freeImage(): void {
     this.deleteFrameAnim();
     super.freeImage();
   }
@@ -131,7 +131,7 @@ export class FrameAnimLayer extends BaseLayer {
 
   protected restoreAfterLoadImage(data: any, tick: number): void {
     const me: any = this as any;
-    const ignore: string[] = [];
+    // const ignore: string[] = [];
     FrameAnimLayer.frameAnimLayerStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });

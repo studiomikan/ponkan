@@ -1,5 +1,4 @@
 import { applyJsEntity, castTagValues } from "../tag-action";
-import { AsyncCallbacks } from "./async-callbacks";
 import { Logger } from "./logger";
 import { Macro } from "./macro";
 import { Resource } from "./resource";
@@ -7,7 +6,7 @@ import { ScriptParser } from "./script-parser";
 import { Tag } from "./tag";
 import * as Util from "./util";
 
-export interface IForLoopInfo {
+export interface ForLoopInfo {
   startTagPoint: number;
   indexVarName: string;
   loops: number;
@@ -22,7 +21,7 @@ export class Script {
   protected tagPoint: number = 0;
   protected latestTagBuffer: Tag | null = null;
 
-  protected forLoopStack: IForLoopInfo[] = [];
+  protected forLoopStack: ForLoopInfo[] = [];
   protected ifDepth: number = 0;
 
   protected macroStack: Macro[] = [];
@@ -247,7 +246,7 @@ export class Script {
    * @param tagAction タグ動作定義マップ
    */
   protected goToElseFromIf(tagActions: any): void {
-    let depth: number = 0;
+    let depth = 0;
     while (true) {
       const tag: Tag | null = this.getNextTag();
       if (tag === null) {
@@ -288,7 +287,7 @@ export class Script {
   /**
    * elsifタグの動作
    */
-  public elsifJump() {
+  public elsifJump(): void {
     // タグ動作としてelsifにきたときは、単に前のif/elsifブロックの終わりを示すため、
     // endifへジャンプしたのでよい。
     this.goToEndifFromElse();
@@ -297,7 +296,7 @@ export class Script {
   /**
    * elseタグの動作
    */
-  public elseJump() {
+  public elseJump(): void {
     // タグ動作としてelseにきたときは、単に前のif/elsifブロックの終わりを示すため、
     // endifへジャンプしたのでよい。
     this.goToEndifFromElse();
@@ -306,8 +305,8 @@ export class Script {
   /**
    * endifまでジャンプする。
    */
-  protected goToEndifFromElse() {
-    let depth: number = 0;
+  protected goToEndifFromElse(): void {
+    let depth = 0;
     while (true) {
       const tag: Tag | null = this.getNextTag();
       if (tag === null) {
@@ -342,8 +341,8 @@ export class Script {
    * @param loops 繰り返し回数
    * @param indexVarName indexを格納する一時変数の名前。
    */
-  public startForLoop(loops: number, indexVarName: string = "__index__"): void {
-    const loopInfo: IForLoopInfo = {
+  public startForLoop(loops: number, indexVarName = "__index__"): void {
+    const loopInfo: ForLoopInfo = {
       startTagPoint: this.tagPoint,
       indexVarName,
       loops,
@@ -374,7 +373,7 @@ export class Script {
    * forLoopから抜け出す
    */
   public breakForLoop(): void {
-    let depth: number = 0;
+    let depth = 0;
     while (true) {
       const tag: Tag | null = this.getNextTag();
       if (tag === null) {

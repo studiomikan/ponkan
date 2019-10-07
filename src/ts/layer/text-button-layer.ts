@@ -1,9 +1,5 @@
 import { AsyncTask } from "../base/async-task";
 import { BaseLayer } from "../base/base-layer";
-import { Logger } from "../base/logger";
-import { PonMouseEvent } from "../base/pon-mouse-event";
-import { Resource } from "../base/resource";
-import { Ponkan3 } from "../ponkan3";
 import { CommandButton } from "./button";
 import { FrameAnimLayer } from "./frame-anim-layer";
 
@@ -20,23 +16,23 @@ export class TextButton extends CommandButton {
   public txtBtnOnBackgroundAlpha: number = 1.0;
 
   public initTextButton(
-    jump: boolean = true,
-    call: boolean = false,
+    jump = true,
+    call = false,
     filePath: string | null = null,
     label: string | null = null,
-    countPage: boolean = true,
-    isSystemButton: boolean = false,
+    countPage = true,
+    isSystemButton = false,
     exp: string | null = null,
-    text: string = "",
-    normalBackgroundColor: number = 0x000000,
-    overBackgroundColor: number = 0x000000,
-    onBackgroundColor: number = 0x000000,
-    normalBackgroundAlpha: number = 1.0,
-    overBackgroundAlpha: number = 1.0,
-    onBackgroundAlpha: number = 1.0,
-    onEnterSoundBuf: string = "",
-    onLeaveSoundBuf: string = "",
-    onClickSoundBuf: string = "",
+    text = "",
+    normalBackgroundColor = 0x000000,
+    overBackgroundColor = 0x000000,
+    onBackgroundColor = 0x000000,
+    normalBackgroundAlpha = 1.0,
+    overBackgroundAlpha = 1.0,
+    onBackgroundAlpha = 1.0,
+    onEnterSoundBuf = "",
+    onLeaveSoundBuf = "",
+    onClickSoundBuf = "",
   ): void {
     this.clearCommandButton();
     this.freeImage();
@@ -151,12 +147,12 @@ export class TextButtonLayer extends FrameAnimLayer {
   protected textButtons: TextButton[] = [];
 
   public addTextButton(
-    btnName: string = "",
-    jump: boolean = true,
-    call: boolean = false,
+    btnName = "",
+    jump = true,
+    call = false,
     filePath: string | null = null,
     label: string | null = null,
-    countPage: boolean = true,
+    countPage = true,
     exp: string | null = null,
     text: string,
     x: number,
@@ -166,10 +162,10 @@ export class TextButtonLayer extends FrameAnimLayer {
     backgroundColors: number[],
     backgroundAlphas: number[],
     isSystemButton: boolean,
-    textMarginTop: number = 0,
-    textMarginRight: number = 0,
-    textMarginBottom: number = 0,
-    textMarginLeft: number = 0,
+    textMarginTop = 0,
+    textMarginRight = 0,
+    textMarginBottom = 0,
+    textMarginLeft = 0,
     textAlign: "left" | "center" | "right" = "center",
     onEnterSoundBuf: string,
     onLeaveSoundBuf: string,
@@ -319,7 +315,7 @@ export class TextButtonLayer extends FrameAnimLayer {
 
   public store(tick: number): any {
     const data: any = super.store(tick);
-    const me: any = this as any;
+    // const me: any = this as any;
 
     data.textButtons = this.textButtons.map((textButton) => textButton.store(tick));
 
