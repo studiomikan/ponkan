@@ -6,7 +6,7 @@ doc/
 dist_dev/
 dist_test/
 game_template/node_modules/
-game_template/public/*
+game_template/public/
 game_template/dist/
 games/
 tags
