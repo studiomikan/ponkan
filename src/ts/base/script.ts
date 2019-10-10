@@ -143,12 +143,12 @@ export class Script {
     } else {
       const macro: Macro = this.macroStack[this.macroStack.length - 1];
       const tag: Tag | null = this.latestTagBuffer = macro.getNextTag();
+      this.resource.setMacroParams(macro.params);
       if (tag != null) {
         if (this.resource.hasMacro(tag.name)) {
           this.callMacro(tag);
           return this.getNextTag();
         } else {
-          this.resource.setMacroParams(macro.params);
           return tag;
         }
       } else {
