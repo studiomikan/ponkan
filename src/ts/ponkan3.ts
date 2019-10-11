@@ -484,7 +484,7 @@ export class Ponkan3 extends PonGame {
   // コンダクタ
   // =========================================================
   public onTag(tag: Tag, line: number, tick: number): "continue" | "break" {
-    // Logger.debug("onTag: ", tag.name, tag.values, tag);
+    Logger.debug("onTag: ", tag.name, tag.values, tag);
     const tagAction: TagAction = this.tagActions[tag.name];
     if (tagAction === null || tagAction === undefined) {
       // Logger.debug("Unknown Tag: ", tag.name, tag);

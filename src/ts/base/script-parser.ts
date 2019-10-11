@@ -17,7 +17,7 @@ export class ScriptParser {
     this.scriptText = scriptText;
     this.currentLineNum = 0;
     this.saveMarkCount = 0;
-    this.lines = this.scriptText.split(/\n/g);
+    this.lines = this.scriptText.split(/\r\n|\n|\r/g);
     this.parse();
   }
 
