@@ -230,6 +230,24 @@ export class Script {
   }
 
   /**
+   * 次のタグを取得する。マクロの呼び出しを行わない。
+   * ただしマクロの中で呼び出されたときはそのマクロ内部で移動する。
+   */
+  protected getNextTagForIf(): Tag | null {
+    if (this.macroStack.length === 0) {
+      const tags = this.parser.tags;
+      if (tags.length <= this.tagPoint) {
+        return null;
+      } else {
+        return tags[this.tagPoint++];
+      }
+    } else {
+      const macro: Macro = this.macroStack[this.macroStack.length - 1];
+      return macro.getNextTag();
+    }
+  }
+
+  /**
    * 条件分岐を開始
    * @param tagAction タグ動作定義マップ
    */
@@ -248,7 +266,7 @@ export class Script {
   protected goToElseFromIf(tagActions: any): void {
     let depth = 0;
     while (true) {
-      const tag: Tag | null = this.getNextTagWithoutMacro();
+      const tag: Tag | null = this.getNextTagForIf();
       if (tag === null) {
         throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
       }
@@ -308,7 +326,7 @@ export class Script {
   protected goToEndifFromElse(): void {
     let depth = 0;
     while (true) {
-      const tag: Tag | null = this.getNextTagWithoutMacro();
+      const tag: Tag | null = this.getNextTagForIf();
       if (tag === null) {
         throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
         break;
@@ -375,7 +393,7 @@ export class Script {
   public breakForLoop(): void {
     let depth = 0;
     while (true) {
-      const tag: Tag | null = this.getNextTagWithoutMacro();
+      const tag: Tag | null = this.getNextTagForIf();
       if (tag === null) {
         throw new Error("breakforの動作エラー。forとendforの対応が取れていません");
         break;
