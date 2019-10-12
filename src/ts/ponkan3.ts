@@ -1503,4 +1503,5 @@ export class Ponkan3 extends PonGame {
 
 }
 
+PIXI.utils.skipHello();
 (window as any).Ponkan3 = Ponkan3;
