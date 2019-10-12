@@ -467,11 +467,11 @@ export class Ponkan3 extends PonGame {
     if (ch.length !== 1) {
       throw new Error("コマンドショートカットには1文字しか指定できません");
     }
-    this.conductor.commandShortcut[ch] = command;
+    this.resource.commandShortcut[ch] = command;
   }
 
   public delCommandShortcut(ch: string): void {
-    delete this.conductor.commandShortcut[ch];
+    delete this.resource.commandShortcut[ch];
   }
 
   public execCommand(commandName: string, values: any = {}): void {

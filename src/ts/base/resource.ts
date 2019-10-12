@@ -31,6 +31,8 @@ export class Resource {
   private bufferCanvas: HTMLCanvasElement;
   private bufferCanvasContext: CanvasRenderingContext2D;
 
+  public commandShortcut: any = {};
+
   public constructor(ponGame: PonGame, basePath = "./gamedata", gameVersion = "0.0.0") {
     this.ponGame = ponGame;
     this.basePath = this.fixPath(basePath);
