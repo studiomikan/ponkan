@@ -6,7 +6,7 @@ import { ScriptParser } from "./script-parser";
 import { Tag } from "./tag";
 import * as Util from "./util";
 
-export interface ForLoopInfo {
+export interface IForLoopInfo {
   startTagPoint: number;
   indexVarName: string;
   loops: number;
@@ -21,7 +21,7 @@ export class Script {
   protected tagPoint: number = 0;
   protected latestTagBuffer: Tag | null = null;
 
-  protected forLoopStack: ForLoopInfo[] = [];
+  protected forLoopStack: IForLoopInfo[] = [];
   protected ifDepth: number = 0;
 
   protected macroStack: Macro[] = [];
@@ -73,7 +73,7 @@ export class Script {
   public goToLabel(label: string): void {
     this.goToStart();
     while (true) {
-      const tag: Tag | null = this.getNextTag();
+      const tag: Tag | null = this.getNextTagWithoutMacro();
       if (tag == null) {
         throw new Error(`${this.filePath}内に、ラベル ${label} が見つかりませんでした`);
       }
@@ -93,7 +93,7 @@ export class Script {
   public goToSaveMark(saveMarkName: string): void {
     this.goToStart();
     while (true) {
-      const tag: Tag | null = this.getNextTag();
+      const tag: Tag | null = this.getNextTagWithoutMacro();
       if (tag == null) {
         throw new Error(`${this.filePath}内に、セーブマーク ${saveMarkName} が見つかりませんでした`);
       }
@@ -198,7 +198,7 @@ export class Script {
   public defineMacro(name: string): Macro {
     const tags: Tag[] = [];
     while (true) {
-      const tag: Tag | null = this.getNextTagForDefineMacro();
+      const tag: Tag | null = this.getNextTagWithoutMacro();
       if (tag === null) {
         throw new Error("マクロ定義エラー。macroとendmacroの対応が取れていません");
       } else if (tag.name === "__label__") {
@@ -220,7 +220,7 @@ export class Script {
   /**
    * 次のタグを取得する。マクロの呼び出しを行わない。
    */
-  protected getNextTagForDefineMacro(): Tag | null {
+  protected getNextTagWithoutMacro(): Tag | null {
     const tags = this.parser.tags;
     if (tags.length <= this.tagPoint) {
       return null;
@@ -248,7 +248,7 @@ export class Script {
   protected goToElseFromIf(tagActions: any): void {
     let depth = 0;
     while (true) {
-      const tag: Tag | null = this.getNextTag();
+      const tag: Tag | null = this.getNextTagWithoutMacro();
       if (tag === null) {
         throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
       }
@@ -308,7 +308,7 @@ export class Script {
   protected goToEndifFromElse(): void {
     let depth = 0;
     while (true) {
-      const tag: Tag | null = this.getNextTag();
+      const tag: Tag | null = this.getNextTagWithoutMacro();
       if (tag === null) {
         throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
         break;
@@ -342,7 +342,7 @@ export class Script {
    * @param indexVarName indexを格納する一時変数の名前。
    */
   public startForLoop(loops: number, indexVarName = "__index__"): void {
-    const loopInfo: ForLoopInfo = {
+    const loopInfo: IForLoopInfo = {
       startTagPoint: this.tagPoint,
       indexVarName,
       loops,
@@ -375,7 +375,7 @@ export class Script {
   public breakForLoop(): void {
     let depth = 0;
     while (true) {
-      const tag: Tag | null = this.getNextTag();
+      const tag: Tag | null = this.getNextTagWithoutMacro();
       if (tag === null) {
         throw new Error("breakforの動作エラー。forとendforの対応が取れていません");
         break;

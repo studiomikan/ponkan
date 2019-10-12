@@ -16,6 +16,7 @@
   "rules": {
     "no-constant-condition": 0,
     "@typescript-eslint/no-explicit-any": 0,
-    "@typescript-eslint/no-inferrable-types": [1, { "ignoreProperties": true }]
+    "@typescript-eslint/no-inferrable-types": [1, { "ignoreProperties": true }],
+	  "@typescript-eslint/interface-name-prefix": [1, { "prefixWithI": "always" }]
   }
 }
