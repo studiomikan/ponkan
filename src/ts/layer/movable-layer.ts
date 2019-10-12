@@ -251,10 +251,8 @@ export class MovableLayer extends SliderLayer {
     const p2: MovePosInfo = this.movePosList[2];
     const p3: MovePosInfo = this.movePosList[3];
     const t = phase;
-    // tslint:disable
     this.x = (1 - t) * (1 - t) * (1 - t) * p0.x + 3 * (1 - t) * (1 - t) * t * p1.x + 3 * (1 - t) * t * t * p2.x + t * t * t * p3.x;
     this.y = (1 - t) * (1 - t) * (1 - t) * p0.y + 3 * (1 - t) * (1 - t) * t * p1.y + 3 * (1 - t) * t * t * p2.y + t * t * t * p3.y;
-    // tslint:enable
     this.alpha = p0.alpha + (p3.alpha - p0.alpha) * phase;
     this.scaleX = p0.scalex + (p3.scalex - p0.scalex) * phase;
     this.scaleY = p0.scaley + (p3.scaley - p0.scaley) * phase;

@@ -1,6 +1,6 @@
 import { AsyncCallbacks } from "./base/async-callbacks";
 import { AsyncTask } from "./base/async-task";
-import { BaseLayer, BaseLayerEventListener } from "./base/base-layer";
+import { BaseLayer } from "./base/base-layer";
 import { ConductorState } from "./base/conductor";
 import { Logger } from "./base/logger";
 import { PonGame } from "./base/pon-game";
@@ -79,22 +79,7 @@ export class Ponkan3 extends PonGame {
   public hideMessageByRlickFlag: boolean = false;
   protected _messageLayerNum: number = DEFAULT_MESSAGE_LAYER_NUM;
   public get messageLayerNum(): number { return this._messageLayerNum; }
-  public set messageLayerNum(num: number) {
-    if (this.messageLayerEventListener != null) {
-      this.messageLayer.delEventListener(this.messageLayerEventListener);
-    }
-    this._messageLayerNum = num;
-    (function(self: Ponkan3): void {
-      self.messageLayerEventListener = {
-        /* eslint-disable @typescript-eslint/no-unused-vars */
-        onChangeX(sender: BaseLayer, x): void { self.onChangeMessageLayerPos(); },
-        onChangeY(sender: BaseLayer, y): void { self.onChangeMessageLayerPos(); },
-        /* eslint-enalble @typescript-eslint/no-unused-vars */
-      };
-      self.messageLayer.addEventListener(self.messageLayerEventListener);
-    })(this);
-  }
-  public messageLayerEventListener: BaseLayerEventListener | null = null;
+  public set messageLayerNum(num: number) { this._messageLayerNum = num; }
 
   protected _lineBreakGlyphLayerNum: number = DEFAULT_LINE_BREAK_LAYER_NUM;
   public get lineBreakGlyphLayerNum(): number { return this._lineBreakGlyphLayerNum; }
@@ -208,6 +193,9 @@ export class Ponkan3 extends PonGame {
 
     // オートモード中は強制的に状態を表示
     this.autoModeLayer.visible = this.autoModeFlag;
+    // グリフの位置を調整
+    this.resetLineBreakGlyphPos();
+    this.resetPageBreakGlyphPos();
   }
 
   protected beforeDraw(tick: number): void  {
@@ -960,12 +948,21 @@ export class Ponkan3 extends PonGame {
     y: number,
   ): void {
     this.resetBreakGlyphPos(lay, pos, x, y);
-    // }
     if (lay.hasFrameAnim) {
       lay.stopFrameAnim();
       lay.startFrameAnim(tick);
     }
     lay.visible = true;
+  }
+
+  private resetLineBreakGlyphPos(): void {
+      this.resetBreakGlyphPos(this.lineBreakGlyphLayer, this.lineBreakGlyphPos,
+                              this.lineBreakGlyphX, this.lineBreakGlyphY);
+  }
+
+  private resetPageBreakGlyphPos(): void {
+      this.resetBreakGlyphPos(this.pageBreakGlyphLayer, this.pageBreakGlyphPos,
+                              this.pageBreakGlyphX, this.pageBreakGlyphY);
   }
 
   private resetBreakGlyphPos(
@@ -1026,17 +1023,6 @@ export class Ponkan3 extends PonGame {
     if (this.hideMessageByRlickFlag) {
       this.showMessages();
       this.hideMessageByRlickFlag = false;
-    }
-  }
-
-  private onChangeMessageLayerPos(): void {
-    if (this.pageBreakGlyphPos === "eol" || this.pageBreakGlyphPos === "relative") {
-      this.resetBreakGlyphPos(this.pageBreakGlyphLayer, this.pageBreakGlyphPos,
-                              this.pageBreakGlyphX, this.pageBreakGlyphY);
-    }
-    if (this.lineBreakGlyphPos === "eol" || this.lineBreakGlyphPos === "relative") {
-      this.resetBreakGlyphPos(this.lineBreakGlyphLayer, this.lineBreakGlyphPos,
-                              this.lineBreakGlyphX, this.lineBreakGlyphY);
     }
   }
 

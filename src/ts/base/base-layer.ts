@@ -8,12 +8,6 @@ import { PonSpriteCallbacks, PonSprite } from "./pon-sprite";
 import { PonWheelEvent } from "./pon-wheel-event";
 import { Resource } from "./resource";
 
-export interface BaseLayerEventListener {
-  // onLabel(labelName: string, line: number, tick: number): "continue" | "break";
-  onChangeX(sender: BaseLayer, x: number): void;
-  onChangeY(sender: BaseLayer, y: number): void;
-}
-
 export class BaseLayerChar {
   public readonly ch: string;
   public readonly sp: PonSprite;
@@ -246,8 +240,8 @@ export class BaseLayer {
 
   // 子レイヤ
   private _children: BaseLayer[] = [];
-  // イベントリスナ
-  private eventListenerList: BaseLayerEventListener[] = [];
+  // // イベントリスナ
+  // private eventListenerList: BaseLayerEventListener[] = [];
 
   /** イベント遮断フラグ。trueにするとマウスイベントの伝播を遮断する。 */
   public blockLeftClickFlag: boolean = false;
@@ -362,12 +356,12 @@ export class BaseLayer {
   public get x(): number { return this.container.x; }
   public set x(x) {
     this.container.x = x;
-    this.callEventListener("onChangeX", [x]);
+    // this.callEventListener("onChangeX", [x]);
   }
   public get y(): number { return this.container.y; }
   public set y(y) {
     this.container.y = y;
-    this.callEventListener("onChangeY", [y]);
+    // this.callEventListener("onChangeY", [y]);
   }
   public get width(): number { return this.maskSprite.width; }
   public set width(width: number) {
@@ -511,31 +505,6 @@ export class BaseLayer {
 
   public child(index: number): BaseLayer {
     return this.children[index];
-  }
-
-  public addEventListener(listener: BaseLayerEventListener): void {
-    if (this.eventListenerList.indexOf(listener) === -1) {
-      this.eventListenerList.push(listener);
-    }
-  }
-
-  public delEventListener(listener: BaseLayerEventListener): void {
-    const index = this.eventListenerList.indexOf(listener);
-    if (index !== -1) {
-      this.eventListenerList.splice(index, 1);
-    }
-  }
-
-  public clearEventListener(): void {
-    this.eventListenerList = [];
-  }
-
-  private callEventListener(method: string, args: any[]): void {
-    args.unshift(this);
-    this.eventListenerList.forEach((listener: any) => {
-      // listener[method].apply(listener, args);
-      listener[method](...args);
-    });
   }
 
   public update(tick: number): void {
