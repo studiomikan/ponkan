@@ -13,6 +13,7 @@ module.exports = {
   },
   module: {
     rules: [
+      { enforce: "pre", test: /\.ts$/, loader: "eslint-loader", exclude: /node_modules/ },
       { test: /\.ts$/, loader:'ts-loader', exclude: /node_modules/ }
     ]
   },

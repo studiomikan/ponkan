@@ -4,7 +4,7 @@ import { AsyncTask } from "./async-task";
 import { Logger } from "./logger";
 import { Resource } from "./resource";
 
-export interface SoundBufferCallbacks {
+export interface ISoundBufferCallbacks {
   onStop(bufferNum: number): void;
   onFadeComplete(bufferNum: number): void;
 }
@@ -20,7 +20,7 @@ export enum SoundState {
 
 export class SoundBuffer {
   public readonly bufferNum: number;
-  protected callback: SoundBufferCallbacks;
+  protected callback: ISoundBufferCallbacks;
   protected resource: Resource;
 
   protected howl: Howl | null = null;
@@ -36,7 +36,7 @@ export class SoundBuffer {
   protected fadeTime: number = 0;
   protected stopAfterFade: boolean = false;
 
-  public constructor(resource: Resource, bufferNum: number, callback: SoundBufferCallbacks) {
+  public constructor(resource: Resource, bufferNum: number, callback: ISoundBufferCallbacks) {
     this.resource = resource;
     this.bufferNum = bufferNum;
     this.callback = callback;

@@ -9,7 +9,7 @@ PIXI.TextMetrics.BASELINE_SYMBOL += "ぽン甘｜";
 /**
  * PonSpriteのコールバック
  */
-export interface PonSpriteCallbacks {
+export interface IPonSpriteCallbacks {
   /**
    * コンテナにスプライトを追加する
    * @param child 追加するスプライト
@@ -27,7 +27,7 @@ export interface PonSpriteCallbacks {
  */
 export class PonSprite {
   /** コールバック */
-  private callbacks: PonSpriteCallbacks;
+  private callbacks: IPonSpriteCallbacks;
   private _x: number = 0;
   private _y: number = 0;
   private _width: number = DEFAULT_WIDTH;
@@ -116,7 +116,7 @@ export class PonSprite {
   /**
    * @param callbacks コールバック
    */
-  public constructor(callbacks: PonSpriteCallbacks) {
+  public constructor(callbacks: IPonSpriteCallbacks) {
     this.callbacks = callbacks;
   }
 

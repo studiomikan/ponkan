@@ -3,7 +3,7 @@ import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
 import { SliderLayer } from "./slider-layer";
 
-export interface MovePosInfo {
+export interface IMovePosInfo {
   x: number;
   y: number;
   alpha: number;
@@ -16,7 +16,7 @@ export class MovableLayer extends SliderLayer {
   protected _isMoving: boolean = false;
   protected moveType: "linear" | "bezier2" | "bezier3" | "catmullrom" = "linear";
   protected moveEase: "none" | "in" | "out" | "both" = "none";
-  protected movePosList: MovePosInfo[] = [];
+  protected movePosList: IMovePosInfo[] = [];
   protected movePoint: number = 0;
   protected moveTime: number = 0;
   protected moveDelay: number = 0;
@@ -35,7 +35,7 @@ export class MovableLayer extends SliderLayer {
     tick: number,
     time: number,
     delay: number,
-    path: MovePosInfo[],
+    path: IMovePosInfo[],
     type: "linear" | "bezier2" | "bezier3" | "catmullrom",
     ease: "none" | "in" | "out" | "both",
     loop: boolean,
@@ -87,7 +87,7 @@ export class MovableLayer extends SliderLayer {
 
   public stopMove(triggerEvent = true): void {
     if (this._isMoving) {
-      const lastPos: MovePosInfo = this.movePosList[this.movePosList.length - 1];
+      const lastPos: IMovePosInfo = this.movePosList[this.movePosList.length - 1];
       this.x = lastPos.x;
       this.y = lastPos.y;
       this.alpha = lastPos.alpha;
@@ -102,8 +102,8 @@ export class MovableLayer extends SliderLayer {
     }
   }
 
-  private clonePath(orgPath: MovePosInfo[]): MovePosInfo[] {
-    const path: MovePosInfo[] = [];
+  private clonePath(orgPath: IMovePosInfo[]): IMovePosInfo[] {
+    const path: IMovePosInfo[] = [];
     orgPath.forEach((p: any) => {
       const obj: any = {};
       Object.keys(p).forEach((key) => {
@@ -181,8 +181,8 @@ export class MovableLayer extends SliderLayer {
    */
   protected moveLinear(tick: number, phase: number): void {
     // 移動
-    const startPos: MovePosInfo = this.movePosList[this.movePoint];
-    let endPos: MovePosInfo;
+    const startPos: IMovePosInfo = this.movePosList[this.movePoint];
+    let endPos: IMovePosInfo;
     if (this.movePoint + 1 < this.movePosList.length) {
       endPos = this.movePosList[this.movePoint + 1];
     } else {
@@ -201,13 +201,13 @@ export class MovableLayer extends SliderLayer {
           this.movePoint = 0;
         }
         this.moveStartTick += this.moveTime;
-        const nextStartPos: MovePosInfo = this.movePosList[this.movePoint];
+        const nextStartPos: IMovePosInfo = this.movePosList[this.movePoint];
         this.x = nextStartPos.x;
         this.y = nextStartPos.y;
       } else {
         if (this.movePoint + 1 < this.movePosList.length) {
           this.moveStartTick += this.moveTime;
-          const nextStartPos: MovePosInfo = this.movePosList[this.movePoint];
+          const nextStartPos: IMovePosInfo = this.movePosList[this.movePoint];
           this.x = nextStartPos.x;
           this.y = nextStartPos.y;
         } else {
@@ -224,9 +224,9 @@ export class MovableLayer extends SliderLayer {
    */
   protected moveBezierCurve2(tick: number, phase: number): void {
     // 移動
-    const p0: MovePosInfo = this.movePosList[0];
-    const p1: MovePosInfo = this.movePosList[1];
-    const p2: MovePosInfo = this.movePosList[2];
+    const p0: IMovePosInfo = this.movePosList[0];
+    const p1: IMovePosInfo = this.movePosList[1];
+    const p2: IMovePosInfo = this.movePosList[2];
     const t = phase;
     this.x = (1 - t) * (1 - t) * p0.x + 2 * (1 - t) * t * p1.x + t * t * p2.x;
     this.y = (1 - t) * (1 - t) * p0.y + 2 * (1 - t) * t * p1.y + t * t * p2.y;
@@ -246,10 +246,10 @@ export class MovableLayer extends SliderLayer {
    */
   protected moveBezierCurve3(tick: number, phase: number): void {
     // 移動
-    const p0: MovePosInfo = this.movePosList[0];
-    const p1: MovePosInfo = this.movePosList[1];
-    const p2: MovePosInfo = this.movePosList[2];
-    const p3: MovePosInfo = this.movePosList[3];
+    const p0: IMovePosInfo = this.movePosList[0];
+    const p1: IMovePosInfo = this.movePosList[1];
+    const p2: IMovePosInfo = this.movePosList[2];
+    const p3: IMovePosInfo = this.movePosList[3];
     const t = phase;
     this.x = (1 - t) * (1 - t) * (1 - t) * p0.x + 3 * (1 - t) * (1 - t) * t * p1.x + 3 * (1 - t) * t * t * p2.x + t * t * t * p3.x;
     this.y = (1 - t) * (1 - t) * (1 - t) * p0.y + 3 * (1 - t) * (1 - t) * t * p1.y + 3 * (1 - t) * t * t * p2.y + t * t * t * p3.y;
@@ -269,11 +269,11 @@ export class MovableLayer extends SliderLayer {
    */
   protected moveCatmullRom(tick: number, phase: number): void {
     const n: number = this.movePoint;
-    const p: MovePosInfo[] = this.movePosList;
-    let p0: MovePosInfo;
-    let p1: MovePosInfo;
-    let p2: MovePosInfo;
-    let p3: MovePosInfo;
+    const p: IMovePosInfo[] = this.movePosList;
+    let p0: IMovePosInfo;
+    let p1: IMovePosInfo;
+    let p2: IMovePosInfo;
+    let p3: IMovePosInfo;
     // let t = phase
 
     if (this.moveLoop) {
@@ -315,13 +315,13 @@ export class MovableLayer extends SliderLayer {
           this.movePoint = 0;
         }
         this.moveStartTick += this.moveTime;
-        const startPos: MovePosInfo = this.movePosList[this.movePoint];
+        const startPos: IMovePosInfo = this.movePosList[this.movePoint];
         this.x = startPos.x;
         this.y = startPos.y;
       } else {
         if (this.movePoint + 1 < this.movePosList.length) {
           this.moveStartTick += this.moveTime;
-          const startPos: MovePosInfo = this.movePosList[this.movePoint];
+          const startPos: IMovePosInfo = this.movePosList[this.movePoint];
           this.x = startPos.x;
           this.y = startPos.y;
         } else {
