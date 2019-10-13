@@ -20,10 +20,8 @@ $ npm install
 
 # case of develop
 $ npm start
-# case of build only
-$ npm run build
 # case of release build (to dist directory)
-$ npm run release
+$ npm run build
 
 # open http://localhost:8080/
 ```

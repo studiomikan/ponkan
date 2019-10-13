@@ -15,9 +15,9 @@
     "email": "studiomikan@gmail.com"
   },
   "scripts": {
-    "release": "webpack --config webpack.config.prod.js",
-    "build": "webpack --config webpack.config.dev.js",
+    "build": "webpack --config webpack.config.prod.js",
     "start": "webpack-dev-server --config webpack.config.dev.js",
+    "dev": "npm run start",
     "doc": "typedoc --out ./doc ./src/ts",
     "lint": "eslint ./src/**/*.ts",
     "lint-fix": "eslint --fix ./src/**/*.ts",
