@@ -33,6 +33,7 @@ jobs:
     steps:
       - checkout
       - restore_npm
+      - run:
           name: Lint
           command: npm run lint
       - save_npm
