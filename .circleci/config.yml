@@ -18,28 +18,41 @@ commands:
           paths:
             - ~/workspace/node_modules
 jobs:
+  setup:
+    executor:
+      name: default
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: npm install
+      - save_npm
   lint:
     executor:
       name: default
     steps:
       - checkout
-      - restore_cache:
-          name: Restore npm dependencies
-          key: npm-{{ checksum "package.json" }}
-      - run:
-          name: Install dependencies
-          command: npm install
-      - run:
-          name: ES lint
+      - restore_npm
+          name: Lint
           command: npm run lint
-      - save_cache:
-          name: Cache npm dependencies
-          key: npm-{{ checksum "package.json" }}
-          paths:
-            - ~/workspace/node_modules
+      - save_npm
+  build:
+    executor:
+      name: default
+    steps:
+      - checkout
+      - restore_npm
+      - run:
+          name: Build
+          command: npm run build
+      - save_npm
 workflows:
   pull-request:
     jobs:
+      - setup
       - lint:
           requires:
             - setup
+      - build:
+          requires:
+            - lint
