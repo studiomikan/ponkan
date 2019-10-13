@@ -4,7 +4,7 @@ import { AsyncTask } from "./async-task";
 // import { Logger } from "./logger";
 import { PonGame } from "./pon-game";
 import { PonMouseEvent } from "./pon-mouse-event";
-import { PonSpriteCallbacks, PonSprite } from "./pon-sprite";
+import { IPonSpriteCallbacks, PonSprite } from "./pon-sprite";
 import { PonWheelEvent } from "./pon-wheel-event";
 import { Resource } from "./resource";
 
@@ -16,7 +16,7 @@ export class BaseLayerChar {
     this.sp = sp;
   }
 
-  public clone(spriteCallbacks: PonSpriteCallbacks): BaseLayerChar {
+  public clone(spriteCallbacks: IPonSpriteCallbacks): BaseLayerChar {
     const sp = new PonSprite(spriteCallbacks);
     sp.createText(this.ch, this.sp.textStyle as PIXI.TextStyle, this.sp.textPitch);
     sp.x = this.sp.x;
@@ -31,7 +31,7 @@ export class BaseLayerChar {
 
 export class BaseLayerTextLine {
   public readonly container: PIXI.Container;
-  public readonly spriteCallbacks: PonSpriteCallbacks;
+  public readonly spriteCallbacks: IPonSpriteCallbacks;
   public readonly chList: BaseLayerChar[] = [];
   public readonly rubyList: BaseLayerChar[] = [];
 
@@ -226,9 +226,9 @@ export class BaseLayer {
   protected textContainer: PIXI.Container;
   // protected textSpriteCallbacks: IPonSpriteCallbacks;
   protected childContainer: PIXI.Container;
-  protected childSpriteCallbacks: PonSpriteCallbacks;
+  protected childSpriteCallbacks: IPonSpriteCallbacks;
   protected imageContainer: PIXI.Container;
-  protected imageSpriteCallbacks: PonSpriteCallbacks;
+  protected imageSpriteCallbacks: IPonSpriteCallbacks;
 
   /** 読み込んでいる画像 */
   protected image: HTMLImageElement | null = null;

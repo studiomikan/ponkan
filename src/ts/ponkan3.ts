@@ -7,7 +7,7 @@ import { PonGame } from "./base/pon-game";
 import { PonKeyEvent } from "./base/pon-key-event";
 import { PonMouseEvent } from "./base/pon-mouse-event";
 import { PonWheelEvent } from "./base/pon-wheel-event";
-import { SoundBufferCallbacks, SoundBuffer } from "./base/sound";
+import { ISoundBufferCallbacks, SoundBuffer } from "./base/sound";
 import { Tag } from "./base/tag";
 import * as Util from "./base/util";
 import { HistoryLayer } from "./layer/history-layer";
@@ -498,6 +498,7 @@ export class Ponkan3 extends PonGame {
     return tagAction.action(tag.values, tick);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onLabel(labelName: string, line: number, tick: number): "continue" | "break" {
     // Logger.debug("onLabel: ", labelName);
     return "continue";
@@ -617,7 +618,7 @@ export class Ponkan3 extends PonGame {
       this.soundBufferCount = +config.soundBufferCount;
     }
 
-    const callbacks: SoundBufferCallbacks = {
+    const callbacks: ISoundBufferCallbacks = {
       onStop: (bufferNum: number) => {
         this.onSoundStop(bufferNum);
       },
@@ -651,14 +652,17 @@ export class Ponkan3 extends PonGame {
   //   }
   // }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onSoundStop(bufferNum: number): void {
     this.conductor.trigger("soundstop");
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onSoundFadeComplete(bufferNum: number): void {
     this.conductor.trigger("soundfade");
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public waitSoundCompleteCallback(sb: SoundBuffer): void {
     this.conductor.clearEventHandlerByName("click");
     this.conductor.start();
@@ -670,6 +674,7 @@ export class Ponkan3 extends PonGame {
     this.conductor.start();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public waitSoundFadeCompleteCallback(sb: SoundBuffer): void {
     this.conductor.clearEventHandlerByName("click");
     this.conductor.start();
@@ -1231,7 +1236,6 @@ export class Ponkan3 extends PonGame {
     console.log("SAVE! ", this.latestSaveData);
 
     // システムデータの保存
-    const comment: string = this.latestSaveData.comment;
     if (this.systemVar.saveDataInfo == null) { this.systemVar.saveDataInfo = []; }
     this.systemVar.saveDataInfo[num] = {
       isEmpty: false,
@@ -1373,7 +1377,7 @@ export class Ponkan3 extends PonGame {
     }
 
     // スキップとオートモードは停止させる
-    asyncTask.add((params: any, index: number): AsyncCallbacks => {
+    asyncTask.add((): AsyncCallbacks => {
       const cb = new AsyncCallbacks();
       window.setTimeout(() => {
         this.stopSkip();
