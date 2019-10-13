@@ -1,10 +1,7 @@
-import * as PIXI from "pixi.js";
 import { AsyncCallbacks } from "./async-callbacks";
-import { AsyncTask } from "./async-task";
 import { BaseLayer } from "./base-layer";
-import { Conductor, ConductorState, IConductorEvent } from "./conductor";
+import { Conductor, IConductorEvent } from "./conductor";
 import { Logger } from "./logger";
-import { PonEventHandler } from "./pon-event-handler";
 import { PonKeyEvent } from "./pon-key-event";
 import { PonMouseEvent } from "./pon-mouse-event";
 import { PonRenderer } from "./pon-renderer";
@@ -114,20 +111,19 @@ export class PonGame implements IConductorEvent {
     this.fps = 0;
   }
 
-  public lock(stop: boolean = true): void {
+  public lock(stop = true): void {
     this.isLocked = true;
     if (stop) {
       this.conductor.stop();
     }
   }
 
-  public unlock(restart: boolean = true): void {
+  public unlock(restart = true): void {
     this.isLocked = false;
     if (restart) {
       this.conductor.start();
     }
   }
-
 
   // ============================================================
   // スケーリング
@@ -209,8 +205,8 @@ export class PonGame implements IConductorEvent {
   }
 
   public onWindowResize(): void {
-    let scaleX: number = 1.0;
-    let scaleY: number = 1.0;
+    let scaleX = 1.0;
+    let scaleY = 1.0;
     const bodyWidth = document.body.clientWidth;
     const bodyHeight = document.body.clientHeight;
     switch (this.scaleMode) {
@@ -300,10 +296,12 @@ export class PonGame implements IConductorEvent {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected update(tick: number): void {
     // should to override
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected beforeDraw(tick: number): void {
     // should to override
   }
@@ -333,7 +331,7 @@ export class PonGame implements IConductorEvent {
   public callSubroutine(
     filePath: string | null,
     label: string | null = null,
-    countPage: boolean = false,
+    countPage = false,
   ): AsyncCallbacks {
     if (filePath == null) {
       filePath = this.conductor.script.filePath;
@@ -349,7 +347,7 @@ export class PonGame implements IConductorEvent {
    * @param forceStart 強制的にpb, lb, waitclickを終わらせるかどうか
    * @param countPage 既読処理をするかどうか
    */
-  public returnSubroutine(forceStart: boolean = false, countPage: boolean = true): "continue" | "break" {
+  public returnSubroutine(forceStart = false, countPage = true): "continue" | "break" {
     if (this.conductorStack.length === 1) {
       throw new Error("returnで戻れませんでした。callとreturnの対応が取れていません");
     }
@@ -375,27 +373,33 @@ export class PonGame implements IConductorEvent {
     return "break";
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onTag(tag: Tag, line: number, tick: number): "continue" | "break" {
     return "continue";
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onLabel(labelName: string, line: number, tick: number): "continue" | "break" {
     return "continue";
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): "continue" | "break" {
     return "continue";
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break" {
     return "continue";
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onChangeStable(isStable: boolean): void {
     return;
   }
 
-  public onReturnSubroutin(forceStart: boolean = false): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public onReturnSubroutin(forceStart = false): void {
     return;
   }
 
@@ -462,7 +466,7 @@ export class PonGame implements IConductorEvent {
   /**
    * レンダラーの再設定
    */
-  public resetPrimaryLayersRenderer() {
+  public resetPrimaryLayersRenderer(): void {
     // レンダラーとの紐付けを解除
     this.forePrimaryLayers.forEach((fore) => {
       this.foreRenderer.removeContainer(fore.container);
@@ -647,12 +651,14 @@ export class PonGame implements IConductorEvent {
     }
   }
 
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   public onMouseEnter(e: PonMouseEvent): void { return; }
   public onMouseLeave(e: PonMouseEvent): void { return; }
   public onMouseMove(e: PonMouseEvent): void { return; }
   public onMouseDown(e: PonMouseEvent): void { return; }
   public onMouseUp(e: PonMouseEvent): void { return; }
   public onMouseWheel(e: PonWheelEvent): boolean { return true; }
+  /* eslint-enable @typescript-eslint/no-unused-vars */
 
   private initKeyboardEvent(): void {
     window.addEventListener("keydown", (e: KeyboardEvent) => {
@@ -663,7 +669,9 @@ export class PonGame implements IConductorEvent {
     });
   }
 
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   public onKeyDown(e: PonKeyEvent): boolean { return true; }
   public onKeyUp(e: PonKeyEvent): boolean { return true; }
+  /* eslint-enable @typescript-eslint/no-unused-vars */
 
 }

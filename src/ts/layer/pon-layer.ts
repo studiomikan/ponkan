@@ -1,15 +1,9 @@
 import { AsyncCallbacks } from "../base/async-callbacks";
 import { AsyncTask } from "../base/async-task";
 import { BaseLayer } from "../base/base-layer";
-import { PonGame } from "../base/pon-game";
 import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
 import { FilteredLayer } from "./filtered-layer";
-import { FrameAnimLayer } from "./frame-anim-layer";
-import { ImageButtonLayer } from "./image-button-layer";
-import { MovableLayer } from "./movable-layer";
-import { TextButtonLayer } from "./text-button-layer";
-import { ToggleButtonLayer } from "./toggle-button-layer";
 
 export class PonLayer extends FilteredLayer {
 

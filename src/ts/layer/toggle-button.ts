@@ -1,9 +1,6 @@
 import { AsyncTask } from "../base/async-task";
 import { BaseLayer } from "../base/base-layer";
-import { Logger } from "../base/logger";
 import { PonMouseEvent } from "../base/pon-mouse-event";
-import { Resource } from "../base/resource";
-import { Ponkan3 } from "../ponkan3";
 
 /**
  * トグルボタン機能

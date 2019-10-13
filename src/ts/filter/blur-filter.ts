@@ -1,4 +1,3 @@
-import { AsyncTask } from "../base/async-task";
 import { LayerFilter } from "./layer-filter";
 
 export class BlurFilter extends LayerFilter {

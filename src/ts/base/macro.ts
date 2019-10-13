@@ -1,5 +1,3 @@
-import { Logger } from "./logger";
-import { Resource } from "./resource";
 import { Tag } from "./tag";
 
 export class Macro {

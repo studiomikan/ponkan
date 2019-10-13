@@ -1,8 +1,3 @@
-import { Logger } from "./logger";
-import { Resource } from "./resource";
-import { Script } from "./script";
-import * as Util from "./util";
-
 export class ScreenShot {
   private canvas: HTMLCanvasElement;
   private context: CanvasRenderingContext2D;

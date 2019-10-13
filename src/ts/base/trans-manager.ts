@@ -1,6 +1,4 @@
 import { AsyncCallbacks } from "./async-callbacks";
-import { AsyncTask } from "./async-task";
-import { Logger } from "./logger";
 import { PonGame } from "./pon-game";
 import { Resource } from "./resource";
 
@@ -164,7 +162,7 @@ export class TransManager {
   public initUnivTrans(
     time: number,
     ruleFilePath: string,
-    vague: number = 0.25,
+    vague = 0.25,
   ): AsyncCallbacks {
 
     this.initTrans(time, "univ");

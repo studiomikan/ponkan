@@ -1,18 +1,12 @@
 import * as PIXI from "pixi.js";
 import { AsyncCallbacks } from "./async-callbacks";
 import { AsyncTask } from "./async-task";
-import { Logger } from "./logger";
+// import { Logger } from "./logger";
 import { PonGame } from "./pon-game";
 import { PonMouseEvent } from "./pon-mouse-event";
-import { IPonSpriteCallbacks, PonSprite } from "./pon-sprite";
+import { PonSpriteCallbacks, PonSprite } from "./pon-sprite";
 import { PonWheelEvent } from "./pon-wheel-event";
 import { Resource } from "./resource";
-
-export interface IBaseLayerEventListener {
-  // onLabel(labelName: string, line: number, tick: number): "continue" | "break";
-  onChangeX(sender: BaseLayer, x: number): void;
-  onChangeY(sender: BaseLayer, y: number): void;
-}
 
 export class BaseLayerChar {
   public readonly ch: string;
@@ -22,7 +16,7 @@ export class BaseLayerChar {
     this.sp = sp;
   }
 
-  public clone(spriteCallbacks: IPonSpriteCallbacks): BaseLayerChar {
+  public clone(spriteCallbacks: PonSpriteCallbacks): BaseLayerChar {
     const sp = new PonSprite(spriteCallbacks);
     sp.createText(this.ch, this.sp.textStyle as PIXI.TextStyle, this.sp.textPitch);
     sp.x = this.sp.x;
@@ -37,7 +31,7 @@ export class BaseLayerChar {
 
 export class BaseLayerTextLine {
   public readonly container: PIXI.Container;
-  public readonly spriteCallbacks: IPonSpriteCallbacks;
+  public readonly spriteCallbacks: PonSpriteCallbacks;
   public readonly chList: BaseLayerChar[] = [];
   public readonly rubyList: BaseLayerChar[] = [];
 
@@ -86,12 +80,12 @@ export class BaseLayerTextLine {
     this.chList.splice(0, this.chList.length);
   }
 
-  public get x() { return this.container.x; }
+  public get x(): number { return this.container.x; }
   public set x(x: number) { this.container.x = x; }
-  public get y() { return this.container.y; }
+  public get y(): number { return this.container.y; }
   public set y(y: number) { this.container.y = y; }
-  public get textX() { return this._textX; }
-  public get text() {
+  public get textX(): number { return this._textX; }
+  public get text(): string {
     let str = "";
     this.chList.forEach((blc) => {
       str += blc.ch;
@@ -99,7 +93,7 @@ export class BaseLayerTextLine {
     return str;
   }
   public get tailChar(): string { return this.chList[this.chList.length - 1].ch; }
-  public get length() { return this.chList.length; }
+  public get length(): number { return this.chList.length; }
   public get width(): number {
     if (this.chList.length === 0) {
       return 0;
@@ -134,7 +128,7 @@ export class BaseLayerTextLine {
     const pitch = this.rubyPitch;
     const center = targetSp.x + targetSp.textWidth / 2;
     const tmpRubyList: BaseLayerChar[] = [];
-    let rubyWidthSum: number = 0;
+    let rubyWidthSum = 0;
 
     for (let i = 0; i < rubyText.length; i++) {
       const sp: PonSprite = new PonSprite(this.spriteCallbacks);
@@ -155,7 +149,7 @@ export class BaseLayerTextLine {
     });
   }
 
-  public reserveRubyText(rubyText: string, rubyFontSize: number, rubyOffset: number, rubyPitch: number) {
+  public reserveRubyText(rubyText: string, rubyFontSize: number, rubyOffset: number, rubyPitch: number): void {
     this.rubyText = rubyText;
     this.rubyFontSize = rubyFontSize;
     this.rubyOffset = rubyOffset;
@@ -187,7 +181,6 @@ export class BaseLayerTextLine {
   }
 }
 
-
 /**
  * 基本レイヤ。PIXI.Containerをラップしたもの
  */
@@ -206,12 +199,12 @@ export class BaseLayer {
   protected maskSprite: PIXI.Sprite;
   /** デバッグ情報を出力するためのコンテナ */
   protected debugContainer: PIXI.Container;
-  public set debugInfoVisible (visible: boolean) { this.debugContainer.visible = visible; }
+  public set debugInfoVisible(visible: boolean) { this.debugContainer.visible = visible; }
   public get debugInfoVisible(): boolean { return this.debugContainer.visible; }
   /** デバッグ情報: ボーダー */
   protected debugBorder: PIXI.Graphics;
   /** デバッグ情報: テキスト情報 */
-  protected debugText : PIXI.Text;
+  protected debugText: PIXI.Text;
   /** デバッグ情報: テキスト情報のスタイル */
   public debugTextStyle: PIXI.TextStyle = new PIXI.TextStyle({
     fontFamily: ["GenShinGothic", "monospace"],
@@ -233,9 +226,9 @@ export class BaseLayer {
   protected textContainer: PIXI.Container;
   // protected textSpriteCallbacks: IPonSpriteCallbacks;
   protected childContainer: PIXI.Container;
-  protected childSpriteCallbacks: IPonSpriteCallbacks;
+  protected childSpriteCallbacks: PonSpriteCallbacks;
   protected imageContainer: PIXI.Container;
-  protected imageSpriteCallbacks: IPonSpriteCallbacks;
+  protected imageSpriteCallbacks: PonSpriteCallbacks;
 
   /** 読み込んでいる画像 */
   protected image: HTMLImageElement | null = null;
@@ -247,8 +240,8 @@ export class BaseLayer {
 
   // 子レイヤ
   private _children: BaseLayer[] = [];
-  // イベントリスナ
-  private eventListenerList: IBaseLayerEventListener[] = [];
+  // // イベントリスナ
+  // private eventListenerList: BaseLayerEventListener[] = [];
 
   /** イベント遮断フラグ。trueにするとマウスイベントの伝播を遮断する。 */
   public blockLeftClickFlag: boolean = false;
@@ -363,12 +356,12 @@ export class BaseLayer {
   public get x(): number { return this.container.x; }
   public set x(x) {
     this.container.x = x;
-    this.callEventListener("onChangeX", [x]);
+    // this.callEventListener("onChangeX", [x]);
   }
   public get y(): number { return this.container.y; }
   public set y(y) {
     this.container.y = y;
-    this.callEventListener("onChangeY", [y]);
+    // this.callEventListener("onChangeY", [y]);
   }
   public get width(): number { return this.maskSprite.width; }
   public set width(width: number) {
@@ -514,30 +507,6 @@ export class BaseLayer {
     return this.children[index];
   }
 
-  public addEventListener(listener: IBaseLayerEventListener): void {
-    if (this.eventListenerList.indexOf(listener) === -1) {
-      this.eventListenerList.push(listener);
-    }
-  }
-
-  public delEventListener(listener: IBaseLayerEventListener): void {
-    const index = this.eventListenerList.indexOf(listener);
-    if (index !== -1) {
-      this.eventListenerList.splice(index, 1);
-    }
-  }
-
-  public clearEventListener(): void {
-    this.eventListenerList = [];
-  }
-
-  private callEventListener(method: string, args: any[]) {
-    args.unshift(this);
-    this.eventListenerList.forEach((listener: any) => {
-      listener[method].apply(listener, args);
-    });
-  }
-
   public update(tick: number): void {
     this.children.forEach((child) => {
       child.update(tick);
@@ -611,6 +580,7 @@ export class BaseLayer {
   //    これが呼ばれると e.stopPropagationFlag が true になっているので、
   //    その場合は親レイヤーのイベント処理をしてはいけない。
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onMouseEnter(e: PonMouseEvent): void { /* empty */ }
   public _onMouseEnter(e: PonMouseEvent): void {
     // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる。
@@ -619,6 +589,7 @@ export class BaseLayer {
     this.onMouseEnter(e);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onMouseLeave(e: PonMouseEvent): void { /* empty */ }
   public _onMouseLeave(e: PonMouseEvent): void {
     // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる
@@ -629,6 +600,7 @@ export class BaseLayer {
 
   /** onMouseEnter等を発生させるためのバッファ */
   protected isInsideBuffer: boolean = false;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onMouseMove(e: PonMouseEvent): void { /* empty */ }
   public _onMouseMove(e: PonMouseEvent): void {
     // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる
@@ -672,6 +644,7 @@ export class BaseLayer {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onMouseDown(e: PonMouseEvent): void { /* empty */ }
   public _onMouseDown(e: PonMouseEvent): void {
     for (let i = this.children.length - 1; i >= 0; i--) {
@@ -687,6 +660,7 @@ export class BaseLayer {
     this.onMouseDown(e);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onMouseUp(e: PonMouseEvent): void { /* empty */ }
   public _onMouseUp(e: PonMouseEvent): void {
     for (let i = this.children.length - 1; i >= 0; i--) {
@@ -702,7 +676,8 @@ export class BaseLayer {
     this.onMouseUp(e);
   }
 
-  public onMouseWheel(e: PonWheelEvent) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public onMouseWheel(e: PonWheelEvent): boolean {
     for (let i = this.children.length - 1; i >= 0; i--) {
       const child: BaseLayer = this.children[i];
       if (!child.visible) { continue; }
@@ -726,7 +701,7 @@ export class BaseLayer {
    * @param color 色 0xRRGGBB
    * @param alpha アルファ値 0.0〜1.0
    */
-  public setBackgroundColor(color: number, alpha: number = 1.0): void {
+  public setBackgroundColor(color: number, alpha = 1.0): void {
     this.freeImage();
     this.backgroundSprite.fillColor(color, alpha);
     this._backgroundColor = color;
@@ -836,7 +811,7 @@ export class BaseLayer {
    * @param chWidth 追加しようとしている文字の横幅
    * @return 表示位置
    */
-  public getNextTextPos(chWidth: number): { x: number, y: number, newLineFlag: boolean } {
+  public getNextTextPos(chWidth: number): { x: number; y: number; newLineFlag: boolean } {
     const currentLine = this.currentTextLine;
     const right = currentLine.x + currentLine.width;
     let x = 0;
@@ -884,16 +859,14 @@ export class BaseLayer {
    * @param chWidth 追加する文字の幅
    * @return 改行が必要ならtrue
    */
-  protected shouldBeNewTextLine(chWidth: number = 0): boolean {
+  protected shouldBeNewTextLine(chWidth = 0): boolean {
     const currentLine = this.currentTextLine;
     const left = currentLine.x;
     const right = currentLine.x + currentLine.width;
-    let x = 0;
     switch (this.textAlign) {
       case "left":
         return right + chWidth > this.width - this.textMarginRight;
       case "center":
-        x = right + chWidth / 2;
         return (left - (chWidth / 2)) < this.textMarginLeft ||
                (right + (chWidth / 2) > this.width - this.textMarginRight);
       case "right":
@@ -1054,8 +1027,6 @@ export class BaseLayer {
 
     this.clearBackgroundColor();
     this.freeImage();
-    const width = this.width;
-    const height = this.height;
     this.resource.loadImage(filePath).done((image) => {
       // Logger.debug("BaseLayer.loadImage success: ", image);
       this.image = image as HTMLImageElement;
@@ -1139,6 +1110,7 @@ export class BaseLayer {
     "hasBackgroundColor",
   ];
 
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   /**
    * 保存する。
    * 子レイヤーの状態は保存されないことに注意が必要。
@@ -1149,6 +1121,7 @@ export class BaseLayer {
     BaseLayer.baseLayerStoreParams.forEach((p) => data[p] = me[p]);
     return data;
   }
+  /* eslint-enalbe @typescript-eslint/no-unused-vars */
 
   /**
    * 復元する。
@@ -1156,7 +1129,7 @@ export class BaseLayer {
    * 継承先で子レイヤーを使用している場合は、継承先で独自に復元処理を実装する
    */
   public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
-    const storeParams = () => {
+    const storeParams = (): void => {
       const me: any = this as any;
       const restoreParams = BaseLayer.baseLayerStoreParams.filter(
         (param) => BaseLayer.baseLayerIgnoreParams.indexOf(param) === -1);

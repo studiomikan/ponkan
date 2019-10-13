@@ -1,20 +1,4 @@
-import { Logger } from "./logger";
 import { Tag } from "./tag";
-
-/*
-スクリプトのイメージ
-
-# コメント行
-@ コマンド行
-[タグ名 key=value
-        key=value]
-*label
-- JS 出力なし
-= JS 出力あり
----
-JS部
----
-*/
 
 export class ScriptParser2 {
   private scriptText: string;
@@ -83,7 +67,7 @@ export class ScriptParser2 {
   }
 
   private parseCommand(): void {
-    const trash = this.getChar(); // "[" 読み捨て
+    this.getChar(); // "[" 読み捨て
 
     // コマンド名取得
     this.skipWhiteSpace();
@@ -92,7 +76,7 @@ export class ScriptParser2 {
       throw new Error(`文法エラー：コマンド名がありません(line:${this.currentLineNum})`);
     }
 
-    let body: string = `[${commandName}` ;
+    let body = `[${commandName}` ;
     const values: any = {};
 
     while (true) {
@@ -146,10 +130,10 @@ export class ScriptParser2 {
       const comment: string = body.substring(p);
       this.addTag("__save_mark__", { __body__: body, name, comment });
     } else if (body.length > 0) {
-      const name: string = `__save_mark_${this.currentLineNum}__`;
+      const name = `__save_mark_${this.currentLineNum}__`;
       this.addTag("__save_mark__", { __body__: body, name, comment: body });
     } else {
-      const name: string = `__save_mark_${this.currentLineNum}__`;
+      const name = `__save_mark_${this.currentLineNum}__`;
       this.addTag("__save_mark__", { __body__: body, name, comment: "" });
     }
   }
@@ -157,7 +141,7 @@ export class ScriptParser2 {
   private parseJs(): void {
     if (this.read3Char() === "---") {
       this.readUntilLineBreak(); // "---" を読み捨てる
-      let js: string = "";
+      let js = "";
       while (true) {
         const tmp: string  = this.readUntilLineBreak();
         if (tmp === "" || tmp.trim() === "---") { break; }
@@ -206,7 +190,7 @@ export class ScriptParser2 {
     const ch0 = this.getChar();
     if (ch0 === "") { return ""; }
 
-    if (ch0 === "\"" || ch0 === "\'") {
+    if (ch0 === "\"" || ch0 === "'") {
       let word = "";
       let escapeFlag = false;
       while (true) {
@@ -229,7 +213,7 @@ export class ScriptParser2 {
       while (true) {
         const ch = this.readChar();
         switch (ch) {
-          case "": case "\"": case "\'":
+          case "": case "\"": case "'":
           case "\r": case "\n": case "\t": case " ":
           case "=": case "]":
             return word;
@@ -261,7 +245,7 @@ export class ScriptParser2 {
            script.charAt(point + 2);
   }
 
-  private skipWhiteSpace() {
+  private skipWhiteSpace(): void {
     while (true) {
       const ch: string = this.readChar();
       if (ch === "") {
@@ -290,7 +274,7 @@ export class ScriptParser2 {
     return false;
   }
 
-  private addTag(name: string, values: object) {
+  private addTag(name: string, values: object): void {
     this._tags.push(new Tag(name, values, this.currentLineNum - 1));
     // Logger.debug("ADD TAG: ", name, values)
   }

@@ -4,8 +4,6 @@ import { BaseLayer } from "../base/base-layer";
 import { PonGame } from "../base/pon-game";
 import { PonMouseEvent } from "../base/pon-mouse-event";
 import { Resource } from "../base/resource";
-import { Ponkan3 } from "../ponkan3";
-// import { CommandImageButton } from "./image-button-layer";
 import { Button } from "./button";
 import { ToggleButtonLayer } from "./toggle-button-layer";
 
@@ -19,12 +17,12 @@ export class SliderButton extends Button {
     });
   }
 
-  public clearSliderButton() {
+  public clearSliderButton(): void {
     this.clearButton();
     this.freeImage();
   }
 
-  public setButtonStatus(status: "normal" | "over" | "on" | "disabled") {
+  public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
     super.setButtonStatus(status);
 
     switch (status) {
@@ -90,7 +88,6 @@ export class Slider extends BaseLayer {
     foreImagePath: string,
     buttonImagePath: string,
   ): AsyncCallbacks {
-    const cb = new AsyncCallbacks();
     const task = new AsyncTask();
 
     this.clearSlider();
@@ -101,11 +98,11 @@ export class Slider extends BaseLayer {
     this.exp = exp;
 
     // 背景画像読み込み
-    task.add((params: any, index: number): AsyncCallbacks => {
+    task.add((): AsyncCallbacks => {
       return this.loadImage(backImagePath);
     });
     // 前景画像読み込み
-    task.add((params: any, index: number): AsyncCallbacks => {
+    task.add((): AsyncCallbacks => {
       const foreImage = this.foreImage;
       const foreImageCb = foreImage.loadImage(foreImagePath);
       foreImageCb.done(() => {
@@ -116,7 +113,7 @@ export class Slider extends BaseLayer {
       return foreImageCb;
     });
     // ボタン読み込み
-    task.add((params: any, index: number): AsyncCallbacks => {
+    task.add((): AsyncCallbacks => {
       const button = this.button;
       const buttonCb = button.initSliderButton(buttonImagePath);
       buttonCb.done(() => {
@@ -181,13 +178,15 @@ export class Slider extends BaseLayer {
     this.button.x = x;
   }
 
-  public onButtonDown(e: PonMouseEvent) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public onButtonDown(e: PonMouseEvent): void {
     if (!this.locked) {
       this.down = true;
     }
   }
 
-  public onButtonUp(e: PonMouseEvent) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public onButtonUp(e: PonMouseEvent): void {
     // this.down = false;
   }
 
@@ -357,7 +356,7 @@ export class SliderLayer extends ToggleButtonLayer {
       } else {
         // 数が合わない場合は一度破棄して作り直す
         this.clearSliders();
-        data.sliders.forEach((sliderData: any, i: number) => {
+        data.sliders.forEach((sliderData: any) => {
           const s = new Slider(sliderData.name, this.resource, this.owner);
           this.addChild(s);
           this.sliders.push(s);

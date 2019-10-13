@@ -1,22 +1,22 @@
-  /**
-   * 色を "rgb(r,g,b)" の文字列に変換する
-   * @param color 色
-   */
+/**
+ * 色を "rgb(r,g,b)" の文字列に変換する
+ * @param color 色
+ */
 export function toRgb(color: number | string): string {
-  let r: number = 0;
-  let g: number = 0;
-  let b: number  = 0;
+  let r = 0;
+  let g = 0;
+  let b = 0;
   switch (typeof color) {
     case "string":
-      r = +("0x" + ((color as string).substr(1, 2)));
-      g = +("0x" + ((color as string).substr(3, 2)));
-      b = +("0x" + ((color as string).substr(5, 2)));
+      r = +("0x" + (color as string).substr(1, 2));
+      g = +("0x" + (color as string).substr(3, 2));
+      b = +("0x" + (color as string).substr(5, 2));
       break;
     case "number":
       // tslint:disable
       r = Math.floor((color & 0xff0000) / 0x10000);
       g = Math.floor((color & 0x00ff00) / 0x100);
-      b = Math.floor((color) & 0x0000ff);
+      b = Math.floor(color & 0x0000ff);
       // tslint:enable
       break;
   }
@@ -30,7 +30,7 @@ export function toRgb(color: number | string): string {
  * @return オブジェクト
  */
 export function objExtend(base: any, obj: any): any {
-  Object.keys(obj).forEach((key) => {
+  Object.keys(obj).forEach(key => {
     base[key] = obj[key];
   });
   return base;
@@ -43,7 +43,7 @@ export function objExtend(base: any, obj: any): any {
  */
 export function objClone(obj: any): any {
   const base: any = {};
-  Object.keys(obj).forEach((key) => {
+  Object.keys(obj).forEach(key => {
     base[key] = obj[key];
   });
   return base;

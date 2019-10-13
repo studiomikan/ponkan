@@ -1,4 +1,3 @@
-import { AsyncCallbacks } from "../base/async-callbacks";
 import { AsyncTask } from "../base/async-task";
 import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
@@ -32,7 +31,7 @@ export class FilteredLayer extends MovableLayer {
     }
   }
 
-  public static registerFilter(filterName: string, createFunction: any) {
+  public static registerFilter(filterName: string, createFunction: any): void {
     // console.log("@@ register ", filterName, createFunction);
     FilteredLayer.filterClassList[filterName] = createFunction;
   }
@@ -62,11 +61,11 @@ export class FilteredLayer extends MovableLayer {
 
   public store(tick: number): any {
     const data: any = super.store(tick);
-    const me: any = this as any;
+    // const me: any = this as any;
     // FilteredLayer.filteredLayerStoreParams.forEach((p) => data[p] = me[p]);
 
     data.filters = [];
-    this.filters.forEach((filter, index) => {
+    this.filters.forEach((filter) => {
       data.filters.push({
         filterName: filter.filterName,
         data: filter.store(),
@@ -78,7 +77,7 @@ export class FilteredLayer extends MovableLayer {
 
   public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
     super.restore(asyncTask, data, tick, clear);
-    const me: any = this as any;
+    // const me: any = this as any;
     // FilteredLayer.filteredLayerStoreParams.forEach((p) => me[p] = data[p]);
 
     this.clearFilters();
@@ -91,8 +90,8 @@ export class FilteredLayer extends MovableLayer {
 
   public copyTo(dest: FilteredLayer): void {
     super.copyTo(dest);
-    const me: any = this as any;
-    const you: any = dest as any;
+    // const me: any = this as any;
+    // const you: any = dest as any;
     // FilteredLayer.filteredLayerStoreParams.forEach((p) => you[p] = me[p]);
     dest.clearFilters();
     this.filters.forEach((filter: LayerFilter) => {

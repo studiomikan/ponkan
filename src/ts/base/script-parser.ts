@@ -17,7 +17,7 @@ export class ScriptParser {
     this.scriptText = scriptText;
     this.currentLineNum = 0;
     this.saveMarkCount = 0;
-    this.lines = this.scriptText.split(/\n/g);
+    this.lines = this.scriptText.split(/\r\n|\n|\r/g);
     this.parse();
   }
 
@@ -60,7 +60,7 @@ export class ScriptParser {
 
       if (line === "---") {
         // JavaScript部
-        let js: string = "";
+        let js = "";
         while (true) {
           const tmp: string | null = this.getLineWithoutTrim();
           if (tmp === null || tmp.trim() === "---") { break; }
@@ -151,10 +151,10 @@ export class ScriptParser {
       }
       this.addTag("__save_mark__", { __body__: body, name, comment });
     } else if (body.length > 0) {
-      const name: string = `__save_mark_${this.saveMarkCount}__`;
+      const name = `__save_mark_${this.saveMarkCount}__`;
       this.addTag("__save_mark__", { __body__: body, name, comment: body });
     } else {
-      const name: string = `__save_mark_${this.saveMarkCount}__`;
+      const name = `__save_mark_${this.saveMarkCount}__`;
       this.addTag("__save_mark__", { __body__: body, name, comment: "" });
     }
     this.saveMarkCount++;
@@ -181,7 +181,7 @@ export class ScriptParser {
     this.addTag("__line_break__", { __body__: "\n" });
   }
 
-  private addTag(name: string, values: object) {
+  private addTag(name: string, values: object): void {
     this._tags.push(new Tag(name, values, this.currentLineNum - 1));
     // Logger.debug("ADD TAG: ", name, values)
   }

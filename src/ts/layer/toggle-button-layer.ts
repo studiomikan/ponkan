@@ -1,10 +1,5 @@
 import { AsyncCallbacks } from "../base/async-callbacks";
 import { AsyncTask } from "../base/async-task";
-import { BaseLayer } from "../base/base-layer";
-import { Logger } from "../base/logger";
-import { PonMouseEvent } from "../base/pon-mouse-event";
-import { Resource } from "../base/resource";
-import { Ponkan3 } from "../ponkan3";
 import { ImageButtonLayer } from "./image-button-layer";
 import { ToggleButton } from "./toggle-button";
 
@@ -14,7 +9,7 @@ export class ImageToggleButton extends ToggleButton {
   public initImageToggleButton(
     filePath: string,
     varName: string,
-    isSystemButton: boolean = false,
+    isSystemButton = false,
     exp: string | null,
     direction: "horizontal" | "vertical",
   ): AsyncCallbacks {
@@ -108,7 +103,7 @@ export class ToggleButtonLayer extends ImageButtonLayer {
     x: number,
     y: number,
     varName: string,
-    isSystemButton: boolean = false,
+    isSystemButton = false,
     exp: string | null,
     direction: "horizontal" | "vertical",
   ): AsyncCallbacks {
@@ -167,7 +162,7 @@ export class ToggleButtonLayer extends ImageButtonLayer {
 
   public store(tick: number): any {
     const data: any = super.store(tick);
-    const me: any = this as any;
+    // const me: any = this as any;
 
     data.imageToggleButtons =
       this.imageToggleButtons.map((toggleButton) => toggleButton.store(tick));
