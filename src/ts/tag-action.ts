@@ -2735,8 +2735,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
     ///   動画の再生はストリーミング方式で行われます。\n
     ///   ネットワーク回線によっては、動画がスムーズに再生できない可能性があります。
     ///
-    ///   動画のサイズ（幅・高さ）は無視され、読み込んだレイヤーサイズに合わせて
-    ///   拡大・縮小されます。
+    ///   動画のサイズ（幅・高さ）は無視され、指定した幅・高さで再生されます。
+    ///   また、レイヤーサイズも同じサイズに変更されます。
     ///
     ///   対応する動画ファイル形式は、プレイするブラウザに依存します。
     new TagAction(
@@ -2756,11 +2756,23 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("autoplay", "boolean", false, true),
         /// @param ループ再生するかどうか
         new TagValue("loop", "boolean", false, false),
+        /// @param 表示非表示
+        new TagValue("visible", "boolean", false, null),
+        /// @param x座標(px)
+        new TagValue("x", "number", false, null),
+        /// @param y座標(px)
+        new TagValue("y", "number", false, null),
+        /// @param レイヤーのAlpha(0.0〜1.0)
+        new TagValue("alpha", "number", false, 1.0),
       ],
       (values: any, tick: number):  "continue" | "break" => {
         const task: AsyncTask = new AsyncTask();
         p.getLayers(values).forEach((layer) => {
           task.add(() => {
+            if (values.x != null) { layer.x = values.x; }
+            if (values.y != null) { layer.y = values.y; }
+            if (values.visible != null) { layer.visible = values.visible; }
+            if (values.alpha != null) { layer.alpha = values.alpha; }
             return layer.loadVideo(values.file, values.width, values.height, values.autoplay, values.loop);
           });
         });

@@ -1098,6 +1098,8 @@ export class BaseLayer {
       video.source.removeEventListener("canplaythrough", onCanPlay);
       this.video = video;
       this.videoFilePath = filePath;
+      this.width = this.video.width;
+      this.height = this.video.height;
       cb.callDone(this);
     }
     video.source.addEventListener("canplaythrough", onCanPlay);
