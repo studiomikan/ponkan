@@ -2756,6 +2756,8 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("autoplay", "boolean", false, true),
         /// @param ループ再生するかどうか
         new TagValue("loop", "boolean", false, false),
+        /// @param 音量(0.0〜1.0)
+        new TagValue("volume", "number", false, 1.0),
         /// @param 表示非表示
         new TagValue("visible", "boolean", false, null),
         /// @param x座標(px)
@@ -2773,7 +2775,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
             if (values.y != null) { layer.y = values.y; }
             if (values.visible != null) { layer.visible = values.visible; }
             if (values.alpha != null) { layer.alpha = values.alpha; }
-            return layer.loadVideo(values.file, values.width, values.height, values.autoplay, values.loop);
+            return layer.loadVideo(values.file, values.width, values.height, values.autoplay, values.loop, values.volume);
           });
         });
         task.run().done(() => {
@@ -2786,6 +2788,47 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
           }
         });
         return p.conductor.stop()
+      },
+    ),
+    /// @category 動画再生
+    /// @description 動画を解放する
+    /// @details
+    ///   動画を解放します。
+    ///   動画再生が完了したら、必ずこのコマンドで解放するようにしてください。
+    new TagAction(
+      ["freevideo"],
+      [
+        /// @param 対象レイヤー
+        new TagValue("lay", "string", true, null),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+      ],
+      (values: any, tick: number):  "continue" | "break" => {
+        p.getLayers(values).forEach((layer) => {
+          layer.freeVideo();
+        });
+        return "continue";
+      },
+    ),
+    /// @category 動画再生
+    /// @description 動画の設定
+    /// @details
+    ///   動画に関して設定します。
+    new TagAction(
+      ["videoopt"],
+      [
+        /// @param 対象レイヤー
+        new TagValue("lay", "string", true, null),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+        /// @param 音量(0.0〜1.0)
+        new TagValue("volume", "number", false, null),
+      ],
+      (values: any, tick: number):  "continue" | "break" => {
+        p.getLayers(values).forEach((layer) => {
+          if (values.volume != null) { layer.videoVolume = values.volume; }
+        });
+        return "continue";
       },
     ),
     /// @category 動画再生
@@ -2849,32 +2892,12 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
       },
     ),
     /// @category 動画再生
-    /// @description 動画を解放する
-    /// @details
-    ///   動画を解放します。
-    ///   動画再生が完了したら、必ずこのコマンドで解放するようにしてください。
-    new TagAction(
-      ["freevideo"],
-      [
-        /// @param 対象レイヤー
-        new TagValue("lay", "string", true, null),
-        /// @param 対象ページ
-        new TagValue("page", "string", false, "current"),
-      ],
-      (values: any, tick: number):  "continue" | "break" => {
-        p.getLayers(values).forEach((layer) => {
-          layer.freeVideo();
-        });
-        return "continue";
-      },
-    ),
-    /// @category 動画再生
     /// @description 動画再生の終了を待つ
     /// @details
     ///   動画再生の終了を待ちます。\n
     ///   動画再生中のレイヤーが無い場合やループ再生の場合はなにもしません。
     new TagAction(
-      ["waitvideo", "wv"],
+      ["waitvideo"],
       [
         /// @param スキップ可能かどうか
         new TagValue("canskip", "boolean", false, true),
