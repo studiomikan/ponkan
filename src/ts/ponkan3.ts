@@ -841,6 +841,23 @@ export class Ponkan3 extends PonGame {
     }
   }
 
+  public get hasPlayingVideoLayer(): boolean {
+    return this.foreLayers.filter((layer) => layer.isPlayingVideo && !layer.isLoopPlayingVideo).length > 0 ||
+           this.backLayers.filter((layer) => layer.isPlayingVideo && !layer.isLoopPlayingVideo).length > 0;
+  }
+
+  public waitVideoClickCallback(): void {
+    this.conductor.clearEventHandlerByName("move");
+    this.foreLayers.forEach((layer) => layer.stopVideo());
+    this.backLayers.forEach((layer) => layer.stopVideo());
+    this.conductor.start();
+  }
+
+  public waitVideoCompleteCallback(): void {
+    this.conductor.clearEventHandlerByName("click");
+    this.conductor.start();
+  }
+
   // =========================================================
   // Quake
   // =========================================================

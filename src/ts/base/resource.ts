@@ -4,6 +4,7 @@ import { Logger } from "./logger";
 import { Macro } from "./macro";
 import { PonGame } from "./pon-game";
 import { Script } from "./script";
+import * as PIXI from "pixi.js";
 import * as Util from "./util";
 
 export class Resource {
@@ -134,6 +135,9 @@ export class Resource {
    * @return 補完後のパス
    */
   public getPath(filePath: string): string {
+    if (filePath.match(/^http:\/\/|^https:\/\//)) {
+      return filePath;
+    }
     let path = `${this.basePath}/${filePath}`;
     if (this.enableResourceCache) {
       path += `?v=${this.gameVersion}`;
@@ -241,7 +245,7 @@ export class Resource {
     return cb;
   }
 
-  public loadSoundHowler( filePath: string): AsyncCallbacks {
+  public loadSoundHowler(filePath: string): AsyncCallbacks {
     const cb = new AsyncCallbacks();
 
     const h: Howl = new Howl({
@@ -258,6 +262,11 @@ export class Resource {
     });
 
     return cb;
+  }
+
+  public loadVideoTexture(filePath: string, autoPlay: boolean): PIXI.Texture {
+    const path: string = this.getPath(filePath);
+    return PIXI.Texture.fromVideo(path, PIXI.SCALE_MODES.NEAREST, true, autoPlay);
   }
 
   public isEnabledLocalStorage(): boolean {

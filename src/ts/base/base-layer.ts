@@ -5,6 +5,7 @@ import { AsyncTask } from "./async-task";
 import { PonGame } from "./pon-game";
 import { PonMouseEvent } from "./pon-mouse-event";
 import { IPonSpriteCallbacks, PonSprite } from "./pon-sprite";
+import { IPonVideoCallbacks, PonVideo} from "./pon-video";
 import { PonWheelEvent } from "./pon-wheel-event";
 import { Resource } from "./resource";
 
@@ -229,14 +230,25 @@ export class BaseLayer {
   protected childSpriteCallbacks: IPonSpriteCallbacks;
   protected imageContainer: PIXI.Container;
   protected imageSpriteCallbacks: IPonSpriteCallbacks;
+  protected videoCallbacks: IPonVideoCallbacks;
 
   /** 読み込んでいる画像 */
   protected image: HTMLImageElement | null = null;
   protected imageFilePath: string | null = null;
   /** 画像用スプライト */
   protected imageSprite: PonSprite | null = null;
-  protected get imageWidth(): number { return this.image !== null ? this.image.width : 0; }
-  protected get imageHeight(): number { return this.image !== null ? this.image.height : 0; }
+  public get imageWidth(): number { return this.image !== null ? this.image.width : 0; }
+  public get imageHeight(): number { return this.image !== null ? this.image.height : 0; }
+
+  /** 動画スプライト */
+  protected videoFilePath: string | null = null;
+  public video: PonVideo | null = null;
+  public set videoWidth(width: number) { if (this.video != null) { this.video.width = width; } }
+  public get videoWidth(): number { return this.video != null ? this.video.width : 0; }
+  public set videoHeight(height: number) { if (this.video != null) { this.video.height = height; } }
+  public get videoHeight(): number { return this.video != null ? this.video.height : 0; }
+  public set videoLoop(loop: boolean) { if (this.video != null) { this.video.loop = loop; } }
+  public get videoLoop(): boolean { return this.video != null ? this.video.loop : false; }
 
   // 子レイヤ
   private _children: BaseLayer[] = [];
@@ -415,6 +427,14 @@ export class BaseLayer {
     this.imageContainer = new PIXI.Container();
     this.container.addChild(this.imageContainer);
     this.imageSpriteCallbacks = {
+      pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
+        this.imageContainer.addChild(child);
+      },
+      pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
+        this.imageContainer.removeChild(child);
+      },
+    };
+    this.videoCallbacks = {
       pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
         this.imageContainer.addChild(child);
       },
@@ -703,6 +723,7 @@ export class BaseLayer {
    */
   public setBackgroundColor(color: number, alpha = 1.0): void {
     this.freeImage();
+    this.freeVideo();
     this.backgroundSprite.fillColor(color, alpha);
     this._backgroundColor = color;
     this._backgroundAlpha = alpha;
@@ -1027,6 +1048,7 @@ export class BaseLayer {
 
     this.clearBackgroundColor();
     this.freeImage();
+    this.freeVideo();
     this.resource.loadImage(filePath).done((image) => {
       // Logger.debug("BaseLayer.loadImage success: ", image);
       this.image = image as HTMLImageElement;
@@ -1058,6 +1080,77 @@ export class BaseLayer {
     this.imageFilePath = null;
   }
 
+  public loadVideo(filePath: string, width: number, height: number, autoPlay: boolean, loop: boolean): AsyncCallbacks {
+    const cb = new AsyncCallbacks();
+    this.clearBackgroundColor();
+    this.freeImage();
+    this.freeVideo();
+
+    const videoTexture = this.resource.loadVideoTexture(filePath, autoPlay);
+    const video = new PonVideo(videoTexture, this.videoCallbacks);
+    video.width = width;
+    video.height = height;
+    video.loop = loop;
+
+    let timeoutTimer = -1;
+    const onCanPlay = (): void => {
+      if (timeoutTimer != -1) { window.clearTimeout(timeoutTimer); }
+      video.source.removeEventListener("canplaythrough", onCanPlay);
+      this.video = video;
+      this.videoFilePath = filePath;
+      this.width = this.video.width;
+      this.height = this.video.height;
+      cb.callDone(this);
+    }
+    video.source.addEventListener("canplaythrough", onCanPlay);
+    timeoutTimer = window.setTimeout(() => {
+      video.source.removeEventListener("canplaythrough", onCanPlay);
+      cb.callFail(this);
+    }, 30000); // TODO: タイムアウト時間を変更できるようにする
+
+    video.source.addEventListener('ended', () => {
+      this.owner.conductor.trigger("video");
+    });
+    return cb;
+  }
+
+  public playVideo(loop: boolean): void {
+    if (this.video != null) {
+      this.video.loop = loop;
+      this.video.play();
+    }
+  }
+
+  public pauseVideo(): void {
+    if (this.video != null) {
+      this.video.pause();
+    }
+  }
+
+  public stopVideo(): void {
+    if (this.video != null) {
+      this.video.stop();
+    }
+  }
+
+  public freeVideo(): void {
+    if (this.video != null) {
+      this.video.stop();
+      this.video.destroy();
+    }
+    this.video = null;
+    this.videoFilePath = null;
+  }
+
+  public get isPlayingVideo(): boolean {
+    if (this.video) console.log("this.video", this.video, this.video.playing, this.video.loop);
+    return this.video != null && this.video.playing;
+  }
+
+  public get isLoopPlayingVideo(): boolean {
+    return this.video != null && this.video.loop;
+  }
+
   protected static baseLayerStoreParams: string[] = [
     "name",
     "x",
@@ -1074,6 +1167,10 @@ export class BaseLayer {
     "imageFilePath",
     "imageX",
     "imageY",
+    "videoFilePath",
+    "videoWidth",
+    "videoHeight",
+    "videoLoop",
     "textFontFamily",
     "textFontSize",
     "textFontWeight",
@@ -1108,6 +1205,7 @@ export class BaseLayer {
     "backgroundColor",
     "backgroundAlpha",
     "hasBackgroundColor",
+    "isPlayingVideo",
   ];
 
   /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -1147,13 +1245,28 @@ export class BaseLayer {
       this.setBackgroundColor(data.backgroundColor, data.backgroundAlpha);
     }
 
-    // 画像がある場合は非同期で読み込んでその後にサイズ等を復元する
     if (data.imageFilePath != null &&
         data.imageFilePath !== "" &&
         data.imageFilePath !== this.imageFilePath) {
+      // 画像がある場合は非同期で読み込んでその後にサイズ等を復元する
       this.freeImage();
       asyncTask.add((params: any, index: number): AsyncCallbacks => {
         const cb = this.loadImage(data.imageFilePath);
+        cb.done(() => {
+          storeParams();
+          this.restoreAfterLoadImage(data, tick);
+        });
+        return cb;
+      });
+    } else if (data.videoFilePath != null &&
+               data.videoFilePath != "" &&
+               data.videoFilePath != this.videoFilePath &&
+               data.videoLoop) {
+      // 動画がある場合は非同期で読み込んでその後にサイズ等を復元する
+      this.freeVideo();
+      asyncTask.add((params: any, index: number): AsyncCallbacks => {
+        const cb = this.loadVideo(data.videoFilePath, data.videoWidth, data.videoHeight,
+                                  data.isPlayingVideo, data.videoLoop);
         cb.done(() => {
           storeParams();
           this.restoreAfterLoadImage(data, tick);
