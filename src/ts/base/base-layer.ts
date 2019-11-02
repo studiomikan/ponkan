@@ -249,6 +249,8 @@ export class BaseLayer {
   public get videoHeight(): number { return this.video != null ? this.video.height : 0; }
   public set videoLoop(loop: boolean) { if (this.video != null) { this.video.loop = loop; } }
   public get videoLoop(): boolean { return this.video != null ? this.video.loop : false; }
+  public set videoVolume(volume: number) { if (this.video != null) { this.video.volume = volume; } }
+  public get videoVolume(): number { return this.video != null ? this.video.volume : 0; }
 
   // 子レイヤ
   private _children: BaseLayer[] = [];
@@ -1080,7 +1082,7 @@ export class BaseLayer {
     this.imageFilePath = null;
   }
 
-  public loadVideo(filePath: string, width: number, height: number, autoPlay: boolean, loop: boolean): AsyncCallbacks {
+  public loadVideo(filePath: string, width: number, height: number, autoPlay: boolean, loop: boolean, volume: number): AsyncCallbacks {
     const cb = new AsyncCallbacks();
     this.clearBackgroundColor();
     this.freeImage();
@@ -1091,6 +1093,7 @@ export class BaseLayer {
     video.width = width;
     video.height = height;
     video.loop = loop;
+    video.volume = volume;
 
     let timeoutTimer = -1;
     const onCanPlay = (): void => {
@@ -1171,6 +1174,7 @@ export class BaseLayer {
     "videoWidth",
     "videoHeight",
     "videoLoop",
+    "videoVolume",
     "textFontFamily",
     "textFontSize",
     "textFontWeight",
@@ -1266,7 +1270,7 @@ export class BaseLayer {
       this.freeVideo();
       asyncTask.add((params: any, index: number): AsyncCallbacks => {
         const cb = this.loadVideo(data.videoFilePath, data.videoWidth, data.videoHeight,
-                                  data.isPlayingVideo, data.videoLoop);
+                                  data.isPlayingVideo, data.videoLoop, data.videoVolume);
         cb.done(() => {
           storeParams();
           this.restoreAfterLoadImage(data, tick);
