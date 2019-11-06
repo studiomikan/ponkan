@@ -64,12 +64,6 @@ export class SoundBuffer {
     return this.howl != null;
   }
 
-  // public destroy() {
-  //   this.stop();
-  //   this.howl.unload();
-  //   this.howl = null;
-  //   this.filePath = null;
-  // }
   public freeSound(): void {
     this.stop();
     this.filePath = null;
@@ -151,13 +145,9 @@ export class SoundBuffer {
   }
 
   public play(): void {
-    if (this.howl == null) {
-      throw new Error("音声が読み込まれていません");
-    }
-    if (this.playing) {
-      this.stop();
-    }
-    // this.seek = 0;
+    if (this.howl == null) { throw new Error("音声が読み込まれていません"); }
+    if (this.playing) { this.stop(); } 
+    if (this.fading) { this.endFade(); }
     this.setHowlerEvent();
     this.setHowlerOptions();
     this.howl.play();
@@ -239,15 +229,18 @@ export class SoundBuffer {
   }
 
   public endFade(): void {
-    this.fadeout(0, this.stopAfterFade);
+    if (!this.fading) { return; }
+    this._volume = this.fadeTargetVolume;
+    if (this.stopAfterFade) {
+      this.stop();
+    } else {
+      this._state = SoundState.Play;
+    }
   }
 
   protected onFade(): void {
-    this._volume = this.fadeTargetVolume;
-    this._state = SoundState.Play;
-    if (this.stopAfterFade) {
-      this.stop();
-    }
+    if (!this.fading) { return; }
+    this.endFade();
     this.callback.onFadeComplete(this.bufferNum);
   }
 
