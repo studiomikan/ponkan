@@ -68,10 +68,10 @@ export class Ponkan3 extends PonGame {
 
   // メッセージ関係
   public textSpeedMode: "user" | "system" = "user";
-  public unreadTextSpeed: number = 100; // "system" の時の速度
-  public readTextSpeed: number = 100; // "system" の時の速度
-  public userUnreadTextSpeed: number = 100; // "user" の時の速度
-  public userReadTextSpeed: number = 100; // "user" の時の速度
+  public unreadTextSpeed: number = 20; // "system" の時の速度
+  public readTextSpeed: number = 20; // "system" の時の速度
+  public userUnreadTextSpeed: number = 20; // "user" の時の速度
+  public userReadTextSpeed: number = 20; // "user" の時の速度
   public clickSkipEnabled: boolean = true;
   public nowaitModeFlag: boolean = false;
   public addCharWithBackFlag: boolean = false;
@@ -127,6 +127,10 @@ export class Ponkan3 extends PonGame {
   public constructor(parentId: string, config: any = {}) {
     super(parentId, config);
     if (config.saveDataPrefix != null) { this.saveDataPrefix = config.saveDataPrefix; }
+    if (config.text != null) {
+      if (config.text.unread != null) { this.userUnreadTextSpeed = config.text.unread; }
+      if (config.text.read != null) { this.userReadTextSpeed = config.text.read; }
+    }
 
     this.initialAsyncTask = new AsyncTask();
 
