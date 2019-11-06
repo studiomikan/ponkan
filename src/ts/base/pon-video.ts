@@ -14,11 +14,6 @@ export interface IPonVideoCallbacks {
    * @param child 削除するスプライト
    */
   pixiContainerRemoveChild(child: PIXI.DisplayObject): void;
-
-  /**
-   * 再生終了時
-   */
-  // onComplete(): void;
 }
 
 
@@ -31,6 +26,8 @@ export class PonVideo {
   protected videoTexture: PIXI.Texture;
   protected videoSprite: PIXI.Sprite;
 
+  public get texture(): PIXI.Texture { return this.videoTexture; }
+  public get sprite(): PIXI.Sprite { return this.videoSprite; }
   public get source(): HTMLVideoElement { return this.videoTexture.baseTexture.source as HTMLVideoElement; }
 
   public get width(): number { return this.videoSprite.width; }

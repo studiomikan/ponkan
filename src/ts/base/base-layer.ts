@@ -1117,9 +1117,8 @@ export class BaseLayer {
     return cb;
   }
 
-  public playVideo(loop: boolean): void {
+  public playVideo(): void {
     if (this.video != null) {
-      this.video.loop = loop;
       this.video.play();
     }
   }
@@ -1146,7 +1145,6 @@ export class BaseLayer {
   }
 
   public get isPlayingVideo(): boolean {
-    if (this.video) console.log("this.video", this.video, this.video.playing, this.video.loop);
     return this.video != null && this.video.playing;
   }
 
@@ -1249,11 +1247,12 @@ export class BaseLayer {
       this.setBackgroundColor(data.backgroundColor, data.backgroundAlpha);
     }
 
+    this.freeImage();
+    this.freeVideo();
     if (data.imageFilePath != null &&
         data.imageFilePath !== "" &&
         data.imageFilePath !== this.imageFilePath) {
       // 画像がある場合は非同期で読み込んでその後にサイズ等を復元する
-      this.freeImage();
       asyncTask.add((params: any, index: number): AsyncCallbacks => {
         const cb = this.loadImage(data.imageFilePath);
         cb.done(() => {
@@ -1310,6 +1309,14 @@ export class BaseLayer {
       dest.imageSprite = new PonSprite(dest.imageSpriteCallbacks);
       dest.imageSprite.setImage(this.image);
       dest.image = this.image;
+    }
+
+    // 動画のコピー
+    if (this.video === null) {
+      dest.freeVideo();
+    } else if (this.videoFilePath !== dest.videoFilePath) {
+      dest.freeVideo();
+      dest.video = new PonVideo(this.video.texture, dest.videoCallbacks);
     }
 
     // その他のパラメータのコピー

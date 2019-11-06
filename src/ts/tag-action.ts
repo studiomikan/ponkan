@@ -2823,10 +2823,13 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("page", "string", false, "current"),
         /// @param 音量(0.0〜1.0)
         new TagValue("volume", "number", false, null),
+        /// @param ループ再生するかどうか
+        new TagValue("loop", "boolean", false, null),
       ],
       (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
           if (values.volume != null) { layer.videoVolume = values.volume; }
+          if (values.loop != null) { layer.videoLoop = values.loop; }
         });
         return "continue";
       },
@@ -2842,12 +2845,10 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
-        /// @param ループ再生するかどうか
-        new TagValue("loop", "boolean", false, false),
       ],
       (values: any, tick: number):  "continue" | "break" => {
         p.getLayers(values).forEach((layer) => {
-          layer.playVideo(values.loop);
+          layer.playVideo();
         });
         return "continue";
       },
@@ -2903,6 +2904,7 @@ export function generateTagActions(p: Ponkan3): TagAction[] {
         new TagValue("canskip", "boolean", false, true),
       ],
       (values: any, tick: number):  "continue" | "break" => {
+        console.log("@@waitvideo", values)
         if (!p.hasPlayingVideoLayer) {
           return "continue";
         }
