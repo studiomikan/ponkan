@@ -1,4 +1,3 @@
-import { AsyncTask } from "../base/async-task";
 import { Ponkan3 } from "../ponkan3";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -7,7 +6,6 @@ import { Ponkan3 } from "../ponkan3";
  * すべてのプラグインはこのクラスを継承して作成する。
  */
 export class PonPlugin {
-
   protected ponkan: Ponkan3;
 
   constructor(ponkan: Ponkan3) {
@@ -31,21 +29,14 @@ export class PonPlugin {
 
   /**
    * セーブデータ復元時
-   * @param asyncTask 非同期実行タスク
    * @param data 復元元データ
    * @param tick 復元時の時間
    * @param clear メッセージをクリアする場合はtrue
    * @param sound 音声を復元する場合はtrue
    * @param toBack 表ページを裏ページに復元する場合はtrue
    */
-  public onRestore(
-    asyncTask: AsyncTask,
-    data: any,
-    tick: number,
-    clear: boolean,
-    sound: boolean,
-    toBack: boolean): void {
-      return;
+  public async onRestore(data: any, tick: number, clear: boolean, sound: boolean, toBack: boolean): Promise<void> {
+    return;
   }
 
   /**
@@ -53,7 +44,7 @@ export class PonPlugin {
    * @param isStable 安定していればtrue
    */
   public onChangeStable(isStable: boolean): void {
-      return;
+    return;
   }
 
   /**
@@ -61,7 +52,7 @@ export class PonPlugin {
    * @param visible 隠すときfalse、表示するときtrue
    */
   public onChangeMessageVisible(visible: boolean): void {
-      return;
+    return;
   }
 
   /**
@@ -69,7 +60,7 @@ export class PonPlugin {
    * @param toback 表→裏へのコピーならtrue、それ以外はfalse
    */
   public onCopyLayer(toback: boolean): void {
-      return;
+    return;
   }
 
   /**
@@ -80,14 +71,14 @@ export class PonPlugin {
    * ここで入れ替える必要がある。
    */
   public onFlipLayers(): void {
-      return;
+    return;
   }
 
   /**
    * システム変数（sv）を保存する直前に呼ばれる
    */
   public onSaveSystemVariables(): void {
-      return;
+    return;
   }
 }
 /* eslint-enable @typescript-eslint/no-unused-vars */

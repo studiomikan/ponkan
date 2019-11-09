@@ -1,19 +1,17 @@
-import { AsyncCallbacks } from "./base/async-callbacks";
-import { AsyncTask } from "./base/async-task";
-import { BaseLayer } from "./base/base-layer";
-import { ConductorState } from "./base/conductor";
-import { Logger } from "./base/logger";
-import { PonGame } from "./base/pon-game";
-import { PonKeyEvent } from "./base/pon-key-event";
-import { PonMouseEvent } from "./base/pon-mouse-event";
-import { PonWheelEvent } from "./base/pon-wheel-event";
-import { ISoundBufferCallbacks, SoundBuffer } from "./base/sound";
-import { Tag } from "./base/tag";
-import * as Util from "./base/util";
-import { HistoryLayer } from "./layer/history-layer";
-import { PonLayer } from "./layer/pon-layer";
-import { PonPlugin } from "./plugin/pon-plugin";
-import { applyJsEntity, castTagValues, generateTagActions, TagAction, TagValue } from "./tag-action";
+import { BaseLayer } from './base/base-layer';
+import { ConductorState } from './base/conductor';
+import { Logger } from './base/logger';
+import { PonGame } from './base/pon-game';
+import { PonKeyEvent } from './base/pon-key-event';
+import { PonMouseEvent } from './base/pon-mouse-event';
+import { PonWheelEvent } from './base/pon-wheel-event';
+import { ISoundBufferCallbacks, SoundBuffer } from './base/sound';
+import { Tag } from './base/tag';
+import * as Util from './base/util';
+import { HistoryLayer } from './layer/history-layer';
+import { PonLayer } from './layer/pon-layer';
+import { PonPlugin } from './plugin/pon-plugin';
+import { applyJsEntity, castTagValues, generateTagActions, TagAction, TagValue } from './tag-action';
 
 export enum SkipType {
   INVALID = 0,
@@ -35,8 +33,6 @@ export class Ponkan3 extends PonGame {
     unknowncommand: true,
   };
 
-  protected initialAsyncTask: AsyncTask;
-
   public skipMode: SkipType = SkipType.INVALID;
   public canSkipUnreadPart: boolean = false;
   public canSkipUnreadPartByCtrl: boolean = true;
@@ -54,9 +50,13 @@ export class Ponkan3 extends PonGame {
   public layerAlias: any = {};
   public forePrimaryLayer: PonLayer;
   public backPrimaryLayer: PonLayer;
-  public get foreLayers(): PonLayer[] { return this.forePrimaryLayer.children as PonLayer[]; }
-  public get backLayers(): PonLayer[] { return this.backPrimaryLayer.children as PonLayer[]; }
-  public currentPage: "fore" | "back" = "fore";
+  public get foreLayers(): PonLayer[] {
+    return this.forePrimaryLayer.children as PonLayer[];
+  }
+  public get backLayers(): PonLayer[] {
+    return this.backPrimaryLayer.children as PonLayer[];
+  }
+  public currentPage: 'fore' | 'back' = 'fore';
   public isQuaking: boolean = false;
   protected quakeStartTick: number = -1;
   protected quakeTime: number = 0;
@@ -67,7 +67,7 @@ export class Ponkan3 extends PonGame {
   protected quakeIntervalFrame: number = 4;
 
   // メッセージ関係
-  public textSpeedMode: "user" | "system" = "user";
+  public textSpeedMode: 'user' | 'system' = 'user';
   public unreadTextSpeed: number = 20; // "system" の時の速度
   public readTextSpeed: number = 20; // "system" の時の速度
   public userUnreadTextSpeed: number = 20; // "user" の時の速度
@@ -78,20 +78,32 @@ export class Ponkan3 extends PonGame {
   public hideMessageFlag: boolean = false;
   public hideMessageByRlickFlag: boolean = false;
   protected _messageLayerNum: number = DEFAULT_MESSAGE_LAYER_NUM;
-  public get messageLayerNum(): number { return this._messageLayerNum; }
-  public set messageLayerNum(num: number) { this._messageLayerNum = num; }
+  public get messageLayerNum(): number {
+    return this._messageLayerNum;
+  }
+  public set messageLayerNum(num: number) {
+    this._messageLayerNum = num;
+  }
 
   protected _lineBreakGlyphLayerNum: number = DEFAULT_LINE_BREAK_LAYER_NUM;
-  public get lineBreakGlyphLayerNum(): number { return this._lineBreakGlyphLayerNum; }
-  public set lineBreakGlyphLayerNum(num: number) { this._lineBreakGlyphLayerNum = num; }
-  public lineBreakGlyphPos: "eol" | "relative" | "absolute" = "eol";
+  public get lineBreakGlyphLayerNum(): number {
+    return this._lineBreakGlyphLayerNum;
+  }
+  public set lineBreakGlyphLayerNum(num: number) {
+    this._lineBreakGlyphLayerNum = num;
+  }
+  public lineBreakGlyphPos: 'eol' | 'relative' | 'absolute' = 'eol';
   public lineBreakGlyphX: number = 0;
   public lineBreakGlyphY: number = 0;
 
   protected _pageBreakGlyphLayerNum: number = DEFAULT_PAGE_BREAK_LAYER_NUM;
-  public get pageBreakGlyphLayerNum(): number { return this._pageBreakGlyphLayerNum; }
-  public set pageBreakGlyphLayerNum(num: number) { this._pageBreakGlyphLayerNum = num; }
-  public pageBreakGlyphPos: "eol" | "relative" | "absolute" = "eol";
+  public get pageBreakGlyphLayerNum(): number {
+    return this._pageBreakGlyphLayerNum;
+  }
+  public set pageBreakGlyphLayerNum(num: number) {
+    this._pageBreakGlyphLayerNum = num;
+  }
+  public pageBreakGlyphPos: 'eol' | 'relative' | 'absolute' = 'eol';
   public pageBreakGlyphX: number = 0;
   public pageBreakGlyphY: number = 0;
 
@@ -112,40 +124,51 @@ export class Ponkan3 extends PonGame {
   public readonly soundBuffers: SoundBuffer[] = [];
 
   // セーブ＆ロード
-  protected saveDataPrefix: string = "ponkan-game";
-  protected latestSaveComment: string = "";
+  protected saveDataPrefix: string = 'ponkan-game';
+  protected latestSaveComment: string = '';
   protected latestSaveData: any = {};
   protected tempSaveData: any = {};
 
-  public get tmpVar(): any { return this.resource.tmpVar; }
-  public get gameVar(): any { return this.resource.gameVar; }
-  public get systemVar(): any { return this.resource.systemVar; }
+  public get tmpVar(): any {
+    return this.resource.tmpVar;
+  }
+  public get gameVar(): any {
+    return this.resource.gameVar;
+  }
+  public get systemVar(): any {
+    return this.resource.systemVar;
+  }
 
   // プラグイン
   protected plugins: PonPlugin[] = [];
 
   public constructor(parentId: string, config: any = {}) {
     super(parentId, config);
-    if (config.saveDataPrefix != null) { this.saveDataPrefix = config.saveDataPrefix; }
-    if (config.text != null) {
-      if (config.text.unread != null) { this.userUnreadTextSpeed = config.text.unread; }
-      if (config.text.read != null) { this.userReadTextSpeed = config.text.read; }
+    if (config.saveDataPrefix != null) {
+      this.saveDataPrefix = config.saveDataPrefix;
     }
-
-    this.initialAsyncTask = new AsyncTask();
+    if (config.text != null) {
+      if (config.text.unread != null) {
+        this.userUnreadTextSpeed = config.text.unread;
+      }
+      if (config.text.read != null) {
+        this.userReadTextSpeed = config.text.read;
+      }
+    }
 
     this.initTagAction();
 
-    this.forePrimaryLayer =
-      this.addForePrimaryLayer(new PonLayer("Fore primary layer", this.resource, this)) as PonLayer;
-    this.backPrimaryLayer =
-      this.addBackPrimaryLayer(new PonLayer("Back primary layer", this.resource, this)) as PonLayer;
+    this.forePrimaryLayer = this.addForePrimaryLayer(
+      new PonLayer('Fore primary layer', this.resource, this),
+    ) as PonLayer;
+    this.backPrimaryLayer = this.addBackPrimaryLayer(
+      new PonLayer('Back primary layer', this.resource, this),
+    ) as PonLayer;
     this.initLayers(config);
 
-    this.historyLayer = new HistoryLayer("HistoryLayer", this.resource, this);
+    this.historyLayer = new HistoryLayer('HistoryLayer', this.resource, this);
     this.addForePrimaryLayer(this.historyLayer);
     this.historyLayer.visible = false;
-    this.historyLayer.init(config, this.initialAsyncTask);
 
     this.initSoundBuffers(config);
   }
@@ -154,24 +177,18 @@ export class Ponkan3 extends PonGame {
     this.stop();
     this.forePrimaryLayer.destroy();
     this.backPrimaryLayer.destroy();
-    this.plugins.forEach((p) => p.destroy());
+    this.plugins.forEach(p => p.destroy());
     super.destroy();
   }
 
-  public start(): void {
+  public async start(): Promise<void> {
     super.start();
     if (this.resource.existSystemData(this.saveDataPrefix)) {
-      // this.resource.loadSystemData(this.saveDataPrefix);
-      this.loadSystemData(this.saveDataPrefix, this.initialAsyncTask);
+      this.loadSystemData(this.saveDataPrefix);
     }
-    this.initialAsyncTask.run().done(() => {
-      this.conductor.loadScript("start.pon").done(() => {
-        // Logger.debug("onLoadScript success");
-        this.conductor.start();
-      }).fail(() => {
-        // Logger.debug("onLoadScript fail");
-      });
-    });
+    await this.historyLayer.init(this.config);
+    await this.conductor.loadScript('start.pon');
+    this.conductor.start();
   }
 
   public stop(): void {
@@ -202,7 +219,7 @@ export class Ponkan3 extends PonGame {
     this.resetPageBreakGlyphPos();
   }
 
-  protected beforeDraw(tick: number): void  {
+  protected beforeDraw(tick: number): void {
     this.forePrimaryLayer.beforeDraw(tick);
     this.backPrimaryLayer.beforeDraw(tick);
     this.quake(tick);
@@ -228,13 +245,13 @@ export class Ponkan3 extends PonGame {
   // =========================================================
 
   public showLayerDebugInfo(): void {
-    this.foreLayers.forEach((layer) => layer.debugInfoVisible = true);
-    this.backLayers.forEach((layer) => layer.debugInfoVisible = true);
+    this.foreLayers.forEach(layer => (layer.debugInfoVisible = true));
+    this.backLayers.forEach(layer => (layer.debugInfoVisible = true));
   }
 
   public hideLayerDebugInfo(): void {
-    this.foreLayers.forEach((layer) => layer.debugInfoVisible = false);
-    this.backLayers.forEach((layer) => layer.debugInfoVisible = false);
+    this.foreLayers.forEach(layer => (layer.debugInfoVisible = false));
+    this.backLayers.forEach(layer => (layer.debugInfoVisible = false));
   }
 
   public getDebugInfo(): any {
@@ -251,14 +268,14 @@ export class Ponkan3 extends PonGame {
 
   public dumpDebugInfo(): void {
     const info = this.getDebugInfo();
-    console.info("=========================================");
-    console.info("latestSaveData", info.latestSaveData);
-    console.info("systemVar", info.systemVar);
-    console.info("foreLayers(current object)", info.foreLayers);
-    console.info("backLayers(current object)", info.backLayers);
-    console.info("foreLayers(stored data)", info.foreLayerStoredData);
-    console.info("backLayers(stored data)", info.backLayerStoredData);
-    console.info("=========================================");
+    console.info('=========================================');
+    console.info('latestSaveData', info.latestSaveData);
+    console.info('systemVar', info.systemVar);
+    console.info('foreLayers(current object)', info.foreLayers);
+    console.info('backLayers(current object)', info.backLayers);
+    console.info('foreLayers(stored data)', info.foreLayerStoredData);
+    console.info('backLayers(stored data)', info.backLayerStoredData);
+    console.info('=========================================');
   }
 
   // =========================================================
@@ -283,7 +300,9 @@ export class Ponkan3 extends PonGame {
   }
   public onMouseUp(e: PonMouseEvent): void {
     this.eventReceivesLayer._onMouseUp(e);
-    if (e.stopPropagationFlag || e.forceStopFlag) { return; }
+    if (e.stopPropagationFlag || e.forceStopFlag) {
+      return;
+    }
 
     if (e.isRight) {
       this.onPrimaryRightClick();
@@ -324,7 +343,7 @@ export class Ponkan3 extends PonGame {
     }
 
     // トリガーを発火
-    if (this.conductor.trigger("click")) {
+    if (this.conductor.trigger('click')) {
       return true;
     }
 
@@ -337,9 +356,11 @@ export class Ponkan3 extends PonGame {
 
     // コンダクターのスリープを解除する。
     // テキスト出力のウェイトの動作を解除し、次のwait系タグまで飛ばす。
-    if (this.clickSkipEnabled &&
-        this.conductor.status === ConductorState.Sleep &&
-        this.conductor.sleepSender === "ch") {
+    if (
+      this.clickSkipEnabled &&
+      this.conductor.status === ConductorState.Sleep &&
+      this.conductor.sleepSender === 'ch'
+    ) {
       this.conductor.start();
       this.skipMode = SkipType.UNTIL_CLICK_WAIT;
     }
@@ -347,7 +368,7 @@ export class Ponkan3 extends PonGame {
     return true;
   }
 
-  public onPrimaryRightClick(): boolean {
+  public async onPrimaryRightClick(): Promise<boolean> {
     if (!this.rightClickEnabled) {
       return false;
     }
@@ -364,9 +385,8 @@ export class Ponkan3 extends PonGame {
 
     if (this.rightClickJump) {
       // ジャンプさせる
-      this.conductor.jump(this.rightClickFilePath, this.rightClickLabel, false).done(() => {
-        this.conductor.start();
-      });
+      await this.conductor.jump(this.rightClickFilePath, this.rightClickLabel, false);
+      this.conductor.start();
     } else if (this.rightClickCall) {
       // 右クリックサブルーチン呼び出し
       this.callSubroutine(this.rightClickFilePath, this.rightClickLabel, false);
@@ -379,7 +399,7 @@ export class Ponkan3 extends PonGame {
         } else {
           // タグによるメッセージ隠し中
           // clickにイベントハンドラが登録されてるのでそいつを呼んで復帰
-          this.conductor.trigger("click");
+          this.conductor.trigger('click');
         }
       } else {
         this.hideMessagesByRightClick();
@@ -398,7 +418,9 @@ export class Ponkan3 extends PonGame {
       // do nothing.
     } else {
       switch (e.key) {
-        case "Ctrl": case "ctrl": case "Control":
+        case 'Ctrl':
+        case 'ctrl':
+        case 'Control':
           this.onPrimaryClick();
           this.startSkipByCtrl();
           break;
@@ -411,28 +433,35 @@ export class Ponkan3 extends PonGame {
     // Logger.debug("onKeyUp: ", e.key, this.historyLayer.visible);
     if (this.historyLayer.visible) {
       switch (e.key.toLowerCase()) {
-        case "esc": case "escape":
+        case 'esc':
+        case 'escape':
           this.hideHistoryLayer();
           break;
-        case "arrowup":
-          if (this.conductor.isStable) { this.historyLayer.scrollUpPage(); }
+        case 'arrowup':
+          if (this.conductor.isStable) {
+            this.historyLayer.scrollUpPage();
+          }
           break;
-        case "arrowdown":
-          if (this.conductor.isStable) { this.historyLayer.scrollDownPage(); }
+        case 'arrowdown':
+          if (this.conductor.isStable) {
+            this.historyLayer.scrollDownPage();
+          }
           break;
       }
     } else {
       switch (e.key.toLowerCase()) {
-        case "ctrl": case "control":
+        case 'ctrl':
+        case 'control':
           this.stopWhilePressingCtrlSkip();
           break;
-        case "esc": case "escape":
+        case 'esc':
+        case 'escape':
           this.onPrimaryRightClick();
           break;
-        case "enter":
+        case 'enter':
           this.onPrimaryClick();
           break;
-        case "arrowup":
+        case 'arrowup':
           if (this.conductor.isStable && this.enabledHistory) {
             this.showHistoryLayer();
           }
@@ -446,9 +475,9 @@ export class Ponkan3 extends PonGame {
   // タグ動作
   // =========================================================
   private initTagAction(): void {
-    generateTagActions(this).forEach((tagAction) => {
+    generateTagActions(this).forEach(tagAction => {
       // Logger.debug(tagAction);
-      tagAction.names.forEach((name) => {
+      tagAction.names.forEach(name => {
         this.tagActions[name] = tagAction;
       });
     });
@@ -457,7 +486,7 @@ export class Ponkan3 extends PonGame {
 
   public addCommandShortcut(ch: string, command: string): void {
     if (ch.length !== 1) {
-      throw new Error("コマンドショートカットには1文字しか指定できません");
+      throw new Error('コマンドショートカットには1文字しか指定できません');
     }
     this.resource.commandShortcut[ch] = command;
   }
@@ -475,15 +504,15 @@ export class Ponkan3 extends PonGame {
   // =========================================================
   // コンダクタ
   // =========================================================
-  public onTag(tag: Tag, line: number, tick: number): "continue" | "break" {
-    Logger.debug("onTag: ", tag.name, tag.values, tag);
+  public onTag(tag: Tag, line: number, tick: number): 'continue' | 'break' {
+    Logger.debug('onTag: ', tag.name, tag.values, tag);
     const tagAction: TagAction = this.tagActions[tag.name];
     if (tagAction === null || tagAction === undefined) {
       // Logger.debug("Unknown Tag: ", tag.name, tag);
       if (this.raiseError.unknowncommand) {
         throw new Error(`${tag.name}というタグは存在しません`);
       } else {
-        return "continue";
+        return 'continue';
       }
     }
     applyJsEntity(this.resource, tag.values);
@@ -503,12 +532,12 @@ export class Ponkan3 extends PonGame {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public onLabel(labelName: string, line: number, tick: number): "continue" | "break" {
+  public onLabel(labelName: string, line: number, tick: number): 'continue' | 'break' {
     // Logger.debug("onLabel: ", labelName);
-    return "continue";
+    return 'continue';
   }
 
-  public onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): "continue" | "break" {
+  public onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): 'continue' | 'break' {
     // Logger.debug("onSaveMark: ", saveMarkName, comment);
 
     // 未読の場合はスキップを停止する
@@ -524,32 +553,32 @@ export class Ponkan3 extends PonGame {
       }
     }
 
-    if (comment != null && comment !== "") {
+    if (comment != null && comment !== '') {
       this.latestSaveComment = comment;
     }
     this.latestSaveData = this.generateSaveData(saveMarkName, this.latestSaveComment, tick);
-    return "continue";
+    return 'continue';
   }
 
-  public onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break" {
+  public onJs(js: string, printFlag: boolean, line: number, tick: number): 'continue' | 'break' {
     // Logger.debug("onJs: ", js);
     const text = this.resource.evalJs(js);
     if (printFlag) {
-      const tag = new Tag("ch", { text: "" + text }, line);
+      const tag = new Tag('ch', { text: '' + text }, line);
       return this.onTag(tag, line, tick);
     } else {
-      return "continue";
+      return 'continue';
     }
   }
 
   public onChangeStable(isStable: boolean): void {
     this.forePrimaryLayer.onChangeStable(isStable);
     this.backPrimaryLayer.onChangeStable(isStable);
-    this.plugins.forEach((p) => p.onChangeStable(isStable));
+    this.plugins.forEach(p => p.onChangeStable(isStable));
   }
 
   public onReturnSubroutin(forceStart = false): void {
-    this.conductor.trigger("return_subroutin");
+    this.conductor.trigger('return_subroutin');
     if (forceStart) {
       this.hideBreakGlyph();
     }
@@ -559,7 +588,7 @@ export class Ponkan3 extends PonGame {
   // スキップ／オート関係
   // =========================================================
 
-  public get isSkipping(): boolean  {
+  public get isSkipping(): boolean {
     return this.skipMode !== SkipType.INVALID;
   }
 
@@ -658,34 +687,34 @@ export class Ponkan3 extends PonGame {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onSoundStop(bufferNum: number): void {
-    this.conductor.trigger("soundstop");
+    this.conductor.trigger('soundstop');
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onSoundFadeComplete(bufferNum: number): void {
-    this.conductor.trigger("soundfade");
+    this.conductor.trigger('soundfade');
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public waitSoundCompleteCallback(sb: SoundBuffer): void {
-    this.conductor.clearEventHandlerByName("click");
+    this.conductor.clearEventHandlerByName('click');
     this.conductor.start();
   }
 
   public waitSoundStopClickCallback(sb: SoundBuffer): void {
-    this.conductor.clearEventHandlerByName("soundstop");
+    this.conductor.clearEventHandlerByName('soundstop');
     sb.stop();
     this.conductor.start();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public waitSoundFadeCompleteCallback(sb: SoundBuffer): void {
-    this.conductor.clearEventHandlerByName("click");
+    this.conductor.clearEventHandlerByName('click');
     this.conductor.start();
   }
 
   public waitSoundFadeClickCallback(sb: SoundBuffer): void {
-    this.conductor.clearEventHandlerByName("soundfade");
+    this.conductor.clearEventHandlerByName('soundfade');
     sb.endFade();
     this.conductor.start();
   }
@@ -710,16 +739,18 @@ export class Ponkan3 extends PonGame {
 
     // デフォルト設定の反映
     if (config.layersDefault != null) {
-      this.foreLayers.forEach((lay) => lay.applyConfig(config.layersDefault));
-      this.backLayers.forEach((lay) => lay.applyConfig(config.layersDefault));
+      this.foreLayers.forEach(lay => lay.applyConfig(config.layersDefault));
+      this.backLayers.forEach(lay => lay.applyConfig(config.layersDefault));
     }
   }
 
-  public get layerCount(): number { return this._layerCount; }
+  public get layerCount(): number {
+    return this._layerCount;
+  }
   public set layerCount(layerCount: number) {
     if (layerCount < this._layerCount) {
       // 減少するとき
-      [this.forePrimaryLayer, this.backPrimaryLayer].forEach((primaryLayer) => {
+      [this.forePrimaryLayer, this.backPrimaryLayer].forEach(primaryLayer => {
         const oldList = primaryLayer.children;
         for (let i = 0; i < oldList.length; i++) {
           if (i < layerCount) {
@@ -757,30 +788,34 @@ export class Ponkan3 extends PonGame {
    */
   protected getTargetLayers(pageLayers: PonLayer[], lay: string): PonLayer[] {
     const targetLayers: PonLayer[] = [];
-    if (lay == null || lay === "" || lay === "all") {
+    if (lay == null || lay === '' || lay === 'all') {
       return pageLayers;
-    } else if (lay.indexOf(",") !== -1) {
-      lay.split(",").forEach((l) => {
-        this.getTargetLayers(pageLayers, l.trim()).forEach((layer) => {
+    } else if (lay.indexOf(',') !== -1) {
+      lay.split(',').forEach(l => {
+        this.getTargetLayers(pageLayers, l.trim()).forEach(layer => {
           targetLayers.push(layer);
         });
       });
-    } else if (lay.indexOf("-") !== -1) {
-      const numList: string[] = lay.split("-");
+    } else if (lay.indexOf('-') !== -1) {
+      const numList: string[] = lay.split('-');
       const start: number = parseInt(numList[0], 10);
       const end: number = parseInt(numList[1], 10);
-      if (start < 0) { throw new Error("レイヤ指定が範囲外です"); }
-      if (end >= this.layerCount) { throw new Error("レイヤ指定が範囲外です"); }
+      if (start < 0) {
+        throw new Error('レイヤ指定が範囲外です');
+      }
+      if (end >= this.layerCount) {
+        throw new Error('レイヤ指定が範囲外です');
+      }
       for (let i = start; i <= end; i++) {
         targetLayers.push(pageLayers[i]);
       }
-    } else if (lay === "mes" || lay === "message") {
+    } else if (lay === 'mes' || lay === 'message') {
       targetLayers.push(pageLayers[this.messageLayerNum]);
-    } else if (lay === "linebreak") {
+    } else if (lay === 'linebreak') {
       targetLayers.push(pageLayers[this.lineBreakGlyphLayerNum]);
-    } else if (lay === "pagebreak") {
+    } else if (lay === 'pagebreak') {
       targetLayers.push(pageLayers[this.pageBreakGlyphLayerNum]);
-    } else if (lay === "auto" || lay === "automode") {
+    } else if (lay === 'auto' || lay === 'automode') {
       targetLayers.push(pageLayers[this.autoModeLayerNum]);
     } else if (this.layerAlias[lay] != null) {
       return this.getTargetLayers(pageLayers, this.layerAlias[lay]);
@@ -799,13 +834,13 @@ export class Ponkan3 extends PonGame {
    * @param values タグの値
    */
   public getLayers(values: any): PonLayer[] {
-    const lay: string = "" + values.lay as string;
-    let page: string = "" + values.page as string;
+    const lay: string = ('' + values.lay) as string;
+    let page: string = ('' + values.page) as string;
     let pageLayers: PonLayer[];
-    if (values.page == null || values.page === "current") {
+    if (values.page == null || values.page === 'current') {
       page = this.currentPage;
     }
-    if (page === "back") {
+    if (page === 'back') {
       pageLayers = this.backLayers;
     } else {
       pageLayers = this.foreLayers;
@@ -814,51 +849,55 @@ export class Ponkan3 extends PonGame {
   }
 
   public get hasMovingLayer(): boolean {
-    return this.foreLayers.filter((layer) => layer.isMoving && !layer.isLoopMoving).length > 0 ||
-           this.backLayers.filter((layer) => layer.isMoving && !layer.isLoopMoving).length > 0;
+    return (
+      this.foreLayers.filter(layer => layer.isMoving && !layer.isLoopMoving).length > 0 ||
+      this.backLayers.filter(layer => layer.isMoving && !layer.isLoopMoving).length > 0
+    );
   }
 
   public waitMoveClickCallback(): void {
-    this.conductor.clearEventHandlerByName("move");
-    this.foreLayers.forEach((layer) => layer.stopMove());
-    this.backLayers.forEach((layer) => layer.stopMove());
+    this.conductor.clearEventHandlerByName('move');
+    this.foreLayers.forEach(layer => layer.stopMove());
+    this.backLayers.forEach(layer => layer.stopMove());
     this.conductor.start();
   }
 
   public waitMoveCompleteCallback(): void {
-    this.conductor.clearEventHandlerByName("click");
+    this.conductor.clearEventHandlerByName('click');
     this.conductor.start();
   }
 
   public waitFrameAnimClickCallback(layers: PonLayer[]): void {
-    this.conductor.clearEventHandlerByName("frameanim");
-    layers.forEach((layer) => {
+    this.conductor.clearEventHandlerByName('frameanim');
+    layers.forEach(layer => {
       layer.stopFrameAnim();
     });
     this.conductor.start();
   }
 
   public waitFrameAnimCompleteCallback(layers: PonLayer[]): void {
-    if (layers.filter((l) => l.frameAnimRunning).length === 0) {
-      this.conductor.clearEventHandlerByName("click");
+    if (layers.filter(l => l.frameAnimRunning).length === 0) {
+      this.conductor.clearEventHandlerByName('click');
       this.conductor.start();
     }
   }
 
   public get hasPlayingVideoLayer(): boolean {
-    return this.foreLayers.filter((layer) => layer.isPlayingVideo && !layer.isLoopPlayingVideo).length > 0 ||
-           this.backLayers.filter((layer) => layer.isPlayingVideo && !layer.isLoopPlayingVideo).length > 0;
+    return (
+      this.foreLayers.filter(layer => layer.isPlayingVideo && !layer.isLoopPlayingVideo).length > 0 ||
+      this.backLayers.filter(layer => layer.isPlayingVideo && !layer.isLoopPlayingVideo).length > 0
+    );
   }
 
   public waitVideoClickCallback(): void {
-    this.conductor.clearEventHandlerByName("move");
-    this.foreLayers.forEach((layer) => layer.stopVideo());
-    this.backLayers.forEach((layer) => layer.stopVideo());
+    this.conductor.clearEventHandlerByName('move');
+    this.foreLayers.forEach(layer => layer.stopVideo());
+    this.backLayers.forEach(layer => layer.stopVideo());
     this.conductor.start();
   }
 
   public waitVideoCompleteCallback(): void {
-    this.conductor.clearEventHandlerByName("click");
+    this.conductor.clearEventHandlerByName('click');
     this.conductor.start();
   }
 
@@ -890,7 +929,7 @@ export class Ponkan3 extends PonGame {
     this.backPrimaryLayer.x = 0;
     this.backPrimaryLayer.y = 0;
 
-    this.conductor.trigger("quake");
+    this.conductor.trigger('quake');
   }
 
   protected quake(tick: number): void {
@@ -931,9 +970,9 @@ export class Ponkan3 extends PonGame {
     if (this.nowaitModeFlag) {
       return 0;
     } else if (this.conductor.isPassedLatestSaveMark()) {
-      return this.textSpeedMode === "user" ? this.userReadTextSpeed : this.readTextSpeed;
+      return this.textSpeedMode === 'user' ? this.userReadTextSpeed : this.readTextSpeed;
     } else {
-      return this.textSpeedMode === "user" ? this.userUnreadTextSpeed : this.unreadTextSpeed;
+      return this.textSpeedMode === 'user' ? this.userUnreadTextSpeed : this.unreadTextSpeed;
     }
   }
 
@@ -957,19 +996,29 @@ export class Ponkan3 extends PonGame {
   }
 
   public showLineBreakGlyph(tick: number): void {
-    this.showBreakGlyph(tick, this.lineBreakGlyphLayer, this.lineBreakGlyphPos,
-                        this.lineBreakGlyphX, this.lineBreakGlyphY);
+    this.showBreakGlyph(
+      tick,
+      this.lineBreakGlyphLayer,
+      this.lineBreakGlyphPos,
+      this.lineBreakGlyphX,
+      this.lineBreakGlyphY,
+    );
   }
 
   public showPageBreakGlyph(tick: number): void {
-    this.showBreakGlyph(tick, this.pageBreakGlyphLayer, this.pageBreakGlyphPos,
-                        this.pageBreakGlyphX, this.pageBreakGlyphY);
+    this.showBreakGlyph(
+      tick,
+      this.pageBreakGlyphLayer,
+      this.pageBreakGlyphPos,
+      this.pageBreakGlyphX,
+      this.pageBreakGlyphY,
+    );
   }
 
   public showBreakGlyph(
     tick: number,
     lay: PonLayer,
-    pos: "eol" | "relative" | "absolute" = "eol",
+    pos: 'eol' | 'relative' | 'absolute' = 'eol',
     x: number,
     y: number,
   ): void {
@@ -982,43 +1031,46 @@ export class Ponkan3 extends PonGame {
   }
 
   private resetLineBreakGlyphPos(): void {
-      this.resetBreakGlyphPos(this.lineBreakGlyphLayer, this.lineBreakGlyphPos,
-                              this.lineBreakGlyphX, this.lineBreakGlyphY);
+    this.resetBreakGlyphPos(
+      this.lineBreakGlyphLayer,
+      this.lineBreakGlyphPos,
+      this.lineBreakGlyphX,
+      this.lineBreakGlyphY,
+    );
   }
 
   private resetPageBreakGlyphPos(): void {
-      this.resetBreakGlyphPos(this.pageBreakGlyphLayer, this.pageBreakGlyphPos,
-                              this.pageBreakGlyphX, this.pageBreakGlyphY);
+    this.resetBreakGlyphPos(
+      this.pageBreakGlyphLayer,
+      this.pageBreakGlyphPos,
+      this.pageBreakGlyphX,
+      this.pageBreakGlyphY,
+    );
   }
 
-  private resetBreakGlyphPos(
-    lay: PonLayer,
-    pos: "eol" | "relative" | "absolute" = "eol",
-    x: number,
-    y: number,
-  ): void {
+  private resetBreakGlyphPos(lay: PonLayer, pos: 'eol' | 'relative' | 'absolute' = 'eol', x: number, y: number): void {
     const mesLay = this.messageLayer;
-    if (pos === "eol") {
+    if (pos === 'eol') {
       const glyphPos = mesLay.getNextTextPos(lay.width);
       lay.x = mesLay.x + glyphPos.x;
       lay.y = mesLay.y + glyphPos.y;
-    } else if (pos === "relative") {
+    } else if (pos === 'relative') {
       lay.x = mesLay.x + x;
       lay.y = mesLay.y + y;
-    } else if (pos === "absolute") {
+    } else if (pos === 'absolute') {
       lay.x = x;
       lay.y = y;
     }
   }
 
   public hideBreakGlyph(): void {
-     this.pageBreakGlyphLayer.visible = false;
-     this.lineBreakGlyphLayer.visible = false;
+    this.pageBreakGlyphLayer.visible = false;
+    this.lineBreakGlyphLayer.visible = false;
   }
 
   public hideMessages(): void {
-    this.foreLayers.forEach((layer) => layer.storeVisible());
-    this.foreLayers.forEach((layer) => {
+    this.foreLayers.forEach(layer => layer.storeVisible());
+    this.foreLayers.forEach(layer => {
       if (layer.autoHideWithMessage) {
         layer.visible = false;
       }
@@ -1026,15 +1078,15 @@ export class Ponkan3 extends PonGame {
     this.messageLayer.visible = false;
     this.lineBreakGlyphLayer.visible = false;
     this.pageBreakGlyphLayer.visible = false;
-    this.plugins.forEach((p) => p.onChangeMessageVisible(false));
+    this.plugins.forEach(p => p.onChangeMessageVisible(false));
     this.hideMessageFlag = true;
   }
 
   public showMessages(): void {
-    this.foreLayers.forEach((layer) => {
+    this.foreLayers.forEach(layer => {
       layer.restoreVisible();
     });
-    this.plugins.forEach((p) => p.onChangeMessageVisible(true));
+    this.plugins.forEach(p => p.onChangeMessageVisible(true));
     this.hideMessageFlag = false;
   }
 
@@ -1092,26 +1144,26 @@ export class Ponkan3 extends PonGame {
   // =========================================================
 
   public backlay(lay: string): void {
-    const fore: PonLayer[] = this.getLayers({lay, page: "fore"});
-    const back: PonLayer[] = this.getLayers({lay, page: "back"});
+    const fore: PonLayer[] = this.getLayers({ lay, page: 'fore' });
+    const back: PonLayer[] = this.getLayers({ lay, page: 'back' });
     for (let i = 0; i < fore.length; i++) {
       fore[i].copyTo(back[i]);
     }
-    this.plugins.forEach((p) => p.onCopyLayer(true));
+    this.plugins.forEach(p => p.onCopyLayer(true));
   }
 
   public copylay(srclay: string, destlay: string, srcpage: string, destpage: string): void {
-    const srcLayers: PonLayer[] = this.getLayers({lay: srclay, page: srcpage});
-    const destLayers: PonLayer[] = this.getLayers({lay: destlay, page: destpage});
+    const srcLayers: PonLayer[] = this.getLayers({ lay: srclay, page: srcpage });
+    const destLayers: PonLayer[] = this.getLayers({ lay: destlay, page: destpage });
     if (srcLayers.length !== destLayers.length) {
-      throw new Error("コピー元と先のレイヤ数が異なります(copylay)");
+      throw new Error('コピー元と先のレイヤ数が異なります(copylay)');
     }
     for (let i = 0; i < srcLayers.length; i++) {
       if (srcLayers[i] !== destLayers[i]) {
         srcLayers[i].copyTo(destLayers[i]);
       }
     }
-    this.plugins.forEach((p) => p.onCopyLayer(true));
+    this.plugins.forEach(p => p.onCopyLayer(true));
   }
 
   // [override]
@@ -1120,7 +1172,7 @@ export class Ponkan3 extends PonGame {
     const tmp = this.forePrimaryLayer;
     this.forePrimaryLayer = this.backPrimaryLayer;
     this.backPrimaryLayer = tmp;
-    this.plugins.forEach((p) => p.onFlipLayers());
+    this.plugins.forEach(p => p.onFlipLayers());
 
     this.removeForePrimaryLayer(this.historyLayer);
     this.removeBackPrimaryLayer(this.historyLayer);
@@ -1133,18 +1185,18 @@ export class Ponkan3 extends PonGame {
    * この時点で表ページ・裏ページの入れ替えは完了している。
    */
   public onCompleteTrans(): boolean {
-    this.currentPage = "fore";
+    this.currentPage = 'fore';
     return super.onCompleteTrans();
   }
 
   public waitTransClickCallback(): void {
-    this.conductor.clearEventHandlerByName("trans");
+    this.conductor.clearEventHandlerByName('trans');
     this.transManager.stop();
     this.conductor.start();
   }
 
   public waitTransCompleteCallback(): void {
-    this.conductor.clearEventHandlerByName("click");
+    this.conductor.clearEventHandlerByName('click');
     this.conductor.start();
   }
 
@@ -1158,21 +1210,17 @@ export class Ponkan3 extends PonGame {
   }
 
   protected static ponkanSystemStoreParams: string[] = [
-    "scaleMode",
-    "_fixedScaleWidth",
-    "_fixedScaleHeight",
-    "autoModeInterval",
-    "userReadTextSpeed",
-    "userUnreadTextSpeed",
-    "canSkipUnreadPart",
-    "canSkipUnreadPartByCtrl",
+    'scaleMode',
+    '_fixedScaleWidth',
+    '_fixedScaleHeight',
+    'autoModeInterval',
+    'userReadTextSpeed',
+    'userUnreadTextSpeed',
+    'canSkipUnreadPart',
+    'canSkipUnreadPartByCtrl',
   ];
 
-  protected static ponkanSystemStoreIgnoreParams: string[] = [
-    "scaleMode",
-    "_fixedScaleWidth",
-    "_fixedScaleHeight",
-  ];
+  protected static ponkanSystemStoreIgnoreParams: string[] = ['scaleMode', '_fixedScaleWidth', '_fixedScaleHeight'];
 
   public saveSystemData(): void {
     const data = this.systemVar;
@@ -1186,7 +1234,7 @@ export class Ponkan3 extends PonGame {
 
     // サウンド
     data.soundBuffers = [];
-    this.soundBuffers.forEach((sound) => {
+    this.soundBuffers.forEach(sound => {
       data.soundBuffers.push(sound.storeSystem());
     });
 
@@ -1194,7 +1242,7 @@ export class Ponkan3 extends PonGame {
     this.resource.saveSystemData(this.saveDataPrefix);
   }
 
-  public loadSystemData(saveDataPrefix: string, asyncTask: AsyncTask): void {
+  public loadSystemData(saveDataPrefix: string): void {
     // 読み込み
     this.resource.loadSystemData(saveDataPrefix);
     const data = this.systemVar;
@@ -1203,9 +1251,12 @@ export class Ponkan3 extends PonGame {
     // システム
     if (data.system != null) {
       const restoreParams = Ponkan3.ponkanSystemStoreParams.filter(
-        (param) => Ponkan3.ponkanSystemStoreIgnoreParams.indexOf(param) === -1);
+        param => Ponkan3.ponkanSystemStoreIgnoreParams.indexOf(param) === -1,
+      );
       restoreParams.forEach((param: string) => {
-        if (data.system[param] != null) { me[param] = data.system[param]; }
+        if (data.system[param] != null) {
+          me[param] = data.system[param];
+        }
       });
       if (data.system.scaleMode != null) {
         switch (data.system.scaleMode) {
@@ -1230,7 +1281,7 @@ export class Ponkan3 extends PonGame {
       this.soundBuffers.forEach((sound, index) => {
         // data.soundBuffers.push(sound.storeSystem());
         if (data.soundBuffers[index] != null) {
-          sound.restoreSystem(asyncTask, data.soundBuffers[index]);
+          sound.restoreSystem(data.soundBuffers[index]);
         }
       });
     }
@@ -1241,8 +1292,7 @@ export class Ponkan3 extends PonGame {
   }
 
   public save(tick: number, num: number): void {
-
-    Logger.debug("==SAVE=============================================");
+    Logger.debug('==SAVE=============================================');
     Logger.debug(num, this.latestSaveData);
 
     // セーブデータの保存
@@ -1251,13 +1301,15 @@ export class Ponkan3 extends PonGame {
       saveStr = JSON.stringify(this.latestSaveData);
     } catch (e) {
       Logger.error(e);
-      throw new Error("セーブデータの保存に失敗しました。JSON文字列に変換できません");
+      throw new Error('セーブデータの保存に失敗しました。JSON文字列に変換できません');
     }
     this.resource.storeToLocalStorage(this.getSaveDataName(num), saveStr);
-    console.log("SAVE! ", this.latestSaveData);
+    console.log('SAVE! ', this.latestSaveData);
 
     // システムデータの保存
-    if (this.systemVar.saveDataInfo == null) { this.systemVar.saveDataInfo = []; }
+    if (this.systemVar.saveDataInfo == null) {
+      this.systemVar.saveDataInfo = [];
+    }
     this.systemVar.saveDataInfo[num] = {
       isEmpty: false,
       date: this.getNowDateStr(),
@@ -1269,17 +1321,17 @@ export class Ponkan3 extends PonGame {
     Logger.debug(this.systemVar.saveDataInfo[num]);
 
     this.saveSystemData();
-    Logger.debug("===================================================");
+    Logger.debug('===================================================');
   }
 
   public getNowDateStr(): string {
     const d: Date = new Date();
     const year = d.getFullYear();
-    const month = ("0" + (d.getMonth() + 1)).substring(0, 2);
-    const day = ("0" + d.getDate()).substring(0, 2);
-    const hours = ("0" + d.getHours()).substring(0, 2);
-    const minutes = ("0" + d.getMinutes()).substring(0, 2);
-    const seconds = ("0" + d.getSeconds()).substring(0, 2);
+    const month = ('0' + (d.getMonth() + 1)).substring(0, 2);
+    const day = ('0' + d.getDate()).substring(0, 2);
+    const hours = ('0' + d.getHours()).substring(0, 2);
+    const minutes = ('0' + d.getMinutes()).substring(0, 2);
+    const seconds = ('0' + d.getSeconds()).substring(0, 2);
     return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
     // const millisecond = d.getMilliseconds();
     // return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}.${millisecond}`;
@@ -1290,30 +1342,30 @@ export class Ponkan3 extends PonGame {
     // "canStopSkipByTag",
     // "autoModeFlag",
     // "autoModeInterval",
-    "layerCount",
-    "currentPage",
-    "textSpeedMode",
-    "unreadTextSpeed",
-    "readTextSpeed",
+    'layerCount',
+    'currentPage',
+    'textSpeedMode',
+    'unreadTextSpeed',
+    'readTextSpeed',
     // "userUnreadTextSpeed",
     // "userReadTextSpeed",
-    "nowaitModeFlag",
-    "addCharWithBackFlag",
-    "messageLayerNum",
-    "lineBreakGlyphLayerNum",
-    "lineBreakGlyphPos",
-    "lineBreakGlyphX",
-    "lineBreakGlyphY",
-    "pageBreakGlyphLayerNum",
-    "pageBreakGlyphPos",
-    "pageBreakGlyphX",
-    "pageBreakGlyphY",
-    "rightClickJump",
-    "rightClickCall",
-    "rightClickFilePath",
-    "rightClickLabel",
-    "rightClickEnabled",
-    "enabledHistory",
+    'nowaitModeFlag',
+    'addCharWithBackFlag',
+    'messageLayerNum',
+    'lineBreakGlyphLayerNum',
+    'lineBreakGlyphPos',
+    'lineBreakGlyphX',
+    'lineBreakGlyphY',
+    'pageBreakGlyphLayerNum',
+    'pageBreakGlyphPos',
+    'pageBreakGlyphX',
+    'pageBreakGlyphY',
+    'rightClickJump',
+    'rightClickCall',
+    'rightClickFilePath',
+    'rightClickLabel',
+    'rightClickEnabled',
+    'enabledHistory',
   ];
 
   protected generateSaveData(saveMarkName: string, comment: string, tick: number): any {
@@ -1334,90 +1386,80 @@ export class Ponkan3 extends PonGame {
 
     data.forePrimaryLayer = this.forePrimaryLayer.store(tick);
     data.foreLayers = [];
-    this.foreLayers.forEach((layer) => {
+    this.foreLayers.forEach(layer => {
       data.foreLayers.push(layer.store(tick));
     });
     data.backPrimaryLayer = this.backPrimaryLayer.store(tick);
     data.backLayers = [];
-    this.backLayers.forEach((layer) => {
+    this.backLayers.forEach(layer => {
       data.backLayers.push(layer.store(tick));
     });
 
     data.soundBuffers = [];
-    this.soundBuffers.forEach((sound) => {
+    this.soundBuffers.forEach(sound => {
       data.soundBuffers.push(sound.store(tick));
     });
 
     // プラグイン
-    this.plugins.forEach((p) => p.onStore(data, tick));
+    this.plugins.forEach(p => p.onStore(data, tick));
 
     return data;
   }
 
   public tempSave(tick: number, num: number): void {
-    const name = "" + num;
-    this.tempSaveData[name] = this.generateSaveData("tempsave", "tempsave", tick);
+    const name = '' + num;
+    this.tempSaveData[name] = this.generateSaveData('tempsave', 'tempsave', tick);
     this.tempSaveData[name].gameVar = null; // tempsaveではゲーム変数は保存しない
   }
 
-  public load(tick: number, num: number): AsyncCallbacks {
-    const asyncTask = new AsyncTask();
+  public async load(tick: number, num: number): Promise<void> {
     const me: any = this as any;
     const dataStr: string = this.resource.restoreFromLocalStorage(this.getSaveDataName(num));
     const data: any = JSON.parse(dataStr);
 
-    Logger.debug("LOAD! ", data);
+    Logger.debug('LOAD! ', data);
 
     Ponkan3.ponkanStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
 
     // layer
-    this.forePrimaryLayer.restore(asyncTask, data.forePrimaryLayer, tick, true);
-    this.backPrimaryLayer.restore(asyncTask, data.backPrimaryLayer, tick, true);
+    // TODO: 並列化
+    await this.forePrimaryLayer.restore(data.forePrimaryLayer, tick, true);
+    await this.backPrimaryLayer.restore(data.backPrimaryLayer, tick, true);
     for (let i = 0; i < data.foreLayers.length; i++) {
-      this.foreLayers[i].restore(asyncTask, data.foreLayers[i], tick, true);
-      this.backLayers[i].restore(asyncTask, data.backLayers[i], tick, true);
+      await this.foreLayers[i].restore(data.foreLayers[i], tick, true);
+      await this.backLayers[i].restore(data.backLayers[i], tick, true);
     }
 
     // sound
-    this.soundBuffers.forEach((sb) => {
+    this.soundBuffers.forEach(sb => {
       sb.stop();
     });
     for (let i = 0; i < data.soundBuffers.length; i++) {
       if (this.soundBuffers[i] != null) {
-        this.soundBuffers[i].restore(asyncTask, data.soundBuffers[i], tick);
+        await this.soundBuffers[i].restore(data.soundBuffers[i], tick);
       }
     }
 
     // conductor
-    this.conductor.restore(asyncTask, data.conductor, tick);
+    this.conductor.restore(data.conductor, tick);
 
     if (data.gameVar != null) {
       this.resource.gameVar = Util.objClone(data.gameVar);
     }
 
     // スキップとオートモードは停止させる
-    asyncTask.add((): AsyncCallbacks => {
-      const cb = new AsyncCallbacks();
-      window.setTimeout(() => {
-        this.stopSkip();
-        this.stopAutoMode();
-        cb.callDone();
-      }, 0);
-      return cb;
-    });
+    this.stopSkip();
+    this.stopAutoMode();
 
     // プラグイン
-    this.plugins.forEach((p) => p.onRestore(asyncTask, data, tick, false, true, false));
-
-    return asyncTask.run();
+    this.plugins.forEach(async p => await p.onRestore(data, tick, false, true, false));
   }
 
-  public tempLoad(tick: number, num: number, sound = false, toBack = false): AsyncCallbacks {
-    const asyncTask = new AsyncTask();
+  public async tempLoad(tick: number, num: number, sound = false, toBack = false): Promise<void> {
     const me: any = this as any;
-    const data: any = this.tempSaveData["" + num];
+    const data: any = this.tempSaveData['' + num];
 
     Logger.debug(data);
 
@@ -1427,35 +1469,33 @@ export class Ponkan3 extends PonGame {
 
     // layer
     if (toBack) {
-      this.backPrimaryLayer.restore(asyncTask, data.forePrimaryLayer, tick, false);
+      await this.backPrimaryLayer.restore(data.forePrimaryLayer, tick, false);
       for (let i = 0; i < data.foreLayers.length; i++) {
-        this.backLayers[i].restore(asyncTask, data.foreLayers[i], tick, false);
+        await this.backLayers[i].restore(data.foreLayers[i], tick, false);
       }
     } else {
-      this.forePrimaryLayer.restore(asyncTask, data.forePrimaryLayer, tick, false);
-      this.backPrimaryLayer.restore(asyncTask, data.backPrimaryLayer, tick, false);
+      await this.forePrimaryLayer.restore(data.forePrimaryLayer, tick, false);
+      await this.backPrimaryLayer.restore(data.backPrimaryLayer, tick, false);
       for (let i = 0; i < data.foreLayers.length; i++) {
-        this.foreLayers[i].restore(asyncTask, data.foreLayers[i], tick, false);
-        this.backLayers[i].restore(asyncTask, data.backLayers[i], tick, false);
+        await this.foreLayers[i].restore(data.foreLayers[i], tick, false);
+        await this.backLayers[i].restore(data.backLayers[i], tick, false);
       }
     }
 
     // sound
     if (sound) {
-      this.soundBuffers.forEach((sb) => {
+      this.soundBuffers.forEach(sb => {
         sb.stop();
       });
       for (let i = 0; i < data.soundBuffers.length; i++) {
         if (this.soundBuffers[i] != null) {
-          this.soundBuffers[i].restore(asyncTask, data.soundBuffers[i], tick);
+          await this.soundBuffers[i].restore(data.soundBuffers[i], tick);
         }
       }
     }
 
     // プラグイン
-    this.plugins.forEach((p) => p.onRestore(asyncTask, data, tick, true, sound, toBack));
-
-    return asyncTask.run();
+    this.plugins.forEach(async p => await p.onRestore(data, tick, true, sound, toBack));
   }
 
   public copySaveData(srcNum: number, destNum: number): void {
@@ -1463,36 +1503,48 @@ export class Ponkan3 extends PonGame {
   }
 
   public get emptySaveData(): any {
-    return  {
+    return {
       isEmpty: true,
-      date: "----/--/-- --:--:--",
-      name: "",
-      comment: "NO DATA",
-      message: "",
-      text: "",
+      date: '----/--/-- --:--:--',
+      name: '',
+      comment: 'NO DATA',
+      message: '',
+      text: '',
       screenShot: this.screenShot.nodata,
     };
   }
 
   public deleteSaveData(num: number): void {
     delete this.systemVar.saveDataInfo[num];
-    this.resource.storeToLocalStorage(this.getSaveDataName(num), "");
+    this.resource.storeToLocalStorage(this.getSaveDataName(num), '');
     this.saveSystemData();
   }
 
   public getSaveDataInfo(num: number): any {
     if (this.existSaveData(num)) {
       const data = this.systemVar.saveDataInfo[num];
-      if (data.screenShot == null || data.screenShot === "") {
+      if (data.screenShot == null || data.screenShot === '') {
         data.screenShot = this.screenShot.nodata;
       }
       const empty = this.emptySaveData;
-      if (data.date == null) { data.date = empty.date; }
-      if (data.name == null) { data.name = empty.name; }
-      if (data.comment == null) { data.comment = empty.comment; }
-      if (data.message == null) { data.message = empty.message; }
-      if (data.text == null) { data.text = empty.text; }
-      if (data.screenShot == null) { data.screenShot = empty.screenShot; }
+      if (data.date == null) {
+        data.date = empty.date;
+      }
+      if (data.name == null) {
+        data.name = empty.name;
+      }
+      if (data.comment == null) {
+        data.comment = empty.comment;
+      }
+      if (data.message == null) {
+        data.message = empty.message;
+      }
+      if (data.text == null) {
+        data.text = empty.text;
+      }
+      if (data.screenShot == null) {
+        data.screenShot = empty.screenShot;
+      }
       return data;
     } else {
       return this.emptySaveData;
@@ -1500,9 +1552,7 @@ export class Ponkan3 extends PonGame {
   }
 
   public existSaveData(num: number): boolean {
-    return this.systemVar != null &&
-           this.systemVar.saveDataInfo != null &&
-           this.systemVar.saveDataInfo[num] != null;
+    return this.systemVar != null && this.systemVar.saveDataInfo != null && this.systemVar.saveDataInfo[num] != null;
   }
 
   public getSaveDataScreenShot(num: number): string {
@@ -1525,7 +1575,6 @@ export class Ponkan3 extends PonGame {
     }
     return splitedAry;
   }
-
 }
 
 PIXI.utils.skipHello();

@@ -1,4 +1,3 @@
-import { AsyncTask } from "../base/async-task";
 import { BaseLayer } from "../base/base-layer";
 import { PonMouseEvent } from "../base/pon-mouse-event";
 import { Ponkan3 } from "../ponkan3";
@@ -20,7 +19,9 @@ export class Button extends BaseLayer {
 
   public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
     this.buttonStatus = status;
-    if (this.buttonStatus === "disabled") { this.down = false; }
+    if (this.buttonStatus === "disabled") {
+      this.down = false;
+    }
     this.resource.getForeCanvasElm().style.cursor = this.resource.cursor[status];
   }
 
@@ -56,10 +57,7 @@ export class Button extends BaseLayer {
     this.down = false;
   }
 
-  protected static buttonStoreParams: string[] = [
-    "insideFlag",
-    "buttonStatus",
-  ];
+  protected static buttonStoreParams: string[] = ["insideFlag", "buttonStatus"];
 
   public store(tick: number): any {
     const data: any = super.store(tick);
@@ -70,9 +68,9 @@ export class Button extends BaseLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
     this.clearButton();
-    super.restore(asyncTask, data, tick, clear);
+    await super.restore(data, tick, clear);
 
     const me: any = this as any;
     Button.buttonStoreParams.forEach((param: string) => {
@@ -174,8 +172,12 @@ export class CommandButton extends Button {
 
   public onChangeStable(isStable: boolean): void {
     super.onChangeStable(isStable);
-    if (!this.isSystemButton) { return; }
-    if (this.systemButtonLocked) { return; }
+    if (!this.isSystemButton) {
+      return;
+    }
+    if (this.systemButtonLocked) {
+      return;
+    }
     if (isStable) {
       if (this.insideFlag) {
         this.setButtonStatus("over");
@@ -216,11 +218,13 @@ export class CommandButton extends Button {
   //   // }
   // }
 
-  public onMouseUp(e: PonMouseEvent): void {
+  public async onMouseUp(e: PonMouseEvent): Promise<void> {
     const down = this.down; // super.onMouseUpでfalseになってしまうのでキャッシュしておく
 
     super.onMouseUp(e);
-    if (!e.isLeft) { return; }
+    if (!e.isLeft) {
+      return;
+    }
 
     if (down && this.isInsideEvent(e) && this.buttonStatus !== "disabled") {
       const p: Ponkan3 = this.owner as Ponkan3;
@@ -233,14 +237,12 @@ export class CommandButton extends Button {
       if (this.filePath != null || this.label != null) {
         if (this.jump) {
           p.conductor.stop();
-          p.conductor.jump(this.filePath, this.label, this.countPage).done(() => {
-            p.conductor.start();
-          });
+          await p.conductor.jump(this.filePath, this.label, this.countPage);
+          p.conductor.start();
         } else if (this.call) {
-          p.callSubroutine(this.filePath, this.label, this.countPage).done(() => {
-            p.conductor.start();
-          });
           p.conductor.stop();
+          await p.callSubroutine(this.filePath, this.label, this.countPage);
+          p.conductor.start();
         }
       }
       if (this.isSystemButton) {
@@ -276,9 +278,9 @@ export class CommandButton extends Button {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
     this.clearCommandButton();
-    super.restore(asyncTask, data, tick, clear);
+    await super.restore(data, tick, clear);
   }
 
   public restoreAfterLoadImage(data: any, tick: number): void {

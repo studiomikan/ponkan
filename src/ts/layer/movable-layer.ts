@@ -1,4 +1,3 @@
-import { AsyncTask } from "../base/async-task";
 import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
 import { SliderLayer } from "./slider-layer";
@@ -12,7 +11,6 @@ export interface IMovePosInfo {
 }
 
 export class MovableLayer extends SliderLayer {
-
   protected _isMoving: boolean = false;
   protected moveType: "linear" | "bezier2" | "bezier3" | "catmullrom" = "linear";
   protected moveEase: "none" | "in" | "out" | "both" = "none";
@@ -24,8 +22,12 @@ export class MovableLayer extends SliderLayer {
   protected moveTotalTime: number = 0;
   protected moveStartTick: number = -1;
   protected moveDelayStartTick: number = -1;
-  public get isMoving(): boolean { return this._isMoving; }
-  public get isLoopMoving(): boolean { return this.moveLoop; }
+  public get isMoving(): boolean {
+    return this._isMoving;
+  }
+  public get isLoopMoving(): boolean {
+    return this.moveLoop;
+  }
 
   public constructor(name: string, resource: Resource, owner: Ponkan3) {
     super(name, resource, owner);
@@ -40,7 +42,6 @@ export class MovableLayer extends SliderLayer {
     ease: "none" | "in" | "out" | "both",
     loop: boolean,
   ): void {
-
     if (type === "bezier2" && path.length !== 2) {
       throw new Error("bezier2ではpathを2点指定する必要があります。");
     }
@@ -71,11 +72,21 @@ export class MovableLayer extends SliderLayer {
     for (let i = 1; i < posList.length; i++) {
       const p0 = posList[i - 1];
       const p = posList[i];
-      if (p.x == null) { p.x = p0.x; }
-      if (p.y == null) { p.y = p0.y; }
-      if (p.alpha == null) { p.alpha = p0.alpha; }
-      if (p.scalex == null) { p.scalex = p0.scalex; }
-      if (p.scaley == null) { p.scaley = p0.scaley; }
+      if (p.x == null) {
+        p.x = p0.x;
+      }
+      if (p.y == null) {
+        p.y = p0.y;
+      }
+      if (p.alpha == null) {
+        p.alpha = p0.alpha;
+      }
+      if (p.scalex == null) {
+        p.scalex = p0.scalex;
+      }
+      if (p.scaley == null) {
+        p.scaley = p0.scaley;
+      }
     }
     this.movePosList = posList;
 
@@ -106,7 +117,7 @@ export class MovableLayer extends SliderLayer {
     const path: IMovePosInfo[] = [];
     orgPath.forEach((p: any) => {
       const obj: any = {};
-      Object.keys(p).forEach((key) => {
+      Object.keys(p).forEach(key => {
         obj[key] = p[key];
       });
       path.push(obj);
@@ -118,8 +129,12 @@ export class MovableLayer extends SliderLayer {
   public update(tick: number): void {
     super.update(tick);
     if (this._isMoving) {
-      if (this.moveDelayStartTick === -1) { this.moveDelayStartTick = tick; }
-      if (tick - this.moveDelayStartTick < this.moveDelay) { return; }
+      if (this.moveDelayStartTick === -1) {
+        this.moveDelayStartTick = tick;
+      }
+      if (tick - this.moveDelayStartTick < this.moveDelay) {
+        return;
+      }
 
       if (this.moveStartTick === -1) {
         this.moveStartTick = tick;
@@ -128,9 +143,15 @@ export class MovableLayer extends SliderLayer {
 
       // easeの処理
       switch (this.moveEase) {
-        case "in": phase = this.moveEaseIn(phase); break;
-        case "out": phase = this.moveEaseOut(phase); break;
-        case "both": phase = this.moveEaseInOut(phase); break;
+        case "in":
+          phase = this.moveEaseIn(phase);
+          break;
+        case "out":
+          phase = this.moveEaseOut(phase);
+          break;
+        case "both":
+          phase = this.moveEaseInOut(phase);
+          break;
         // case 'none': phase = phase; break;
       }
       if (phase > 1) {
@@ -138,10 +159,18 @@ export class MovableLayer extends SliderLayer {
       }
       // 移動
       switch (this.moveType) {
-        case "bezier2": this.moveBezierCurve2(tick, phase); break;
-        case "bezier3": this.moveBezierCurve3(tick, phase); break;
-        case "catmullrom": this.moveCatmullRom(tick, phase); break;
-        default: this.moveLinear(tick, phase); break;
+        case "bezier2":
+          this.moveBezierCurve2(tick, phase);
+          break;
+        case "bezier3":
+          this.moveBezierCurve3(tick, phase);
+          break;
+        case "catmullrom":
+          this.moveCatmullRom(tick, phase);
+          break;
+        default:
+          this.moveLinear(tick, phase);
+          break;
       }
     }
   }
@@ -171,7 +200,7 @@ export class MovableLayer extends SliderLayer {
    */
   protected moveEaseInOut(phase: number): number {
     // v(t) = -2t^3 + 3t^2 = t^2(3-2t)
-    return (phase * phase) * (3 - (2 * phase));
+    return phase * phase * (3 - 2 * phase);
   }
 
   /**
@@ -251,8 +280,16 @@ export class MovableLayer extends SliderLayer {
     const p2: IMovePosInfo = this.movePosList[2];
     const p3: IMovePosInfo = this.movePosList[3];
     const t = phase;
-    this.x = (1 - t) * (1 - t) * (1 - t) * p0.x + 3 * (1 - t) * (1 - t) * t * p1.x + 3 * (1 - t) * t * t * p2.x + t * t * t * p3.x;
-    this.y = (1 - t) * (1 - t) * (1 - t) * p0.y + 3 * (1 - t) * (1 - t) * t * p1.y + 3 * (1 - t) * t * t * p2.y + t * t * t * p3.y;
+    this.x =
+      (1 - t) * (1 - t) * (1 - t) * p0.x +
+      3 * (1 - t) * (1 - t) * t * p1.x +
+      3 * (1 - t) * t * t * p2.x +
+      t * t * t * p3.x;
+    this.y =
+      (1 - t) * (1 - t) * (1 - t) * p0.y +
+      3 * (1 - t) * (1 - t) * t * p1.y +
+      3 * (1 - t) * t * t * p2.y +
+      t * t * t * p3.y;
     this.alpha = p0.alpha + (p3.alpha - p0.alpha) * phase;
     this.scaleX = p0.scalex + (p3.scalex - p0.scalex) * phase;
     this.scaleY = p0.scaley + (p3.scaley - p0.scaley) * phase;
@@ -277,10 +314,10 @@ export class MovableLayer extends SliderLayer {
     // let t = phase
 
     if (this.moveLoop) {
-      p0 = (n - 1) < 0 ? p[p.length - 1] : p[n - 1];
+      p0 = n - 1 < 0 ? p[p.length - 1] : p[n - 1];
       p1 = p[n];
-      p2 = p[((n + 1) % p.length)];
-      p3 = p[((n + 2) % p.length)];
+      p2 = p[(n + 1) % p.length];
+      p3 = p[(n + 2) % p.length];
     } else {
       if (n === 0) {
         // 始点
@@ -345,8 +382,7 @@ export class MovableLayer extends SliderLayer {
     const v1 = (p3 - p1) / 2;
     const t2 = t * t;
     const t3 = t2 * t;
-    return (2 * p1 - 2 * p2 + v0 + v1) * t3 +
-           (-3 * p1 + 3 * p2 - 2 * v0 - v1) * t2 + v0 * t + p1;
+    return (2 * p1 - 2 * p2 + v0 + v1) * t3 + (-3 * p1 + 3 * p2 - 2 * v0 - v1) * t2 + v0 * t + p1;
   }
 
   protected static movableLayerStoreParams: string[] = [
@@ -384,9 +420,9 @@ export class MovableLayer extends SliderLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
     this.stopMove(false);
-    super.restore(asyncTask, data, tick, clear);
+    await super.restore(data, tick, clear);
 
     if (data.moveLoop) {
       const me: any = this as any;
@@ -403,7 +439,6 @@ export class MovableLayer extends SliderLayer {
     super.copyTo(dest);
     const me: any = this as any;
     const you: any = dest as any;
-    MovableLayer.movableLayerStoreParams.forEach((p) => you[p] = me[p]);
+    MovableLayer.movableLayerStoreParams.forEach(p => (you[p] = me[p]));
   }
-
 }

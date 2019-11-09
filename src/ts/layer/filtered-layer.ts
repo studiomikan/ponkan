@@ -1,4 +1,3 @@
-import { AsyncTask } from "../base/async-task";
 import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
 import { MovableLayer } from "./movable-layer";
@@ -9,13 +8,14 @@ import { ColorMatrixFilter, createColorMatrixFilter } from "../filter/color-matr
 import { LayerFilter } from "../filter/layer-filter";
 
 export class FilteredLayer extends MovableLayer {
-
   public get pixiFilters(): Array<PIXI.Filter<any>> {
     return this.container.filters == null ? [] : this.container.filters;
   }
 
   protected _filters: LayerFilter[] = [];
-  public get filters(): LayerFilter[] { return this._filters; }
+  public get filters(): LayerFilter[] {
+    return this._filters;
+  }
 
   protected static filterClassList: any = null;
 
@@ -45,7 +45,7 @@ export class FilteredLayer extends MovableLayer {
   protected addLayerFilter(filter: LayerFilter): void {
     this.filters.push(filter);
     const buf: Array<PIXI.Filter<any>> = [];
-    this.filters.forEach((f) => {
+    this.filters.forEach(f => {
       buf.push(f.pixiFilter);
     });
     this.container.filters = buf;
@@ -65,7 +65,7 @@ export class FilteredLayer extends MovableLayer {
     // FilteredLayer.filteredLayerStoreParams.forEach((p) => data[p] = me[p]);
 
     data.filters = [];
-    this.filters.forEach((filter) => {
+    this.filters.forEach(filter => {
       data.filters.push({
         filterName: filter.filterName,
         data: filter.store(),
@@ -75,8 +75,8 @@ export class FilteredLayer extends MovableLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
-    super.restore(asyncTask, data, tick, clear);
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
+    await super.restore(data, tick, clear);
     // const me: any = this as any;
     // FilteredLayer.filteredLayerStoreParams.forEach((p) => me[p] = data[p]);
 

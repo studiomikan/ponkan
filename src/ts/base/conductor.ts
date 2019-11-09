@@ -1,5 +1,3 @@
-import { AsyncCallbacks } from "./async-callbacks";
-import { AsyncTask } from "./async-task";
 // import { Logger } from "./logger";
 import { PonEventHandler } from "./pon-event-handler";
 import { ReadUnread } from "./read-unread";
@@ -28,9 +26,13 @@ export class Conductor {
   protected eventCallbacks: IConductorEvent;
   public latestScriptFilePath: string = ""; // パースエラー時のメッセージ用
   protected _script: Script;
-  public get script(): Script { return this._script; }
+  public get script(): Script {
+    return this._script;
+  }
   protected _status: ConductorState = ConductorState.Stop;
-  public get status(): ConductorState { return this._status; }
+  public get status(): ConductorState {
+    return this._status;
+  }
 
   protected sleepStartTick: number = -1;
   protected sleepTime: number = -1;
@@ -51,17 +53,14 @@ export class Conductor {
     this.readUnread = new ReadUnread(this.resource);
   }
 
-  public loadScript(filePath: string): AsyncCallbacks {
-    this.latestScriptFilePath = filePath;
-    const cb = new AsyncCallbacks();
-    this.resource.loadScript(filePath).done((script: Script) => {
-      this._script = script;
-      cb.callDone(filePath);
-    }).fail((e: any) => {
+  public async loadScript(filePath: string): Promise<void> {
+    try {
+      this.latestScriptFilePath = filePath;
+      this._script = await this.resource.loadScript(filePath);
+    } catch (e) {
       this.eventCallbacks.onError(e);
-      cb.callFail(filePath);
-    });
-    return cb;
+      throw e;
+    }
   }
 
   /**
@@ -72,28 +71,19 @@ export class Conductor {
    * @param label 移動先ラベル
    * @param countPage 既読処理をするかどうか
    */
-  public jump(filePath: string | null, label: string | null = null, countPage = true): AsyncCallbacks {
-    const cb = new AsyncCallbacks();
+  public async jump(filePath: string | null, label: string | null = null, countPage = true): Promise<void> {
     if (countPage) {
       this.passLatestSaveMark();
       this.latestSaveMarkName = "";
     }
     if (filePath != null && filePath !== "") {
-      this.loadScript(filePath).done(() => {
-        if (label != null) {
-          this.script.goToLabel(label);
-        }
-        cb.callDone({filePath, label});
-      }).fail(() => {
-        cb.callFail({filePath, label});
-      });
-    } else if (label != null) {
-      window.setTimeout(() => {
+      await this.loadScript(filePath);
+      if (label != null) {
         this.script.goToLabel(label);
-        cb.callDone({filePath, label});
-      }, 0);
+      }
+    } else if (label != null) {
+      this.script.goToLabel(label);
     }
-    return cb;
   }
 
   public isPassed(labelName: string): boolean {
@@ -113,7 +103,9 @@ export class Conductor {
   }
 
   public conduct(tick: number): void {
-    if (this.status === ConductorState.Stop) { return; }
+    if (this.status === ConductorState.Stop) {
+      return;
+    }
 
     // スリープ処理
     // スリープ中ならretur、終了していたときは後続処理へ進む
@@ -144,8 +136,7 @@ export class Conductor {
         case "__save_mark__":
           this.passLatestSaveMark();
           this.latestSaveMarkName = tag.values.name;
-          tagReturnValue = this.eventCallbacks.onSaveMark(
-            tag.values.name, tag.values.comment, tag.line, tick);
+          tagReturnValue = this.eventCallbacks.onSaveMark(tag.values.name, tag.values.comment, tag.line, tick);
           break;
         case "__js__":
           tagReturnValue = this.eventCallbacks.onJs(tag.values.__body__, tag.values.print, tag.line, tick);
@@ -170,8 +161,12 @@ export class Conductor {
           break;
       }
 
-      if (tagReturnValue === "break") { break; }
-      if (this.status !== ConductorState.Run) { break; }
+      if (tagReturnValue === "break") {
+        break;
+      }
+      if (this.status !== ConductorState.Run) {
+        break;
+      }
     }
     this.callOnChangeStable();
   }
@@ -180,8 +175,10 @@ export class Conductor {
     for (const key in values) {
       if (Object.prototype.hasOwnProperty.call(values, key)) {
         const v: any = values[key];
-        if (typeof v !== "string") { continue; }
-        const value: string = "" + v as string;
+        if (typeof v !== "string") {
+          continue;
+        }
+        const value: string = ("" + v) as string;
         if (value.length >= 2 && values.charAt(0) === "&") {
           const js: string = value.substring(1);
           values[key] = this.resource.evalJs(js);
@@ -212,7 +209,7 @@ export class Conductor {
     return "break";
   }
 
-  public sleep(tick: number, sleepTime: number, sender: string): "continue" | "break"  {
+  public sleep(tick: number, sleepTime: number, sender: string): "continue" | "break" {
     this._status = ConductorState.Sleep;
     this.sleepStartTick = tick;
     this.sleepTime = sleepTime;
@@ -222,12 +219,14 @@ export class Conductor {
   }
 
   public get isStable(): boolean {
-    return this._status === ConductorState.Stop &&
-           !this.hasEventHandler("move") &&
-           !this.hasEventHandler("trans") &&
-           !this.hasEventHandler("frameanim") &&
-           !this.hasEventHandler("soundstop") &&
-           !this.hasEventHandler("soundfade");
+    return (
+      this._status === ConductorState.Stop &&
+      !this.hasEventHandler("move") &&
+      !this.hasEventHandler("trans") &&
+      !this.hasEventHandler("frameanim") &&
+      !this.hasEventHandler("soundstop") &&
+      !this.hasEventHandler("soundfade")
+    );
   }
 
   public addEventHandler(handler: PonEventHandler): void {
@@ -249,9 +248,11 @@ export class Conductor {
    */
   public trigger(eventName: string): boolean {
     const handlers: PonEventHandler[] = this.eventHandlers[eventName];
-    if (handlers == null) { return false; }
+    if (handlers == null) {
+      return false;
+    }
     this.clearEventHandlerByName(eventName);
-    handlers.forEach((h) => {
+    handlers.forEach(h => {
       // Logger.debug("FIRE! ", eventName, h);
       h.fire();
     });
@@ -263,7 +264,7 @@ export class Conductor {
   }
 
   public clearEventHandler(eventHandler: PonEventHandler): void {
-    Object.keys(this.eventHandlers).forEach((eventName) => {
+    Object.keys(this.eventHandlers).forEach(eventName => {
       this.eventHandlers[eventName].forEach((eh: PonEventHandler, index: number) => {
         if (eh === eventHandler) {
           this.eventHandlers[eventName].splice(index, 1);
@@ -289,13 +290,7 @@ export class Conductor {
   //   this.eventHandlers = this.eventHandlersStack.pop();
   // }
 
-  protected static conductorStoreParams = [
-    "_status",
-    "sleepStartTick",
-    "sleepTime",
-    "sleepSender",
-  ];
-
+  protected static conductorStoreParams = ["_status", "sleepStartTick", "sleepTime", "sleepSender"];
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public store(saveMarkName: string, tick: number): any {
@@ -325,27 +320,19 @@ export class Conductor {
     return data;
   }
 
-
   /* eslint-disable @typescript-eslint/no-unused-vars */
   /**
    * 復元。ステータスの値は復元されるが、再スタートなどはしないので注意。
    */
-  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
+  public async restore(data: any, tick: number): Promise<void> {
     const me: any = this as any;
     Conductor.conductorStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
 
     // script
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    asyncTask.add((params: any, index: number): AsyncCallbacks => {
-      const cb = this.loadScript(data.scriptFilePath);
-      cb.done(() => {
-        this.script.goToSaveMark(data.saveMarkName);
-      });
-      return cb;
-    });
+    await this.loadScript(data.scriptFilePath);
+    this.script.goToSaveMark(data.saveMarkName);
   }
   /* eslint-enabled @typescript-eslint/no-unused-vars */
-
 }

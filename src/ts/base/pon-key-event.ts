@@ -1,4 +1,3 @@
-
 export class PonKeyEvent {
   private e: KeyboardEvent;
 
@@ -11,7 +10,13 @@ export class PonKeyEvent {
     return this.e.key;
   }
 
-  public get ctrl(): boolean { return this.e.ctrlKey; }
-  public get shift(): boolean { return this.e.shiftKey; }
-  public get alt(): boolean { return this.e.altKey; }
+  public get ctrl(): boolean {
+    return this.e.ctrlKey;
+  }
+  public get shift(): boolean {
+    return this.e.shiftKey;
+  }
+  public get alt(): boolean {
+    return this.e.altKey;
+  }
 }

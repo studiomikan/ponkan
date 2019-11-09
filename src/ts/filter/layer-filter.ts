@@ -1,7 +1,11 @@
 export class LayerFilter {
   public static readonly filterName: string = "LayerFilter(base class)";
-  public get filterName(): string { return LayerFilter.filterName; }
-  public get pixiFilter(): PIXI.Filter<any> { return this._filter; }
+  public get filterName(): string {
+    return LayerFilter.filterName;
+  }
+  public get pixiFilter(): PIXI.Filter<any> {
+    return this._filter;
+  }
   protected _filter: PIXI.Filter<any>;
   protected params: any = {};
 
@@ -15,7 +19,7 @@ export class LayerFilter {
 
   protected permitParams(params: any, list: string[]): any {
     const newParams: any = {};
-    list.forEach((key) => {
+    list.forEach(key => {
       if (params[key] != null) {
         newParams[key] = params[key];
       }

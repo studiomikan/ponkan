@@ -10,7 +10,9 @@ export class ScriptParser {
   private saveMarkCount: number = 0;
   private _tags: Tag[] = [];
 
-  public get tags(): Tag[] { return this._tags; }
+  public get tags(): Tag[] {
+    return this._tags;
+  }
 
   public constructor(resource: Resource, scriptText: string) {
     this.resource = resource;
@@ -22,7 +24,7 @@ export class ScriptParser {
   }
 
   public debugPrint(): void {
-    this.tags.forEach((tag) => {
+    this.tags.forEach(tag => {
       tag.debugPrint();
     });
   }
@@ -46,7 +48,9 @@ export class ScriptParser {
   private parse(): void {
     while (true) {
       const line: string | null = this.getLine();
-      if (line === null) { break; }
+      if (line === null) {
+        break;
+      }
       if (line === "") {
         if (this.currentLineNum < this.lines.length) {
           this.addLinebreak();
@@ -63,7 +67,9 @@ export class ScriptParser {
         let js = "";
         while (true) {
           const tmp: string | null = this.getLineWithoutTrim();
-          if (tmp === null || tmp.trim() === "---") { break; }
+          if (tmp === null || tmp.trim() === "---") {
+            break;
+          }
           js += tmp + "\n";
         }
         this.addTag("__js__", { __body__: js, print: false });
@@ -121,7 +127,9 @@ export class ScriptParser {
           // { を省略していないとき
           while (valuesStr.charAt(valuesStr.length - 1) !== "}") {
             const line: string | null = this.getLine();
-            if (line === null) { break; }
+            if (line === null) {
+              break;
+            }
             valuesStr += " " + line.trim();
           }
         }
@@ -171,8 +179,10 @@ export class ScriptParser {
   private parseText(line: string): void {
     for (let i = 0; i < line.length; i++) {
       const ch = line.charAt(i);
-      if (ch === "") { continue; }
-      this.addTag("ch", { __body__: ch, text: ch});
+      if (ch === "") {
+        continue;
+      }
+      this.addTag("ch", { __body__: ch, text: ch });
     }
     this.addLinebreak(); // 最後に改行を付与
   }

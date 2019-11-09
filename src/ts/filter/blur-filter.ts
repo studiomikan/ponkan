@@ -2,12 +2,16 @@ import { LayerFilter } from "./layer-filter";
 
 export class BlurFilter extends LayerFilter {
   public static readonly filterName: string = "blur";
-  public get filterName(): string { return BlurFilter.filterName; }
-  public get filter(): PIXI.filters.BlurFilter { return this._filter as PIXI.filters.BlurFilter; }
+  public get filterName(): string {
+    return BlurFilter.filterName;
+  }
+  public get filter(): PIXI.filters.BlurFilter {
+    return this._filter as PIXI.filters.BlurFilter;
+  }
 
   public constructor(params: any) {
     super(params);
-    const filter = this._filter = new PIXI.filters.BlurFilter();
+    const filter = (this._filter = new PIXI.filters.BlurFilter());
     filter.blurX = params.blurX || 4;
     filter.blurY = params.blurY || 4;
     filter.quality = params.quality || 4;
