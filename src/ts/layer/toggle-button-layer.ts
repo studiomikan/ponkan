@@ -1,24 +1,21 @@
-import { AsyncCallbacks } from "../base/async-callbacks";
-import { AsyncTask } from "../base/async-task";
 import { ImageButtonLayer } from "./image-button-layer";
 import { ToggleButton } from "./toggle-button";
 
 export class ImageToggleButton extends ToggleButton {
   protected direction: "horizontal" | "vertical" = "horizontal";
 
-  public initImageToggleButton(
+  public async initImageToggleButton(
     filePath: string,
     varName: string,
     isSystemButton = false,
     exp: string | null,
     direction: "horizontal" | "vertical",
-  ): AsyncCallbacks {
-    const cb = new AsyncCallbacks();
-
+  ): Promise<void> {
     this.clearToggleButton();
     this.freeImage();
 
-    this.loadImage(filePath).done(() => {
+    try {
+      await this.loadImage(filePath);
       this.direction = direction;
       if (this.direction === "vertical") {
         this.height = Math.floor(this.imageHeight / 2);
@@ -26,13 +23,9 @@ export class ImageToggleButton extends ToggleButton {
         this.width = Math.floor(this.imageWidth / 2);
       }
       this.initToggleButton(varName, isSystemButton, exp);
-      cb.callDone();
-    }).fail(() => {
-      cb.callFail();
+    } catch (e) {
       throw new Error("画像の読み込みに失敗しました。");
-    });
-
-    return cb;
+    }
   }
 
   public clearToggleButton(): void {
@@ -71,8 +64,8 @@ export class ImageToggleButton extends ToggleButton {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
-    super.restore(asyncTask, data, tick, clear);
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
+    await super.restore(data, tick, clear);
   }
 
   public restoreAfterLoadImage(data: any, tick: number): void {
@@ -98,7 +91,7 @@ export class ToggleButtonLayer extends ImageButtonLayer {
 
   private imageToggleButtons: ImageToggleButton[] = [];
 
-  public addToggleButton(
+  public async addToggleButton(
     filePath: string,
     x: number,
     y: number,
@@ -106,7 +99,7 @@ export class ToggleButtonLayer extends ImageButtonLayer {
     isSystemButton = false,
     exp: string | null,
     direction: "horizontal" | "vertical",
-  ): AsyncCallbacks {
+  ): Promise<void> {
     const name = `ImageToggleButton ${this.imageToggleButtons.length}`;
     const btn = new ImageToggleButton(name, this.resource, this.owner);
     this.addChild(btn);
@@ -170,26 +163,30 @@ export class ToggleButtonLayer extends ImageButtonLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
     if (data.imageToggleButtons.length > 0) {
       if (data.imageToggleButtons.length === this.imageToggleButtons.length) {
         // 数が同じ場合（たとえばtemploadなどでロードしたときなど）は読み込み直さない
-        data.imageToggleButtons.forEach((toggleButtonData: any, i: number) => {
-          this.imageToggleButtons[i].restore(asyncTask, toggleButtonData, tick, clear);
-        });
+        await Promise.all(
+          data.imageToggleButtons.map((toggleButtonData: any, i: number) => {
+            return this.imageToggleButtons[i].restore(toggleButtonData, tick, clear);
+          })
+        );
       } else {
         this.clearToggleButtons();
-        data.imageToggleButtons.forEach((toggleButtonData: any) => {
-          const btn = new ImageToggleButton(toggleButtonData.name, this.resource, this.owner);
-          this.addChild(btn);
-          this.imageToggleButtons.push(btn);
-          btn.restore(asyncTask, toggleButtonData, tick, clear);
-        });
+        await Promise.all(
+           data.imageToggleButtons.forEach((toggleButtonData: any) => {
+             const btn = new ImageToggleButton(toggleButtonData.name, this.resource, this.owner);
+             this.addChild(btn);
+             this.imageToggleButtons.push(btn);
+             return btn.restore(toggleButtonData, tick, clear);
+           })
+        );
       }
     } else {
       this.clearToggleButtons();
     }
-    super.restore(asyncTask, data, tick, clear);
+    await super.restore(data, tick, clear);
   }
 
   protected restoreAfterLoadImage(data: any, tick: number): void {

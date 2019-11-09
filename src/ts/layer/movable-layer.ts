@@ -1,4 +1,3 @@
-import { AsyncTask } from "../base/async-task";
 import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
 import { SliderLayer } from "./slider-layer";
@@ -384,9 +383,9 @@ export class MovableLayer extends SliderLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
     this.stopMove(false);
-    super.restore(asyncTask, data, tick, clear);
+    await super.restore(data, tick, clear);
 
     if (data.moveLoop) {
       const me: any = this as any;

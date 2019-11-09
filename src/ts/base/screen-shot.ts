@@ -25,7 +25,7 @@ export class ScreenShot {
     this.context.fillStyle = "#000000";
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // // TODO テストのためbodyに追加
+    // テストのためbodyに追加
     // let body = document.querySelector("body");
     // if (body != null) {
     //   body.appendChild(this.canvas);

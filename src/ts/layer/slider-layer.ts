@@ -1,5 +1,3 @@
-import { AsyncCallbacks } from "../base/async-callbacks";
-import { AsyncTask } from "../base/async-task";
 import { BaseLayer } from "../base/base-layer";
 import { PonGame } from "../base/pon-game";
 import { PonMouseEvent } from "../base/pon-mouse-event";
@@ -10,11 +8,10 @@ import { ToggleButtonLayer } from "./toggle-button-layer";
 export class SliderButton extends Button {
   private callbacks: any;
 
-  public initSliderButton(imagePath: string): AsyncCallbacks {
-    return this.loadImage(imagePath).done(() => {
-      this.initButton();
-      this.width = Math.floor(this.imageWidth / 3);
-    });
+  public async initSliderButton(imagePath: string): Promise<void> {
+    await this.loadImage(imagePath)
+    this.initButton();
+    this.width = Math.floor(this.imageWidth / 3);
   }
 
   public clearSliderButton(): void {
@@ -81,15 +78,13 @@ export class Slider extends BaseLayer {
     });
   }
 
-  public initSlider(
+  public async initSlider(
     value: number,
     exp: string | ((v: number) => void),
     backImagePath: string,
     foreImagePath: string,
     buttonImagePath: string,
-  ): AsyncCallbacks {
-    const task = new AsyncTask();
-
+  ): Promise<void> {
     this.clearSlider();
 
     if (value < 0.0) { value = 0.0; }
@@ -97,35 +92,29 @@ export class Slider extends BaseLayer {
     this.value = value;
     this.exp = exp;
 
-    // 背景画像読み込み
-    task.add((): AsyncCallbacks => {
-      return this.loadImage(backImagePath);
-    });
-    // 前景画像読み込み
-    task.add((): AsyncCallbacks => {
-      const foreImage = this.foreImage;
-      const foreImageCb = foreImage.loadImage(foreImagePath);
-      foreImageCb.done(() => {
-        foreImage.x = 0;
-        foreImage.y = 0;
-        foreImage.visible = true;
-      });
-      return foreImageCb;
-    });
-    // ボタン読み込み
-    task.add((): AsyncCallbacks => {
-      const button = this.button;
-      const buttonCb = button.initSliderButton(buttonImagePath);
-      buttonCb.done(() => {
-        button.x = 0;
-        button.y = 0;
-        button.visible = true;
-        button.setButtonStatus("normal");
-      });
-      return buttonCb;
-    });
+    const task: Promise<void>[] = [];
 
-    return task.run().done(() => {
+    // 背景画像読み込み
+    task.push(this.loadImage(backImagePath));
+    // 前景画像読み込み
+    task.push(
+      this.foreImage.loadImage(foreImagePath).then(() => {
+        this.foreImage.x = 0;
+        this.foreImage.y = 0;
+        this.foreImage.visible = true;
+      })
+    );
+    // ボタン読み込み
+    task.push(
+      this.button.initSliderButton(buttonImagePath).then(() => {
+        this.button.x = 0;
+        this.button.y = 0;
+        this.button.visible = true;
+        this.button.setButtonStatus("normal");
+      })
+    );
+
+    return Promise.all(task).then(() => {
       this.setValue(value);
       this.visible = true;
       this.lock();
@@ -251,16 +240,16 @@ export class Slider extends BaseLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
     this.clearSlider();
-    super.restore(asyncTask, data, tick, clear);
+    await super.restore(data, tick, clear);
 
     const me: any = this as any;
     Slider.sliderStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
-    this.foreImage.restore(asyncTask, data.foreImage, tick, clear);
-    this.button.restore(asyncTask, data.button, tick, clear);
+    await this.foreImage.restore(data.foreImage, tick, clear);
+    await this.button.restore(data.button, tick, clear);
     this.button.setCallbacks({
       onMouseDown: (e: PonMouseEvent) => { this.onButtonDown(e); },
       onMouseUp: (e: PonMouseEvent) => { this.onButtonUp(e); },
@@ -294,7 +283,7 @@ export class SliderLayer extends ToggleButtonLayer {
 
   private sliders: Slider[] = [];
 
-  public addSlider(
+  public async addSlider(
     x: number,
     y: number,
     value: number,
@@ -302,7 +291,7 @@ export class SliderLayer extends ToggleButtonLayer {
     backImagePath: string,
     foreImagePath: string,
     buttonImagePath: string,
-  ): AsyncCallbacks {
+  ): Promise<void> {
     const name = `Slider ${this.sliders.length}`;
     const slider = new Slider(name, this.resource, this.owner);
     this.addChild(slider);
@@ -343,25 +332,29 @@ export class SliderLayer extends ToggleButtonLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
-    super.restore(asyncTask, data, tick, clear);
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
+    await super.restore(data, tick, clear);
 
     if (data.sliders != null && data.sliders.length > 0) {
       console.log("sliders", data.sliders);
       if (data.sliders.length === this.sliders.length) {
         // 数が同じ場合
-        data.sliders.forEach((sliderData: any, i: number) => {
-          this.sliders[i].restore(asyncTask, sliderData, tick, clear);
-        });
+        await Promise.all(
+          data.sliders.map((sliderData: any, i: number) => {
+            return this.sliders[i].restore(sliderData, tick, clear);
+          })
+        )
       } else {
         // 数が合わない場合は一度破棄して作り直す
         this.clearSliders();
-        data.sliders.forEach((sliderData: any) => {
-          const s = new Slider(sliderData.name, this.resource, this.owner);
-          this.addChild(s);
-          this.sliders.push(s);
-          s.restore(asyncTask, sliderData, tick, clear);
-        });
+        await Promise.all(
+          data.sliders.map((sliderData: any) => {
+            const s = new Slider(sliderData.name, this.resource, this.owner);
+            this.addChild(s);
+            this.sliders.push(s);
+            return s.restore(sliderData, tick, clear);
+          })
+        );
       }
     } else {
       this.clearSliders();

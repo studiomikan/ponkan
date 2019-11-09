@@ -1,5 +1,3 @@
-import { AsyncCallbacks } from "../base/async-callbacks";
-import { AsyncTask } from "../base/async-task";
 import { BaseLayer } from "../base/base-layer";
 import { PonGame } from "../base/pon-game";
 import { PonMouseEvent } from "../base/pon-mouse-event";
@@ -11,12 +9,11 @@ import { Button } from "./button";
 export class HistoryButton extends Button {
   private callbacks: any;
 
-  public initHistoryButton(imagePath: string): AsyncCallbacks {
-    return this.loadImage(imagePath).done(() => {
-      this.initButton();
-      this.width = Math.floor(this.imageWidth / 3);
-      this.setButtonStatus("normal");
-    });
+  public async initHistoryButton(imagePath: string): Promise<void> {
+    await this.loadImage(imagePath);
+    this.initButton();
+    this.width = Math.floor(this.imageWidth / 3);
+    this.setButtonStatus("normal");
   }
 
   public clearHistoryButton(): void {
@@ -477,7 +474,7 @@ export class HistoryLayer extends BaseLayer {
     this.closeButton = new HistoryButton("CloseButton", resource, owner);
   }
 
-  public init(config: any = {}, asyncTask: AsyncTask): void {
+  public async init(config: any = {}): Promise<void> {
     if (config.history == null) { config.history = {}; }
     if (config.history.text == null) { config.history.text = {}; }
     if (config.history.upButton == null) { config.history.upButton = {}; }
@@ -493,9 +490,7 @@ export class HistoryLayer extends BaseLayer {
 
     // 背景
     if (config.history.backgroundImage != null) {
-      asyncTask.add(() => {
-        return this.loadImage(config.history.backgroundImage);
-      });
+      await this.loadImage(config.history.backgroundImage);
     }
 
     // テキスト

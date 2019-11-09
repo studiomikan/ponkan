@@ -1,4 +1,3 @@
-import { AsyncTask } from "../base/async-task";
 import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
 import { MovableLayer } from "./movable-layer";
@@ -75,8 +74,8 @@ export class FilteredLayer extends MovableLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
-    super.restore(asyncTask, data, tick, clear);
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
+    await super.restore(data, tick, clear);
     // const me: any = this as any;
     // FilteredLayer.filteredLayerStoreParams.forEach((p) => me[p] = data[p]);
 

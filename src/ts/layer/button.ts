@@ -1,4 +1,3 @@
-import { AsyncTask } from "../base/async-task";
 import { BaseLayer } from "../base/base-layer";
 import { PonMouseEvent } from "../base/pon-mouse-event";
 import { Ponkan3 } from "../ponkan3";
@@ -70,9 +69,9 @@ export class Button extends BaseLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
     this.clearButton();
-    super.restore(asyncTask, data, tick, clear);
+    await super.restore(data, tick, clear);
 
     const me: any = this as any;
     Button.buttonStoreParams.forEach((param: string) => {
@@ -216,7 +215,7 @@ export class CommandButton extends Button {
   //   // }
   // }
 
-  public onMouseUp(e: PonMouseEvent): void {
+  public async onMouseUp(e: PonMouseEvent): Promise<void> {
     const down = this.down; // super.onMouseUpでfalseになってしまうのでキャッシュしておく
 
     super.onMouseUp(e);
@@ -233,14 +232,12 @@ export class CommandButton extends Button {
       if (this.filePath != null || this.label != null) {
         if (this.jump) {
           p.conductor.stop();
-          p.conductor.jump(this.filePath, this.label, this.countPage).done(() => {
-            p.conductor.start();
-          });
+          await p.conductor.jump(this.filePath, this.label, this.countPage);
+          p.conductor.start();
         } else if (this.call) {
-          p.callSubroutine(this.filePath, this.label, this.countPage).done(() => {
-            p.conductor.start();
-          });
           p.conductor.stop();
+          await p.callSubroutine(this.filePath, this.label, this.countPage);
+          p.conductor.start();
         }
       }
       if (this.isSystemButton) {
@@ -276,9 +273,9 @@ export class CommandButton extends Button {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
     this.clearCommandButton();
-    super.restore(asyncTask, data, tick, clear);
+    await super.restore(data, tick, clear);
   }
 
   public restoreAfterLoadImage(data: any, tick: number): void {

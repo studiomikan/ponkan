@@ -1,4 +1,3 @@
-import { AsyncTask } from "../base/async-task";
 import { BaseLayer } from "../base/base-layer";
 import { CommandButton } from "./button";
 import { FrameAnimLayer } from "./frame-anim-layer";
@@ -113,8 +112,8 @@ export class TextButton extends CommandButton {
     return data;
   }
 
-  // public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
-  //   super.restore(asyncTask, data, tick, clear);
+  // public async restore(data: any, tick: number, clear: boolean): Promise<void> {
+  //   await super.restore(data, tick, clear);
   // }
 
   public restoreAfterLoadImage(data: any, tick: number): void {
@@ -322,17 +321,19 @@ export class TextButtonLayer extends FrameAnimLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
     this.clearTextButtons();
     if (data.textButtons != null && data.textButtons.length > 0) {
-      data.textButtons.forEach((textButtonData: any) => {
-        const btn = new TextButton(textButtonData.name, this.resource, this.owner);
-        this.addChild(btn);
-        this.textButtons.push(btn);
-        btn.restore(asyncTask, textButtonData, tick, clear);
-      });
+      await Promise.all(
+        data.textButtons.map((textButtonData: any) => {
+          const btn = new TextButton(textButtonData.name, this.resource, this.owner);
+          this.addChild(btn);
+          this.textButtons.push(btn);
+          return btn.restore(textButtonData, tick, clear);
+        })
+      )
     }
-    super.restore(asyncTask, data, tick, clear);
+    await super.restore(data, tick, clear);
   }
 
   protected restoreAfterLoadImage(data: any, tick: number): void {

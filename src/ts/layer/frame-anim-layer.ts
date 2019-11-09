@@ -1,4 +1,3 @@
-import { AsyncTask } from "../base/async-task";
 import { BaseLayer } from "../base/base-layer";
 import { Logger } from "../base/logger";
 
@@ -124,9 +123,9 @@ export class FrameAnimLayer extends BaseLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
     this.stopFrameAnim(false);
-    super.restore(asyncTask, data, tick, clear);
+    await super.restore(data, tick, clear);
   }
 
   protected restoreAfterLoadImage(data: any, tick: number): void {

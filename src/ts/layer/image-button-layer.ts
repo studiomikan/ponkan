@@ -1,12 +1,10 @@
-import { AsyncCallbacks } from "../base/async-callbacks";
-import { AsyncTask } from "../base/async-task";
 import { CommandButton } from "./button";
 import { TextButtonLayer } from "./text-button-layer";
 
 export class CommandImageButton extends CommandButton {
   protected direction: "horizontal" | "vertical" = "horizontal";
 
-  public initImageButton(
+  public async initImageButton(
     jump = true,
     call = false,
     filePath: string | null = null,
@@ -19,30 +17,19 @@ export class CommandImageButton extends CommandButton {
     onEnterSoundBuf: string,
     onLeaveSoundBuf: string,
     onClickSoundBuf: string,
-  ): AsyncCallbacks {
-    const cb = new AsyncCallbacks();
-
+  ): Promise<void> {
     this.clearCommandButton();
     this.freeImage();
-
     this.initCommandButton(jump, call, filePath, label, countPage, isSystemButton, exp,
                     onEnterSoundBuf, onLeaveSoundBuf, onClickSoundBuf);
     this.direction = direction;
-
-    this.loadImage(file).done(() => {
-      if (this.direction === "vertical") {
-        this.height = Math.floor(this.imageHeight / 3);
-      } else {
-        this.width = Math.floor(this.imageWidth / 3);
-      }
-      this.setButtonStatus("disabled");
-      cb.callDone();
-    }).fail(() => {
-      cb.callFail();
-      throw new Error("画像の読み込みに失敗しました。");
-    });
-
-    return cb;
+    await this.loadImage(file);
+    if (this.direction === "vertical") {
+      this.height = Math.floor(this.imageHeight / 3);
+    } else {
+      this.width = Math.floor(this.imageWidth / 3);
+    }
+    this.setButtonStatus("disabled");
   }
 
   public clearCommandButton(): void {
@@ -95,8 +82,8 @@ export class CommandImageButton extends CommandButton {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
-    super.restore(asyncTask, data, tick, clear);
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
+    await super.restore(data, tick, clear);
   }
 
   public restoreAfterLoadImage(data: any, tick: number): void {
@@ -122,7 +109,7 @@ export class ImageButtonLayer extends TextButtonLayer {
 
   private imageButtons: CommandImageButton[] = [];
 
-  public addImageButton(
+  public async addImageButton(
     jump = true,
     call = false,
     filePath: string | null = null,
@@ -137,7 +124,7 @@ export class ImageButtonLayer extends TextButtonLayer {
     onEnterSoundBuf: string,
     onLeaveSoundBuf: string,
     onClickSoundBuf: string,
-  ): AsyncCallbacks {
+  ): Promise<void> {
     const name = `ImageButton ${this.imageButtons.length}`;
     const btn = new CommandImageButton(name, this.resource, this.owner);
     this.addChild(btn);
@@ -145,7 +132,7 @@ export class ImageButtonLayer extends TextButtonLayer {
 
     btn.x = x;
     btn.y = y;
-    return btn.initImageButton(
+    await btn.initImageButton(
       jump,
       call,
       filePath,
@@ -207,27 +194,31 @@ export class ImageButtonLayer extends TextButtonLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
     if (data.imageButtons.length > 0) {
       if (data.imageButtons.length === this.imageButtons.length) {
         // 数が同じ場合（たとえばtemploadなどでロードしたときなど）は読み込み直さない
-        data.imageButtons.forEach((imageButtonData: any, i: number) => {
-          this.imageButtons[i].restore(asyncTask, imageButtonData, tick, clear);
-        });
+        await Promise.all(
+          data.imageButtons.map((imageButtonData: any, i: number) => {
+            return this.imageButtons[i].restore(imageButtonData, tick, clear);
+          })
+        );
       } else {
         // 数が合わない場合は一度破棄して作り直す
-        this.clearImageButtons();
-        data.imageButtons.forEach((imageButtonData: any) => {
-          const btn = new CommandImageButton(imageButtonData.name, this.resource, this.owner);
-          this.addChild(btn);
-          this.imageButtons.push(btn);
-          btn.restore(asyncTask, imageButtonData, tick, clear);
-        });
+        this.clearImageButtons()
+        await Promise.all(
+          data.imageButtons.map((imageButtonData: any) => {
+            const btn = new CommandImageButton(imageButtonData.name, this.resource, this.owner);
+            this.addChild(btn);
+            this.imageButtons.push(btn);
+            return btn.restore(imageButtonData, tick, clear);
+          })
+        );
       }
     } else {
       this.clearImageButtons();
     }
-    super.restore(asyncTask, data, tick, clear);
+    await super.restore(data, tick, clear); // TODO: このタイミングであってるのかどうか確認する
   }
 
   protected restoreAfterLoadImage(data: any, tick: number): void {

@@ -1,4 +1,3 @@
-import { AsyncCallbacks } from "./async-callbacks";
 import { BaseLayer } from "./base-layer";
 import { Conductor, IConductorEvent } from "./conductor";
 import { Logger } from "./logger";
@@ -86,8 +85,7 @@ export class PonGame implements IConductorEvent {
     // this.initMouseEventOnCanvas(this.backRenderer.canvasElm);
     this.initKeyboardEvent();
 
-    const mainConductor: Conductor = new Conductor(this.resource, "Main Conductor", this);
-    this.conductorStack.push(mainConductor);
+    this.conductorStack.push(new Conductor(this.resource, "Main Conductor", this));
   }
 
   public destroy(): void {
@@ -328,11 +326,11 @@ export class PonGame implements IConductorEvent {
    * @param file 移動先ファイル
    * @param label 移動先ラベル
    */
-  public callSubroutine(
+  public async callSubroutine(
     filePath: string | null,
     label: string | null = null,
     countPage = false,
-  ): AsyncCallbacks {
+  ): Promise<void> {
     if (filePath == null) {
       filePath = this.conductor.script.filePath;
     }

@@ -1,6 +1,3 @@
-import { Howl } from "howler";
-import { AsyncCallbacks } from "./async-callbacks";
-import { AsyncTask } from "./async-task";
 import { Logger } from "./logger";
 import { Resource } from "./resource";
 
@@ -42,22 +39,18 @@ export class SoundBuffer {
     this.callback = callback;
   }
 
-  public loadSound(filePath: string): AsyncCallbacks {
+  public async loadSound(filePath: string): Promise<void> {
     Logger.debug("SoundBuffer.loadSound call: ", filePath);
-    const cb: AsyncCallbacks = new AsyncCallbacks();
     this.filePath = filePath;
 
-    this.resource.loadSoundHowler(filePath).done((howl: Howl): void => {
-      Logger.debug("SoundBuffer.loadSound success: ", howl);
-      this.howl = howl;
+    try {
+      this.howl = await this.resource.loadSoundHowler(filePath);
+      Logger.debug("SoundBuffer.loadSound success: ", this.howl);
       this.setHowlerEvent();
       this.setHowlerOptions();
-      cb.callDone(this);
-    }).fail(() => {
+    } catch (e) {
       Logger.debug("SoundBuffer.loadSound fail: ", filePath);
-      cb.callFail();
-    });
-    return cb;
+    }
   }
 
   public get hasSound(): boolean {
@@ -271,7 +264,7 @@ export class SoundBuffer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
+  public async restore(data: any, tick: number): Promise<void> {
     const me: any = this as any;
     const ignore: string[] = [
       "hasSound",
@@ -285,13 +278,8 @@ export class SoundBuffer {
     this.stop();
 
     if (data.hasSound) {
-      asyncTask.add((): AsyncCallbacks => {
-        const cb = this.loadSound(data.filePath);
-        cb.done(() => {
-          this.restoreAfterLoad(data, tick);
-        });
-        return cb;
-      });
+      await this.loadSound(data.filePath);
+      this.restoreAfterLoad(data, tick);
     } else {
       this.restoreAfterLoad(data, tick);
     }
@@ -317,7 +305,7 @@ export class SoundBuffer {
     };
   }
 
-  public restoreSystem(asyncTask: AsyncTask, data: any): any {
+  public restoreSystem(data: any): void {
     if (data != null && data.gvolume != null) {
       this.gvolume = data.gvolume;
     }

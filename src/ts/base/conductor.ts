@@ -1,5 +1,3 @@
-import { AsyncCallbacks } from "./async-callbacks";
-import { AsyncTask } from "./async-task";
 // import { Logger } from "./logger";
 import { PonEventHandler } from "./pon-event-handler";
 import { ReadUnread } from "./read-unread";
@@ -51,17 +49,14 @@ export class Conductor {
     this.readUnread = new ReadUnread(this.resource);
   }
 
-  public loadScript(filePath: string): AsyncCallbacks {
-    this.latestScriptFilePath = filePath;
-    const cb = new AsyncCallbacks();
-    this.resource.loadScript(filePath).done((script: Script) => {
-      this._script = script;
-      cb.callDone(filePath);
-    }).fail((e: any) => {
+  public async loadScript(filePath: string): Promise<void> {
+    try {
+      this.latestScriptFilePath = filePath;
+      this._script = await this.resource.loadScript(filePath);
+    } catch (e) {
       this.eventCallbacks.onError(e);
-      cb.callFail(filePath);
-    });
-    return cb;
+      throw e;
+    }
   }
 
   /**
@@ -72,28 +67,19 @@ export class Conductor {
    * @param label 移動先ラベル
    * @param countPage 既読処理をするかどうか
    */
-  public jump(filePath: string | null, label: string | null = null, countPage = true): AsyncCallbacks {
-    const cb = new AsyncCallbacks();
+  public async jump(filePath: string | null, label: string | null = null, countPage = true): Promise<void> {
     if (countPage) {
       this.passLatestSaveMark();
       this.latestSaveMarkName = "";
     }
     if (filePath != null && filePath !== "") {
-      this.loadScript(filePath).done(() => {
-        if (label != null) {
-          this.script.goToLabel(label);
-        }
-        cb.callDone({filePath, label});
-      }).fail(() => {
-        cb.callFail({filePath, label});
-      });
-    } else if (label != null) {
-      window.setTimeout(() => {
+      await this.loadScript(filePath);
+      if (label != null) {
         this.script.goToLabel(label);
-        cb.callDone({filePath, label});
-      }, 0);
+      }
+    } else if (label != null) {
+      this.script.goToLabel(label);
     }
-    return cb;
   }
 
   public isPassed(labelName: string): boolean {
@@ -330,21 +316,15 @@ export class Conductor {
   /**
    * 復元。ステータスの値は復元されるが、再スタートなどはしないので注意。
    */
-  public restore(asyncTask: AsyncTask, data: any, tick: number): void {
+  public async restore(data: any, tick: number): Promise<void> {
     const me: any = this as any;
     Conductor.conductorStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
 
     // script
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    asyncTask.add((params: any, index: number): AsyncCallbacks => {
-      const cb = this.loadScript(data.scriptFilePath);
-      cb.done(() => {
-        this.script.goToSaveMark(data.saveMarkName);
-      });
-      return cb;
-    });
+    await this.loadScript(data.scriptFilePath);
+    this.script.goToSaveMark(data.saveMarkName);
   }
   /* eslint-enabled @typescript-eslint/no-unused-vars */
 

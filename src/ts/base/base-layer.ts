@@ -1,6 +1,4 @@
 import * as PIXI from "pixi.js";
-import { AsyncCallbacks } from "./async-callbacks";
-import { AsyncTask } from "./async-task";
 // import { Logger } from "./logger";
 import { PonGame } from "./pon-game";
 import { PonMouseEvent } from "./pon-mouse-event";
@@ -8,6 +6,7 @@ import { IPonSpriteCallbacks, PonSprite } from "./pon-sprite";
 import { IPonVideoCallbacks, PonVideo} from "./pon-video";
 import { PonWheelEvent } from "./pon-wheel-event";
 import { Resource } from "./resource";
+import { Logger } from "./logger";
 
 export class BaseLayerChar {
   public readonly ch: string;
@@ -1044,30 +1043,25 @@ export class BaseLayer {
    * 同時に、レイヤサイズを画像に合わせて変更する。
    * @param filePath ファイルパス
    */
-  public loadImage(filePath: string): AsyncCallbacks {
+  public async loadImage(filePath: string): Promise<void> {
     // Logger.debug("BaseLayer.loadImage call: ", filePath);
-    const cb = new AsyncCallbacks();
-
     this.clearBackgroundColor();
     this.freeImage();
     this.freeVideo();
-    this.resource.loadImage(filePath).done((image) => {
+    try {
+      this.image = await this.resource.loadImage(filePath);
       // Logger.debug("BaseLayer.loadImage success: ", image);
-      this.image = image as HTMLImageElement;
       this.imageFilePath = filePath;
       this.imageSprite = new PonSprite(this.imageSpriteCallbacks);
-      this.imageSprite.setImage(image);
+      this.imageSprite.setImage(this.image);
       this.width = this.imageSprite.width;
       this.height = this.imageSprite.height;
       this.imageX = 0;
       this.imageY = 0;
-      cb.callDone(this);
-    }).fail(() => {
-      // Logger.debug("BaseLayer.loadImage fail: ");
-      cb.callFail(this);
-    });
-
-    return cb;
+    } catch (e) {
+      Logger.error(e);
+      throw e
+    }
   }
 
   /**
@@ -1082,8 +1076,7 @@ export class BaseLayer {
     this.imageFilePath = null;
   }
 
-  public loadVideo(filePath: string, width: number, height: number, autoPlay: boolean, loop: boolean, volume: number): AsyncCallbacks {
-    const cb = new AsyncCallbacks();
+  public loadVideo(filePath: string, width: number, height: number, autoPlay: boolean, loop: boolean, volume: number): Promise<BaseLayer> {
     this.clearBackgroundColor();
     this.freeImage();
     this.freeVideo();
@@ -1095,26 +1088,27 @@ export class BaseLayer {
     video.loop = loop;
     video.volume = volume;
 
-    let timeoutTimer = -1;
-    const onCanPlay = (): void => {
-      if (timeoutTimer != -1) { window.clearTimeout(timeoutTimer); }
-      video.source.removeEventListener("canplaythrough", onCanPlay);
-      this.video = video;
-      this.videoFilePath = filePath;
-      this.width = this.video.width;
-      this.height = this.video.height;
-      cb.callDone(this);
-    }
-    video.source.addEventListener("canplaythrough", onCanPlay);
-    timeoutTimer = window.setTimeout(() => {
-      video.source.removeEventListener("canplaythrough", onCanPlay);
-      cb.callFail(this);
-    }, 30000); // TODO: タイムアウト時間を変更できるようにする
+    return new Promise<BaseLayer>((resolve, reject): void => {
+      let timeoutTimer = -1;
+      const onCanPlay = (): void => {
+        if (timeoutTimer != -1) { window.clearTimeout(timeoutTimer); }
+        video.source.removeEventListener("canplaythrough", onCanPlay);
+        this.video = video;
+        this.videoFilePath = filePath;
+        this.width = this.video.width;
+        this.height = this.video.height;
+        resolve(this);
+      }
+      video.source.addEventListener("canplaythrough", onCanPlay);
+      timeoutTimer = window.setTimeout(() => {
+        video.source.removeEventListener("canplaythrough", onCanPlay);
+        reject(this);
+      }, 30000); // TODO: タイムアウト時間を変更できるようにする
 
-    video.source.addEventListener('ended', () => {
-      this.owner.conductor.trigger("video");
+      video.source.addEventListener('ended', () => {
+        this.owner.conductor.trigger("video");
+      });
     });
-    return cb;
   }
 
   public playVideo(): void {
@@ -1228,7 +1222,7 @@ export class BaseLayer {
    * 子レイヤーの状態は変化しないことに注意。
    * 継承先で子レイヤーを使用している場合は、継承先で独自に復元処理を実装する
    */
-  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
     const storeParams = (): void => {
       const me: any = this as any;
       const restoreParams = BaseLayer.baseLayerStoreParams.filter(
@@ -1253,29 +1247,36 @@ export class BaseLayer {
         data.imageFilePath !== "" &&
         data.imageFilePath !== this.imageFilePath) {
       // 画像がある場合は非同期で読み込んでその後にサイズ等を復元する
-      asyncTask.add((params: any, index: number): AsyncCallbacks => {
-        const cb = this.loadImage(data.imageFilePath);
-        cb.done(() => {
-          storeParams();
-          this.restoreAfterLoadImage(data, tick);
-        });
-        return cb;
-      });
+      await this.loadImage(data.imageFilePath);
+      storeParams();
+      this.restoreAfterLoadImage(data, tick);
+      // asyncTask.add((params: any, index: number): AsyncCallbacks => {
+      //   const cb = this.loadImage(data.imageFilePath);
+      //   cb.done(() => {
+      //     storeParams();
+      //     this.restoreAfterLoadImage(data, tick);
+      //   });
+      //   // return cb;
+      // });
     } else if (data.videoFilePath != null &&
                data.videoFilePath != "" &&
                data.videoFilePath != this.videoFilePath &&
                data.videoLoop) {
       // 動画がある場合は非同期で読み込んでその後にサイズ等を復元する
       this.freeVideo();
-      asyncTask.add((params: any, index: number): AsyncCallbacks => {
-        const cb = this.loadVideo(data.videoFilePath, data.videoWidth, data.videoHeight,
-                                  data.isPlayingVideo, data.videoLoop, data.videoVolume);
-        cb.done(() => {
-          storeParams();
-          this.restoreAfterLoadImage(data, tick);
-        });
-        return cb;
-      });
+      await this.loadVideo(data.videoFilePath, data.videoWidth, data.videoHeight,
+                           data.isPlayingVideo, data.videoLoop, data.videoVolume);
+      storeParams();
+      this.restoreAfterLoadImage(data, tick);
+      // asyncTask.add((params: any, index: number): AsyncCallbacks => {
+      //   const cb = this.loadVideo(data.videoFilePath, data.videoWidth, data.videoHeight,
+      //                             data.isPlayingVideo, data.videoLoop, data.videoVolume);
+      //   cb.done(() => {
+      //     storeParams();
+      //     this.restoreAfterLoadImage(data, tick);
+      //   });
+      //   return cb;
+      // });
     } else {
       storeParams();
       this.restoreAfterLoadImage(data, tick);

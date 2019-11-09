@@ -1,4 +1,3 @@
-import { AsyncCallbacks } from "./async-callbacks";
 import { PonGame } from "./pon-game";
 import { Resource } from "./resource";
 
@@ -129,7 +128,7 @@ export class TransManager {
     this.filter = this.filters.crossfade;
   }
 
-  public initTrans(
+  public async initTrans(
     time: number,
     method: "scroll-to-right" |
             "scroll-to-left" |
@@ -137,8 +136,7 @@ export class TransManager {
             "scroll-to-bottom" |
             "univ" |
             "crossfade",
-  ): AsyncCallbacks {
-    const cb = new AsyncCallbacks();
+  ): Promise<void> {
     if (this.isRunning) {
       this.stop();
     }
@@ -152,18 +150,19 @@ export class TransManager {
       throw new Error(`存在しないmethodです(${this.method})`);
     }
 
-    window.setTimeout(() => {
-      cb.callDone();
-    }, 0);
-
-    return cb;
+    // TODO: return Promise.resolveでも問題ないのか調べる
+    return new Promise((resolve): void => {
+      setTimeout(() => {
+        resolve();
+      }, 0);
+    });
   }
 
-  public initUnivTrans(
+  public async initUnivTrans(
     time: number,
     ruleFilePath: string,
     vague = 0.25,
-  ): AsyncCallbacks {
+  ): Promise<void> {
 
     this.initTrans(time, "univ");
     this.ruleFilePath = ruleFilePath;
@@ -175,20 +174,15 @@ export class TransManager {
     const width = this.game.width;
     const height = this.game.height;
 
-    const cb = this.resource.loadImage(ruleFilePath);
-    cb.done((ruleImage: HTMLImageElement) => {
-      this.ruleImage = ruleImage;
-      this.ruleSprite = PIXI.Sprite.from(ruleImage);
-      this.ruleSprite.width = width;
-      this.ruleSprite.height = height;
+    this.ruleImage = await this.resource.loadImage(ruleFilePath);
+    this.ruleSprite = PIXI.Sprite.from(this.ruleImage);
+    this.ruleSprite.width = width;
+    this.ruleSprite.height = height;
 
-      const maskSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
-      maskSprite.width = width;
-      maskSprite.height = height;
-      this.ruleSprite.mask = maskSprite;
-    });
-
-    return cb;
+    const maskSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
+    maskSprite.width = width;
+    maskSprite.height = height;
+    this.ruleSprite.mask = maskSprite;
   }
 
   public get isRunning(): boolean {

@@ -1,5 +1,3 @@
-import { AsyncCallbacks } from "./base/async-callbacks";
-import { AsyncTask } from "./base/async-task";
 import { BaseLayer } from "./base/base-layer";
 import { ConductorState } from "./base/conductor";
 import { Logger } from "./base/logger";
@@ -34,8 +32,6 @@ export class Ponkan3 extends PonGame {
   public raiseError: any = {
     unknowncommand: true,
   };
-
-  protected initialAsyncTask: AsyncTask;
 
   public skipMode: SkipType = SkipType.INVALID;
   public canSkipUnreadPart: boolean = false;
@@ -132,8 +128,6 @@ export class Ponkan3 extends PonGame {
       if (config.text.read != null) { this.userReadTextSpeed = config.text.read; }
     }
 
-    this.initialAsyncTask = new AsyncTask();
-
     this.initTagAction();
 
     this.forePrimaryLayer =
@@ -145,10 +139,10 @@ export class Ponkan3 extends PonGame {
     this.historyLayer = new HistoryLayer("HistoryLayer", this.resource, this);
     this.addForePrimaryLayer(this.historyLayer);
     this.historyLayer.visible = false;
-    this.historyLayer.init(config, this.initialAsyncTask);
 
     this.initSoundBuffers(config);
   }
+
 
   public destroy(): void {
     this.stop();
@@ -158,20 +152,14 @@ export class Ponkan3 extends PonGame {
     super.destroy();
   }
 
-  public start(): void {
+  public async start(): Promise<void> {
     super.start();
     if (this.resource.existSystemData(this.saveDataPrefix)) {
-      // this.resource.loadSystemData(this.saveDataPrefix);
-      this.loadSystemData(this.saveDataPrefix, this.initialAsyncTask);
+      this.loadSystemData(this.saveDataPrefix);
     }
-    this.initialAsyncTask.run().done(() => {
-      this.conductor.loadScript("start.pon").done(() => {
-        // Logger.debug("onLoadScript success");
-        this.conductor.start();
-      }).fail(() => {
-        // Logger.debug("onLoadScript fail");
-      });
-    });
+    await this.historyLayer.init(this.config);
+    await this.conductor.loadScript("start.pon");
+    this.conductor.start();
   }
 
   public stop(): void {
@@ -347,7 +335,7 @@ export class Ponkan3 extends PonGame {
     return true;
   }
 
-  public onPrimaryRightClick(): boolean {
+  public async onPrimaryRightClick(): Promise<boolean> {
     if (!this.rightClickEnabled) {
       return false;
     }
@@ -364,9 +352,8 @@ export class Ponkan3 extends PonGame {
 
     if (this.rightClickJump) {
       // ジャンプさせる
-      this.conductor.jump(this.rightClickFilePath, this.rightClickLabel, false).done(() => {
-        this.conductor.start();
-      });
+      await this.conductor.jump(this.rightClickFilePath, this.rightClickLabel, false);
+      this.conductor.start();
     } else if (this.rightClickCall) {
       // 右クリックサブルーチン呼び出し
       this.callSubroutine(this.rightClickFilePath, this.rightClickLabel, false);
@@ -1194,7 +1181,7 @@ export class Ponkan3 extends PonGame {
     this.resource.saveSystemData(this.saveDataPrefix);
   }
 
-  public loadSystemData(saveDataPrefix: string, asyncTask: AsyncTask): void {
+  public loadSystemData(saveDataPrefix: string): void {
     // 読み込み
     this.resource.loadSystemData(saveDataPrefix);
     const data = this.systemVar;
@@ -1230,7 +1217,7 @@ export class Ponkan3 extends PonGame {
       this.soundBuffers.forEach((sound, index) => {
         // data.soundBuffers.push(sound.storeSystem());
         if (data.soundBuffers[index] != null) {
-          sound.restoreSystem(asyncTask, data.soundBuffers[index]);
+          sound.restoreSystem(data.soundBuffers[index]);
         }
       });
     }
@@ -1360,8 +1347,7 @@ export class Ponkan3 extends PonGame {
     this.tempSaveData[name].gameVar = null; // tempsaveではゲーム変数は保存しない
   }
 
-  public load(tick: number, num: number): AsyncCallbacks {
-    const asyncTask = new AsyncTask();
+  public async load(tick: number, num: number): Promise<void> {
     const me: any = this as any;
     const dataStr: string = this.resource.restoreFromLocalStorage(this.getSaveDataName(num));
     const data: any = JSON.parse(dataStr);
@@ -1373,11 +1359,12 @@ export class Ponkan3 extends PonGame {
     });
 
     // layer
-    this.forePrimaryLayer.restore(asyncTask, data.forePrimaryLayer, tick, true);
-    this.backPrimaryLayer.restore(asyncTask, data.backPrimaryLayer, tick, true);
+    // TODO: 並列化
+    await this.forePrimaryLayer.restore(data.forePrimaryLayer, tick, true);
+    await this.backPrimaryLayer.restore(data.backPrimaryLayer, tick, true);
     for (let i = 0; i < data.foreLayers.length; i++) {
-      this.foreLayers[i].restore(asyncTask, data.foreLayers[i], tick, true);
-      this.backLayers[i].restore(asyncTask, data.backLayers[i], tick, true);
+      await this.foreLayers[i].restore(data.foreLayers[i], tick, true);
+      await this.backLayers[i].restore(data.backLayers[i], tick, true);
     }
 
     // sound
@@ -1386,36 +1373,26 @@ export class Ponkan3 extends PonGame {
     });
     for (let i = 0; i < data.soundBuffers.length; i++) {
       if (this.soundBuffers[i] != null) {
-        this.soundBuffers[i].restore(asyncTask, data.soundBuffers[i], tick);
+        await this.soundBuffers[i].restore(data.soundBuffers[i], tick);
       }
     }
 
     // conductor
-    this.conductor.restore(asyncTask, data.conductor, tick);
+    this.conductor.restore(data.conductor, tick);
 
     if (data.gameVar != null) {
       this.resource.gameVar = Util.objClone(data.gameVar);
     }
 
     // スキップとオートモードは停止させる
-    asyncTask.add((): AsyncCallbacks => {
-      const cb = new AsyncCallbacks();
-      window.setTimeout(() => {
-        this.stopSkip();
-        this.stopAutoMode();
-        cb.callDone();
-      }, 0);
-      return cb;
-    });
+    this.stopSkip();
+    this.stopAutoMode();
 
     // プラグイン
-    this.plugins.forEach((p) => p.onRestore(asyncTask, data, tick, false, true, false));
-
-    return asyncTask.run();
+    this.plugins.forEach(async (p) => await p.onRestore(data, tick, false, true, false));
   }
 
-  public tempLoad(tick: number, num: number, sound = false, toBack = false): AsyncCallbacks {
-    const asyncTask = new AsyncTask();
+  public async tempLoad(tick: number, num: number, sound = false, toBack = false): Promise<void> {
     const me: any = this as any;
     const data: any = this.tempSaveData["" + num];
 
@@ -1427,16 +1404,16 @@ export class Ponkan3 extends PonGame {
 
     // layer
     if (toBack) {
-      this.backPrimaryLayer.restore(asyncTask, data.forePrimaryLayer, tick, false);
+      await this.backPrimaryLayer.restore(data.forePrimaryLayer, tick, false);
       for (let i = 0; i < data.foreLayers.length; i++) {
-        this.backLayers[i].restore(asyncTask, data.foreLayers[i], tick, false);
+        await this.backLayers[i].restore(data.foreLayers[i], tick, false);
       }
     } else {
-      this.forePrimaryLayer.restore(asyncTask, data.forePrimaryLayer, tick, false);
-      this.backPrimaryLayer.restore(asyncTask, data.backPrimaryLayer, tick, false);
+      await this.forePrimaryLayer.restore(data.forePrimaryLayer, tick, false);
+      await this.backPrimaryLayer.restore(data.backPrimaryLayer, tick, false);
       for (let i = 0; i < data.foreLayers.length; i++) {
-        this.foreLayers[i].restore(asyncTask, data.foreLayers[i], tick, false);
-        this.backLayers[i].restore(asyncTask, data.backLayers[i], tick, false);
+        await this.foreLayers[i].restore(data.foreLayers[i], tick, false);
+        await this.backLayers[i].restore(data.backLayers[i], tick, false);
       }
     }
 
@@ -1447,15 +1424,13 @@ export class Ponkan3 extends PonGame {
       });
       for (let i = 0; i < data.soundBuffers.length; i++) {
         if (this.soundBuffers[i] != null) {
-          this.soundBuffers[i].restore(asyncTask, data.soundBuffers[i], tick);
+          await this.soundBuffers[i].restore(data.soundBuffers[i], tick);
         }
       }
     }
 
     // プラグイン
-    this.plugins.forEach((p) => p.onRestore(asyncTask, data, tick, true, sound, toBack));
-
-    return asyncTask.run();
+    this.plugins.forEach(async (p) => await p.onRestore(data, tick, true, sound, toBack));
   }
 
   public copySaveData(srcNum: number, destNum: number): void {

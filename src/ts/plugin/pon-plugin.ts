@@ -1,4 +1,3 @@
-import { AsyncTask } from "../base/async-task";
 import { Ponkan3 } from "../ponkan3";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -31,20 +30,18 @@ export class PonPlugin {
 
   /**
    * セーブデータ復元時
-   * @param asyncTask 非同期実行タスク
    * @param data 復元元データ
    * @param tick 復元時の時間
    * @param clear メッセージをクリアする場合はtrue
    * @param sound 音声を復元する場合はtrue
    * @param toBack 表ページを裏ページに復元する場合はtrue
    */
-  public onRestore(
-    asyncTask: AsyncTask,
+  public async onRestore(
     data: any,
     tick: number,
     clear: boolean,
     sound: boolean,
-    toBack: boolean): void {
+    toBack: boolean): Promise<void> {
       return;
   }
 

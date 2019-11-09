@@ -1,4 +1,3 @@
-import { AsyncTask } from "../base/async-task";
 import { BaseLayer } from "../base/base-layer";
 import { PonMouseEvent } from "../base/pon-mouse-event";
 
@@ -135,9 +134,9 @@ export class ToggleButton extends BaseLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
     this.clearToggleButton();
-    super.restore(asyncTask, data, tick, clear);
+    await super.restore(data, tick, clear);
   }
 
   public restoreAfterLoadImage(data: any, tick: number): void {
