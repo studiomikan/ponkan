@@ -8,18 +8,38 @@ export class ScreenShot {
   public constructor(config: any) {
     this.canvas = document.createElement("canvas");
 
-    if (config == null) { config = {}; }
-    if (config.screenShot == null) { config.screenShot = {}; }
+    if (config == null) {
+      config = {};
+    }
+    if (config.screenShot == null) {
+      config.screenShot = {};
+    }
 
     const cfg = config.screenShot;
-    if (cfg.width != null) { this.canvas.width = cfg.width; } else { this.canvas.width = 320; }
-    if (cfg.height != null) { this.canvas.height = cfg.height; } else { this.canvas.height = 180; }
-    if (cfg.dataType != null) { this.dataType = cfg.dataType; }
-    if (cfg.quality != null) { this.quality = cfg.quality; }
-    if (cfg.nodata != null) { this.nodata = cfg.nodata; }
+    if (cfg.width != null) {
+      this.canvas.width = cfg.width;
+    } else {
+      this.canvas.width = 320;
+    }
+    if (cfg.height != null) {
+      this.canvas.height = cfg.height;
+    } else {
+      this.canvas.height = 180;
+    }
+    if (cfg.dataType != null) {
+      this.dataType = cfg.dataType;
+    }
+    if (cfg.quality != null) {
+      this.quality = cfg.quality;
+    }
+    if (cfg.nodata != null) {
+      this.nodata = cfg.nodata;
+    }
 
     const context: CanvasRenderingContext2D | null = this.canvas.getContext("2d");
-    if (context == null) { throw new Error("Canvasの初期化に失敗しました"); }
+    if (context == null) {
+      throw new Error("Canvasの初期化に失敗しました");
+    }
     this.context = context;
 
     this.context.fillStyle = "#000000";
@@ -43,5 +63,4 @@ export class ScreenShot {
       return this.canvas.toDataURL(this.dataType);
     }
   }
-
 }

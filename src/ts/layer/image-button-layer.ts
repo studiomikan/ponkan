@@ -20,8 +20,18 @@ export class CommandImageButton extends CommandButton {
   ): Promise<void> {
     this.clearCommandButton();
     this.freeImage();
-    this.initCommandButton(jump, call, filePath, label, countPage, isSystemButton, exp,
-                    onEnterSoundBuf, onLeaveSoundBuf, onClickSoundBuf);
+    this.initCommandButton(
+      jump,
+      call,
+      filePath,
+      label,
+      countPage,
+      isSystemButton,
+      exp,
+      onEnterSoundBuf,
+      onLeaveSoundBuf,
+      onClickSoundBuf,
+    );
     this.direction = direction;
     await this.loadImage(file);
     if (this.direction === "vertical") {
@@ -50,7 +60,7 @@ export class CommandImageButton extends CommandButton {
           this.imageY = -Math.floor(this.imageHeight / 3);
           break;
         case "on":
-          this.imageY = -Math.floor(this.imageHeight / 3 * 2);
+          this.imageY = -Math.floor((this.imageHeight / 3) * 2);
           break;
       }
     } else {
@@ -63,15 +73,13 @@ export class CommandImageButton extends CommandButton {
           this.imageX = -Math.floor(this.imageWidth / 3);
           break;
         case "on":
-          this.imageX = -Math.floor(this.imageWidth / 3 * 2);
+          this.imageX = -Math.floor((this.imageWidth / 3) * 2);
           break;
       }
     }
   }
 
-  protected static imageButtonStoreParams: string[] = [
-    "direction",
-  ];
+  protected static imageButtonStoreParams: string[] = ["direction"];
 
   public store(tick: number): any {
     const data: any = super.store(tick);
@@ -106,7 +114,6 @@ export class CommandImageButton extends CommandButton {
 }
 
 export class ImageButtonLayer extends TextButtonLayer {
-
   private imageButtons: CommandImageButton[] = [];
 
   public async addImageButton(
@@ -149,7 +156,7 @@ export class ImageButtonLayer extends TextButtonLayer {
   }
 
   public clearImageButtons(): void {
-    this.imageButtons.forEach((imageButton) => {
+    this.imageButtons.forEach(imageButton => {
       imageButton.clearCommandButton();
       imageButton.destroy();
       this.deleteChildLayer(imageButton);
@@ -159,28 +166,28 @@ export class ImageButtonLayer extends TextButtonLayer {
 
   public lockButtons(): void {
     super.lockButtons();
-    this.imageButtons.forEach((imageButton) => {
+    this.imageButtons.forEach(imageButton => {
       imageButton.setButtonStatus("disabled");
     });
   }
 
   public unlockButtons(): void {
     super.unlockButtons();
-    this.imageButtons.forEach((imageButton) => {
+    this.imageButtons.forEach(imageButton => {
       imageButton.setButtonStatus("normal");
     });
   }
 
   public lockSystemButtons(): void {
     super.lockSystemButtons();
-    this.imageButtons.forEach((imageButton) => {
+    this.imageButtons.forEach(imageButton => {
       imageButton.lockSystemButton();
     });
   }
 
   public unlockSystemButtons(): void {
     super.unlockSystemButtons();
-    this.imageButtons.forEach((imageButton) => {
+    this.imageButtons.forEach(imageButton => {
       imageButton.unlockSystemButton();
     });
   }
@@ -189,7 +196,7 @@ export class ImageButtonLayer extends TextButtonLayer {
     const data: any = super.store(tick);
     // const me: any = this as any;
 
-    data.imageButtons = this.imageButtons.map((imageButton) => imageButton.store(tick));
+    data.imageButtons = this.imageButtons.map(imageButton => imageButton.store(tick));
 
     return data;
   }
@@ -201,18 +208,18 @@ export class ImageButtonLayer extends TextButtonLayer {
         await Promise.all(
           data.imageButtons.map((imageButtonData: any, i: number) => {
             return this.imageButtons[i].restore(imageButtonData, tick, clear);
-          })
+          }),
         );
       } else {
         // 数が合わない場合は一度破棄して作り直す
-        this.clearImageButtons()
+        this.clearImageButtons();
         await Promise.all(
           data.imageButtons.map((imageButtonData: any) => {
             const btn = new CommandImageButton(imageButtonData.name, this.resource, this.owner);
             this.addChild(btn);
             this.imageButtons.push(btn);
             return btn.restore(imageButtonData, tick, clear);
-          })
+          }),
         );
       }
     } else {
@@ -234,12 +241,11 @@ export class ImageButtonLayer extends TextButtonLayer {
     super.copyTo(dest);
 
     dest.clearImageButtons();
-    this.imageButtons.forEach((srcBtn) => {
+    this.imageButtons.forEach(srcBtn => {
       const destBtn = new CommandImageButton(srcBtn.name, dest.resource, dest.owner);
       dest.addChild(destBtn);
       dest.imageButtons.push(destBtn);
       srcBtn.copyTo(destBtn);
     });
   }
-
 }

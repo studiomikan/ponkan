@@ -19,7 +19,9 @@ export class Button extends BaseLayer {
 
   public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
     this.buttonStatus = status;
-    if (this.buttonStatus === "disabled") { this.down = false; }
+    if (this.buttonStatus === "disabled") {
+      this.down = false;
+    }
     this.resource.getForeCanvasElm().style.cursor = this.resource.cursor[status];
   }
 
@@ -55,10 +57,7 @@ export class Button extends BaseLayer {
     this.down = false;
   }
 
-  protected static buttonStoreParams: string[] = [
-    "insideFlag",
-    "buttonStatus",
-  ];
+  protected static buttonStoreParams: string[] = ["insideFlag", "buttonStatus"];
 
   public store(tick: number): any {
     const data: any = super.store(tick);
@@ -173,8 +172,12 @@ export class CommandButton extends Button {
 
   public onChangeStable(isStable: boolean): void {
     super.onChangeStable(isStable);
-    if (!this.isSystemButton) { return; }
-    if (this.systemButtonLocked) { return; }
+    if (!this.isSystemButton) {
+      return;
+    }
+    if (this.systemButtonLocked) {
+      return;
+    }
     if (isStable) {
       if (this.insideFlag) {
         this.setButtonStatus("over");
@@ -219,7 +222,9 @@ export class CommandButton extends Button {
     const down = this.down; // super.onMouseUpでfalseになってしまうのでキャッシュしておく
 
     super.onMouseUp(e);
-    if (!e.isLeft) { return; }
+    if (!e.isLeft) {
+      return;
+    }
 
     if (down && this.isInsideEvent(e) && this.buttonStatus !== "disabled") {
       const p: Ponkan3 = this.owner as Ponkan3;

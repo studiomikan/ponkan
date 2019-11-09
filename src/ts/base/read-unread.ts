@@ -3,7 +3,9 @@ import { Script } from "./script";
 
 export class ReadUnread {
   protected resource: Resource;
-  protected get systemVar(): any { return this.resource.systemVar; }
+  protected get systemVar(): any {
+    return this.resource.systemVar;
+  }
 
   public constructor(resource: Resource) {
     this.resource = resource;
@@ -28,10 +30,11 @@ export class ReadUnread {
 
   public isPassed(script: Script, label: string): boolean {
     const s = this.systemVar;
-    return s.trail != null &&
-           s.trail[script.filePath] != null &&
-           s.trail[script.filePath][label] != null &&
-           s.trail[script.filePath][label] > 0;
+    return (
+      s.trail != null &&
+      s.trail[script.filePath] != null &&
+      s.trail[script.filePath][label] != null &&
+      s.trail[script.filePath][label] > 0
+    );
   }
-
 }

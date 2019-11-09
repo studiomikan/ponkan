@@ -95,7 +95,7 @@ export class Resource {
   }
 
   public debugClearSystemData(): void {
-    Object.keys(this.systemVar).forEach((key) => {
+    Object.keys(this.systemVar).forEach(key => {
       delete this.systemVar[key];
     });
   }
@@ -108,7 +108,7 @@ export class Resource {
     const sv = this.systemVar;
     const mp = this.macroParams;
     /* eslint-enable */
-    return (function(): any{
+    return (function(): any {
       return eval(js);
     })();
   }
@@ -141,7 +141,9 @@ export class Resource {
     if (this.enableResourceCache) {
       path += `?v=${this.gameVersion}`;
     } else {
-      path += `?x=${Math.random().toString(36).slice(-8)}`;
+      path += `?x=${Math.random()
+        .toString(36)
+        .slice(-8)}`;
     }
     return path;
   }
@@ -165,7 +167,7 @@ export class Resource {
       xhr.onload = (): void => {
         if (200 <= xhr.status && xhr.status < 300) {
           Logger.debug("AJAX SUCCESS: ", xhr);
-          resolve(xhr.responseText)
+          resolve(xhr.responseText);
         } else {
           Logger.debug("AJAX FAILED: ", xhr);
           reject(xhr.responseText);
@@ -184,7 +186,7 @@ export class Resource {
   public async loadScript(filePath: string): Promise<Script> {
     if (this.enableResourceCache && this.enabledScriptCache && this.scriptCache[filePath] != null) {
       // キャッシュから
-      return this.scriptCache[filePath].clone()
+      return this.scriptCache[filePath].clone();
     } else {
       // 新規読み込み
       try {
@@ -198,7 +200,7 @@ export class Resource {
         }
       } catch (e) {
         Logger.error(e);
-        throw e
+        throw e;
       }
     }
   }
@@ -319,5 +321,4 @@ export class Resource {
   //   return JSON.parse(dataStr)
   // }
   //
-
 }

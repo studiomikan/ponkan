@@ -41,36 +41,54 @@ export class PonSprite {
   private pixiSprite: PIXI.Text | PIXI.Sprite | PIXI.Graphics | null = null;
 
   /** x座標 */
-  public get x(): number { return this._x; }
+  public get x(): number {
+    return this._x;
+  }
   /** x座標 */
   public set x(x) {
     this._x = x;
-    if (this.pixiSprite != null) { this.pixiSprite.x = x; }
+    if (this.pixiSprite != null) {
+      this.pixiSprite.x = x;
+    }
   }
   /** y座標 */
-  public get y(): number { return this._y; }
+  public get y(): number {
+    return this._y;
+  }
   /** y座標 */
   public set y(y) {
     this._y = y;
-    if (this.pixiSprite != null) { this.pixiSprite.y = y; }
+    if (this.pixiSprite != null) {
+      this.pixiSprite.y = y;
+    }
   }
   /** 幅 */
-  public get width(): number { return this._width; }
+  public get width(): number {
+    return this._width;
+  }
   /** 幅 */
   public set width(width) {
     this._width = width;
-    if (this.pixiSprite != null) { this.pixiSprite.width = width; }
+    if (this.pixiSprite != null) {
+      this.pixiSprite.width = width;
+    }
   }
   /** 高さ */
-  public get height(): number { return this._height; }
+  public get height(): number {
+    return this._height;
+  }
   /** 高さ */
   public set height(height) {
     this._height = height;
-    if (this.pixiSprite != null) { this.pixiSprite.height = height; }
+    if (this.pixiSprite != null) {
+      this.pixiSprite.height = height;
+    }
   }
 
   /** スケーリング x */
-  public get scaleX(): number { return this._scaleX; }
+  public get scaleX(): number {
+    return this._scaleX;
+  }
   /** スケーリング x */
   public set scaleX(scaleX: number) {
     this._scaleX = scaleX;
@@ -80,7 +98,9 @@ export class PonSprite {
     }
   }
   /** スケーリング y */
-  public get scaleY(): number { return this._scaleY; }
+  public get scaleY(): number {
+    return this._scaleY;
+  }
   /** スケーリング y */
   public set scaleY(scaleY: number) {
     this._scaleY = scaleY;
@@ -91,11 +111,15 @@ export class PonSprite {
   }
 
   /** 表示状態 */
-  public get visible(): boolean { return this._visible; }
+  public get visible(): boolean {
+    return this._visible;
+  }
   /** 表示状態 */
   public set visible(visible: boolean) {
     this._visible = visible;
-    if (this.pixiSprite != null) { this.pixiSprite.visible = visible; }
+    if (this.pixiSprite != null) {
+      this.pixiSprite.visible = visible;
+    }
   }
 
   /** テキスト */
@@ -107,11 +131,17 @@ export class PonSprite {
     }
   }
   /** テキストスタイル */
-  public get textStyle(): PIXI.TextStyle | null { return this._textStyle; }
+  public get textStyle(): PIXI.TextStyle | null {
+    return this._textStyle;
+  }
   /** テキストの文字間 */
-  public get textPitch(): number { return this._textPitch; }
+  public get textPitch(): number {
+    return this._textPitch;
+  }
   /** テキストの横幅 */
-  public get textWidth(): number { return this._width + this._textPitch; }
+  public get textWidth(): number {
+    return this._width + this._textPitch;
+  }
 
   /**
    * @param callbacks コールバック
@@ -162,11 +192,11 @@ export class PonSprite {
    */
   public clear(): void {
     try {
-    if (this.pixiSprite != null) {
-      this.callbacks.pixiContainerRemoveChild(this.pixiSprite);
-      this.pixiSprite.destroy();
-    }
-    this.pixiSprite = null;
+      if (this.pixiSprite != null) {
+        this.callbacks.pixiContainerRemoveChild(this.pixiSprite);
+        this.pixiSprite.destroy();
+      }
+      this.pixiSprite = null;
     } catch (e) {
       console.error(e);
       throw e;
@@ -251,5 +281,4 @@ export class PonSprite {
   public onDraw(tick: number): void {
     // TODO 実装
   }
-
 }

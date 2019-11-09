@@ -1,5 +1,4 @@
 export class Logger {
-
   public static LEVEL_ERROR: number = 4;
   public static LEVEL_WARN: number = 3;
   public static LEVEL_INFO: number = 2;

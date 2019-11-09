@@ -12,12 +12,24 @@ export class PonRenderer {
 
   private otherRenderer: PonRenderer | null = null;
 
-  public get width(): number { return this._width; }
-  public get height(): number { return this._height; }
-  public get canvasElm(): HTMLCanvasElement { return this._canvasElm; }
-  public get texture(): PIXI.Texture { return this._texture; }
-  public get sprite(): PIXI.Sprite { return this._sprite; }
-  public get container(): PIXI.Container { return this._container; }
+  public get width(): number {
+    return this._width;
+  }
+  public get height(): number {
+    return this._height;
+  }
+  public get canvasElm(): HTMLCanvasElement {
+    return this._canvasElm;
+  }
+  public get texture(): PIXI.Texture {
+    return this._texture;
+  }
+  public get sprite(): PIXI.Sprite {
+    return this._sprite;
+  }
+  public get container(): PIXI.Container {
+    return this._container;
+  }
 
   public constructor(parentElm: HTMLElement, width: number, height: number) {
     this._width = width;
@@ -25,7 +37,7 @@ export class PonRenderer {
     this.parentElm = parentElm;
 
     const renderer = PIXI.autoDetectRenderer(this._width, this._height, {
-      backgroundColor: 0xFF000000,
+      backgroundColor: 0xff000000,
       // transparent: true,
     });
     if (renderer instanceof PIXI.CanvasRenderer) {
@@ -57,7 +69,9 @@ export class PonRenderer {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public draw(tick: number): void {
-    if (this.renderer == null || this._container == null) { return; }
+    if (this.renderer == null || this._container == null) {
+      return;
+    }
     if (this.otherRenderer !== null) {
       this.otherRenderer.texture.update();
     }

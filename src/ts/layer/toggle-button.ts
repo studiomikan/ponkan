@@ -12,11 +12,7 @@ export class ToggleButton extends BaseLayer {
   protected isSystemButton: boolean = false;
   protected systemButtonLocked: boolean = false;
 
-  public initToggleButton(
-    varName: string,
-    isSystemButton: boolean,
-    exp: string | null,
-  ): void {
+  public initToggleButton(varName: string, isSystemButton: boolean, exp: string | null): void {
     this.insideFlag = false;
     this.varName = varName;
     this.isSystemButton = isSystemButton;
@@ -69,8 +65,12 @@ export class ToggleButton extends BaseLayer {
 
   public onChangeStable(isStable: boolean): void {
     super.onChangeStable(isStable);
-    if (!this.isSystemButton) { return; }
-    if (this.systemButtonLocked) { return; }
+    if (!this.isSystemButton) {
+      return;
+    }
+    if (this.systemButtonLocked) {
+      return;
+    }
     if (isStable) {
       this.setButtonStatus("enabled");
     } else {
@@ -106,7 +106,9 @@ export class ToggleButton extends BaseLayer {
 
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
-    if (!e.isLeft) { return; }
+    if (!e.isLeft) {
+      return;
+    }
 
     if (this.buttonStatus !== "disabled") {
       this.setValue(!this.getValue());

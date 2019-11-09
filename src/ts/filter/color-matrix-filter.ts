@@ -2,12 +2,16 @@ import { LayerFilter } from "./layer-filter";
 
 export class ColorMatrixFilter extends LayerFilter {
   public static readonly filterName: string = "colormatrix";
-  public get filterName(): string { return ColorMatrixFilter.filterName; }
-  public get filter(): PIXI.filters.ColorMatrixFilter { return this._filter as PIXI.filters.ColorMatrixFilter; }
+  public get filterName(): string {
+    return ColorMatrixFilter.filterName;
+  }
+  public get filter(): PIXI.filters.ColorMatrixFilter {
+    return this._filter as PIXI.filters.ColorMatrixFilter;
+  }
 
   public constructor(params: any) {
     super(params);
-    const filter = this._filter = new PIXI.filters.ColorMatrixFilter();
+    const filter = (this._filter = new PIXI.filters.ColorMatrixFilter());
     console.log("ColorMatrixFilter type:", params.type);
     switch (params.type.toLowerCase()) {
       case "negative":

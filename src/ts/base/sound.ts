@@ -91,9 +91,13 @@ export class SoundBuffer {
     }
   }
 
-  public get state(): SoundState {return this._state; }
+  public get state(): SoundState {
+    return this._state;
+  }
 
-  public get volume(): number { return this._volume; }
+  public get volume(): number {
+    return this._volume;
+  }
   public set volume(volume: number) {
     this._volume = volume;
     if (this.howl != null) {
@@ -101,7 +105,9 @@ export class SoundBuffer {
     }
   }
 
-  public get gvolume(): number { return this._gvolume; }
+  public get gvolume(): number {
+    return this._gvolume;
+  }
   public set gvolume(gvolume: number) {
     this._gvolume = gvolume;
     if (this.howl != null) {
@@ -109,14 +115,18 @@ export class SoundBuffer {
     }
   }
 
-  public get seek(): number { return this._seek; }
+  public get seek(): number {
+    return this._seek;
+  }
   public set seek(seek: number) {
     if (this.howl != null) {
       this.howl.seek(seek);
     }
   }
 
-  public get loop(): boolean { return this._loop; }
+  public get loop(): boolean {
+    return this._loop;
+  }
   public set loop(loop: boolean) {
     this._loop = loop;
     if (this.howl != null) {
@@ -125,22 +135,28 @@ export class SoundBuffer {
   }
 
   public get playing(): boolean {
-    return this._state === SoundState.Play ||
-           this._state === SoundState.Fade ||
-           this._state === SoundState.Fadein ||
-           this._state === SoundState.Fadeout;
+    return (
+      this._state === SoundState.Play ||
+      this._state === SoundState.Fade ||
+      this._state === SoundState.Fadein ||
+      this._state === SoundState.Fadeout
+    );
   }
 
   public get fading(): boolean {
-    return this._state === SoundState.Fade ||
-           this._state === SoundState.Fadein ||
-           this._state === SoundState.Fadeout;
+    return this._state === SoundState.Fade || this._state === SoundState.Fadein || this._state === SoundState.Fadeout;
   }
 
   public play(): void {
-    if (this.howl == null) { throw new Error("音声が読み込まれていません"); }
-    if (this.playing) { this.stop(); } 
-    if (this.fading) { this.endFade(); }
+    if (this.howl == null) {
+      throw new Error("音声が読み込まれていません");
+    }
+    if (this.playing) {
+      this.stop();
+    }
+    if (this.fading) {
+      this.endFade();
+    }
     this.setHowlerEvent();
     this.setHowlerOptions();
     this.howl.play();
@@ -180,8 +196,7 @@ export class SoundBuffer {
     this.stopAfterFade = autoStop;
     this.setHowlerEvent();
     this.setHowlerOptions();
-    this.howl.fade(this.fadeStartVolume * this.gvolume,
-                   this.fadeTargetVolume * this.gvolume, time);
+    this.howl.fade(this.fadeStartVolume * this.gvolume, this.fadeTargetVolume * this.gvolume, time);
     this._state = SoundState.Fade;
   }
 
@@ -198,8 +213,7 @@ export class SoundBuffer {
     this.howl.once("play", () => {
       this.setHowlerEvent();
       if (this.howl != null) {
-        this.howl.fade(this.fadeStartVolume * this.gvolume,
-                       this.fadeTargetVolume * this.gvolume, time);
+        this.howl.fade(this.fadeStartVolume * this.gvolume, this.fadeTargetVolume * this.gvolume, time);
       }
     });
     this.volume = this.fadeStartVolume;
@@ -216,13 +230,14 @@ export class SoundBuffer {
     this.fadeTime = time;
     this.stopAfterFade = autoStop;
     this.setHowlerEvent();
-    this.howl.fade(this.fadeStartVolume * this.gvolume,
-                   this.fadeTargetVolume * this.gvolume, time);
+    this.howl.fade(this.fadeStartVolume * this.gvolume, this.fadeTargetVolume * this.gvolume, time);
     this._state = SoundState.Fadein;
   }
 
   public endFade(): void {
-    if (!this.fading) { return; }
+    if (!this.fading) {
+      return;
+    }
     this._volume = this.fadeTargetVolume;
     if (this.stopAfterFade) {
       this.stop();
@@ -232,7 +247,9 @@ export class SoundBuffer {
   }
 
   protected onFade(): void {
-    if (!this.fading) { return; }
+    if (!this.fading) {
+      return;
+    }
     this.endFade();
     this.callback.onFadeComplete(this.bufferNum);
   }
@@ -266,11 +283,8 @@ export class SoundBuffer {
 
   public async restore(data: any, tick: number): Promise<void> {
     const me: any = this as any;
-    const ignore: string[] = [
-      "hasSound",
-      "state",
-    ];
-    const restoreParams = SoundBuffer.soundBufferStoreParams.filter((param) => ignore.indexOf(param) === -1);
+    const ignore: string[] = ["hasSound", "state"];
+    const restoreParams = SoundBuffer.soundBufferStoreParams.filter(param => ignore.indexOf(param) === -1);
     restoreParams.forEach((param: string) => {
       me[param] = data[param];
     });

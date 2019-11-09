@@ -3,23 +3,18 @@ import { Logger } from "../base/logger";
 
 // TODO pauseもできるようにする
 export class FrameAnimLayer extends BaseLayer {
-
   protected _frameAnimLoop: boolean = false;
-  public get frameAnimLoop(): boolean { return this._frameAnimLoop; }
+  public get frameAnimLoop(): boolean {
+    return this._frameAnimLoop;
+  }
   protected frameAnimTime: number = 50;
   protected frameAnimWidth: number = 32;
   protected frameAnimHeight: number = 32;
   protected frameAnimFrames: any[] = [];
   protected frameAnimStartTick: number = -1;
-  protected frameAnimState: "stop" | "run"  = "stop";
+  protected frameAnimState: "stop" | "run" = "stop";
 
-  public initFrameAnim(
-    loop: boolean,
-    time: number,
-    width: number,
-    height: number,
-    frames: any[],
-  ): void {
+  public initFrameAnim(loop: boolean, time: number, width: number, height: number, frames: any[]): void {
     this.stopFrameAnim(false);
     this._frameAnimLoop = loop;
     this.frameAnimTime = time;
@@ -92,9 +87,15 @@ export class FrameAnimLayer extends BaseLayer {
   }
 
   private applyFrameAnim(frame: any): void {
-    if (frame.x != null) { this.imageX = -(+frame.x); }
-    if (frame.y != null) { this.imageY = -(+frame.y); }
-    if (frame.alpha != null) { this.alpha = +frame.alpha; }
+    if (frame.x != null) {
+      this.imageX = -+frame.x;
+    }
+    if (frame.y != null) {
+      this.imageY = -+frame.y;
+    }
+    if (frame.alpha != null) {
+      this.alpha = +frame.alpha;
+    }
   }
 
   public freeImage(): void {
@@ -149,7 +150,6 @@ export class FrameAnimLayer extends BaseLayer {
     // その他のパラメータのコピー
     const me: any = this as any;
     const you: any = dest as any;
-    FrameAnimLayer.frameAnimLayerStoreParams.forEach((p) => you[p] = me[p]);
+    FrameAnimLayer.frameAnimLayerStoreParams.forEach(p => (you[p] = me[p]));
   }
-
 }

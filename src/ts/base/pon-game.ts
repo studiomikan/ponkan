@@ -48,8 +48,12 @@ export class PonGame implements IConductorEvent {
   public readonly screenShot: ScreenShot;
   public updateScreenShotFlag: boolean = true;
 
-  public get width(): number { return this.foreRenderer.width; }
-  public get height(): number { return this.foreRenderer.height; }
+  public get width(): number {
+    return this.foreRenderer.width;
+  }
+  public get height(): number {
+    return this.foreRenderer.height;
+  }
 
   public constructor(parentId: string, config: any = {}) {
     const elm: HTMLElement | null = document.getElementById(parentId);
@@ -98,8 +102,12 @@ export class PonGame implements IConductorEvent {
     this.stop();
     this.loopFlag = true;
     this.fpsPreTick = Date.now();
-    window.setTimeout(() => { this.updateLoop(); }, 0);
-    window.setTimeout(() => { this.drawLoop(); }, 60);
+    window.setTimeout(() => {
+      this.updateLoop();
+    }, 0);
+    window.setTimeout(() => {
+      this.drawLoop();
+    }, 60);
   }
 
   public stop(): void {
@@ -143,44 +151,50 @@ export class PonGame implements IConductorEvent {
     });
   }
 
-  public get scaleMode(): ScaleMode { return this._scaleMode; }
+  public get scaleMode(): ScaleMode {
+    return this._scaleMode;
+  }
   public set scaleMode(scaleMode: ScaleMode) {
     this._scaleModeBuffer = this._scaleMode;
     this._scaleMode = scaleMode;
 
     if (this._scaleMode === ScaleMode.FULLSCREEN) {
-      if (!this.isFullscreen) { this.requestFullscreen(); }
+      if (!this.isFullscreen) {
+        this.requestFullscreen();
+      }
     } else {
-      if (this.isFullscreen) { this.cancelFullscreen(); }
+      if (this.isFullscreen) {
+        this.cancelFullscreen();
+      }
     }
     this.onWindowResize();
   }
 
   private get isFullscreen(): boolean {
     const doc: any = window.document;
-    return (doc.fullscreenElement ||
-            doc.mozFullScreenElement ||
-            doc.webkitFullscreenElement ||
-            doc.msFullscreenElement) != null;
+    return (
+      (doc.fullscreenElement || doc.mozFullScreenElement || doc.webkitFullscreenElement || doc.msFullscreenElement) !=
+      null
+    );
   }
 
   private requestFullscreen(): void {
     const elm: any = window.document.documentElement;
-    const requestFullscreen = elm.requestFullscreen ||
-                            elm.mozRequestFullScreen ||
-                            elm.webkitRequestFullScreen ||
-                            elm.msRequestFullscreen;
+    const requestFullscreen =
+      elm.requestFullscreen || elm.mozRequestFullScreen || elm.webkitRequestFullScreen || elm.msRequestFullscreen;
 
-    if (requestFullscreen) { requestFullscreen.call(elm); }
+    if (requestFullscreen) {
+      requestFullscreen.call(elm);
+    }
   }
 
   private cancelFullscreen(): void {
     const doc: any = window.document;
-    const cancelFullscreen = doc.exitFullscreen ||
-                           doc.mozCancelFullScreen ||
-                           doc.webkitExitFullscreen ||
-                           doc.msExitFullscreen;
-    if (cancelFullscreen) { cancelFullscreen.call(doc); }
+    const cancelFullscreen =
+      doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+    if (cancelFullscreen) {
+      cancelFullscreen.call(doc);
+    }
   }
 
   public onFullscreenChange(): void {
@@ -193,8 +207,12 @@ export class PonGame implements IConductorEvent {
     }
   }
 
-  public get fixedScaleWidth(): number { return this._fixedScaleWidth; }
-  public get fixedScaleHeight(): number { return this._fixedScaleHeight; }
+  public get fixedScaleWidth(): number {
+    return this._fixedScaleWidth;
+  }
+  public get fixedScaleHeight(): number {
+    return this._fixedScaleHeight;
+  }
 
   public setFixedScaleSize(width: number, height: number): void {
     this._fixedScaleWidth = width;
@@ -225,19 +243,17 @@ export class PonGame implements IConductorEvent {
   }
 
   private getFitScale(): number {
-    return Math.min(
-      this.parentElm.clientWidth / this.config.width,
-      this.parentElm.clientHeight / this.config.height);
+    return Math.min(this.parentElm.clientWidth / this.config.width, this.parentElm.clientHeight / this.config.height);
   }
 
   public setCanvasScale(scaleX: number, scaleY: number): void {
     const width = this.config.width * scaleX;
     const height = this.config.height * scaleY;
-    const left = ((this.parentElm.clientWidth - width) / 2) + "px";
-    const top = ((this.parentElm.clientHeight - height) / 2) + "px";
+    const left = (this.parentElm.clientWidth - width) / 2 + "px";
+    const top = (this.parentElm.clientHeight - height) / 2 + "px";
     const transform = `scale(${scaleX},${scaleY})`;
     document.querySelectorAll(".ponkan-scale-target").forEach((elm: any) => {
-      if (elm.style !=  null) {
+      if (elm.style != null) {
         elm.style.position = "absolute";
         elm.style.transform = transform;
         elm.style["transform-origin"] = "0 0";
@@ -253,7 +269,9 @@ export class PonGame implements IConductorEvent {
 
   private updateLoop(): void {
     try {
-      if (!this.loopFlag) { return; }
+      if (!this.loopFlag) {
+        return;
+      }
       const tick: number = Date.now();
       this.update(tick);
       window.setTimeout(() => this.updateLoop(), 1);
@@ -265,7 +283,9 @@ export class PonGame implements IConductorEvent {
 
   private drawLoop(): void {
     try {
-      if (!this.loopFlag) { return; }
+      if (!this.loopFlag) {
+        return;
+      }
       const tick: number = Date.now();
 
       if (tick - this.fpsPreTick >= 1000) {
@@ -326,16 +346,11 @@ export class PonGame implements IConductorEvent {
    * @param file 移動先ファイル
    * @param label 移動先ラベル
    */
-  public async callSubroutine(
-    filePath: string | null,
-    label: string | null = null,
-    countPage = false,
-  ): Promise<void> {
+  public async callSubroutine(filePath: string | null, label: string | null = null, countPage = false): Promise<void> {
     if (filePath == null) {
       filePath = this.conductor.script.filePath;
     }
-    const subConductor = new Conductor(
-      this.resource, `Sub Conductor ${this.conductorStack.length}`, this);
+    const subConductor = new Conductor(this.resource, `Sub Conductor ${this.conductorStack.length}`, this);
     this.conductorStack.push(subConductor);
     return this.conductor.jump(filePath, label, countPage);
   }
@@ -410,12 +425,12 @@ export class PonGame implements IConductorEvent {
   // ============================================================
 
   public clearLayer(): void {
-    this.forePrimaryLayers.forEach((layer) => {
+    this.forePrimaryLayers.forEach(layer => {
       layer.destroy();
       this.foreRenderer.removeContainer(layer.container);
     });
     this.forePrimaryLayers = [];
-    this.backPrimaryLayers.forEach((layer) => {
+    this.backPrimaryLayers.forEach(layer => {
       layer.destroy();
       this.backRenderer.removeContainer(layer.container);
     });
@@ -435,12 +450,12 @@ export class PonGame implements IConductorEvent {
   }
 
   public removeForePrimaryLayer(layer: BaseLayer): void {
-    this.forePrimaryLayers = this.forePrimaryLayers.filter((a) => a !== layer);
+    this.forePrimaryLayers = this.forePrimaryLayers.filter(a => a !== layer);
     this.foreRenderer.removeContainer(layer.container);
   }
 
   public removeBackPrimaryLayer(layer: BaseLayer): void {
-    this.backPrimaryLayers = this.backPrimaryLayers.filter((a) => a !== layer);
+    this.backPrimaryLayers = this.backPrimaryLayers.filter(a => a !== layer);
     this.backRenderer.removeContainer(layer.container);
   }
 
@@ -466,19 +481,19 @@ export class PonGame implements IConductorEvent {
    */
   public resetPrimaryLayersRenderer(): void {
     // レンダラーとの紐付けを解除
-    this.forePrimaryLayers.forEach((fore) => {
+    this.forePrimaryLayers.forEach(fore => {
       this.foreRenderer.removeContainer(fore.container);
       this.backRenderer.removeContainer(fore.container);
     });
-    this.backPrimaryLayers.forEach((back) => {
+    this.backPrimaryLayers.forEach(back => {
       this.backRenderer.removeContainer(back.container);
       this.foreRenderer.removeContainer(back.container);
     });
     // 新しくレンダラーに紐付ける
-    this.forePrimaryLayers.forEach((fore) => {
+    this.forePrimaryLayers.forEach(fore => {
       this.foreRenderer.addContainer(fore.container);
     });
-    this.backPrimaryLayers.forEach((back) => {
+    this.backPrimaryLayers.forEach(back => {
       this.backRenderer.addContainer(back.container);
     });
   }
@@ -513,7 +528,9 @@ export class PonGame implements IConductorEvent {
     });
   }
 
-  public onWindowClose(): boolean { return true; }
+  public onWindowClose(): boolean {
+    return true;
+  }
 
   private initMouseEventOnCanvas(canvas: HTMLCanvasElement): void {
     // let move = "ontouchmove" in canvas ? "touchmove" : "mousemove";
@@ -523,7 +540,9 @@ export class PonGame implements IConductorEvent {
     canvas.addEventListener("mouseenter", (e: MouseEvent) => {
       try {
         e.preventDefault();
-        if (this.isLocked) { return true; }
+        if (this.isLocked) {
+          return true;
+        }
         this.onMouseEnter(new PonMouseEvent(e));
       } catch (ex) {
         this.error(ex);
@@ -533,7 +552,9 @@ export class PonGame implements IConductorEvent {
     canvas.addEventListener("mouseleave", (e: MouseEvent) => {
       try {
         e.preventDefault();
-        if (this.isLocked) { return true; }
+        if (this.isLocked) {
+          return true;
+        }
         this.onMouseLeave(new PonMouseEvent(e));
         return true;
       } catch (ex) {
@@ -544,7 +565,9 @@ export class PonGame implements IConductorEvent {
     canvas.addEventListener("mousewheel", (e: Event) => {
       try {
         e.preventDefault();
-        if (this.isLocked) { return true; }
+        if (this.isLocked) {
+          return true;
+        }
         this.onMouseWheel(new PonWheelEvent(e as WheelEvent));
       } catch (ex) {
         this.error(ex);
@@ -564,7 +587,9 @@ export class PonGame implements IConductorEvent {
       (canvas as HTMLCanvasElement).addEventListener("touchmove", (e: TouchEvent) => {
         try {
           e.preventDefault();
-          if (this.isLocked) { return true; }
+          if (this.isLocked) {
+            return true;
+          }
           this.onMouseMove(this.convertTouchEventToMouseEvent(e));
         } catch (ex) {
           this.error(ex);
@@ -575,7 +600,9 @@ export class PonGame implements IConductorEvent {
       (canvas as HTMLCanvasElement).addEventListener("mousemove", (e: MouseEvent) => {
         try {
           e.preventDefault();
-          if (this.isLocked) { return true; }
+          if (this.isLocked) {
+            return true;
+          }
           this.onMouseMove(new PonMouseEvent(e));
         } catch (ex) {
           this.error(ex);
@@ -588,7 +615,9 @@ export class PonGame implements IConductorEvent {
       (canvas as HTMLCanvasElement).addEventListener("touchstart", (e: TouchEvent) => {
         try {
           e.preventDefault();
-          if (this.isLocked) { return true; }
+          if (this.isLocked) {
+            return true;
+          }
           return this.onMouseDown(this.convertTouchEventToMouseEvent(e));
         } catch (ex) {
           this.error(ex);
@@ -598,7 +627,9 @@ export class PonGame implements IConductorEvent {
       (canvas as HTMLCanvasElement).addEventListener("mousedown", (e: MouseEvent) => {
         try {
           e.preventDefault();
-          if (this.isLocked) { return true; }
+          if (this.isLocked) {
+            return true;
+          }
           return this.onMouseDown(new PonMouseEvent(e));
         } catch (ex) {
           this.error(ex);
@@ -610,7 +641,9 @@ export class PonGame implements IConductorEvent {
       (canvas as HTMLCanvasElement).addEventListener("touchend", (e: TouchEvent) => {
         e.preventDefault();
         try {
-          if (this.isLocked) { return true; }
+          if (this.isLocked) {
+            return true;
+          }
           this.onMouseUp(this.convertTouchEventToMouseEvent(e));
           // console.log("@@@@@ontouchend", x, y, button);
         } catch (ex) {
@@ -618,11 +651,13 @@ export class PonGame implements IConductorEvent {
         }
         return true;
       });
-    } else  {
+    } else {
       (canvas as HTMLCanvasElement).addEventListener("mouseup", (e: MouseEvent) => {
         e.preventDefault();
         try {
-          if (this.isLocked) { return true; }
+          if (this.isLocked) {
+            return true;
+          }
           this.onMouseUp(new PonMouseEvent(e));
         } catch (ex) {
           this.error(ex);
@@ -650,26 +685,55 @@ export class PonGame implements IConductorEvent {
   }
 
   /* eslint-disable @typescript-eslint/no-unused-vars */
-  public onMouseEnter(e: PonMouseEvent): void { return; }
-  public onMouseLeave(e: PonMouseEvent): void { return; }
-  public onMouseMove(e: PonMouseEvent): void { return; }
-  public onMouseDown(e: PonMouseEvent): void { return; }
-  public onMouseUp(e: PonMouseEvent): void { return; }
-  public onMouseWheel(e: PonWheelEvent): boolean { return true; }
+  public onMouseEnter(e: PonMouseEvent): void {
+    return;
+  }
+  public onMouseLeave(e: PonMouseEvent): void {
+    return;
+  }
+  public onMouseMove(e: PonMouseEvent): void {
+    return;
+  }
+  public onMouseDown(e: PonMouseEvent): void {
+    return;
+  }
+  public onMouseUp(e: PonMouseEvent): void {
+    return;
+  }
+  public onMouseWheel(e: PonWheelEvent): boolean {
+    return true;
+  }
   /* eslint-enable @typescript-eslint/no-unused-vars */
 
   private initKeyboardEvent(): void {
     window.addEventListener("keydown", (e: KeyboardEvent) => {
-      try { if (this.isLocked) { return; } this.onKeyDown(new PonKeyEvent(e)); } catch (ex) { this.error(ex); }
+      try {
+        if (this.isLocked) {
+          return;
+        }
+        this.onKeyDown(new PonKeyEvent(e));
+      } catch (ex) {
+        this.error(ex);
+      }
     });
     window.addEventListener("keyup", (e: KeyboardEvent) => {
-      try { if (this.isLocked) { return; } this.onKeyUp(new PonKeyEvent(e)); } catch (ex) { this.error(ex); }
+      try {
+        if (this.isLocked) {
+          return;
+        }
+        this.onKeyUp(new PonKeyEvent(e));
+      } catch (ex) {
+        this.error(ex);
+      }
     });
   }
 
   /* eslint-disable @typescript-eslint/no-unused-vars */
-  public onKeyDown(e: PonKeyEvent): boolean { return true; }
-  public onKeyUp(e: PonKeyEvent): boolean { return true; }
+  public onKeyDown(e: PonKeyEvent): boolean {
+    return true;
+  }
+  public onKeyUp(e: PonKeyEvent): boolean {
+    return true;
+  }
   /* eslint-enable @typescript-eslint/no-unused-vars */
-
 }

@@ -33,7 +33,7 @@ export class HistoryButton extends Button {
         this.imageX = -Math.floor(this.imageWidth / 3);
         break;
       case "on":
-        this.imageX = -Math.floor(this.imageWidth / 3 * 2);
+        this.imageX = -Math.floor((this.imageWidth / 3) * 2);
         break;
     }
   }
@@ -58,29 +58,26 @@ export class HistoryButton extends Button {
 }
 
 class SimpleButton extends BaseLayer {
-  protected bgColors: number[] = [0xFF0000, 0x00FF00, 0x0000FF];
+  protected bgColors: number[] = [0xff0000, 0x00ff00, 0x0000ff];
   protected bgAlphas: number[] = [1.0, 1.0, 1.0];
   protected status: "normal" | "over" | "on" = "normal";
   public mouseEnter: (sender: SimpleButton) => void = () => {
     return;
-  }
+  };
   public mouseLeave: (sender: SimpleButton) => void = () => {
     return;
-  }
+  };
   public mouseMove: (sender: SimpleButton) => void = () => {
     return;
-  }
+  };
   public mouseDown: (sender: SimpleButton) => void = () => {
     return;
-  }
+  };
   public mouseUp: (sender: SimpleButton) => void = () => {
     return;
-  }
+  };
 
-  public initButton(
-    bgColors: number[],
-    bgAlphas: number[],
-  ): void {
+  public initButton(bgColors: number[], bgAlphas: number[]): void {
     this.bgColors = bgColors;
     this.bgAlphas = bgAlphas;
 
@@ -130,8 +127,12 @@ class SimpleButton extends BaseLayer {
     super.onMouseUp(e);
 
     if (this.isInsideEvent(e)) {
-      if (this.status !== "on") { return; }
-      if (!e.isLeft) { return; }
+      if (this.status !== "on") {
+        return;
+      }
+      if (!e.isLeft) {
+        return;
+      }
       this.mouseUp(this);
       this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
     }
@@ -160,30 +161,26 @@ class ScrollBarButton extends SimpleButton {
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
 
-    if (!e.isLeft) { return; }
+    if (!e.isLeft) {
+      return;
+    }
     this.down = false;
   }
 }
 
 class ScrollBar extends BaseLayer {
-
   protected minHeight: number = 30;
   protected bar: ScrollBarButton;
   public onChangeCallback: (sender: ScrollBar) => void = () => {
     return;
-  }
+  };
 
   public constructor(name: string, resource: Resource, owner: PonGame) {
     super(name, resource, owner);
     this.bar = new ScrollBarButton("ScrollBarButton", resource, owner);
   }
 
-  public initScrollBar(
-    config: any,
-    buttonColors: number[],
-    buttonAlphas: number[],
-    minHeight: number,
-  ): void {
+  public initScrollBar(config: any, buttonColors: number[], buttonAlphas: number[], minHeight: number): void {
     // super.initButton(bgColors, bgAlphas);
     this.minHeight = minHeight;
     this.visible = true;
@@ -197,20 +194,19 @@ class ScrollBar extends BaseLayer {
     this.addChild(this.bar);
   }
 
-  public setValues(
-    currentPoint: number,
-    maxPoint: number,
-    linesCount: number,
-    screenLineCount: number,
-  ): void {
+  public setValues(currentPoint: number, maxPoint: number, linesCount: number, screenLineCount: number): void {
     if (linesCount <= screenLineCount) {
       this.bar.visible = false;
       return;
     }
 
-    let height: number = Math.floor(this.height * screenLineCount / linesCount);
-    if (height < this.minHeight) { height = this.minHeight; }
-    if (height > this.height) { height = this.height; }
+    let height: number = Math.floor((this.height * screenLineCount) / linesCount);
+    if (height < this.minHeight) {
+      height = this.minHeight;
+    }
+    if (height > this.height) {
+      height = this.height;
+    }
 
     let y: number;
     if (currentPoint === 0) {
@@ -260,10 +256,12 @@ class ScrollBar extends BaseLayer {
 
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
-    if (!e.isLeft) { return; }
+    if (!e.isLeft) {
+      return;
+    }
 
     if (this.bar.down || this.isInsideEvent(e)) {
-      this.setBarY(e.y - (this.bar.height / 2));
+      this.setBarY(e.y - this.bar.height / 2);
       this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
       this.onChangeCallback(this);
       // FIXME eの中身がおかしいが、現状使ってないのでこのまま
@@ -274,8 +272,12 @@ class ScrollBar extends BaseLayer {
 
   protected setBarY(y: number): void {
     const maxY: number = this.height - this.bar.height;
-    if (y < 0) { y = 0; }
-    if (y > maxY) { y = maxY; }
+    if (y < 0) {
+      y = 0;
+    }
+    if (y > maxY) {
+      y = maxY;
+    }
     this.bar.y = y;
   }
 
@@ -294,16 +296,16 @@ class ScrollBar extends BaseLayer {
   public get dragging(): boolean {
     return this.bar.down;
   }
-
 }
 
 class HistoryTextLayer extends BaseLayer {
-
   protected lines: string[][] = [[]];
   protected maxLinesCount: number = 10000;
   protected indentPoints: number[] = [-1];
   protected clearIndentPoints: number[] = [-1];
-  public get currentLine(): string[] { return this.lines[this.lines.length - 1]; }
+  public get currentLine(): string[] {
+    return this.lines[this.lines.length - 1];
+  }
   public scrollOffLines: number = 3;
   protected point: number = 0;
   protected lazyRedrawFlag: boolean = false;
@@ -334,7 +336,7 @@ class HistoryTextLayer extends BaseLayer {
 
   public get historyText(): string {
     let text = "";
-    this.lines.forEach((line) => {
+    this.lines.forEach(line => {
       text += line.join("") + "\n";
     });
     return text;
@@ -389,8 +391,12 @@ class HistoryTextLayer extends BaseLayer {
   }
 
   private fixPoint(): void {
-    if (this.point < 0) { this.point = 0; }
-    if (this.point > this.maxPoint) { this.point = this.maxPoint; }
+    if (this.point < 0) {
+      this.point = 0;
+    }
+    if (this.point > this.maxPoint) {
+      this.point = this.maxPoint;
+    }
   }
 
   public redraw(): void {
@@ -428,7 +434,7 @@ class HistoryTextLayer extends BaseLayer {
   }
 
   public get screenLineCount(): number {
-    const lineHeight = (this.textLineHeight + this.textLinePitch);
+    const lineHeight = this.textLineHeight + this.textLinePitch;
     const areaHeight = this.height - this.textMarginTop - this.textMarginBottom + this.textLinePitch;
     return Math.floor(areaHeight / lineHeight);
   }
@@ -455,7 +461,6 @@ class HistoryTextLayer extends BaseLayer {
  * 履歴レイヤ
  */
 export class HistoryLayer extends BaseLayer {
-
   protected config: any;
   protected textLayer: HistoryTextLayer;
   protected upButton: HistoryButton;
@@ -475,12 +480,24 @@ export class HistoryLayer extends BaseLayer {
   }
 
   public async init(config: any = {}): Promise<void> {
-    if (config.history == null) { config.history = {}; }
-    if (config.history.text == null) { config.history.text = {}; }
-    if (config.history.upButton == null) { config.history.upButton = {}; }
-    if (config.history.downButton == null) { config.history.downButton = {}; }
-    if (config.history.scrollBar == null) { config.history.scrollBar = {}; }
-    if (config.history.closeButton == null) { config.history.closeButton = {}; }
+    if (config.history == null) {
+      config.history = {};
+    }
+    if (config.history.text == null) {
+      config.history.text = {};
+    }
+    if (config.history.upButton == null) {
+      config.history.upButton = {};
+    }
+    if (config.history.downButton == null) {
+      config.history.downButton = {};
+    }
+    if (config.history.scrollBar == null) {
+      config.history.scrollBar = {};
+    }
+    if (config.history.closeButton == null) {
+      config.history.closeButton = {};
+    }
 
     this.x = 0;
     this.y = 0;
@@ -509,10 +526,13 @@ export class HistoryLayer extends BaseLayer {
   }
 
   protected initScrollButtons(config: any): void {
-
     const init = (button: HistoryButton, conf: any): void => {
-      if (conf.bgColors == null) { conf.bgColors = [0x4286f4, 0x4286f4, 0x4286f4]; }
-      if (conf.bgAlphas == null) { conf.bgAlphas = [0.7, 0.8, 0.9]; }
+      if (conf.bgColors == null) {
+        conf.bgColors = [0x4286f4, 0x4286f4, 0x4286f4];
+      }
+      if (conf.bgAlphas == null) {
+        conf.bgAlphas = [0.7, 0.8, 0.9];
+      }
       button.applyConfig(conf);
       button.visible = true;
       button.initHistoryButton(conf.imageFile);
@@ -521,34 +541,36 @@ export class HistoryLayer extends BaseLayer {
     init(this.upButton, config.history.upButton); // ;
     init(this.downButton, config.history.downButton);
     this.upButton.setCallbacks({
-      onMouseUp: () => { this.scrollUpPage(); },
+      onMouseUp: () => {
+        this.scrollUpPage();
+      },
     });
     this.downButton.setCallbacks({
-      onMouseUp: () => { this.scrollDownPage(); },
+      onMouseUp: () => {
+        this.scrollDownPage();
+      },
     });
   }
 
   protected initScrollBar(config: any): void {
     let c: any = Util.objClone(config.history.scrollBar);
-    c = Util.objExtend({
-      x: config.width - 32 - 20,
-      y: 20 + 32,
-      width: 32,
-      height: config.height - (32 + 20) * 2,
-      backgroundColor: 0x4286f4,
-      backgroundAlpha: 0.1,
-      bgColors: [0x4286f4, 0x4286f4, 0x4286f4],
-      bgAlphas: [0.4, 0.5, 0.6],
-      minHeight: 16,
-    }, c);
+    c = Util.objExtend(
+      {
+        x: config.width - 32 - 20,
+        y: 20 + 32,
+        width: 32,
+        height: config.height - (32 + 20) * 2,
+        backgroundColor: 0x4286f4,
+        backgroundAlpha: 0.1,
+        bgColors: [0x4286f4, 0x4286f4, 0x4286f4],
+        bgAlphas: [0.4, 0.5, 0.6],
+        minHeight: 16,
+      },
+      c,
+    );
 
     const sb = this.scrollBar;
-    sb.initScrollBar(
-      c,
-      c.bgColors,
-      c.bgAlphas,
-      c.minHeight,
-    );
+    sb.initScrollBar(c, c.bgColors, c.bgAlphas, c.minHeight);
 
     sb.onChangeCallback = (): void => {
       const p: number = Math.floor(this.textLayer.maxPoint * sb.getBarPoint());
@@ -563,10 +585,13 @@ export class HistoryLayer extends BaseLayer {
 
   protected initCloseButton(config: any): void {
     let c: any = Util.objClone(config.history.closeButton);
-    c = Util.objExtend({
-      x: config.width - 40 - 30,
-      y: 15,
-    }, c);
+    c = Util.objExtend(
+      {
+        x: config.width - 40 - 30,
+        y: 15,
+      },
+      c,
+    );
     this.closeButton.applyConfig(c);
     this.closeButton.initHistoryButton(c.imageFile);
     this.closeButton.setCallbacks({
@@ -661,7 +686,7 @@ export class HistoryLayer extends BaseLayer {
     this.textLayer.goToEnd();
   }
 
-  public onMouseEnter(e: PonMouseEvent): void  {
+  public onMouseEnter(e: PonMouseEvent): void {
     super.onMouseEnter(e);
     e.stopPropagation();
   }

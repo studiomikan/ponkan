@@ -51,9 +51,7 @@ export class ImageToggleButton extends ToggleButton {
     }
   }
 
-  protected static imageToggleButtonStoreParams: string[] = [
-    "direction",
-  ];
+  protected static imageToggleButtonStoreParams: string[] = ["direction"];
 
   public store(tick: number): any {
     const data: any = super.store(tick);
@@ -88,7 +86,6 @@ export class ImageToggleButton extends ToggleButton {
 }
 
 export class ToggleButtonLayer extends ImageButtonLayer {
-
   private imageToggleButtons: ImageToggleButton[] = [];
 
   public async addToggleButton(
@@ -107,17 +104,11 @@ export class ToggleButtonLayer extends ImageButtonLayer {
 
     btn.x = x;
     btn.y = y;
-    return btn.initImageToggleButton(
-      filePath,
-      varName,
-      isSystemButton,
-      exp,
-      direction,
-    );
+    return btn.initImageToggleButton(filePath, varName, isSystemButton, exp, direction);
   }
 
   public clearToggleButtons(): void {
-    this.imageToggleButtons.forEach((toggleButton) => {
+    this.imageToggleButtons.forEach(toggleButton => {
       toggleButton.clearToggleButton();
       toggleButton.destroy();
       this.deleteChildLayer(toggleButton);
@@ -127,28 +118,28 @@ export class ToggleButtonLayer extends ImageButtonLayer {
 
   public lockButtons(): void {
     super.lockButtons();
-    this.imageToggleButtons.forEach((toggleButton) => {
+    this.imageToggleButtons.forEach(toggleButton => {
       toggleButton.setButtonStatus("disabled");
     });
   }
 
   public unlockButtons(): void {
     super.unlockButtons();
-    this.imageToggleButtons.forEach((toggleButton) => {
+    this.imageToggleButtons.forEach(toggleButton => {
       toggleButton.setButtonStatus("enabled");
     });
   }
 
   public lockSystemButtons(): void {
     super.lockSystemButtons();
-    this.imageToggleButtons.forEach((toggleButton) => {
+    this.imageToggleButtons.forEach(toggleButton => {
       toggleButton.lockSystemButton();
     });
   }
 
   public unlockSystemButtons(): void {
     super.unlockSystemButtons();
-    this.imageToggleButtons.forEach((toggleButton) => {
+    this.imageToggleButtons.forEach(toggleButton => {
       toggleButton.unlockSystemButton();
     });
   }
@@ -157,8 +148,7 @@ export class ToggleButtonLayer extends ImageButtonLayer {
     const data: any = super.store(tick);
     // const me: any = this as any;
 
-    data.imageToggleButtons =
-      this.imageToggleButtons.map((toggleButton) => toggleButton.store(tick));
+    data.imageToggleButtons = this.imageToggleButtons.map(toggleButton => toggleButton.store(tick));
 
     return data;
   }
@@ -170,17 +160,17 @@ export class ToggleButtonLayer extends ImageButtonLayer {
         await Promise.all(
           data.imageToggleButtons.map((toggleButtonData: any, i: number) => {
             return this.imageToggleButtons[i].restore(toggleButtonData, tick, clear);
-          })
+          }),
         );
       } else {
         this.clearToggleButtons();
         await Promise.all(
-           data.imageToggleButtons.forEach((toggleButtonData: any) => {
-             const btn = new ImageToggleButton(toggleButtonData.name, this.resource, this.owner);
-             this.addChild(btn);
-             this.imageToggleButtons.push(btn);
-             return btn.restore(toggleButtonData, tick, clear);
-           })
+          data.imageToggleButtons.forEach((toggleButtonData: any) => {
+            const btn = new ImageToggleButton(toggleButtonData.name, this.resource, this.owner);
+            this.addChild(btn);
+            this.imageToggleButtons.push(btn);
+            return btn.restore(toggleButtonData, tick, clear);
+          }),
         );
       }
     } else {
@@ -202,12 +192,11 @@ export class ToggleButtonLayer extends ImageButtonLayer {
     super.copyTo(dest);
 
     dest.clearToggleButtons();
-    this.imageToggleButtons.forEach((srcBtn) => {
+    this.imageToggleButtons.forEach(srcBtn => {
       const destBtn = new ImageToggleButton(name, dest.resource, dest.owner);
       dest.addChild(destBtn);
       dest.imageToggleButtons.push(destBtn);
       srcBtn.copyTo(destBtn);
     });
   }
-
 }
