@@ -1,5 +1,5 @@
-import { Ponkan3 } from '../ponkan3';
-import { TagAction, TagActionResult, TagValue } from '../tag-action';
+import { Ponkan3 } from "../ponkan3";
+import { TagAction, TagActionResult, TagValue } from "../tag-action";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export default function(p: Ponkan3): TagAction[] {
@@ -13,10 +13,10 @@ export default function(p: Ponkan3): TagAction[] {
     ///   マクロを定義します。\n
     ///   マクロについての詳細は [マクロを利用する](../macro/) のページを参照にしてください。
     new TagAction(
-      ['macro'],
+      ["macro"],
       [
         /// @param マクロの名前
-        new TagValue('name', 'string', true, null),
+        new TagValue("name", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         if (p.resource.hasMacro(values.name)) {
@@ -24,7 +24,7 @@ export default function(p: Ponkan3): TagAction[] {
         }
         const m = p.conductor.script.defineMacro(values.name);
         p.resource.macroInfo[values.name] = m;
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category マクロ
@@ -33,11 +33,11 @@ export default function(p: Ponkan3): TagAction[] {
     ///   マクロ定義のl終わりを示します。
     ///   マクロについての詳細は [マクロを利用する](../macro/) のページを参照にしてください。
     new TagAction(
-      ['endmacro'],
+      ["endmacro"],
       [],
       (values: any, tick: number): TagActionResult => {
-        throw new Error('マクロ定義エラー。macroとendmacroの対応が取れていません');
-        return 'continue';
+        throw new Error("マクロ定義エラー。macroとendmacroの対応が取れていません");
+        return "continue";
       },
     ),
   ];

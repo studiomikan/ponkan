@@ -1,5 +1,5 @@
-import { Logger } from './logger';
-import { Resource } from './resource';
+import { Logger } from "./logger";
+import { Resource } from "./resource";
 
 export interface ISoundBufferCallbacks {
   onStop(bufferNum: number): void;
@@ -40,16 +40,16 @@ export class SoundBuffer {
   }
 
   public async loadSound(filePath: string): Promise<void> {
-    Logger.debug('SoundBuffer.loadSound call: ', filePath);
+    Logger.debug("SoundBuffer.loadSound call: ", filePath);
     this.filePath = filePath;
 
     try {
       this.howl = await this.resource.loadSoundHowler(filePath);
-      Logger.debug('SoundBuffer.loadSound success: ', this.howl);
+      Logger.debug("SoundBuffer.loadSound success: ", this.howl);
       this.setHowlerEvent();
       this.setHowlerOptions();
     } catch (e) {
-      Logger.debug('SoundBuffer.loadSound fail: ', filePath);
+      Logger.debug("SoundBuffer.loadSound fail: ", filePath);
     }
   }
 
@@ -68,15 +68,15 @@ export class SoundBuffer {
 
   protected setHowlerEvent(): void {
     if (this.howl != null) {
-      this.howl.off('playerror').on('playerror', () => {
+      this.howl.off("playerror").on("playerror", () => {
         throw new Error(`音声の再生に失敗しました(${this.filePath})`);
       });
-      this.howl.off('end').on('end', () => {
+      this.howl.off("end").on("end", () => {
         if (!this.loop) {
           this.stop();
         }
       });
-      this.howl.off('fade').on('fade', () => {
+      this.howl.off("fade").on("fade", () => {
         this.onFade();
       });
     }
@@ -149,7 +149,7 @@ export class SoundBuffer {
 
   public play(): void {
     if (this.howl == null) {
-      throw new Error('音声が読み込まれていません');
+      throw new Error("音声が読み込まれていません");
     }
     if (this.playing) {
       this.stop();
@@ -166,9 +166,9 @@ export class SoundBuffer {
   public stop(): void {
     if (this.howl != null) {
       this.howl.stop();
-      this.howl.off('fade');
-      this.howl.off('play');
-      this.howl.off('end');
+      this.howl.off("fade");
+      this.howl.off("play");
+      this.howl.off("end");
     }
     if (this._state === SoundState.Fade) {
       this.volume = this.fadeTargetVolume;
@@ -179,7 +179,7 @@ export class SoundBuffer {
 
   public pause(): void {
     if (this.howl == null) {
-      throw new Error('音声が読み込まれていません');
+      throw new Error("音声が読み込まれていません");
     }
     this.setHowlerEvent();
     this.howl.pause();
@@ -188,7 +188,7 @@ export class SoundBuffer {
 
   public fade(volume: number, time: number, autoStop: boolean): void {
     if (this.howl == null) {
-      throw new Error('音声が読み込まれていません');
+      throw new Error("音声が読み込まれていません");
     }
     this.fadeStartVolume = this.volume;
     this.fadeTargetVolume = volume;
@@ -202,7 +202,7 @@ export class SoundBuffer {
 
   public fadein(volume: number, time: number): void {
     if (this.howl == null) {
-      throw new Error('音声が読み込まれていません');
+      throw new Error("音声が読み込まれていません");
     }
     this.stop();
     this.fadeStartVolume = 0;
@@ -210,7 +210,7 @@ export class SoundBuffer {
     this.fadeTime = time;
     this.stopAfterFade = false;
 
-    this.howl.once('play', () => {
+    this.howl.once("play", () => {
       this.setHowlerEvent();
       if (this.howl != null) {
         this.howl.fade(this.fadeStartVolume * this.gvolume, this.fadeTargetVolume * this.gvolume, time);
@@ -223,7 +223,7 @@ export class SoundBuffer {
 
   public fadeout(time: number, autoStop: boolean): void {
     if (this.howl == null) {
-      throw new Error('音声が読み込まれていません');
+      throw new Error("音声が読み込まれていません");
     }
     this.fadeStartVolume = this.volume;
     this.fadeTargetVolume = 0;
@@ -255,18 +255,18 @@ export class SoundBuffer {
   }
 
   protected static soundBufferStoreParams: string[] = [
-    'hasSound',
-    'filePath',
-    'bufferNum',
-    'state',
-    'seek',
-    'loop',
-    'volume',
+    "hasSound",
+    "filePath",
+    "bufferNum",
+    "state",
+    "seek",
+    "loop",
+    "volume",
     // "gvolume",
-    'fadeStartVolume',
-    'fadeTargetVolume',
-    'fadeTime',
-    'stopAfterFade',
+    "fadeStartVolume",
+    "fadeTargetVolume",
+    "fadeTime",
+    "stopAfterFade",
   ];
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -283,7 +283,7 @@ export class SoundBuffer {
 
   public async restore(data: any, tick: number): Promise<void> {
     const me: any = this as any;
-    const ignore: string[] = ['hasSound', 'state'];
+    const ignore: string[] = ["hasSound", "state"];
     const restoreParams = SoundBuffer.soundBufferStoreParams.filter(param => ignore.indexOf(param) === -1);
     restoreParams.forEach((param: string) => {
       me[param] = data[param];

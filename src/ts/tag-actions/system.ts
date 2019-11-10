@@ -1,6 +1,6 @@
-import { Ponkan3 } from '../ponkan3';
-import { TagAction, TagActionResult, TagValue } from '../tag-action';
-import { PonEventHandler } from '../base/pon-event-handler';
+import { Ponkan3 } from "../ponkan3";
+import { TagAction, TagActionResult, TagValue } from "../tag-action";
+import { PonEventHandler } from "../base/pon-event-handler";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export default function(p: Ponkan3): TagAction[] {
@@ -19,14 +19,14 @@ export default function(p: Ponkan3): TagAction[] {
     ///   レイヤー数の変更は頻繁には行わないでください。
     ///   ゲーム開始時に必要なレイヤー数に設定し、以後は変更しないという使い方をしてください。
     new TagAction(
-      ['laycount'],
+      ["laycount"],
       [
         /// @param レイヤー数
-        new TagValue('count', 'number', true, null),
+        new TagValue("count", "number", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.layerCount = values.count;
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category システム
@@ -34,14 +34,14 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   各種エラーを発生させるか・無視するかの設定を行います。
     new TagAction(
-      ['raiseerror'],
+      ["raiseerror"],
       [
         /// @param `true` の場合、存在しないコマンドを実行したときにエラーにする
-        new TagValue('unknowncommand', 'boolean', false, null),
+        new TagValue("unknowncommand", "boolean", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         values.unknowncommand != null && (p.raiseError.unknowncommand = values.unknowncommand);
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category システム
@@ -49,11 +49,11 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   デバッグ情報をブラウザのコンソールに出力します。
     new TagAction(
-      ['dumpdebuginfo'],
+      ["dumpdebuginfo"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.dumpDebugInfo();
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category システム
@@ -63,11 +63,11 @@ export default function(p: Ponkan3): TagAction[] {
     ///   HTMLで作成したコンフィグ画面などを表示するときなどは、このコマンドで
     ///   イベント処理をロックするようにしてください。
     new TagAction(
-      ['lockgame'],
+      ["lockgame"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.lock();
-        return 'break';
+        return "break";
       },
     ),
     /// @category システム
@@ -75,11 +75,11 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   `lockgame` によるロックを解除します。
     new TagAction(
-      ['unlockgame'],
+      ["unlockgame"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.unlock();
-        return 'break';
+        return "break";
       },
     ),
     /// @category システム
@@ -92,11 +92,11 @@ export default function(p: Ponkan3): TagAction[] {
     ///
     ///   システム変数は、セーブ時やゲーム終了時に自動で保存され、ゲーム起動時に自動で復元されます。
     new TagAction(
-      ['clearsysvar'],
+      ["clearsysvar"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.resource.systemVar = {};
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category システム
@@ -106,11 +106,11 @@ export default function(p: Ponkan3): TagAction[] {
     ///
     ///   ゲーム変数はセーブデータごとに保存させる変数です。シナリオの進行管理などに利用します。
     new TagAction(
-      ['cleargamevar'],
+      ["cleargamevar"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.resource.gameVar = {};
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category システム
@@ -120,11 +120,11 @@ export default function(p: Ponkan3): TagAction[] {
     ///
     ///   一時変数はセーブデータ等に保存されません。一時的な値（計算の途中の値など）を保持するのに利用します。
     new TagAction(
-      ['cleartmpvar'],
+      ["cleartmpvar"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.resource.tmpVar = {};
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category システム
@@ -134,11 +134,11 @@ export default function(p: Ponkan3): TagAction[] {
     ///   システム変数は普通、ゲーム終了時に自動的に保存されますが、
     ///   このコマンドを利用して明示的に保存することもできます。
     new TagAction(
-      ['savesysvar'],
+      ["savesysvar"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.saveSystemData();
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category システム
@@ -147,14 +147,14 @@ export default function(p: Ponkan3): TagAction[] {
     ///   クリックスキップの有効無効を設定します。\n
     ///   クリックスキップとは、テキスト表示途中にクリックすると行末・ページ末までスキップする機能のことです。
     new TagAction(
-      ['clickskipopt', 'clickskip'],
+      ["clickskipopt", "clickskip"],
       [
         /// @param 有効ならtrue、無効ならfalseを指定
-        new TagValue('enabled', 'boolean', true, null),
+        new TagValue("enabled", "boolean", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.clickSkipEnabled = values.enabled;
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category システム
@@ -164,18 +164,18 @@ export default function(p: Ponkan3): TagAction[] {
     ///   このコマンドは画面揺れが終わるのを待ちません。
     ///   画面揺れ効果が終わるまで処理を止めたい場合は、`waitquake` を使用してください。
     new TagAction(
-      ['quake'],
+      ["quake"],
       [
         /// @param 画面揺れの時間
-        new TagValue('time', 'number', true, null),
+        new TagValue("time", "number", true, null),
         /// @param 横方向の揺れの最大値
-        new TagValue('x', 'number', false, 20),
+        new TagValue("x", "number", false, 20),
         /// @param 縦方向の揺れの最大値
-        new TagValue('y', 'number', false, 20),
+        new TagValue("y", "number", false, 20),
       ],
       (values: any, tick: number): TagActionResult => {
         p.startQuake(tick, values.time, values.x, values.y);
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category システム
@@ -184,11 +184,11 @@ export default function(p: Ponkan3): TagAction[] {
     ///   `quake` で開始した画面揺れ効果を即座に停止します。
     ///   画面揺れ効果が実行されていない場合には何もしません。
     new TagAction(
-      ['stopquake'],
+      ["stopquake"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.stopQuake();
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category システム
@@ -198,38 +198,38 @@ export default function(p: Ponkan3): TagAction[] {
     ///   `canskip: false` とした場合、スキップ処理やクリック等でスキップできなくなります。
     ///    イベントシーンなどでは `false` にしたほうが良いでしょう。
     new TagAction(
-      ['waitquake'],
+      ["waitquake"],
       [
         /// @param スキップ可能かどうか
-        new TagValue('canskip', 'boolean', false, true),
+        new TagValue("canskip", "boolean", false, true),
       ],
       (values: any, tick: number): TagActionResult => {
         if (!p.isQuaking) {
-          return 'continue';
+          return "continue";
         }
         if (p.isSkipping && values.canskip) {
           p.stopQuake();
-          return 'break';
+          return "break";
         } else {
           if (values.canskip) {
             p.conductor.addEventHandler(
               new PonEventHandler(
-                'click',
+                "click",
                 (): void => {
                   p.stopQuake();
                   p.conductor.start();
                 },
-                'waitquake',
+                "waitquake",
               ),
             );
           }
           p.conductor.addEventHandler(
             new PonEventHandler(
-              'quake',
+              "quake",
               (): void => {
                 p.conductor.start();
               },
-              'waitquake',
+              "waitquake",
             ),
           );
           return p.conductor.stop();
@@ -245,18 +245,18 @@ export default function(p: Ponkan3): TagAction[] {
     ///   jump を true に設定した場合、file と label で指定した場所へジャンプします。\n
     ///   call を true に設定した場合、file と label で指定した場所でサブルーチンを呼び出します。\n
     new TagAction(
-      ['rightclick', 'rclick'],
+      ["rightclick", "rclick"],
       [
         /// @param 右クリック時にjumpする場合はtrue
-        new TagValue('jump', 'boolean', false, null),
+        new TagValue("jump", "boolean", false, null),
         /// @param 右クリック時にcallする場合はtrue
-        new TagValue('call', 'boolean', false, null),
+        new TagValue("call", "boolean", false, null),
         /// @param jumpまたはcallするスクリプトファイル名
-        new TagValue('file', 'string', false, null),
+        new TagValue("file", "string", false, null),
         /// @param jumpまたはcallするラベル名
-        new TagValue('label', 'string', false, null),
+        new TagValue("label", "string", false, null),
         /// @param 右クリックの有効無効
-        new TagValue('enabled', 'boolean', false, null),
+        new TagValue("enabled", "boolean", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         if (values.jump != null) {
@@ -274,7 +274,7 @@ export default function(p: Ponkan3): TagAction[] {
         if (values.enabled != null) {
           p.rightClickEnabled = values.enabled;
         }
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category システム
@@ -282,16 +282,16 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   コマンドショートカットを設定します。
     new TagAction(
-      ['commandshortcut', 'cmdsc'],
+      ["commandshortcut", "cmdsc"],
       [
         /// @param ショートカットの文字
-        new TagValue('ch', 'string', true, null),
+        new TagValue("ch", "string", true, null),
         /// @param コマンドの名前
-        new TagValue('command', 'string', true, null),
+        new TagValue("command", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.addCommandShortcut(values.ch, values.command);
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category システム
@@ -299,14 +299,14 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   コマンドショートカットを削除します。
     new TagAction(
-      ['delcommandshortcut', 'delcmdsc'],
+      ["delcommandshortcut", "delcmdsc"],
       [
         /// @param ショートカットの文字
-        new TagValue('ch', 'string', true, null),
+        new TagValue("ch", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.delCommandShortcut(values.ch);
-        return 'continue';
+        return "continue";
       },
     ),
   ];

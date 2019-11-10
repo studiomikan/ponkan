@@ -1,7 +1,7 @@
-import { BaseLayer } from '../base/base-layer';
-import { Resource } from '../base/resource';
-import { Ponkan3 } from '../ponkan3';
-import { FilteredLayer } from './filtered-layer';
+import { BaseLayer } from "../base/base-layer";
+import { Resource } from "../base/resource";
+import { Ponkan3 } from "../ponkan3";
+import { FilteredLayer } from "./filtered-layer";
 
 export class PonLayer extends FilteredLayer {
   public autoHideWithMessage: boolean = false;
@@ -63,7 +63,7 @@ export class PonLayer extends FilteredLayer {
     super.freeImage();
   }
 
-  protected static ponLayerStoreParams: string[] = ['autoHideWithMessage', 'visibleBuffer'];
+  protected static ponLayerStoreParams: string[] = ["autoHideWithMessage", "visibleBuffer"];
 
   public storeVisible(): void {
     this.visibleBuffer = this.visible;

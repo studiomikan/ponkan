@@ -1,12 +1,12 @@
-import * as PIXI from 'pixi.js';
+import * as PIXI from "pixi.js";
 // import { Logger } from "./logger";
-import { PonGame } from './pon-game';
-import { PonMouseEvent } from './pon-mouse-event';
-import { IPonSpriteCallbacks, PonSprite } from './pon-sprite';
-import { IPonVideoCallbacks, PonVideo } from './pon-video';
-import { PonWheelEvent } from './pon-wheel-event';
-import { Resource } from './resource';
-import { Logger } from './logger';
+import { PonGame } from "./pon-game";
+import { PonMouseEvent } from "./pon-mouse-event";
+import { IPonSpriteCallbacks, PonSprite } from "./pon-sprite";
+import { IPonVideoCallbacks, PonVideo } from "./pon-video";
+import { PonWheelEvent } from "./pon-wheel-event";
+import { Resource } from "./resource";
+import { Logger } from "./logger";
 
 export class BaseLayerChar {
   public readonly ch: string;
@@ -37,7 +37,7 @@ export class BaseLayerTextLine {
 
   private _textX: number = 0;
 
-  private rubyText: string = '';
+  private rubyText: string = "";
   private rubyFontSize: number = 2;
   private rubyOffset: number = 2;
   private rubyPitch: number = 2;
@@ -58,7 +58,7 @@ export class BaseLayerTextLine {
     return this._textX;
   }
   public get text(): string {
-    let str = '';
+    let str = "";
     this.chList.forEach(blc => {
       str += blc.ch;
     });
@@ -128,9 +128,9 @@ export class BaseLayerTextLine {
     this.chList.push(new BaseLayerChar(ch, sp));
 
     // TODO ルビがあったら追加する
-    if (this.rubyText !== '') {
+    if (this.rubyText !== "") {
       this.addRubyText(sp, textStyle);
-      this.rubyText = '';
+      this.rubyText = "";
     }
   }
 
@@ -227,10 +227,10 @@ export class BaseLayer {
   protected debugText: PIXI.Text;
   /** デバッグ情報: テキスト情報のスタイル */
   public debugTextStyle: PIXI.TextStyle = new PIXI.TextStyle({
-    fontFamily: ['GenShinGothic', 'monospace'],
+    fontFamily: ["GenShinGothic", "monospace"],
     fontSize: 12,
-    fontWeight: 'normal',
-    fontStyle: 'normal',
+    fontWeight: "normal",
+    fontStyle: "normal",
     fill: 0xffffff,
     stroke: 0x000000,
     strokeThickness: 3,
@@ -314,12 +314,12 @@ export class BaseLayer {
   // 文字関係
   protected textLines: BaseLayerTextLine[] = [new BaseLayerTextLine()];
   public textStyle: PIXI.TextStyle = new PIXI.TextStyle({
-    fontFamily: ['GenShinGothic', 'monospace'],
+    fontFamily: ["GenShinGothic", "monospace"],
     fontSize: 24,
-    fontWeight: 'normal',
-    fontStyle: 'normal',
+    fontWeight: "normal",
+    fontStyle: "normal",
     fill: 0xffffff,
-    textBaseline: 'alphabetic',
+    textBaseline: "alphabetic",
     dropShadow: false,
     dropShadowAlpha: 0.7,
     dropShadowAngle: Math.PI / 6,
@@ -334,7 +334,7 @@ export class BaseLayer {
     this.textStyle.fontFamily = fontFamily;
   }
   public get textFontFamily(): string[] {
-    if (typeof this.textStyle.fontFamily === 'string') {
+    if (typeof this.textStyle.fontFamily === "string") {
       return [this.textStyle.fontFamily];
     } else {
       return this.textStyle.fontFamily;
@@ -373,17 +373,17 @@ export class BaseLayer {
   public get textGradientStops(): number[] {
     return this.textStyle.fillGradientStops;
   }
-  public set textGradientType(gradientType: 'vertical' | 'horizontal') {
+  public set textGradientType(gradientType: "vertical" | "horizontal") {
     this.textStyle.fillGradientType = {
       vertical: PIXI.TEXT_GRADIENT.LINEAR_VERTICAL,
       horizontal: PIXI.TEXT_GRADIENT.LINEAR_HORIZONTAL,
     }[gradientType];
   }
-  public get textGradientType(): 'vertical' | 'horizontal' {
+  public get textGradientType(): "vertical" | "horizontal" {
     if (this.textStyle.fillGradientType === PIXI.TEXT_GRADIENT.LINEAR_VERTICAL) {
-      return 'vertical';
+      return "vertical";
     } else {
-      return 'horizontal';
+      return "horizontal";
     }
   }
   public set textShadowVisible(visible: boolean) {
@@ -426,7 +426,7 @@ export class BaseLayer {
     this.textStyle.stroke = color;
   }
   public get textEdgeColor(): number | string {
-    if (typeof this.textStyle.stroke === 'number') {
+    if (typeof this.textStyle.stroke === "number") {
       return this.textStyle.stroke;
     } else {
       return this.textStyle.stroke as string;
@@ -455,7 +455,7 @@ export class BaseLayer {
   public textIndentPoint: number | null = null;
   public reservedTextIndentPoint: number | null = null;
   public reservedTextIndentClear: boolean = false;
-  public textAlign: 'left' | 'center' | 'right' = 'left';
+  public textAlign: "left" | "center" | "right" = "left";
   public rubyFontSize: number = 10;
   public rubyOffset: number = 2;
   public rubyPitch: number = 2;
@@ -463,9 +463,9 @@ export class BaseLayer {
   /** 禁則文字（行頭禁則文字） */
   public static headProhibitionChar: string =
     '%),:;]}｡｣ﾞﾟ。，、．：；゛゜ヽヾゝ"ゞ々’”）〕］｝〉》」』】°′″℃￠％‰' +
-    '!.?､･ｧｨｩｪｫｬｭｮｯｰ・？！ーぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ';
+    "!.?､･ｧｨｩｪｫｬｭｮｯｰ・？！ーぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ";
   /** 禁則文字（行末禁則文字） */
-  public static tailProhibitionChar: string = '\\$([{｢‘“（〔［｛〈《「『【￥＄￡';
+  public static tailProhibitionChar: string = "\\$([{｢‘“（〔［｛〈《「『【￥＄￡";
 
   public get children(): BaseLayer[] {
     return this._children;
@@ -710,7 +710,7 @@ export class BaseLayer {
 
   protected isBlockedEvent(e: PonMouseEvent | PonWheelEvent, eventName: string): boolean {
     if (e instanceof PonMouseEvent) {
-      if (eventName === 'down' || eventName === 'up') {
+      if (eventName === "down" || eventName === "up") {
         if (this.blockLeftClickFlag && e.isLeft) {
           return true;
         }
@@ -721,7 +721,7 @@ export class BaseLayer {
           return true;
         }
       }
-      if (eventName === 'move') {
+      if (eventName === "move") {
         if (this.blockMouseMove) {
           return true;
         }
@@ -911,7 +911,7 @@ export class BaseLayer {
       // if (e.stopPropagationFlag) { e.stopPropagation(); }
       // if (e.forceStopFlag) { return; }
     }
-    if (this.isBlockedEvent(e, 'wheel')) {
+    if (this.isBlockedEvent(e, "wheel")) {
       return false;
     }
     return true;
@@ -965,10 +965,10 @@ export class BaseLayer {
   }
 
   public get text(): string {
-    let str = '';
+    let str = "";
     this.textLines.forEach((textLine: BaseLayerTextLine) => {
-      if (str !== '') {
-        str += '\n';
+      if (str !== "") {
+        str += "\n";
       }
       str += textLine.text;
     });
@@ -987,7 +987,7 @@ export class BaseLayer {
    * レイヤにテキストを追加する
    */
   public addText(text: string): void {
-    if (text === '') {
+    if (text === "") {
       return;
     }
     for (let i = 0; i < text.length; i++) {
@@ -999,13 +999,13 @@ export class BaseLayer {
    * レイヤに1文字追加する
    */
   public addChar(ch: string): void {
-    if (ch === '') {
+    if (ch === "") {
       return;
     }
     if (ch.length > 1) {
       return this.addText(ch);
     }
-    if (ch === '\n' || ch === '\r') {
+    if (ch === "\n" || ch === "\r") {
       this.addTextReturn();
       return;
     }
@@ -1050,7 +1050,7 @@ export class BaseLayer {
     let y = currentLine.y;
     let newLineFlag = false;
     switch (this.textAlign) {
-      case 'left':
+      case "left":
         if (this.shouldBeNewTextLine(chWidth)) {
           x = this.getTextLineBasePoint();
           y = this.currentTextLine.y + this.textLineHeight + this.textLinePitch;
@@ -1060,7 +1060,7 @@ export class BaseLayer {
           y = currentLine.y;
         }
         break;
-      case 'center':
+      case "center":
         if (this.shouldBeNewTextLine(chWidth)) {
           x = this.getTextLineBasePoint() - chWidth / 2;
           y = this.currentTextLine.y + this.textLineHeight + this.textLinePitch;
@@ -1070,7 +1070,7 @@ export class BaseLayer {
           y = currentLine.y;
         }
         break;
-      case 'right':
+      case "right":
         x = right;
         y = currentLine.y;
         if (this.shouldBeNewTextLine(chWidth)) {
@@ -1096,11 +1096,11 @@ export class BaseLayer {
     const left = currentLine.x;
     const right = currentLine.x + currentLine.width;
     switch (this.textAlign) {
-      case 'left':
+      case "left":
         return right + chWidth > this.width - this.textMarginRight;
-      case 'center':
+      case "center":
         return left - chWidth / 2 < this.textMarginLeft || right + chWidth / 2 > this.width - this.textMarginRight;
-      case 'right':
+      case "right":
         return left - chWidth < this.textMarginLeft;
     }
   }
@@ -1129,13 +1129,13 @@ export class BaseLayer {
    */
   public alignCurrentTextLine(): void {
     switch (this.textAlign) {
-      case 'left':
+      case "left":
         this.currentTextLine.x = this.getTextLineBasePoint();
         break;
-      case 'center':
+      case "center":
         this.currentTextLine.x = this.getTextLineBasePoint() - this.currentTextLine.width / 2;
         break;
-      case 'right':
+      case "right":
         this.currentTextLine.x = this.getTextLineBasePoint() - this.currentTextLine.width;
         break;
     }
@@ -1152,13 +1152,13 @@ export class BaseLayer {
       return this.textLocatePoint;
     }
     switch (this.textAlign) {
-      case 'left':
+      case "left":
         return this.textIndentPoint == null ? this.textMarginLeft : this.textIndentPoint;
-      case 'center':
+      case "center":
         return this.textIndentPoint == null
           ? (this.width - this.textMarginLeft - this.textMarginRight) / 2
           : (this.width - this.textIndentPoint - this.textMarginRight) / 2;
-      case 'right':
+      case "right":
         return this.textIndentPoint == null ? this.width - this.textMarginRight : this.textIndentPoint;
     }
   }
@@ -1178,13 +1178,13 @@ export class BaseLayer {
     } else {
       // yだけ変えるときのxを自動算出
       switch (this.textAlign) {
-        case 'left':
+        case "left":
           this.textLocatePoint = preLine.x + preLine.width;
           break;
-        case 'center':
+        case "center":
           this.textLocatePoint = preLine.x + preLine.width / 2;
           break;
-        case 'right':
+        case "right":
           this.textLocatePoint = preLine.x;
           break;
       }
@@ -1203,11 +1203,11 @@ export class BaseLayer {
   public setIndentPoint(): void {
     const currentLine = this.currentTextLine;
     switch (this.textAlign) {
-      case 'left':
-      case 'center':
+      case "left":
+      case "center":
         this.reservedTextIndentPoint = currentLine.x + currentLine.width;
         break;
-      case 'right':
+      case "right":
         this.reservedTextIndentPoint = currentLine.x;
         break;
     }
@@ -1308,21 +1308,21 @@ export class BaseLayer {
         if (timeoutTimer != -1) {
           window.clearTimeout(timeoutTimer);
         }
-        video.source.removeEventListener('canplaythrough', onCanPlay);
+        video.source.removeEventListener("canplaythrough", onCanPlay);
         this.video = video;
         this.videoFilePath = filePath;
         this.width = this.video.width;
         this.height = this.video.height;
         resolve(this);
       };
-      video.source.addEventListener('canplaythrough', onCanPlay);
+      video.source.addEventListener("canplaythrough", onCanPlay);
       timeoutTimer = window.setTimeout(() => {
-        video.source.removeEventListener('canplaythrough', onCanPlay);
+        video.source.removeEventListener("canplaythrough", onCanPlay);
         reject(this);
       }, 30000); // TODO: タイムアウト時間を変更できるようにする
 
-      video.source.addEventListener('ended', () => {
-        this.owner.conductor.trigger('video');
+      video.source.addEventListener("ended", () => {
+        this.owner.conductor.trigger("video");
       });
     });
   }
@@ -1363,61 +1363,61 @@ export class BaseLayer {
   }
 
   protected static baseLayerStoreParams: string[] = [
-    'name',
-    'x',
-    'y',
-    'scaleX',
-    'scaleY',
-    'width',
-    'height',
-    'visible',
-    'alpha',
-    'backgroundColor',
-    'backgroundAlpha',
-    'hasBackgroundColor',
-    'imageFilePath',
-    'imageX',
-    'imageY',
-    'videoFilePath',
-    'videoWidth',
-    'videoHeight',
-    'videoLoop',
-    'videoVolume',
-    'textFontFamily',
-    'textFontSize',
-    'textFontWeight',
-    'textFontStyle',
-    'textColor',
-    'textShadowVisible',
-    'textShadowAlpha',
-    'textShadowAngle',
-    'textShadowBlur',
-    'textShadowColor',
-    'textShadowDistance',
-    'textEdgeColor',
-    'textEdgeWidth',
-    'textMarginTop',
-    'textMarginRight',
-    'textMarginBottom',
-    'textMarginLeft',
-    'textPitch',
-    'textLineHeight',
-    'textLinePitch',
-    'textAutoReturn',
-    'textLocatePoint',
-    'textIndentPoint',
-    'reservedTextIndentPoint',
-    'textAlign',
-    'rubyFontSize',
-    'rubyOffset',
-    'rubyPitch',
+    "name",
+    "x",
+    "y",
+    "scaleX",
+    "scaleY",
+    "width",
+    "height",
+    "visible",
+    "alpha",
+    "backgroundColor",
+    "backgroundAlpha",
+    "hasBackgroundColor",
+    "imageFilePath",
+    "imageX",
+    "imageY",
+    "videoFilePath",
+    "videoWidth",
+    "videoHeight",
+    "videoLoop",
+    "videoVolume",
+    "textFontFamily",
+    "textFontSize",
+    "textFontWeight",
+    "textFontStyle",
+    "textColor",
+    "textShadowVisible",
+    "textShadowAlpha",
+    "textShadowAngle",
+    "textShadowBlur",
+    "textShadowColor",
+    "textShadowDistance",
+    "textEdgeColor",
+    "textEdgeWidth",
+    "textMarginTop",
+    "textMarginRight",
+    "textMarginBottom",
+    "textMarginLeft",
+    "textPitch",
+    "textLineHeight",
+    "textLinePitch",
+    "textAutoReturn",
+    "textLocatePoint",
+    "textIndentPoint",
+    "reservedTextIndentPoint",
+    "textAlign",
+    "rubyFontSize",
+    "rubyOffset",
+    "rubyPitch",
   ];
 
   protected static baseLayerIgnoreParams: string[] = [
-    'backgroundColor',
-    'backgroundAlpha',
-    'hasBackgroundColor',
-    'isPlayingVideo',
+    "backgroundColor",
+    "backgroundAlpha",
+    "hasBackgroundColor",
+    "isPlayingVideo",
   ];
 
   /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -1460,7 +1460,7 @@ export class BaseLayer {
 
     this.freeImage();
     this.freeVideo();
-    if (data.imageFilePath != null && data.imageFilePath !== '' && data.imageFilePath !== this.imageFilePath) {
+    if (data.imageFilePath != null && data.imageFilePath !== "" && data.imageFilePath !== this.imageFilePath) {
       // 画像がある場合は非同期で読み込んでその後にサイズ等を復元する
       await this.loadImage(data.imageFilePath);
       storeParams();
@@ -1475,7 +1475,7 @@ export class BaseLayer {
       // });
     } else if (
       data.videoFilePath != null &&
-      data.videoFilePath != '' &&
+      data.videoFilePath != "" &&
       data.videoFilePath != this.videoFilePath &&
       data.videoLoop
     ) {

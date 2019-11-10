@@ -1,5 +1,5 @@
-import { PonGame } from './pon-game';
-import { Resource } from './resource';
+import { PonGame } from "./pon-game";
+import { Resource } from "./resource";
 
 class CrossFadeFilter extends PIXI.Filter<any> {
   public constructor() {
@@ -21,9 +21,9 @@ class CrossFadeFilter extends PIXI.Filter<any> {
       fragmentShader, // fragment shader
       {
         // uniforms
-        subSampler: { type: 'sampler2D', value: 1 },
-        foreAlpha: { type: 'float', value: 1.0 },
-        backAlpha: { type: 'float', value: 1.0 },
+        subSampler: { type: "sampler2D", value: 1 },
+        foreAlpha: { type: "float", value: 1.0 },
+        backAlpha: { type: "float", value: 1.0 },
       },
     );
   }
@@ -78,13 +78,13 @@ class UnivTransFilter extends PIXI.Filter<any> {
       fragmentShader, // fragment shader
       {
         // uniforms
-        subSampler: { type: 'sampler2D', value: 1 },
-        ruleSampler: { type: 'sampler2D', value: 1 },
-        time: { type: 'float', value: 1 },
-        elapsedTime: { type: 'float', value: 1 },
-        vague: { type: 'float', value: 1 },
-        phase: { type: 'float', value: 1 },
-        phaseMax: { type: 'float', value: 1 },
+        subSampler: { type: "sampler2D", value: 1 },
+        ruleSampler: { type: "sampler2D", value: 1 },
+        time: { type: "float", value: 1 },
+        elapsedTime: { type: "float", value: 1 },
+        vague: { type: "float", value: 1 },
+        phase: { type: "float", value: 1 },
+        phaseMax: { type: "float", value: 1 },
       },
     );
   }
@@ -96,14 +96,14 @@ export class TransManager {
 
   private startTick: number = -1;
   private time: number = 1000;
-  private method: 'univ' | 'scroll-to-right' | 'scroll-to-left' | 'scroll-to-top' | 'scroll-to-bottom' | 'crossfade' =
-    'crossfade';
+  private method: "univ" | "scroll-to-right" | "scroll-to-left" | "scroll-to-top" | "scroll-to-bottom" | "crossfade" =
+    "crossfade";
   private ruleFilePath: string | null = null;
   private ruleImage: HTMLImageElement | null = null;
   private ruleSprite: PIXI.Sprite | null = null;
   private vague: number = 0.25;
   private table: number[] = [];
-  private status: 'stop' | 'run' = 'stop';
+  private status: "stop" | "run" = "stop";
 
   private filters: any;
   private filter: PIXI.Filter<any>;
@@ -113,10 +113,10 @@ export class TransManager {
     this.resource = resource;
 
     this.filters = {
-      'scroll-to-right': null,
-      'scroll-to-left': null,
-      'scroll-to-top': null,
-      'scroll-to-bottom': null,
+      "scroll-to-right": null,
+      "scroll-to-left": null,
+      "scroll-to-top": null,
+      "scroll-to-bottom": null,
       univ: new UnivTransFilter(),
       crossfade: new CrossFadeFilter(),
     };
@@ -125,7 +125,7 @@ export class TransManager {
 
   public async initTrans(
     time: number,
-    method: 'scroll-to-right' | 'scroll-to-left' | 'scroll-to-top' | 'scroll-to-bottom' | 'univ' | 'crossfade',
+    method: "scroll-to-right" | "scroll-to-left" | "scroll-to-top" | "scroll-to-bottom" | "univ" | "crossfade",
   ): Promise<void> {
     if (this.isRunning) {
       this.stop();
@@ -149,7 +149,7 @@ export class TransManager {
   }
 
   public async initUnivTrans(time: number, ruleFilePath: string, vague = 0.25): Promise<void> {
-    this.initTrans(time, 'univ');
+    this.initTrans(time, "univ");
     this.ruleFilePath = ruleFilePath;
 
     if (vague < 0) {
@@ -175,7 +175,7 @@ export class TransManager {
   }
 
   public get isRunning(): boolean {
-    return this.status === 'run';
+    return this.status === "run";
   }
 
   /**
@@ -183,11 +183,11 @@ export class TransManager {
    * PonGameのonCompleteTransも呼び出される。
    */
   public stop(): void {
-    if (this.status !== 'run') {
+    if (this.status !== "run") {
       return;
     }
 
-    this.status = 'stop';
+    this.status = "stop";
     this.ruleFilePath = null;
     // 表ページと一緒に描画するのをやめる
     this.game.foreRenderer.delOtherRenderer();
@@ -203,7 +203,7 @@ export class TransManager {
   }
 
   public start(): void {
-    this.status = 'run';
+    this.status = "run";
     // 開始時に、表と裏は入れ替えておく
     this.game.flipPrimaryLayers();
     // フィルター関連の初期化
@@ -234,22 +234,22 @@ export class TransManager {
     this.game.backRenderer.draw(tick);
     this.game.backRenderer.texture.update();
     switch (this.method) {
-      case 'scroll-to-right':
-        this.drawScrollHorizontal(tick, elapsedTime, 'right');
+      case "scroll-to-right":
+        this.drawScrollHorizontal(tick, elapsedTime, "right");
         break;
-      case 'scroll-to-left':
-        this.drawScrollHorizontal(tick, elapsedTime, 'left');
+      case "scroll-to-left":
+        this.drawScrollHorizontal(tick, elapsedTime, "left");
         break;
-      case 'scroll-to-top':
-        this.drawScrollVertical(tick, elapsedTime, 'top');
+      case "scroll-to-top":
+        this.drawScrollVertical(tick, elapsedTime, "top");
         break;
-      case 'scroll-to-bottom':
-        this.drawScrollVertical(tick, elapsedTime, 'bottom');
+      case "scroll-to-bottom":
+        this.drawScrollVertical(tick, elapsedTime, "bottom");
         break;
-      case 'univ':
+      case "univ":
         this.drawUniv(tick, elapsedTime);
         break;
-      case 'crossfade':
+      case "crossfade":
         this.drawCrossFade(tick, elapsedTime);
         break;
       default:
@@ -259,7 +259,7 @@ export class TransManager {
     this.game.foreRenderer.draw(tick);
   }
 
-  public drawScrollHorizontal(tick: number, elapsedTime: number, to: 'left' | 'right'): void {
+  public drawScrollHorizontal(tick: number, elapsedTime: number, to: "left" | "right"): void {
     const width: number = this.game.width;
     let d: number = width * (elapsedTime / this.time);
     if (d < 0) {
@@ -269,10 +269,10 @@ export class TransManager {
       d = width;
     }
 
-    this.game.backRenderer.sprite.x = to === 'right' ? d - width : width - d;
+    this.game.backRenderer.sprite.x = to === "right" ? d - width : width - d;
   }
 
-  public drawScrollVertical(tick: number, elapsedTime: number, to: 'top' | 'bottom'): void {
+  public drawScrollVertical(tick: number, elapsedTime: number, to: "top" | "bottom"): void {
     const height: number = this.game.height;
     let d: number = height * (elapsedTime / this.time);
     if (d < 0) {
@@ -282,7 +282,7 @@ export class TransManager {
       d = height;
     }
 
-    this.game.backRenderer.sprite.y = to === 'bottom' ? d - height : height - d;
+    this.game.backRenderer.sprite.y = to === "bottom" ? d - height : height - d;
   }
 
   public drawCrossFade(tick: number, elapsedTime: number): void {

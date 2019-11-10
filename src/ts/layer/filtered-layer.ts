@@ -1,11 +1,11 @@
-import { Resource } from '../base/resource';
-import { Ponkan3 } from '../ponkan3';
-import { MovableLayer } from './movable-layer';
+import { Resource } from "../base/resource";
+import { Ponkan3 } from "../ponkan3";
+import { MovableLayer } from "./movable-layer";
 
-import { ColorFilter, createColorFilter } from '../filter/adjustment-filter';
-import { BlurFilter, createBlurFilter } from '../filter/blur-filter';
-import { ColorMatrixFilter, createColorMatrixFilter } from '../filter/color-matrix-filter';
-import { LayerFilter } from '../filter/layer-filter';
+import { ColorFilter, createColorFilter } from "../filter/adjustment-filter";
+import { BlurFilter, createBlurFilter } from "../filter/blur-filter";
+import { ColorMatrixFilter, createColorMatrixFilter } from "../filter/color-matrix-filter";
+import { LayerFilter } from "../filter/layer-filter";
 
 export class FilteredLayer extends MovableLayer {
   public get pixiFilters(): Array<PIXI.Filter<any>> {

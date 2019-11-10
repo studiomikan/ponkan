@@ -1,15 +1,15 @@
-import { ImageButtonLayer } from './image-button-layer';
-import { ToggleButton } from './toggle-button';
+import { ImageButtonLayer } from "./image-button-layer";
+import { ToggleButton } from "./toggle-button";
 
 export class ImageToggleButton extends ToggleButton {
-  protected direction: 'horizontal' | 'vertical' = 'horizontal';
+  protected direction: "horizontal" | "vertical" = "horizontal";
 
   public async initImageToggleButton(
     filePath: string,
     varName: string,
     isSystemButton = false,
     exp: string | null,
-    direction: 'horizontal' | 'vertical',
+    direction: "horizontal" | "vertical",
   ): Promise<void> {
     this.clearToggleButton();
     this.freeImage();
@@ -17,26 +17,26 @@ export class ImageToggleButton extends ToggleButton {
     try {
       await this.loadImage(filePath);
       this.direction = direction;
-      if (this.direction === 'vertical') {
+      if (this.direction === "vertical") {
         this.height = Math.floor(this.imageHeight / 2);
       } else {
         this.width = Math.floor(this.imageWidth / 2);
       }
       this.initToggleButton(varName, isSystemButton, exp);
     } catch (e) {
-      throw new Error('画像の読み込みに失敗しました。');
+      throw new Error("画像の読み込みに失敗しました。");
     }
   }
 
   public clearToggleButton(): void {
     super.clearToggleButton();
-    this.direction = 'horizontal';
+    this.direction = "horizontal";
   }
 
   public setValue(value: boolean): void {
     super.setValue(value);
 
-    if (this.direction === 'vertical') {
+    if (this.direction === "vertical") {
       if (value) {
         this.imageY = -Math.floor(this.imageHeight / 2);
       } else {
@@ -51,7 +51,7 @@ export class ImageToggleButton extends ToggleButton {
     }
   }
 
-  protected static imageToggleButtonStoreParams: string[] = ['direction'];
+  protected static imageToggleButtonStoreParams: string[] = ["direction"];
 
   public store(tick: number): any {
     const data: any = super.store(tick);
@@ -95,7 +95,7 @@ export class ToggleButtonLayer extends ImageButtonLayer {
     varName: string,
     isSystemButton = false,
     exp: string | null,
-    direction: 'horizontal' | 'vertical',
+    direction: "horizontal" | "vertical",
   ): Promise<void> {
     const name = `ImageToggleButton ${this.imageToggleButtons.length}`;
     const btn = new ImageToggleButton(name, this.resource, this.owner);
@@ -119,14 +119,14 @@ export class ToggleButtonLayer extends ImageButtonLayer {
   public lockButtons(): void {
     super.lockButtons();
     this.imageToggleButtons.forEach(toggleButton => {
-      toggleButton.setButtonStatus('disabled');
+      toggleButton.setButtonStatus("disabled");
     });
   }
 
   public unlockButtons(): void {
     super.unlockButtons();
     this.imageToggleButtons.forEach(toggleButton => {
-      toggleButton.setButtonStatus('enabled');
+      toggleButton.setButtonStatus("enabled");
     });
   }
 

@@ -1,16 +1,16 @@
-import { Resource } from './base/resource';
-import { Tag } from './base/tag';
-import { Ponkan3 } from './ponkan3';
+import { Resource } from "./base/resource";
+import { Tag } from "./base/tag";
+import { Ponkan3 } from "./ponkan3";
 
 export type TagValueType =
-  | 'number'
-  | 'boolean'
-  | 'string'
-  | 'array'
-  | 'object'
-  | 'function'
-  | 'string|function'
-  | 'number|array';
+  | "number"
+  | "boolean"
+  | "string"
+  | "array"
+  | "object"
+  | "function"
+  | "string|function"
+  | "number|array";
 
 export class TagValue {
   public readonly name: string;
@@ -26,7 +26,7 @@ export class TagValue {
   }
 }
 
-export type TagActionResult = 'continue' | 'break';
+export type TagActionResult = "continue" | "break";
 
 export class TagAction {
   public readonly names: string[];
@@ -46,8 +46,8 @@ export class TagAction {
 export function applyJsEntity(resource: Resource, values: any): void {
   for (const key in values) {
     if (Object.prototype.hasOwnProperty.call(values, key)) {
-      const value: string = ('' + values[key]) as string;
-      if (value.indexOf('&') === 0 && value.length >= 2) {
+      const value: string = ("" + values[key]) as string;
+      if (value.indexOf("&") === 0 && value.length >= 2) {
         const js: string = value.substring(1);
         values[key] = resource.evalJs(js);
       }
@@ -68,32 +68,32 @@ export function castTagValues(tag: Tag, tagAction: TagAction): void {
       return;
     }
     if (typeof value !== def.type) {
-      const str: string = '' + value;
+      const str: string = "" + value;
       switch (def.type) {
-        case 'number':
+        case "number":
           tag.values[def.name] = +str;
           if (isNaN(tag.values[def.name])) {
             throw new Error(`${tag.name}タグの${def.name}を数値に変換できませんでした(${str})`);
           }
           break;
-        case 'boolean':
-          tag.values[def.name] = str === 'true';
+        case "boolean":
+          tag.values[def.name] = str === "true";
           break;
-        case 'string':
+        case "string":
           tag.values[def.name] = str;
           break;
-        case 'function':
+        case "function":
           tag.values[def.name] = value;
           break;
-        case 'string|function':
-          if (typeof value === 'string') {
+        case "string|function":
+          if (typeof value === "string") {
             tag.values[def.name] = str;
           } else {
             tag.values[def.name] = value;
           }
           break;
-        case 'number|array':
-          if (typeof value === 'number') {
+        case "number|array":
+          if (typeof value === "number") {
             tag.values[def.name] = +str;
             if (isNaN(tag.values[def.name])) {
               throw new Error(`${tag.name}タグの${def.name}を数値に変換できませんでした(${str})`);
@@ -102,14 +102,14 @@ export function castTagValues(tag: Tag, tagAction: TagAction): void {
             tag.values[def.name] = value;
           }
           break;
-        case 'array':
+        case "array":
           if (!Array.isArray(value)) {
             throw new Error(`${tag.name}タグの${def.name}は配列である必要があります`);
           }
           tag.values[def.name] = value;
           break;
-        case 'object':
-          if (typeof value !== 'object' || Array.isArray(value)) {
+        case "object":
+          if (typeof value !== "object" || Array.isArray(value)) {
             throw new Error(`${tag.name}タグの${def.name}はオブジェクトである必要があります`);
           }
           tag.values[def.name] = value;
@@ -119,19 +119,19 @@ export function castTagValues(tag: Tag, tagAction: TagAction): void {
   });
 }
 
-import animation from './tag-actions/animation';
-import button from './tag-actions/button';
-import history from './tag-actions/history';
-import layerfilter from './tag-actions/layerfilter';
-import layer from './tag-actions/layer';
-import macro from './tag-actions/macro';
-import message from './tag-actions/message';
-import save from './tag-actions/save';
-import script from './tag-actions/script';
-import sound from './tag-actions/sound';
-import system from './tag-actions/system';
-import trans from './tag-actions/trans';
-import video from './tag-actions/video';
+import animation from "./tag-actions/animation";
+import button from "./tag-actions/button";
+import history from "./tag-actions/history";
+import layerfilter from "./tag-actions/layerfilter";
+import layer from "./tag-actions/layer";
+import macro from "./tag-actions/macro";
+import message from "./tag-actions/message";
+import save from "./tag-actions/save";
+import script from "./tag-actions/script";
+import sound from "./tag-actions/sound";
+import system from "./tag-actions/system";
+import trans from "./tag-actions/trans";
+import video from "./tag-actions/video";
 
 export function generateTagActions(p: Ponkan3): TagAction[] {
   return new Array<TagAction>()

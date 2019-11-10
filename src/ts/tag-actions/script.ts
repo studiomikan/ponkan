@@ -1,6 +1,6 @@
-import { Ponkan3 } from '../ponkan3';
-import { TagAction, TagActionResult, TagValue } from '../tag-action';
-import { PonEventHandler } from '../base/pon-event-handler';
+import { Ponkan3 } from "../ponkan3";
+import { TagAction, TagActionResult, TagValue } from "../tag-action";
+import { PonEventHandler } from "../base/pon-event-handler";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export default function(p: Ponkan3): TagAction[] {
@@ -14,13 +14,13 @@ export default function(p: Ponkan3): TagAction[] {
     ///   スクリプトの実行を停止します。
     ///   ボタン（選択肢）の押下待ちなどで使用します。
     new TagAction(
-      ['s'],
+      ["s"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.conductor.passLatestSaveMark();
         p.conductor.stop();
         p.stopSkip();
-        return 'break';
+        return "break";
       },
     ),
     /// @category スクリプト制御
@@ -32,18 +32,18 @@ export default function(p: Ponkan3): TagAction[] {
     ///   ファイルの読み込みや解析処理が発生するため、処理に時間がかかる場合があります。\n
     ///   同じスクリプトファイル内の移動は問題ありません。
     new TagAction(
-      ['jump'],
+      ["jump"],
       [
         /// @param 移動先のスクリプトファイル名。省略時は現在のファイル内で移動する
-        new TagValue('file', 'string', false, null),
+        new TagValue("file", "string", false, null),
         /// @param 移動先のラベル名。省略時はファイルの先頭
-        new TagValue('label', 'string', false, null),
+        new TagValue("label", "string", false, null),
         /// @param 現在の位置を既読にするかどうか
-        new TagValue('countpage', 'boolean', false, true),
+        new TagValue("countpage", "boolean", false, true),
       ],
       (values: any, tick: number): TagActionResult => {
         if (values.file == null && values.label == null) {
-          return 'continue';
+          return "continue";
         } else {
           p.conductor.jump(values.file, values.label, values.countpage).then(() => {
             p.conductor.start();
@@ -61,18 +61,18 @@ export default function(p: Ponkan3): TagAction[] {
     ///   ファイルの読み込みや解析処理が発生するため、処理に時間がかかる場合があります。\n
     ///   同じスクリプトファイル内の移動は問題ありません。
     new TagAction(
-      ['call'],
+      ["call"],
       [
         /// @param 移動先のスクリプトファイル名。省略時は現在のファイル内で移動する
-        new TagValue('file', 'string', false, null),
+        new TagValue("file", "string", false, null),
         /// @param 移動先のラベル名。省略時はファイルの先頭
-        new TagValue('label', 'string', false, null),
+        new TagValue("label", "string", false, null),
         /// @param 現在の位置を既読にするかどうか
-        new TagValue('countpage', 'boolean', false, false),
+        new TagValue("countpage", "boolean", false, false),
       ],
       (values: any, tick: number): TagActionResult => {
         if (values.file == null && values.label == null) {
-          return 'continue';
+          return "continue";
         } else {
           p.callSubroutine(values.file, values.label, values.countpage).then(() => {
             p.conductor.start();
@@ -91,12 +91,12 @@ export default function(p: Ponkan3): TagAction[] {
     ///   `forcestart` を `true` にした時は、呼び出し元へ戻ると同時に、`lb` `pb` コマンドなどで停止していたとしても、強制的に再開されます。
     ///   ただし `s` コマンドでスクリプトが完全に停止していた場合は停止したままです。
     new TagAction(
-      ['return'],
+      ["return"],
       [
         /// @param 戻った後、強制的にシナリオを再開する
-        new TagValue('forcestart', 'boolean', false, false),
+        new TagValue("forcestart", "boolean", false, false),
         /// @param 現在の位置を既読にするかどうか
-        new TagValue('countpage', 'boolean', false, true),
+        new TagValue("countpage", "boolean", false, true),
       ],
       (values: any, tick: number): TagActionResult => {
         return p.returnSubroutine(values.forcestart, values.countpage);
@@ -106,46 +106,46 @@ export default function(p: Ponkan3): TagAction[] {
     /// @description 条件によって分岐する
     /// @details
     new TagAction(
-      ['if'],
+      ["if"],
       [
         /// @param 条件式(JavaScript)
-        new TagValue('exp', 'string', true, null),
+        new TagValue("exp", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.conductor.script.ifJump(values.exp, p.tagActions);
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category スクリプト制御
     /// @description 条件によって分岐する
     /// @details
     new TagAction(
-      ['elseif', 'elsif'],
+      ["elseif", "elsif"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.conductor.script.elsifJump();
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category スクリプト制御
     /// @description 条件によって分岐する
     /// @details
     new TagAction(
-      ['else'],
+      ["else"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.conductor.script.elseJump();
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category スクリプト制御
     /// @description 条件分岐の終了
     /// @details
     new TagAction(
-      ['endif'],
+      ["endif"],
       [],
       (values: any, tick: number): TagActionResult => {
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category スクリプト制御
@@ -155,27 +155,27 @@ export default function(p: Ponkan3): TagAction[] {
     ///   `indexvar` で指定した名前の一時変数にループ回数が格納されます。
     ///   ループ回数は `0` から始まるため、 `0` 〜 `loops - 1` の値をとります。
     new TagAction(
-      ['for'],
+      ["for"],
       [
         /// @param 繰り替えし回数
-        new TagValue('loops', 'number', true, null),
+        new TagValue("loops", "number", true, null),
         /// @param ループ中のインデックスを格納する変数名
-        new TagValue('indexvar', 'string', false, '__index__'),
+        new TagValue("indexvar", "string", false, "__index__"),
       ],
       (values: any, tick: number): TagActionResult => {
         p.conductor.script.startForLoop(values.loops, values.indexvar);
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category スクリプト制御
     /// @description forループの終端
     /// @details
     new TagAction(
-      ['endfor'],
+      ["endfor"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.conductor.script.endForLoop();
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category スクリプト制御
@@ -184,11 +184,11 @@ export default function(p: Ponkan3): TagAction[] {
     ///   現在実行中の `for` ループから抜け、 `endfor` の位置まで移動します。\n
     ///   `if` コマンドなどと組み合わせて、条件によってループを抜けるときに使います。
     new TagAction(
-      ['breakfor'],
+      ["breakfor"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.conductor.script.breakForLoop();
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category スクリプト制御
@@ -196,11 +196,11 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   スキップ処理を開始します。
     new TagAction(
-      ['startskip', 'skip'],
+      ["startskip", "skip"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.startSkipByTag();
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category スクリプト制御
@@ -208,11 +208,11 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   スキップ処理を停止します。
     new TagAction(
-      ['stopskip'],
+      ["stopskip"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.stopSkip();
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category スクリプト制御
@@ -220,11 +220,11 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   オートモードを開始します。
     new TagAction(
-      ['startautomode', 'startauto', 'auto'],
+      ["startautomode", "startauto", "auto"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.startAutoMode();
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category スクリプト制御
@@ -232,11 +232,11 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   オートモードを停止します。
     new TagAction(
-      ['stopautomode', 'stopauto'],
+      ["stopautomode", "stopauto"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.stopAutoMode();
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category スクリプト制御
@@ -247,12 +247,12 @@ export default function(p: Ponkan3): TagAction[] {
     ///   `lay` では、オートモード中かどうかを表示するためのレイヤーを指定します。
     ///   オートモード中は、ここで指定したレイヤーが強制的に表示状態になります。
     new TagAction(
-      ['automodeopt', 'autoopt'],
+      ["automodeopt", "autoopt"],
       [
         /// @param オートモード状態表示に使用するレイヤー
-        new TagValue('lay', 'number', false, null),
+        new TagValue("lay", "number", false, null),
         /// @param オートモードのインターバル時間(ms)
-        new TagValue('time', 'number', false, null),
+        new TagValue("time", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         if (values.lay) {
@@ -261,7 +261,7 @@ export default function(p: Ponkan3): TagAction[] {
         if (values.time) {
           p.autoModeInterval = values.time;
         }
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category スクリプト制御
@@ -271,30 +271,30 @@ export default function(p: Ponkan3): TagAction[] {
     ///   `canskip: false` とした場合、スキップ処理やクリック等でスキップできなくなります。
     ///    イベントシーンなどでは `false` にしたほうが良いでしょう。
     new TagAction(
-      ['wait'],
+      ["wait"],
       [
         /// @param 停止時間(ms)
-        new TagValue('time', 'number', true, null),
+        new TagValue("time", "number", true, null),
         /// @param スキップ可能かどうか
-        new TagValue('canskip', 'boolean', false, true),
+        new TagValue("canskip", "boolean", false, true),
       ],
       (values: any, tick: number): TagActionResult => {
         if (p.isSkipping && values.canskip) {
-          return 'continue';
+          return "continue";
         } else {
           if (values.canskip) {
             p.conductor.addEventHandler(
               new PonEventHandler(
-                'click',
+                "click",
                 (): void => {
                   p.conductor.start();
                   p.stopUntilClickSkip(); // 次のlb,pbまで飛ばされるのを防ぐ
                 },
-                'wait',
+                "wait",
               ),
             );
           }
-          return p.conductor.sleep(tick, values.time, 'wait');
+          return p.conductor.sleep(tick, values.time, "wait");
         }
       },
     ),
@@ -305,25 +305,25 @@ export default function(p: Ponkan3): TagAction[] {
     ///   `canskip: false` とした場合、スキップ処理やクリック等でスキップできなくなります。
     ///    イベントシーンなどでは `false` にしたほうが良いでしょう。
     new TagAction(
-      ['waitclick'],
+      ["waitclick"],
       [
         /// @param スキップ可能かどうか
-        new TagValue('canskip', 'boolean', false, true),
+        new TagValue("canskip", "boolean", false, true),
       ],
       (values: any, tick: number): TagActionResult => {
         p.stopUntilClickSkip(); // クリック待ちまでのスキップを停止
         if (p.isSkipping && values.canskip) {
           // UNTIL_CLICK_WAITが終わってもなおスキップ中なら、クリック待ちはしない
           // ただし改行条件等を通常と揃えるために一度グリフを表示して、すぐに非表示にする
-          return 'continue';
+          return "continue";
         } else {
           p.conductor.addEventHandler(
             new PonEventHandler(
-              'click',
+              "click",
               (): void => {
                 p.conductor.start();
               },
-              'waitclick',
+              "waitclick",
             ),
           );
           if (p.autoModeFlag && values.canskip) {

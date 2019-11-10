@@ -1,8 +1,8 @@
-import { CommandButton } from './button';
-import { TextButtonLayer } from './text-button-layer';
+import { CommandButton } from "./button";
+import { TextButtonLayer } from "./text-button-layer";
 
 export class CommandImageButton extends CommandButton {
-  protected direction: 'horizontal' | 'vertical' = 'horizontal';
+  protected direction: "horizontal" | "vertical" = "horizontal";
 
   public async initImageButton(
     jump = true,
@@ -13,7 +13,7 @@ export class CommandImageButton extends CommandButton {
     isSystemButton = false,
     exp: string | null = null,
     file: string,
-    direction: 'horizontal' | 'vertical',
+    direction: "horizontal" | "vertical",
     onEnterSoundBuf: string,
     onLeaveSoundBuf: string,
     onClickSoundBuf: string,
@@ -34,52 +34,52 @@ export class CommandImageButton extends CommandButton {
     );
     this.direction = direction;
     await this.loadImage(file);
-    if (this.direction === 'vertical') {
+    if (this.direction === "vertical") {
       this.height = Math.floor(this.imageHeight / 3);
     } else {
       this.width = Math.floor(this.imageWidth / 3);
     }
-    this.setButtonStatus('disabled');
+    this.setButtonStatus("disabled");
   }
 
   public clearCommandButton(): void {
     super.clearCommandButton();
-    this.direction = 'horizontal';
+    this.direction = "horizontal";
   }
 
-  public setButtonStatus(status: 'normal' | 'over' | 'on' | 'disabled'): void {
+  public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
     super.setButtonStatus(status);
 
-    if (this.direction === 'vertical') {
+    if (this.direction === "vertical") {
       switch (status) {
-        case 'normal':
-        case 'disabled':
+        case "normal":
+        case "disabled":
           this.imageY = 0;
           break;
-        case 'over':
+        case "over":
           this.imageY = -Math.floor(this.imageHeight / 3);
           break;
-        case 'on':
+        case "on":
           this.imageY = -Math.floor((this.imageHeight / 3) * 2);
           break;
       }
     } else {
       switch (status) {
-        case 'normal':
-        case 'disabled':
+        case "normal":
+        case "disabled":
           this.imageX = 0;
           break;
-        case 'over':
+        case "over":
           this.imageX = -Math.floor(this.imageWidth / 3);
           break;
-        case 'on':
+        case "on":
           this.imageX = -Math.floor((this.imageWidth / 3) * 2);
           break;
       }
     }
   }
 
-  protected static imageButtonStoreParams: string[] = ['direction'];
+  protected static imageButtonStoreParams: string[] = ["direction"];
 
   public store(tick: number): any {
     const data: any = super.store(tick);
@@ -126,7 +126,7 @@ export class ImageButtonLayer extends TextButtonLayer {
     file: string,
     x: number,
     y: number,
-    direction: 'horizontal' | 'vertical',
+    direction: "horizontal" | "vertical",
     isSystemButton: boolean,
     onEnterSoundBuf: string,
     onLeaveSoundBuf: string,
@@ -167,14 +167,14 @@ export class ImageButtonLayer extends TextButtonLayer {
   public lockButtons(): void {
     super.lockButtons();
     this.imageButtons.forEach(imageButton => {
-      imageButton.setButtonStatus('disabled');
+      imageButton.setButtonStatus("disabled");
     });
   }
 
   public unlockButtons(): void {
     super.unlockButtons();
     this.imageButtons.forEach(imageButton => {
-      imageButton.setButtonStatus('normal');
+      imageButton.setButtonStatus("normal");
     });
   }
 

@@ -1,13 +1,13 @@
-import { BaseLayer } from '../base/base-layer';
-import { PonMouseEvent } from '../base/pon-mouse-event';
+import { BaseLayer } from "../base/base-layer";
+import { PonMouseEvent } from "../base/pon-mouse-event";
 
 /**
  * トグルボタン機能
  */
 export class ToggleButton extends BaseLayer {
   protected insideFlag: boolean = false;
-  protected buttonStatus: 'enabled' | 'disabled' = 'disabled';
-  protected varName: string = 'toggle-button-value';
+  protected buttonStatus: "enabled" | "disabled" = "disabled";
+  protected varName: string = "toggle-button-value";
   protected exp: string | null = null;
   protected isSystemButton: boolean = false;
   protected systemButtonLocked: boolean = false;
@@ -17,25 +17,25 @@ export class ToggleButton extends BaseLayer {
     this.varName = varName;
     this.isSystemButton = isSystemButton;
     this.exp = exp;
-    this.setButtonStatus('disabled');
+    this.setButtonStatus("disabled");
     this.setValue(this.getValue());
     this.visible = true;
   }
 
   public clearToggleButton(): void {
-    this.setButtonStatus('disabled');
+    this.setButtonStatus("disabled");
     this.insideFlag = false;
-    this.varName = 'toggle-button-value';
+    this.varName = "toggle-button-value";
     this.exp = null;
   }
 
-  public setButtonStatus(status: 'enabled' | 'disabled'): void {
+  public setButtonStatus(status: "enabled" | "disabled"): void {
     if (this.isSystemButton && this.systemButtonLocked) {
-      this.buttonStatus = 'disabled';
+      this.buttonStatus = "disabled";
     } else {
       this.buttonStatus = status;
     }
-    if (status === 'enabled' && this.insideFlag) {
+    if (status === "enabled" && this.insideFlag) {
       this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
     } else {
       this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
@@ -45,14 +45,14 @@ export class ToggleButton extends BaseLayer {
   public lockSystemButton(): void {
     if (this.isSystemButton) {
       this.systemButtonLocked = true;
-      this.setButtonStatus('disabled');
+      this.setButtonStatus("disabled");
     }
   }
 
   public unlockSystemButton(): void {
     if (this.isSystemButton) {
       this.systemButtonLocked = false;
-      this.setButtonStatus('enabled');
+      this.setButtonStatus("enabled");
     }
   }
   public setValue(value: boolean): void {
@@ -72,16 +72,16 @@ export class ToggleButton extends BaseLayer {
       return;
     }
     if (isStable) {
-      this.setButtonStatus('enabled');
+      this.setButtonStatus("enabled");
     } else {
-      this.setButtonStatus('disabled');
+      this.setButtonStatus("disabled");
     }
   }
 
   public onMouseEnter(e: PonMouseEvent): void {
     super.onMouseEnter(e);
 
-    if (this.buttonStatus !== 'disabled') {
+    if (this.buttonStatus !== "disabled") {
       this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
     }
     this.insideFlag = true;
@@ -90,7 +90,7 @@ export class ToggleButton extends BaseLayer {
   public onMouseLeave(e: PonMouseEvent): void {
     super.onMouseLeave(e);
 
-    if (this.buttonStatus !== 'disabled') {
+    if (this.buttonStatus !== "disabled") {
       this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
     }
     this.insideFlag = false;
@@ -99,7 +99,7 @@ export class ToggleButton extends BaseLayer {
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
 
-    if (this.buttonStatus !== 'disabled') {
+    if (this.buttonStatus !== "disabled") {
       this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.on;
     }
   }
@@ -110,21 +110,21 @@ export class ToggleButton extends BaseLayer {
       return;
     }
 
-    if (this.buttonStatus !== 'disabled') {
+    if (this.buttonStatus !== "disabled") {
       this.setValue(!this.getValue());
-      if (this.exp !== null && this.exp !== '') {
+      if (this.exp !== null && this.exp !== "") {
         this.resource.evalJs(this.exp);
       }
     }
   }
 
   protected static toggleButtonStoreParams: string[] = [
-    'insideFlag',
-    'buttonStatus',
-    'varName',
-    'isSystemButton',
-    'systemButtonLocked',
-    'exp',
+    "insideFlag",
+    "buttonStatus",
+    "varName",
+    "isSystemButton",
+    "systemButtonLocked",
+    "exp",
   ];
 
   public store(tick: number): any {

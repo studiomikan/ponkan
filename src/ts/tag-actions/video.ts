@@ -1,6 +1,6 @@
-import { Ponkan3 } from '../ponkan3';
-import { TagAction, TagActionResult, TagValue } from '../tag-action';
-import { PonEventHandler } from '../base/pon-event-handler';
+import { Ponkan3 } from "../ponkan3";
+import { TagAction, TagActionResult, TagValue } from "../tag-action";
+import { PonEventHandler } from "../base/pon-event-handler";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export default function(p: Ponkan3): TagAction[] {
@@ -20,32 +20,32 @@ export default function(p: Ponkan3): TagAction[] {
     ///
     ///   対応する動画ファイル形式は、プレイするブラウザに依存します。
     new TagAction(
-      ['loadvideo', 'video'],
+      ["loadvideo", "video"],
       [
         /// @param 対象レイヤー
-        new TagValue('lay', 'string', true, null),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue('page', 'string', false, 'current'),
+        new TagValue("page", "string", false, "current"),
         /// @param 動画ファイル
-        new TagValue('file', 'string', true, null),
+        new TagValue("file", "string", true, null),
         /// @param 動画の幅(px)
-        new TagValue('width', 'number', true, null),
+        new TagValue("width", "number", true, null),
         /// @param 動画の高さ(px)
-        new TagValue('height', 'number', true, null),
+        new TagValue("height", "number", true, null),
         /// @param 読み込み完了後に自動的に再生するかどうか
-        new TagValue('autoplay', 'boolean', false, true),
+        new TagValue("autoplay", "boolean", false, true),
         /// @param ループ再生するかどうか
-        new TagValue('loop', 'boolean', false, false),
+        new TagValue("loop", "boolean", false, false),
         /// @param 音量(0.0〜1.0)
-        new TagValue('volume', 'number', false, 1.0),
+        new TagValue("volume", "number", false, 1.0),
         /// @param 表示非表示
-        new TagValue('visible', 'boolean', false, null),
+        new TagValue("visible", "boolean", false, null),
         /// @param x座標(px)
-        new TagValue('x', 'number', false, null),
+        new TagValue("x", "number", false, null),
         /// @param y座標(px)
-        new TagValue('y', 'number', false, null),
+        new TagValue("y", "number", false, null),
         /// @param レイヤーのAlpha(0.0〜1.0)
-        new TagValue('alpha', 'number', false, 1.0),
+        new TagValue("alpha", "number", false, 1.0),
       ],
       (values: any, tick: number): TagActionResult => {
         const task: Promise<unknown>[] = [];
@@ -91,18 +91,18 @@ export default function(p: Ponkan3): TagAction[] {
     ///   動画を解放します。
     ///   動画再生が完了したら、必ずこのコマンドで解放するようにしてください。
     new TagAction(
-      ['freevideo'],
+      ["freevideo"],
       [
         /// @param 対象レイヤー
-        new TagValue('lay', 'string', true, null),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue('page', 'string', false, 'current'),
+        new TagValue("page", "string", false, "current"),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
           layer.freeVideo();
         });
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category 動画再生
@@ -110,16 +110,16 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   動画に関して設定します。
     new TagAction(
-      ['videoopt'],
+      ["videoopt"],
       [
         /// @param 対象レイヤー
-        new TagValue('lay', 'string', true, null),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue('page', 'string', false, 'current'),
+        new TagValue("page", "string", false, "current"),
         /// @param 音量(0.0〜1.0)
-        new TagValue('volume', 'number', false, null),
+        new TagValue("volume", "number", false, null),
         /// @param ループ再生するかどうか
-        new TagValue('loop', 'boolean', false, null),
+        new TagValue("loop", "boolean", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
@@ -130,7 +130,7 @@ export default function(p: Ponkan3): TagAction[] {
             layer.videoLoop = values.loop;
           }
         });
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category 動画再生
@@ -138,18 +138,18 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   動画再生を開始します。
     new TagAction(
-      ['playvideo'],
+      ["playvideo"],
       [
         /// @param 対象レイヤー
-        new TagValue('lay', 'string', true, null),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue('page', 'string', false, 'current'),
+        new TagValue("page", "string", false, "current"),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
           layer.playVideo();
         });
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category 動画再生
@@ -158,18 +158,18 @@ export default function(p: Ponkan3): TagAction[] {
     ///   動画再生を一時停止します。
     ///   再生再開するにはplayvideoコマンドを使用します。
     new TagAction(
-      ['pausevideo'],
+      ["pausevideo"],
       [
         /// @param 対象レイヤー
-        new TagValue('lay', 'string', true, null),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue('page', 'string', false, 'current'),
+        new TagValue("page", "string", false, "current"),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
           layer.pauseVideo();
         });
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category 動画再生
@@ -177,18 +177,18 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   動画再生を終了します。
     new TagAction(
-      ['stopvideo'],
+      ["stopvideo"],
       [
         /// @param 対象レイヤー
-        new TagValue('lay', 'string', true, null),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue('page', 'string', false, 'current'),
+        new TagValue("page", "string", false, "current"),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
           layer.stopVideo();
         });
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category 動画再生
@@ -197,38 +197,38 @@ export default function(p: Ponkan3): TagAction[] {
     ///   動画再生の終了を待ちます。\n
     ///   動画再生中のレイヤーが無い場合やループ再生の場合はなにもしません。
     new TagAction(
-      ['waitvideo'],
+      ["waitvideo"],
       [
         /// @param スキップ可能かどうか
-        new TagValue('canskip', 'boolean', false, true),
+        new TagValue("canskip", "boolean", false, true),
       ],
       (values: any, tick: number): TagActionResult => {
-        console.log('@@waitvideo', values);
+        console.log("@@waitvideo", values);
         if (!p.hasPlayingVideoLayer) {
-          return 'continue';
+          return "continue";
         }
         if (p.isSkipping && values.canskip) {
           p.waitVideoClickCallback();
-          return 'break';
+          return "break";
         } else {
           if (values.canskip) {
             p.conductor.addEventHandler(
               new PonEventHandler(
-                'click',
+                "click",
                 (): void => {
                   p.waitVideoClickCallback();
                 },
-                'waitvideo',
+                "waitvideo",
               ),
             );
           }
           p.conductor.addEventHandler(
             new PonEventHandler(
-              'video',
+              "video",
               (): void => {
                 p.waitVideoCompleteCallback();
               },
-              'waitvideo',
+              "waitvideo",
             ),
           );
           return p.conductor.stop();

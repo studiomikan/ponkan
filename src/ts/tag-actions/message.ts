@@ -1,7 +1,7 @@
-import { Ponkan3 } from '../ponkan3';
-import { TagAction, TagActionResult, TagValue } from '../tag-action';
-import { PonEventHandler } from '../base/pon-event-handler';
-import { PonLayer } from '../layer/pon-layer';
+import { Ponkan3 } from "../ponkan3";
+import { TagAction, TagActionResult, TagValue } from "../tag-action";
+import { PonEventHandler } from "../base/pon-event-handler";
+import { PonLayer } from "../layer/pon-layer";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export default function(p: Ponkan3): TagAction[] {
@@ -14,64 +14,64 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   テキストに関する設定を行います。
     new TagAction(
-      ['messageopt', 'mesopt'],
+      ["messageopt", "mesopt"],
       [
         /// @param 対象レイヤー
-        new TagValue('lay', 'string', false, 'message'),
+        new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
-        new TagValue('page', 'string', false, 'current'),
+        new TagValue("page", "string", false, "current"),
         /// @param フォント名の配列
-        new TagValue('fontfamily', 'array', false, null),
+        new TagValue("fontfamily", "array", false, null),
         /// @param フォントサイズ(px)
-        new TagValue('fontsize', 'number', false, null),
+        new TagValue("fontsize", "number", false, null),
         /// @param フォントウェイト
-        new TagValue('fontweight', 'string', false, null),
+        new TagValue("fontweight", "string", false, null),
         /// @param フォントスタイル。"normal" | "italic"
-        new TagValue('fontstyle', 'string', false, null),
+        new TagValue("fontstyle", "string", false, null),
         /// @param 文字色。0xRRGGBBで指定すると単色、[0xRRGGBB, 0xRRGGBB, ...]のように配列で指定するとグラデーションになります。
-        new TagValue('color', 'number|array', false, null),
+        new TagValue("color", "number|array", false, null),
         /// @param 文字色グラデーションの切り替えポイント([0.0, 0.0, ...])
-        new TagValue('gradientstops', 'array', false, null),
+        new TagValue("gradientstops", "array", false, null),
         /// @param 文字色グラデーションのタイプ（方向）。"vertical" | "horizontal"。初期値は"vertical"
-        new TagValue('gradienttype', 'string', false, null),
+        new TagValue("gradienttype", "string", false, null),
         /// @param テキスト描画のマージン 上
-        new TagValue('margint', 'number', false, null),
+        new TagValue("margint", "number", false, null),
         /// @param テキスト描画のマージン 右
-        new TagValue('marginr', 'number', false, null),
+        new TagValue("marginr", "number", false, null),
         /// @param テキスト描画のマージン 下
-        new TagValue('marginb', 'number', false, null),
+        new TagValue("marginb", "number", false, null),
         /// @param テキスト描画のマージン 左
-        new TagValue('marginl', 'number', false, null),
+        new TagValue("marginl", "number", false, null),
         /// @param テキストの文字間(px)
-        new TagValue('pitch', 'number', false, null),
+        new TagValue("pitch", "number", false, null),
         /// @param テキストの行の高さ(px)
-        new TagValue('lineheight', 'number', false, null),
+        new TagValue("lineheight", "number", false, null),
         /// @param テキストの行間(px)
-        new TagValue('linepitch', 'number', false, null),
+        new TagValue("linepitch", "number", false, null),
         /// @param テキスト寄せの方向。"left" | "center" | "right"
-        new TagValue('align', 'string', false, null),
+        new TagValue("align", "string", false, null),
         /// @param 影の表示非表示
-        new TagValue('shadow', 'boolean', false, null),
+        new TagValue("shadow", "boolean", false, null),
         /// @param 影のAlpha(0.0〜1.0)
-        new TagValue('shadowalpha', 'number', false, null),
+        new TagValue("shadowalpha", "number", false, null),
         /// @param 影の角度(ラジアン)
-        new TagValue('shadowangle', 'number', false, null),
+        new TagValue("shadowangle", "number", false, null),
         /// @param 影のBlur
-        new TagValue('shadowblur', 'number', false, null),
+        new TagValue("shadowblur", "number", false, null),
         /// @param 影の色(0xRRGGBB)
-        new TagValue('shadowcolor ', 'number', false, null),
+        new TagValue("shadowcolor ", "number", false, null),
         /// @param 影の距離(px)
-        new TagValue('shadowdistance', 'number', false, null),
+        new TagValue("shadowdistance", "number", false, null),
         /// @param 縁取りの太さ(px)。0で非表示になる
-        new TagValue('edgewidth', 'number', false, null),
+        new TagValue("edgewidth", "number", false, null),
         /// @param 縁取りの色(0xRRGGBB)
-        new TagValue('edgecolor', 'number', false, null),
+        new TagValue("edgecolor", "number", false, null),
         /// @param ルビのフォントファイズ(px)
-        new TagValue('rubysize', 'number', false, null),
+        new TagValue("rubysize", "number", false, null),
         /// @param ルビの文字間(px)
-        new TagValue('rubypitch', 'number', false, null),
+        new TagValue("rubypitch", "number", false, null),
         /// @param ルビのオフセット(px)
-        new TagValue('rubyoffset', 'number', false, null),
+        new TagValue("rubyoffset", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach((layer: PonLayer) => {
@@ -154,7 +154,7 @@ export default function(p: Ponkan3): TagAction[] {
             layer.rubyOffset = values.rubyoffset;
           }
         });
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category メッセージ操作
@@ -163,30 +163,30 @@ export default function(p: Ponkan3): TagAction[] {
     ///   指定したレイヤーに文字を出力します。\n
     ///   デフォルトではカレントメッセージレイヤーが操作対象です。
     new TagAction(
-      ['ch'],
+      ["ch"],
       [
         /// @param 出力する先のレイヤー
-        new TagValue('lay', 'string', false, 'message'),
+        new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
-        new TagValue('page', 'string', false, 'current'),
+        new TagValue("page", "string", false, "current"),
         /// @param 出力する文字
-        new TagValue('text', 'string', true, null),
+        new TagValue("text", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.hideBreakGlyph();
         p.getLayers(values).forEach(layer => {
           layer.addChar(values.text);
         });
-        if (values.page === 'fore' && p.addCharWithBackFlag) {
-          values.page = 'back';
+        if (values.page === "fore" && p.addCharWithBackFlag) {
+          values.page = "back";
           p.getLayers(values).forEach(layer => {
             layer.addChar(values.text);
           });
         }
         if (p.isSkipping || p.textSpeed === 0) {
-          return 'continue';
+          return "continue";
         } else {
-          return p.conductor.sleep(tick, p.textSpeed, 'ch');
+          return p.conductor.sleep(tick, p.textSpeed, "ch");
         }
       },
     ),
@@ -195,14 +195,14 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   次に出力する文字にルビ（ふりがな）を設定します。
     new TagAction(
-      ['ruby'],
+      ["ruby"],
       [
         /// @param 出力する先のレイヤー
-        new TagValue('lay', 'string', false, 'message'),
+        new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
-        new TagValue('page', 'string', false, 'current'),
+        new TagValue("page", "string", false, "current"),
         /// @param ルビ
-        new TagValue('text', 'string', false, null),
+        new TagValue("text", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         if (values.text != null) {
@@ -210,7 +210,7 @@ export default function(p: Ponkan3): TagAction[] {
             layer.reserveRubyText(values.text);
           });
         }
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category メッセージ操作
@@ -219,18 +219,18 @@ export default function(p: Ponkan3): TagAction[] {
     ///   指定したレイヤーのテキストを改行します。
     ///   デフォルトではカレントメッセージレイヤーが操作対象です。
     new TagAction(
-      ['br'],
+      ["br"],
       [
         /// @param 出力する先のレイヤー
-        new TagValue('lay', 'string', false, 'message'),
+        new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
-        new TagValue('page', 'string', false, 'current'),
+        new TagValue("page", "string", false, "current"),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
           layer.addTextReturn();
         });
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category メッセージ操作
@@ -239,19 +239,19 @@ export default function(p: Ponkan3): TagAction[] {
     ///   指定したレイヤーのテキストをクリアします。
     ///   デフォルトでは全レイヤーが対象です。
     new TagAction(
-      ['clear', 'c'],
+      ["clear", "c"],
       [
         /// @param 対象レイヤー
-        new TagValue('lay', 'string', false, 'all'),
+        new TagValue("lay", "string", false, "all"),
         /// @param 対象ページ
-        new TagValue('page', 'string', false, 'current'),
+        new TagValue("page", "string", false, "current"),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
           layer.clearText();
         });
         p.hideBreakGlyph();
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category メッセージ操作
@@ -267,18 +267,18 @@ export default function(p: Ponkan3): TagAction[] {
     ///
     ///   このコマンドとは別に、一時的にインターバル時間を 0 にする [`nowait`](#nowait) コマンドがあります。
     new TagAction(
-      ['textspeed'],
+      ["textspeed"],
       [
         /// @param インターバルのモード。"user" | "system"
-        new TagValue('mode', 'string', false, null),
+        new TagValue("mode", "string", false, null),
         /// @param ユーザーモードでの未読文章のインターバル時間(ms)
-        new TagValue('unread', 'number', false, null),
+        new TagValue("unread", "number", false, null),
         /// @param ユーザーモードでの既読文章のインターバル時間(ms)
-        new TagValue('read', 'number', false, null),
+        new TagValue("read", "number", false, null),
         /// @param システムモードでの未読文章のインターバル時間(ms)
-        new TagValue('sysunread', 'number', false, null),
+        new TagValue("sysunread", "number", false, null),
         /// @param システムモードでの既読文章のインターバル時間(ms)
-        new TagValue('sysread', 'number', false, null),
+        new TagValue("sysread", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         if (values.move != null) {
@@ -296,7 +296,7 @@ export default function(p: Ponkan3): TagAction[] {
         if (values.sysread != null) {
           p.readTextSpeed = values.sysread;
         }
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category メッセージ操作
@@ -305,11 +305,11 @@ export default function(p: Ponkan3): TagAction[] {
     ///   このコマンド実行直後から、文字出力のインターバル時間を一時的に 0 にします。
     ///   もとに戻すときは `endnowait` コマンドを使用します。
     new TagAction(
-      ['nowait'],
+      ["nowait"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.nowaitModeFlag = true;
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category メッセージ操作
@@ -317,11 +317,11 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   `nowait` の効果を終了します。j
     new TagAction(
-      ['endnowait'],
+      ["endnowait"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.nowaitModeFlag = false;
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category メッセージ操作
@@ -330,22 +330,22 @@ export default function(p: Ponkan3): TagAction[] {
     ///   テキスト表示で、次の文字を表示する位置を変更します。
     ///   以後のテキストは指定された位置からの表示となります。
     new TagAction(
-      ['textlocate', 'locate'],
+      ["textlocate", "locate"],
       [
         /// @param 対象レイヤー
-        new TagValue('lay', 'string', false, 'message'),
+        new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
-        new TagValue('page', 'string', false, 'current'),
+        new TagValue("page", "string", false, "current"),
         /// @param x座標
-        new TagValue('x', 'number', false, null),
+        new TagValue("x", "number", false, null),
         /// @param x座標
-        new TagValue('y', 'number', false, null),
+        new TagValue("y", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
           layer.setCharLocate(values.x, values.y);
         });
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category メッセージ操作
@@ -354,14 +354,14 @@ export default function(p: Ponkan3): TagAction[] {
     ///   現在の文字描画位置でインデントするように設定します。
     ///   インデント位置は `endindent` または `clear` でクリアされます。
     new TagAction(
-      ['indent'],
+      ["indent"],
       [
         /// @param 対象レイヤー
-        new TagValue('lay', 'string', false, 'message'),
+        new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
-        new TagValue('page', 'string', false, 'current'),
+        new TagValue("page", "string", false, "current"),
         /// @param メッセージ履歴もインデントするかどうか
-        new TagValue('history', 'boolean', false, true),
+        new TagValue("history", "boolean", false, true),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
@@ -370,7 +370,7 @@ export default function(p: Ponkan3): TagAction[] {
         if (values.history) {
           p.historyLayer.setHistoryIndentPoint();
         }
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category メッセージ操作
@@ -378,14 +378,14 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   `indent` で設定したインデント位置をクリアします。
     new TagAction(
-      ['endindent'],
+      ["endindent"],
       [
         /// @param 対象レイヤー
-        new TagValue('lay', 'string', false, 'message'),
+        new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
-        new TagValue('page', 'string', false, 'current'),
+        new TagValue("page", "string", false, "current"),
         /// @param メッセージ履歴もインデント解除するか
-        new TagValue('history', 'boolean', false, true),
+        new TagValue("history", "boolean", false, true),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
@@ -394,14 +394,14 @@ export default function(p: Ponkan3): TagAction[] {
         if (values.history) {
           p.historyLayer.clearHistoryIndentPoint();
         }
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category メッセージ操作
     /// @description 行末クリック待ちで停止する
     /// @details
     new TagAction(
-      ['linebreak', 'lb', 'l'],
+      ["linebreak", "lb", "l"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.stopUntilClickSkip(); // クリック待ちまでのスキップを停止
@@ -410,18 +410,18 @@ export default function(p: Ponkan3): TagAction[] {
           // ただし改行条件等を通常と揃えるために一度グリフを表示して、すぐに非表示にする
           p.showLineBreakGlyph(tick);
           p.hideBreakGlyph();
-          return 'break'; // クリック待ちはしないが、一回描画する
+          return "break"; // クリック待ちはしないが、一回描画する
         } else {
           // クリック待ちへ移行
           p.showLineBreakGlyph(tick);
           p.conductor.addEventHandler(
             new PonEventHandler(
-              'click',
+              "click",
               (): void => {
                 p.conductor.start();
                 p.hideBreakGlyph();
               },
-              'lb',
+              "lb",
             ),
           );
           p.reserveAutoClick(tick); // オートモード時の自動クリックを予約
@@ -433,7 +433,7 @@ export default function(p: Ponkan3): TagAction[] {
     /// @description 行末クリック待ちで停止する
     /// @details
     new TagAction(
-      ['pagebreak', 'pb', 'p'],
+      ["pagebreak", "pb", "p"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.stopUntilClickSkip(); // クリック待ちまでのスキップを停止
@@ -443,17 +443,17 @@ export default function(p: Ponkan3): TagAction[] {
           // ただし改行条件等を通常と揃えるために一度グリフを表示して、すぐに非表示にする
           p.showPageBreakGlyph(tick);
           p.hideBreakGlyph();
-          return 'break'; // クリック待ちはしないが、一回描画する
+          return "break"; // クリック待ちはしないが、一回描画する
         } else {
           p.showPageBreakGlyph(tick);
           p.conductor.addEventHandler(
             new PonEventHandler(
-              'click',
+              "click",
               (): void => {
                 p.conductor.start();
                 p.hideBreakGlyph();
               },
-              'pb',
+              "pb",
             ),
           );
           p.reserveAutoClick(tick); // オートモード時の自動クリックを予約
@@ -467,18 +467,18 @@ export default function(p: Ponkan3): TagAction[] {
     ///   メッセージレイヤを一時的に非表示にします。\
     ///   非表示中はスクリプトの実行が停止します。クリック等の操作で再開します。
     new TagAction(
-      ['hidemessages'],
+      ["hidemessages"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.hideMessages();
         p.conductor.addEventHandler(
           new PonEventHandler(
-            'click',
+            "click",
             (): void => {
               p.conductor.start();
               p.showMessages();
             },
-            'hidemessages',
+            "hidemessages",
           ),
         );
         return p.conductor.stop();

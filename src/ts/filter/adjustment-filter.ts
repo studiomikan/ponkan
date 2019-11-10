@@ -1,15 +1,15 @@
-import { AdjustmentFilter } from '@pixi/filter-adjustment';
-import { LayerFilter } from './layer-filter';
+import { AdjustmentFilter } from "@pixi/filter-adjustment";
+import { LayerFilter } from "./layer-filter";
 
 export class ColorFilter extends LayerFilter {
-  public static readonly filterName: string = 'color';
+  public static readonly filterName: string = "color";
   public get filterName(): string {
     return ColorFilter.filterName;
   }
   public get filter(): PIXI.filters.ColorMatrixFilter {
     return this._filter as PIXI.filters.ColorMatrixFilter;
   }
-  private static permitedList = ['gamma', 'saturation', 'contrast', 'brightness', 'red', 'green', 'blue'];
+  private static permitedList = ["gamma", "saturation", "contrast", "brightness", "red", "green", "blue"];
 
   public constructor(params: any) {
     super(params, ColorFilter.permitedList);
@@ -30,7 +30,7 @@ export class ColorFilter extends LayerFilter {
 
 export function createColorFilter(params: any): ColorFilter {
   if (params == null) {
-    throw new Error('Cannot create GammaFilter, params is empty.');
+    throw new Error("Cannot create GammaFilter, params is empty.");
   }
   return new ColorFilter(params);
 }

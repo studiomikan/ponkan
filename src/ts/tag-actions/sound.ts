@@ -1,7 +1,7 @@
-import { Ponkan3 } from '../ponkan3';
-import { TagAction, TagActionResult, TagValue } from '../tag-action';
-import { PonEventHandler } from '../base/pon-event-handler';
-import { SoundBuffer } from '../base/sound';
+import { Ponkan3 } from "../ponkan3";
+import { TagAction, TagActionResult, TagValue } from "../tag-action";
+import { PonEventHandler } from "../base/pon-event-handler";
+import { SoundBuffer } from "../base/sound";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export default function(p: Ponkan3): TagAction[] {
@@ -23,16 +23,16 @@ export default function(p: Ponkan3): TagAction[] {
     ///   ;loadsound "buf": "se", "file": "sound/pekowave1.mp3"
     ///   ```
     new TagAction(
-      ['bufalias'],
+      ["bufalias"],
       [
         /// @param エイリアス名
-        new TagValue('name', 'string', true, null),
+        new TagValue("name", "string", true, null),
         /// @param 対象レイヤー
-        new TagValue('buf', 'string', true, null),
+        new TagValue("buf", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.soundBufferAlias[values.name] = values.buf;
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category サウンド
@@ -40,14 +40,14 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   バッファ番号エイリアスを削除します。
     new TagAction(
-      ['delbufalias'],
+      ["delbufalias"],
       [
         /// @param エイリアス名
-        new TagValue('name', 'string', true, null),
+        new TagValue("name", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         delete p.soundBufferAlias[values.name];
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category サウンド
@@ -55,12 +55,12 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   指定の音声バッファに音声ファイルを読み込みます。
     new TagAction(
-      ['loadsound', 'sound'],
+      ["loadsound", "sound"],
       [
         /// @param 読み込み先バッファ番号
-        new TagValue('buf', 'string', true, null),
+        new TagValue("buf", "string", true, null),
         /// @param 読み込む音声ファイルパス
-        new TagValue('file', 'string', true, null),
+        new TagValue("file", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getSoundBuffer(values.buf)
@@ -80,14 +80,14 @@ export default function(p: Ponkan3): TagAction[] {
     ///   指定の音声バッファの音声を解放します。
     ///   使用が終わった音声はこのコマンドで解放するようにしてください。
     new TagAction(
-      ['freesound', 'unloadsound'],
+      ["freesound", "unloadsound"],
       [
         /// @param 読み込み先バッファ番号
-        new TagValue('buf', 'string', true, null),
+        new TagValue("buf", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getSoundBuffer(values.buf).freeSound();
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category サウンド
@@ -95,18 +95,18 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   音声に関して設定します。
     new TagAction(
-      ['soundopt'],
+      ["soundopt"],
       [
         /// @param バッファ番号
-        new TagValue('buf', 'string', true, null),
+        new TagValue("buf", "string", true, null),
         /// @param 音量(0.0〜1.0)
-        new TagValue('volume', 'number', false, null),
+        new TagValue("volume", "number", false, null),
         /// @param グローバル音量(0.0〜1.0)
-        new TagValue('gvolume', 'number', false, null),
+        new TagValue("gvolume", "number", false, null),
         /// @param シーク位置(ms)
-        new TagValue('seek', 'number', false, null),
+        new TagValue("seek", "number", false, null),
         /// @param ループ再生するかどうか
-        new TagValue('loop', 'boolean', false, null),
+        new TagValue("loop", "boolean", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         const sb: SoundBuffer = p.getSoundBuffer(values.buf);
@@ -122,7 +122,7 @@ export default function(p: Ponkan3): TagAction[] {
         if (values.loop != null) {
           sb.loop = values.loop;
         }
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category サウンド
@@ -130,14 +130,14 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   指定の音声バッファに読み込まれた音声を再生します。
     new TagAction(
-      ['playsound'],
+      ["playsound"],
       [
         /// @param 読み込み先バッファ番号
-        new TagValue('buf', 'string', true, null),
+        new TagValue("buf", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getSoundBuffer(values.buf).play();
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category サウンド
@@ -145,14 +145,14 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   指定の音声バッファの再生を停止します。
     new TagAction(
-      ['stopsound'],
+      ["stopsound"],
       [
         /// @param 読み込み先バッファ番号
-        new TagValue('buf', 'string', true, null),
+        new TagValue("buf", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getSoundBuffer(values.buf).stop();
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category サウンド
@@ -161,20 +161,20 @@ export default function(p: Ponkan3): TagAction[] {
     ///   指定の音声バッファの音量をフェードします。\n
     ///   このコマンドではフェード完了まで待ちません。フェードを待つ場合は `waitfade` コマンドを使用してください。
     new TagAction(
-      ['fadesound'],
+      ["fadesound"],
       [
         /// @param 読み込み先バッファ番号
-        new TagValue('buf', 'string', true, null),
+        new TagValue("buf", "string", true, null),
         /// @param フェード後の音量(0.0〜1.0)
-        new TagValue('volume', 'number', true, null),
+        new TagValue("volume", "number", true, null),
         /// @param フェード時間(ms)
-        new TagValue('time', 'number', true, null),
+        new TagValue("time", "number", true, null),
         /// @param フェード終了後に再生停止するか
-        new TagValue('autostop', 'boolean', false, false),
+        new TagValue("autostop", "boolean", false, false),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getSoundBuffer(values.buf).fade(values.volume, values.time, values.autostop);
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category サウンド
@@ -183,18 +183,18 @@ export default function(p: Ponkan3): TagAction[] {
     ///   指定の音声バッファをフェードアウトします。\n
     ///   このコマンドではフェード完了まで待ちません。フェードを待つ場合は `waitfade` コマンドを使用してください。
     new TagAction(
-      ['fadeoutsound', 'fadeout'],
+      ["fadeoutsound", "fadeout"],
       [
         /// @param 読み込み先バッファ番号
-        new TagValue('buf', 'string', true, null),
+        new TagValue("buf", "string", true, null),
         /// @param フェード時間(ms)
-        new TagValue('time', 'number', true, null),
+        new TagValue("time", "number", true, null),
         /// @param フェード終了後に自動的に再生停止するか
-        new TagValue('autostop', 'boolean', false, true),
+        new TagValue("autostop", "boolean", false, true),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getSoundBuffer(values.buf).fadeout(values.time, values.autostop);
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category サウンド
@@ -203,18 +203,18 @@ export default function(p: Ponkan3): TagAction[] {
     ///   指定の音声バッファをフェードインしながら再生開始します。
     ///   このコマンドではフェード完了まで待ちません。フェードを待つ場合は `waitfade` コマンドを使用してください。
     new TagAction(
-      ['fadeinsound', 'fadein'],
+      ["fadeinsound", "fadein"],
       [
         /// @param 読み込み先バッファ番号
-        new TagValue('buf', 'string', true, null),
+        new TagValue("buf", "string", true, null),
         /// @param フェード後の音量(0.0〜1.0)
-        new TagValue('volume', 'number', true, null),
+        new TagValue("volume", "number", true, null),
         /// @param フェード時間(ms)
-        new TagValue('time', 'number', true, null),
+        new TagValue("time", "number", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getSoundBuffer(values.buf).fadein(values.volume, values.time);
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category サウンド
@@ -223,40 +223,40 @@ export default function(p: Ponkan3): TagAction[] {
     ///   指定の音声バッファの音声が最後まで再生されるのを待ちます。\n
     ///   再生中でない場合やループ再生中の場合はなにもしません。
     new TagAction(
-      ['waitsoundstop', 'waitsound'],
+      ["waitsoundstop", "waitsound"],
       [
         /// @param 読み込み先バッファ番号
-        new TagValue('buf', 'string', true, null),
+        new TagValue("buf", "string", true, null),
         /// @param スキップ可能かどうか
-        new TagValue('canskip', 'boolean', false, true),
+        new TagValue("canskip", "boolean", false, true),
       ],
       (values: any, tick: number): TagActionResult => {
         const s: SoundBuffer = p.getSoundBuffer(values.buf);
         if (!s.playing || s.loop) {
-          return 'continue';
+          return "continue";
         }
         if (p.isSkipping && values.canskip) {
           p.waitSoundStopClickCallback(s);
-          return 'continue';
+          return "continue";
         } else {
           if (values.canskip) {
             p.conductor.addEventHandler(
               new PonEventHandler(
-                'click',
+                "click",
                 (): void => {
                   p.waitSoundStopClickCallback(s);
                 },
-                'waitsoundstop',
+                "waitsoundstop",
               ),
             );
           }
           p.conductor.addEventHandler(
             new PonEventHandler(
-              'soundstop',
+              "soundstop",
               (): void => {
                 p.waitSoundCompleteCallback(s);
               },
-              'waitsoundstop',
+              "waitsoundstop",
             ),
           );
           return p.conductor.stop();
@@ -268,40 +268,40 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   指定の音声バッファのフェードが完了するのを待ちます。
     new TagAction(
-      ['waitsoundfade', 'waitfade'],
+      ["waitsoundfade", "waitfade"],
       [
         /// @param 読み込み先バッファ番号
-        new TagValue('buf', 'string', true, null),
+        new TagValue("buf", "string", true, null),
         /// @param スキップ可能かどうか
-        new TagValue('canskip', 'boolean', false, true),
+        new TagValue("canskip", "boolean", false, true),
       ],
       (values: any, tick: number): TagActionResult => {
         const s: SoundBuffer = p.getSoundBuffer(values.buf);
         if (!s.fading) {
-          return 'continue';
+          return "continue";
         }
         if (p.isSkipping && values.canskip) {
           p.waitSoundFadeClickCallback(s);
-          return 'continue';
+          return "continue";
         } else {
           if (values.canskip) {
             p.conductor.addEventHandler(
               new PonEventHandler(
-                'click',
+                "click",
                 (): void => {
                   p.waitSoundFadeClickCallback(s);
                 },
-                'waitsoundfade',
+                "waitsoundfade",
               ),
             );
           }
           p.conductor.addEventHandler(
             new PonEventHandler(
-              'soundfade',
+              "soundfade",
               (): void => {
                 p.waitSoundFadeCompleteCallback(s);
               },
-              'waitsoundfade',
+              "waitsoundfade",
             ),
           );
           return p.conductor.stop();
@@ -314,14 +314,14 @@ export default function(p: Ponkan3): TagAction[] {
     ///   指定の音声バッファのフェードを終了します。\n
     ///   音声バッファの音量は即座にフェード後の音量になります。
     new TagAction(
-      ['endfadesound', 'endfade'],
+      ["endfadesound", "endfade"],
       [
         /// @param 読み込み先バッファ番号
-        new TagValue('buf', 'string', true, null),
+        new TagValue("buf", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getSoundBuffer(values.buf).endFade();
-        return 'continue';
+        return "continue";
       },
     ),
   ];

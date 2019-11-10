@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js';
+import * as PIXI from "pixi.js";
 
 export class PonRenderer {
   private _width: number;
@@ -41,7 +41,7 @@ export class PonRenderer {
       // transparent: true,
     });
     if (renderer instanceof PIXI.CanvasRenderer) {
-      throw new Error('WebGLに対応していません');
+      throw new Error("WebGLに対応していません");
     }
     this.renderer = renderer;
     parentElm.appendChild(this.renderer.view);

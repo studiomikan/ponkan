@@ -1,5 +1,5 @@
-import { Ponkan3 } from '../ponkan3';
-import { TagAction, TagActionResult, TagValue } from '../tag-action';
+import { Ponkan3 } from "../ponkan3";
+import { TagAction, TagActionResult, TagValue } from "../tag-action";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export default function(p: Ponkan3): TagAction[] {
@@ -12,12 +12,12 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   メッセージ履歴に関して設定します。
     new TagAction(
-      ['historyopt'],
+      ["historyopt"],
       [
         /// @param メッセージレイヤに文字を出力するかどうか
-        new TagValue('output', 'boolean', false, null),
+        new TagValue("output", "boolean", false, null),
         /// @param メッセージレイヤを表示できるかどうか
-        new TagValue('enabled', 'boolean', false, null),
+        new TagValue("enabled", "boolean", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         if (values.output != null) {
@@ -26,7 +26,7 @@ export default function(p: Ponkan3): TagAction[] {
         if (values.enabled != null) {
           p.enabledHistory = values.enabled;
         }
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category メッセージ履歴
@@ -34,11 +34,11 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   メッセージ履歴を表示します。
     new TagAction(
-      ['showhistory', 'history'],
+      ["showhistory", "history"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.showHistoryLayer();
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category メッセージ履歴
@@ -46,14 +46,14 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   メッセージ履歴に指定のテキストを出力します。
     new TagAction(
-      ['historych', 'hch'],
+      ["historych", "hch"],
       [
         /// @param 出力する文字
-        new TagValue('text', 'string', true, null),
+        new TagValue("text", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.addTextToHistory(values.text);
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category メッセージ履歴
@@ -61,11 +61,11 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   メッセージ履歴のテキストを改行します。
     new TagAction(
-      ['hbr'],
+      ["hbr"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.historyTextReturn();
-        return 'continue';
+        return "continue";
       },
     ),
   ];

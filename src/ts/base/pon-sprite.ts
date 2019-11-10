@@ -1,10 +1,10 @@
-import * as PIXI from 'pixi.js';
+import * as PIXI from "pixi.js";
 
 const DEFAULT_WIDTH = 32;
 const DEFAULT_HEIGHT = 32;
 
 // 日本語フォントの上部が見切れてしまう問題の対処
-PIXI.TextMetrics.BASELINE_SYMBOL += 'ぽン甘｜';
+PIXI.TextMetrics.BASELINE_SYMBOL += "ぽン甘｜";
 
 /**
  * PonSpriteのコールバック

@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js';
+import * as PIXI from "pixi.js";
 
 /**
  * PonVideoのコールバック
@@ -71,7 +71,7 @@ export class PonVideo {
   public constructor(videoTexture: PIXI.Texture, callbacks: IPonVideoCallbacks) {
     this.callbacks = callbacks;
     this.videoTexture = videoTexture;
-    this.source.preload = 'auto'; // for PIXI.js bug: https://github.com/pixijs/pixi.js/issues/5996
+    this.source.preload = "auto"; // for PIXI.js bug: https://github.com/pixijs/pixi.js/issues/5996
     this.videoSprite = new PIXI.Sprite(this.videoTexture);
     this.videoSprite.width = 700;
     this.videoSprite.height = 700;

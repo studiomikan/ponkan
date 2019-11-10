@@ -1,4 +1,4 @@
-import { Tag } from './tag';
+import { Tag } from "./tag";
 
 export class Macro {
   public readonly name: string;

@@ -1,10 +1,10 @@
-import { BaseLayer } from '../base/base-layer';
-import { PonGame } from '../base/pon-game';
-import { PonMouseEvent } from '../base/pon-mouse-event';
-import { PonWheelEvent } from '../base/pon-wheel-event';
-import { Resource } from '../base/resource';
-import * as Util from '../base/util';
-import { Button } from './button';
+import { BaseLayer } from "../base/base-layer";
+import { PonGame } from "../base/pon-game";
+import { PonMouseEvent } from "../base/pon-mouse-event";
+import { PonWheelEvent } from "../base/pon-wheel-event";
+import { Resource } from "../base/resource";
+import * as Util from "../base/util";
+import { Button } from "./button";
 
 export class HistoryButton extends Button {
   private callbacks: any;
@@ -13,7 +13,7 @@ export class HistoryButton extends Button {
     await this.loadImage(imagePath);
     this.initButton();
     this.width = Math.floor(this.imageWidth / 3);
-    this.setButtonStatus('normal');
+    this.setButtonStatus("normal");
   }
 
   public clearHistoryButton(): void {
@@ -21,18 +21,18 @@ export class HistoryButton extends Button {
     this.freeImage();
   }
 
-  public setButtonStatus(status: 'normal' | 'over' | 'on' | 'disabled'): void {
+  public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
     super.setButtonStatus(status);
 
     switch (status) {
-      case 'normal':
-      case 'disabled':
+      case "normal":
+      case "disabled":
         this.imageX = 0;
         break;
-      case 'over':
+      case "over":
         this.imageX = -Math.floor(this.imageWidth / 3);
         break;
-      case 'on':
+      case "on":
         this.imageX = -Math.floor((this.imageWidth / 3) * 2);
         break;
     }
@@ -60,7 +60,7 @@ export class HistoryButton extends Button {
 class SimpleButton extends BaseLayer {
   protected bgColors: number[] = [0xff0000, 0x00ff00, 0x0000ff];
   protected bgAlphas: number[] = [1.0, 1.0, 1.0];
-  protected status: 'normal' | 'over' | 'on' = 'normal';
+  protected status: "normal" | "over" | "on" = "normal";
   public mouseEnter: (sender: SimpleButton) => void = () => {
     return;
   };
@@ -81,11 +81,11 @@ class SimpleButton extends BaseLayer {
     this.bgColors = bgColors;
     this.bgAlphas = bgAlphas;
 
-    this.setStatus('normal');
+    this.setStatus("normal");
     this.visible = true;
   }
 
-  public setStatus(status: 'normal' | 'over' | 'on'): void {
+  public setStatus(status: "normal" | "over" | "on"): void {
     this.status = status;
     const c = { normal: 0, over: 1, on: 2 }[status];
     this.setBackgroundColor(this.bgColors[c], this.bgAlphas[c]);
@@ -95,14 +95,14 @@ class SimpleButton extends BaseLayer {
   public onMouseEnter(e: PonMouseEvent): void {
     super.onMouseEnter(e);
 
-    this.setStatus('over');
+    this.setStatus("over");
     this.mouseEnter(this);
   }
 
   public onMouseLeave(e: PonMouseEvent): void {
     super.onMouseLeave(e);
 
-    this.setStatus('normal');
+    this.setStatus("normal");
     this.mouseLeave(this);
   }
 
@@ -118,7 +118,7 @@ class SimpleButton extends BaseLayer {
     super.onMouseDown(e);
 
     if (this.isInsideEvent(e)) {
-      this.setStatus('on');
+      this.setStatus("on");
       this.mouseDown(this);
     }
   }
@@ -127,7 +127,7 @@ class SimpleButton extends BaseLayer {
     super.onMouseUp(e);
 
     if (this.isInsideEvent(e)) {
-      if (this.status !== 'on') {
+      if (this.status !== "on") {
         return;
       }
       if (!e.isLeft) {
@@ -177,7 +177,7 @@ class ScrollBar extends BaseLayer {
 
   public constructor(name: string, resource: Resource, owner: PonGame) {
     super(name, resource, owner);
-    this.bar = new ScrollBarButton('ScrollBarButton', resource, owner);
+    this.bar = new ScrollBarButton("ScrollBarButton", resource, owner);
   }
 
   public initScrollBar(config: any, buttonColors: number[], buttonAlphas: number[], minHeight: number): void {
@@ -335,9 +335,9 @@ class HistoryTextLayer extends BaseLayer {
   }
 
   public get historyText(): string {
-    let text = '';
+    let text = "";
     this.lines.forEach(line => {
-      text += line.join('') + '\n';
+      text += line.join("") + "\n";
     });
     return text;
   }
@@ -472,11 +472,11 @@ export class HistoryLayer extends BaseLayer {
 
   public constructor(name: string, resource: Resource, owner: PonGame) {
     super(name, resource, owner);
-    this.textLayer = new HistoryTextLayer('HistoryText', resource, owner);
-    this.upButton = new HistoryButton('ScrollUpButton', resource, owner);
-    this.downButton = new HistoryButton('ScrollDownButton', resource, owner);
-    this.scrollBar = new ScrollBar('ScrollBar', resource, owner);
-    this.closeButton = new HistoryButton('CloseButton', resource, owner);
+    this.textLayer = new HistoryTextLayer("HistoryText", resource, owner);
+    this.upButton = new HistoryButton("ScrollUpButton", resource, owner);
+    this.downButton = new HistoryButton("ScrollDownButton", resource, owner);
+    this.scrollBar = new ScrollBar("ScrollBar", resource, owner);
+    this.closeButton = new HistoryButton("CloseButton", resource, owner);
   }
 
   public async init(config: any = {}): Promise<void> {

@@ -1,13 +1,13 @@
-import { Howl, Howler } from 'howler';
-import { Logger } from './logger';
-import { Macro } from './macro';
-import { PonGame } from './pon-game';
-import { Script } from './script';
-import * as PIXI from 'pixi.js';
-import * as Util from './util';
+import { Howl, Howler } from "howler";
+import { Logger } from "./logger";
+import { Macro } from "./macro";
+import { PonGame } from "./pon-game";
+import { Script } from "./script";
+import * as PIXI from "pixi.js";
+import * as Util from "./util";
 
 export class Resource {
-  public gameVersion: string = '';
+  public gameVersion: string = "";
   public enableResourceCache: boolean = true;
   private ponGame: PonGame;
   private basePath: string;
@@ -19,10 +19,10 @@ export class Resource {
   private scriptCache: any = {};
 
   public cursor: any = {
-    disabled: 'auto',
-    normal: 'auto',
-    over: 'pointer',
-    on: 'pointer',
+    disabled: "auto",
+    normal: "auto",
+    over: "pointer",
+    on: "pointer",
   };
 
   public readonly macroInfo: any = {};
@@ -33,20 +33,20 @@ export class Resource {
 
   public commandShortcut: any = {};
 
-  public constructor(ponGame: PonGame, basePath = './gamedata', gameVersion = '0.0.0') {
+  public constructor(ponGame: PonGame, basePath = "./gamedata", gameVersion = "0.0.0") {
     this.ponGame = ponGame;
     this.basePath = this.fixPath(basePath);
     this.gameVersion = gameVersion;
 
     Howler.usingWebAudio = true;
 
-    this.bufferCanvas = document.createElement('canvas') as HTMLCanvasElement;
+    this.bufferCanvas = document.createElement("canvas") as HTMLCanvasElement;
     this.bufferCanvas.width = ponGame.width;
     this.bufferCanvas.height = ponGame.height;
 
-    const context: CanvasRenderingContext2D | null = this.bufferCanvas.getContext('2d');
+    const context: CanvasRenderingContext2D | null = this.bufferCanvas.getContext("2d");
     if (context === null) {
-      throw new Error('Canvasの初期化に失敗しました。');
+      throw new Error("Canvasの初期化に失敗しました。");
     }
     this.bufferCanvasContext = context;
   }
@@ -61,13 +61,13 @@ export class Resource {
 
   public saveSystemData(saveDataPrefix: string): void {
     try {
-      Logger.debug('==SYSTEM SAVE======================================');
+      Logger.debug("==SYSTEM SAVE======================================");
       Logger.debug(this.systemVar);
-      Logger.debug('===================================================');
+      Logger.debug("===================================================");
       this.storeToLocalStorage(`${saveDataPrefix}_sys`, JSON.stringify(this.systemVar));
     } catch (e) {
       Logger.error(e);
-      throw new Error('セーブデータの保存に失敗しました。JSON文字列に変換できません');
+      throw new Error("セーブデータの保存に失敗しました。JSON文字列に変換できません");
     }
   }
 
@@ -77,12 +77,12 @@ export class Resource {
       if (str != null) {
         Util.objExtend(this.systemVar, JSON.parse(str));
       }
-      Logger.debug('==SYSTEM LOAD======================================');
+      Logger.debug("==SYSTEM LOAD======================================");
       Logger.debug(this.systemVar);
-      Logger.debug('===================================================');
+      Logger.debug("===================================================");
     } catch (e) {
       Logger.error(e);
-      throw new Error('システムデータのロードに失敗しました');
+      throw new Error("システムデータのロードに失敗しました");
     }
   }
 
@@ -125,7 +125,7 @@ export class Resource {
    * パスの末尾からスラッシュを取り除いて返す
    */
   private fixPath(path: string): string {
-    return path[path.length - 1] === '/' ? path.substring(0, path.length - 1) : path;
+    return path[path.length - 1] === "/" ? path.substring(0, path.length - 1) : path;
   }
 
   /**
@@ -166,14 +166,14 @@ export class Resource {
       const xhr = new XMLHttpRequest();
       xhr.onload = (): void => {
         if (200 <= xhr.status && xhr.status < 300) {
-          Logger.debug('AJAX SUCCESS: ', xhr);
+          Logger.debug("AJAX SUCCESS: ", xhr);
           resolve(xhr.responseText);
         } else {
-          Logger.debug('AJAX FAILED: ', xhr);
+          Logger.debug("AJAX FAILED: ", xhr);
           reject(xhr.responseText);
         }
       };
-      xhr.open('GET', this.getPath(filePath), true);
+      xhr.open("GET", this.getPath(filePath), true);
       xhr.send();
     });
   }
@@ -228,7 +228,7 @@ export class Resource {
           reject(image);
         }
       };
-      if (filePath.indexOf('data:image/') === 0) {
+      if (filePath.indexOf("data:image/") === 0) {
         image.src = filePath;
       } else {
         image.src = path;
@@ -267,7 +267,7 @@ export class Resource {
       window.localStorage.setItem(name, data);
     } catch (e) {
       // ストレージが満杯だったときに発生
-      throw new Error('ストレージが満杯のため保存できませんでした');
+      throw new Error("ストレージが満杯のため保存できませんでした");
     }
   }
 

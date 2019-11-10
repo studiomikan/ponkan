@@ -1,5 +1,5 @@
-import { Ponkan3 } from '../ponkan3';
-import { TagAction, TagActionResult, TagValue } from '../tag-action';
+import { Ponkan3 } from "../ponkan3";
+import { TagAction, TagActionResult, TagValue } from "../tag-action";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export default function(p: Ponkan3): TagAction[] {
@@ -13,14 +13,14 @@ export default function(p: Ponkan3): TagAction[] {
     ///   最後に通過したセーブポイントの状態をセーブします。
     ///   セーブ／ロードの詳細は [セーブ／ロード](../save-and-load/)を参照してください。
     new TagAction(
-      ['save'],
+      ["save"],
       [
         /// @param セーブ番号
-        new TagValue('num', 'number', true, null),
+        new TagValue("num", "number", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.save(tick, values.num);
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category セーブ／ロード
@@ -28,10 +28,10 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   指定のセーブデータをロードします。
     new TagAction(
-      ['load'],
+      ["load"],
       [
         /// @param セーブ番号
-        new TagValue('num', 'number', true, null),
+        new TagValue("num", "number", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.load(tick, values.num)
@@ -55,14 +55,14 @@ export default function(p: Ponkan3): TagAction[] {
     ///   右クリックサブルーチンの開始時にこのコマンドで状態を保存しておき、
     ///   右クリックサブルーチンが終わったときに `tempload` でまとめて復元する、というような用途で使用します。
     new TagAction(
-      ['tempsave'],
+      ["tempsave"],
       [
         /// @param セーブ番号
-        new TagValue('num', 'number', true, null),
+        new TagValue("num", "number", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.tempSave(tick, values.num);
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category セーブ／ロード
@@ -73,14 +73,14 @@ export default function(p: Ponkan3): TagAction[] {
     ///   `toback: true` を指定したときは、一時セーブデータの表ページ―の情報を
     ///   裏ページ側に復元します。レイヤーの状態をトランジションで復元したい場合などに利用します。
     new TagAction(
-      ['tempload'],
+      ["tempload"],
       [
         /// @param セーブ番号
-        new TagValue('num', 'number', true, null),
+        new TagValue("num", "number", true, null),
         /// @param 音声もロードするかどうか
-        new TagValue('sound', 'boolean', false, false),
+        new TagValue("sound", "boolean", false, false),
         /// @param 表ページを裏ページとして復元するかどうか
-        new TagValue('toback', 'boolean', false, false),
+        new TagValue("toback", "boolean", false, false),
       ],
       (values: any, tick: number): TagActionResult => {
         p.tempLoad(tick, values.num, values.sound, values.toback)
@@ -101,52 +101,52 @@ export default function(p: Ponkan3): TagAction[] {
     ///   セーブ画面に入った直後にこのコマンドでスクリーンショットの状態を固定し、
     ///   セーブ画面から抜けるときに `unlockscreenshot` で解除する、というような使い方をします。
     new TagAction(
-      ['lockscreenshot'],
+      ["lockscreenshot"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.lockScreenShot();
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category セーブ／ロード
     /// @description スクリーンショットの固定を解除する
     /// @details
     new TagAction(
-      ['unlockscreenshot'],
+      ["unlockscreenshot"],
       [],
       (values: any, tick: number): TagActionResult => {
         p.unlockScreenShot();
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category セーブ／ロード
     /// @description セーブデータをコピーする
     /// @details
     new TagAction(
-      ['copysavedata', 'copysave'],
+      ["copysavedata", "copysave"],
       [
         /// @param コピー元のセーブ番号
-        new TagValue('srcnum', 'number', true, null),
+        new TagValue("srcnum", "number", true, null),
         /// @param コピー先のセーブ番号
-        new TagValue('destnum', 'number', true, null),
+        new TagValue("destnum", "number", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.copySaveData(values.srcnum, values.destnum);
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category セーブ／ロード
     /// @description セーブデータを削除する
     /// @details
     new TagAction(
-      ['deletesavedata', 'delsavedata', 'delsave'],
+      ["deletesavedata", "delsavedata", "delsave"],
       [
         /// @param セーブ番号
-        new TagValue('num', 'number', true, null),
+        new TagValue("num", "number", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.deleteSaveData(values.num);
-        return 'continue';
+        return "continue";
       },
     ),
   ];

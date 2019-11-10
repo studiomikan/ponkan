@@ -1,4 +1,4 @@
-import { Ponkan3 } from '../ponkan3';
+import { Ponkan3 } from "../ponkan3";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /**

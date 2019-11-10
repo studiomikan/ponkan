@@ -1,5 +1,5 @@
-import { Ponkan3 } from '../ponkan3';
-import { TagAction, TagActionResult, TagValue } from '../tag-action';
+import { Ponkan3 } from "../ponkan3";
+import { TagAction, TagActionResult, TagValue } from "../tag-action";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export default function(p: Ponkan3): TagAction[] {
@@ -12,18 +12,18 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   指定レイヤーに設定されたすべてのフィルタをクリアします。
     new TagAction(
-      ['clearfilters', 'clearfilter'],
+      ["clearfilters", "clearfilter"],
       [
         /// @param 対象レイヤー
-        new TagValue('lay', 'string', true, null),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue('page', 'string', false, 'current'),
+        new TagValue("page", "string", false, "current"),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
           layer.clearFilters();
         });
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category レイヤーフィルタ
@@ -31,28 +31,28 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   レイヤーにぼかしフィルタを設定します。
     new TagAction(
-      ['blur'],
+      ["blur"],
       [
         /// @param 対象レイヤー
-        new TagValue('lay', 'string', true, null),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue('page', 'string', false, 'current'),
+        new TagValue("page", "string", false, "current"),
         /// @param x軸方向のぼかし
-        new TagValue('blurx', 'number', false, 4),
+        new TagValue("blurx", "number", false, 4),
         /// @param y軸方向のぼかし
-        new TagValue('blury', 'number', false, 4),
+        new TagValue("blury", "number", false, 4),
         /// @param ぼかしの品質
-        new TagValue('quality', 'number', false, 4),
+        new TagValue("quality", "number", false, 4),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
-          layer.addFilter('blur', {
+          layer.addFilter("blur", {
             blurX: values.blurx,
             blurY: values.blury,
             quality: values.quality,
           });
         });
-        return 'continue';
+        return "continue";
       },
     ),
     /// @category レイヤーフィルタ
@@ -60,32 +60,32 @@ export default function(p: Ponkan3): TagAction[] {
     /// @details
     ///   レイヤーに色補正フィルタを設定します。
     new TagAction(
-      ['colorfilter'],
+      ["colorfilter"],
       [
         /// @param 対象レイヤー
-        new TagValue('lay', 'string', true, null),
+        new TagValue("lay", "string", true, null),
         /// @param 対象ページ
-        new TagValue('page', 'string', false, 'current'),
+        new TagValue("page", "string", false, "current"),
         /// @param ガンマ値補正
-        new TagValue('gamma', 'number', false, null),
+        new TagValue("gamma", "number", false, null),
         /// @param 彩度
-        new TagValue('saturation', 'number', false, null),
+        new TagValue("saturation", "number", false, null),
         /// @param コントラスト
-        new TagValue('contrast', 'number', false, null),
+        new TagValue("contrast", "number", false, null),
         /// @param 輝度
-        new TagValue('brightness', 'number', false, null),
+        new TagValue("brightness", "number", false, null),
         /// @param 色調（赤）
-        new TagValue('red', 'number', false, null),
+        new TagValue("red", "number", false, null),
         /// @param 色調（緑）
-        new TagValue('green', 'number', false, null),
+        new TagValue("green", "number", false, null),
         /// @param 色調（青）
-        new TagValue('blue', 'number', false, null),
+        new TagValue("blue", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
-          layer.addFilter('color', values);
+          layer.addFilter("color", values);
         });
-        return 'continue';
+        return "continue";
       },
     ),
   ];
