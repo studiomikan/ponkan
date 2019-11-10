@@ -42,44 +42,6 @@ export class BaseLayerTextLine {
   private rubyOffset: number = 2;
   private rubyPitch: number = 2;
 
-  public constructor() {
-    this.container = new PIXI.Container();
-    this.spriteCallbacks = {
-      pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
-        this.container.addChild(child);
-      },
-      pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
-        this.container.removeChild(child);
-      },
-    };
-  }
-
-  public forEach(func: (ch: BaseLayerChar, index: number) => void): void {
-    this.chList.forEach(func);
-  }
-
-  /**
-   * このテキスト行を破棄する。
-   * 以後、テキストを追加したりするとエラーになる。
-   */
-  public destroy(): void {
-    this.chList.forEach(blc => {
-      blc.destroy();
-    });
-    this.chList.splice(0, this.chList.length);
-    this.container.destroy();
-  }
-
-  /**
-   * このテキスト行の文字をすべてクリアする。
-   */
-  public clear(): void {
-    this.chList.forEach(blc => {
-      blc.destroy();
-    });
-    this.chList.splice(0, this.chList.length);
-  }
-
   public get x(): number {
     return this.container.x;
   }
@@ -117,6 +79,44 @@ export class BaseLayerTextLine {
       width += blc.sp.textWidth;
     });
     return width;
+  }
+
+  public constructor() {
+    this.container = new PIXI.Container();
+    this.spriteCallbacks = {
+      pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
+        this.container.addChild(child);
+      },
+      pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
+        this.container.removeChild(child);
+      },
+    };
+  }
+
+  public forEach(func: (ch: BaseLayerChar, index: number) => void): void {
+    this.chList.forEach(func);
+  }
+
+  /**
+   * このテキスト行を破棄する。
+   * 以後、テキストを追加したりするとエラーになる。
+   */
+  public destroy(): void {
+    this.chList.forEach(blc => {
+      blc.destroy();
+    });
+    this.chList.splice(0, this.chList.length);
+    this.container.destroy();
+  }
+
+  /**
+   * このテキスト行の文字をすべてクリアする。
+   */
+  public clear(): void {
+    this.chList.forEach(blc => {
+      blc.destroy();
+    });
+    this.chList.splice(0, this.chList.length);
   }
 
   public addChar(ch: string, textStyle: PIXI.TextStyle, pitch: number, lineHeight: number): void {
@@ -361,14 +361,23 @@ export class BaseLayer {
   public get textFontStyle(): string {
     return this.textStyle.fontStyle;
   }
-  public set textColor(color: number | string) {
+  public set textColor(color: number | string | number[] | string[] | CanvasGradient | CanvasPattern) {
     this.textStyle.fill = color;
   }
-  public get textColor(): number | string {
-    if (typeof this.textStyle.fill === 'number') {
-      return this.textStyle.fill;
+  public get textColor(): number | string | number[] | string[] | CanvasGradient | CanvasPattern {
+    return this.textStyle.fill;
+  }
+  public set textGradientType(gradientType: "vertical" | "horizontal") {
+    this.textStyle.fillGradientType = {
+      'vertical': PIXI.TEXT_GRADIENT.LINEAR_VERTICAL,
+      'horizontal': PIXI.TEXT_GRADIENT.LINEAR_HORIZONTAL
+    }[gradientType];
+  }
+  public get textGradientType(): 'vertical' | 'horizontal' {
+    if (this.textStyle.fillGradientType === PIXI.TEXT_GRADIENT.LINEAR_VERTICAL) {
+      return 'vertical';
     } else {
-      return this.textStyle.fill as string;
+      return 'horizontal';
     }
   }
   public set textShadowVisible(visible: boolean) {
@@ -399,11 +408,7 @@ export class BaseLayer {
     this.textStyle.dropShadowColor = color;
   }
   public get textShadowColor(): number | string {
-    if (typeof this.textStyle.dropShadowColor === 'number') {
-      return this.textStyle.dropShadowColor;
-    } else {
-      return this.textStyle.dropShadowColor as string;
-    }
+    return this.textStyle.dropShadowColor;
   }
   public set textShadowDistance(distance: number) {
     this.textStyle.dropShadowDistance = distance;
@@ -411,7 +416,6 @@ export class BaseLayer {
   public get textShadowDistance(): number {
     return this.textStyle.dropShadowDistance;
   }
-
   public set textEdgeColor(color: number | string) {
     this.textStyle.stroke = color;
   }
