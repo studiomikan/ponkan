@@ -1,6 +1,6 @@
-import { Logger } from "./logger";
-import { Resource } from "./resource";
-import { Tag } from "./tag";
+import { Logger } from './logger';
+import { Resource } from './resource';
+import { Tag } from './tag';
 
 export class ScriptParser {
   private resource: Resource;
@@ -31,7 +31,7 @@ export class ScriptParser {
 
   private getLine(): string | null {
     if (this.currentLineNum < this.lines.length) {
-      return this.lines[this.currentLineNum++].replace(/^[ \t]+|[ \t]+$/g, "");
+      return this.lines[this.currentLineNum++].replace(/^[ \t]+|[ \t]+$/g, '');
     } else {
       return null;
     }
@@ -51,7 +51,7 @@ export class ScriptParser {
       if (line === null) {
         break;
       }
-      if (line === "") {
+      if (line === '') {
         if (this.currentLineNum < this.lines.length) {
           this.addLinebreak();
         }
@@ -62,40 +62,40 @@ export class ScriptParser {
       const body = line.substring(1).trim();
       // Logger.debug("line: ", ch0, body);
 
-      if (line === "---") {
+      if (line === '---') {
         // JavaScript部
-        let js = "";
+        let js = '';
         while (true) {
           const tmp: string | null = this.getLineWithoutTrim();
-          if (tmp === null || tmp.trim() === "---") {
+          if (tmp === null || tmp.trim() === '---') {
             break;
           }
-          js += tmp + "\n";
+          js += tmp + '\n';
         }
-        this.addTag("__js__", { __body__: js, print: false });
+        this.addTag('__js__', { __body__: js, print: false });
       } else {
         // その他の一行コマンド類
         switch (ch0) {
-          case "#":
+          case '#':
             // コメント
             break;
-          case ";":
+          case ';':
             // コマンド
             this.parseCommand(body);
             break;
-          case "*":
+          case '*':
             // ラベル
             this.parseLabel(body);
             break;
-          case "~":
+          case '~':
             // セーブ更新マーク
             this.parseSaveMark(body);
             break;
-          case "-":
+          case '-':
             // JavaScript / JavaScript部
             this.parseJs(body);
             break;
-          case "=":
+          case '=':
             // JavaScript出力
             this.parseJsPrint(body);
             break;
@@ -105,7 +105,7 @@ export class ScriptParser {
         }
       }
     }
-    this.addTag("s", { __body__: "s" });
+    this.addTag('s', { __body__: 's' });
   }
 
   private parseCommand(body: string): void {
@@ -120,17 +120,17 @@ export class ScriptParser {
       } else {
         tagName = body.substring(0, reg.index).trim();
         valuesStr = body.substring(reg.index).trim();
-        if (valuesStr.indexOf("{") !== 0) {
+        if (valuesStr.indexOf('{') !== 0) {
           // { を省略しているとき
           valuesStr = `{${valuesStr}}`;
         } else {
           // { を省略していないとき
-          while (valuesStr.charAt(valuesStr.length - 1) !== "}") {
+          while (valuesStr.charAt(valuesStr.length - 1) !== '}') {
             const line: string | null = this.getLine();
             if (line === null) {
               break;
             }
-            valuesStr += " " + line.trim();
+            valuesStr += ' ' + line.trim();
           }
         }
         // values = JSON.parse(valuesStr);
@@ -146,49 +146,49 @@ export class ScriptParser {
   }
 
   private parseLabel(body: string): void {
-    this.addTag("__label__", { __body__: body });
+    this.addTag('__label__', { __body__: body });
   }
 
   private parseSaveMark(body: string): void {
-    const p: number = body.indexOf("|");
+    const p: number = body.indexOf('|');
     if (p !== -1) {
       let name: string = body.substring(0, p);
       const comment: string = body.substring(p + 1);
       if (name == null || name.length == 0) {
         name = `__save_mark_${this.saveMarkCount}__`;
       }
-      this.addTag("__save_mark__", { __body__: body, name, comment });
+      this.addTag('__save_mark__', { __body__: body, name, comment });
     } else if (body.length > 0) {
       const name = `__save_mark_${this.saveMarkCount}__`;
-      this.addTag("__save_mark__", { __body__: body, name, comment: body });
+      this.addTag('__save_mark__', { __body__: body, name, comment: body });
     } else {
       const name = `__save_mark_${this.saveMarkCount}__`;
-      this.addTag("__save_mark__", { __body__: body, name, comment: "" });
+      this.addTag('__save_mark__', { __body__: body, name, comment: '' });
     }
     this.saveMarkCount++;
   }
 
   private parseJs(body: string): void {
-    this.addTag("__js__", { __body__: body, print: false });
+    this.addTag('__js__', { __body__: body, print: false });
   }
 
   private parseJsPrint(body: string): void {
-    this.addTag("__js__", { __body__: body, print: true });
+    this.addTag('__js__', { __body__: body, print: true });
   }
 
   private parseText(line: string): void {
     for (let i = 0; i < line.length; i++) {
       const ch = line.charAt(i);
-      if (ch === "") {
+      if (ch === '') {
         continue;
       }
-      this.addTag("ch", { __body__: ch, text: ch });
+      this.addTag('ch', { __body__: ch, text: ch });
     }
     this.addLinebreak(); // 最後に改行を付与
   }
 
   private addLinebreak(): void {
-    this.addTag("__line_break__", { __body__: "\n" });
+    this.addTag('__line_break__', { __body__: '\n' });
   }
 
   private addTag(name: string, values: object): void {

@@ -1,10 +1,10 @@
-import { applyJsEntity, castTagValues } from "../tag-action";
-import { Logger } from "./logger";
-import { Macro } from "./macro";
-import { Resource } from "./resource";
-import { ScriptParser } from "./script-parser";
-import { Tag } from "./tag";
-import * as Util from "./util";
+import { applyJsEntity, castTagValues } from '../tag-action';
+import { Logger } from './logger';
+import { Macro } from './macro';
+import { Resource } from './resource';
+import { ScriptParser } from './script-parser';
+import { Tag } from './tag';
+import * as Util from './util';
 
 export interface IForLoopInfo {
   startTagPoint: number;
@@ -34,15 +34,15 @@ export class Script {
     if (scriptText != null) {
       this.parser = new ScriptParser(this.resource, scriptText);
     } else {
-      this.parser = new ScriptParser(this.resource, "");
+      this.parser = new ScriptParser(this.resource, '');
     }
   }
 
   public debugPrint(): void {
-    Logger.debug("============================================");
+    Logger.debug('============================================');
     this.parser.debugPrint();
-    Logger.debug("Script current point: ", this.tagPoint);
-    Logger.debug("============================================");
+    Logger.debug('Script current point: ', this.tagPoint);
+    Logger.debug('============================================');
   }
 
   public clone(): Script {
@@ -83,7 +83,7 @@ export class Script {
       if (tag == null) {
         throw new Error(`${this.filePath}内に、ラベル ${label} が見つかりませんでした`);
       }
-      if (tag.name === "__label__" && tag.values.__body__ === label) {
+      if (tag.name === '__label__' && tag.values.__body__ === label) {
         break;
       }
     }
@@ -103,7 +103,7 @@ export class Script {
       if (tag == null) {
         throw new Error(`${this.filePath}内に、セーブマーク ${saveMarkName} が見つかりませんでした`);
       }
-      if (tag.name === "__save_mark__" && tag.values.name === saveMarkName) {
+      if (tag.name === '__save_mark__' && tag.values.name === saveMarkName) {
         break;
       }
     }
@@ -183,7 +183,7 @@ export class Script {
       this.callMacro(tag);
       const nextTag: Tag | null = this.getNextTag();
       if (nextTag == null) {
-        throw new Error("コマンドショートカットの呼び出しに失敗しました");
+        throw new Error('コマンドショートカットの呼び出しに失敗しました');
       }
       return nextTag;
     } else {
@@ -206,12 +206,12 @@ export class Script {
     while (true) {
       const tag: Tag | null = this.getNextTagWithoutMacro();
       if (tag === null) {
-        throw new Error("マクロ定義エラー。macroとendmacroの対応が取れていません");
-      } else if (tag.name === "__label__") {
-        throw new Error("マクロ定義エラー。マクロの中でラベルは使用できません");
-      } else if (tag.name === "__save_mark__") {
-        throw new Error("マクロ定義エラー。マクロの中でセーブマークは使用できません");
-      } else if (tag.name === "endmacro") {
+        throw new Error('マクロ定義エラー。macroとendmacroの対応が取れていません');
+      } else if (tag.name === '__label__') {
+        throw new Error('マクロ定義エラー。マクロの中でラベルは使用できません');
+      } else if (tag.name === '__save_mark__') {
+        throw new Error('マクロ定義エラー。マクロの中でセーブマークは使用できません');
+      } else if (tag.name === 'endmacro') {
         break;
       } else {
         tags.push(tag.clone());
@@ -274,25 +274,25 @@ export class Script {
     while (true) {
       const tag: Tag | null = this.getNextTagForIf();
       if (tag === null) {
-        throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
+        throw new Error('条件分岐エラー。if/else/elsif/endifの対応が取れていません');
       }
-      if (tag.name === "if") {
+      if (tag.name === 'if') {
         depth++;
-      } else if (tag.name === "else") {
+      } else if (tag.name === 'else') {
         if (depth === 0) {
           break;
         }
-      } else if (tag.name === "endif") {
+      } else if (tag.name === 'endif') {
         if (depth === 0) {
           this.ifDepth--;
           if (this.ifDepth < 0) {
-            throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
+            throw new Error('条件分岐エラー。if/else/elsif/endifの対応が取れていません');
           }
           break;
         } else {
           depth--;
         }
-      } else if (tag.name === "elsif") {
+      } else if (tag.name === 'elsif') {
         if (depth === 0) {
           const tag2: Tag = tag.clone();
           applyJsEntity(this.resource, tag2.values);
@@ -303,7 +303,7 @@ export class Script {
         }
       }
       if (depth < 0) {
-        throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
+        throw new Error('条件分岐エラー。if/else/elsif/endifの対応が取れていません');
       }
     }
   }
@@ -334,16 +334,16 @@ export class Script {
     while (true) {
       const tag: Tag | null = this.getNextTagForIf();
       if (tag === null) {
-        throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
+        throw new Error('条件分岐エラー。if/else/elsif/endifの対応が取れていません');
         break;
       }
-      if (tag.name === "if") {
+      if (tag.name === 'if') {
         depth++;
-      } else if (tag.name === "endif") {
+      } else if (tag.name === 'endif') {
         if (depth === 0) {
           this.ifDepth--;
           if (this.ifDepth < 0) {
-            throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
+            throw new Error('条件分岐エラー。if/else/elsif/endifの対応が取れていません');
           }
           break;
         } else {
@@ -351,7 +351,7 @@ export class Script {
         }
       }
       if (depth < 0) {
-        throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
+        throw new Error('条件分岐エラー。if/else/elsif/endifの対応が取れていません');
       }
     }
   }
@@ -365,7 +365,7 @@ export class Script {
    * @param loops 繰り返し回数
    * @param indexVarName indexを格納する一時変数の名前。
    */
-  public startForLoop(loops: number, indexVarName = "__index__"): void {
+  public startForLoop(loops: number, indexVarName = '__index__'): void {
     const loopInfo: IForLoopInfo = {
       startTagPoint: this.tagPoint,
       indexVarName,
@@ -382,7 +382,7 @@ export class Script {
   public endForLoop(): void {
     const loopInfo = this.forLoopStack[this.forLoopStack.length - 1];
     if (loopInfo == null) {
-      throw new Error("予期しないendforです。forとendforの対応が取れていません");
+      throw new Error('予期しないendforです。forとendforの対応が取れていません');
     }
 
     if (++loopInfo.count < loopInfo.loops) {
@@ -401,12 +401,12 @@ export class Script {
     while (true) {
       const tag: Tag | null = this.getNextTagForIf();
       if (tag === null) {
-        throw new Error("breakforの動作エラー。forとendforの対応が取れていません");
+        throw new Error('breakforの動作エラー。forとendforの対応が取れていません');
         break;
       }
-      if (tag.name === "for") {
+      if (tag.name === 'for') {
         depth++;
-      } else if (tag.name === "endfor") {
+      } else if (tag.name === 'endfor') {
         if (depth === 0) {
           break;
         } else {
@@ -414,7 +414,7 @@ export class Script {
         }
       }
       if (depth < 0) {
-        throw new Error("breakforの動作エラー。forとendforの対応が取れていません");
+        throw new Error('breakforの動作エラー。forとendforの対応が取れていません');
       }
     }
   }

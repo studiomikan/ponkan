@@ -1,12 +1,12 @@
 export class ScreenShot {
   private canvas: HTMLCanvasElement;
   private context: CanvasRenderingContext2D;
-  private dataType: string = "image/jpeg";
+  private dataType: string = 'image/jpeg';
   private quality: number | null = 0.85;
-  public readonly nodata: string = "image/nodata.png";
+  public readonly nodata: string = 'image/nodata.png';
 
   public constructor(config: any) {
-    this.canvas = document.createElement("canvas");
+    this.canvas = document.createElement('canvas');
 
     if (config == null) {
       config = {};
@@ -36,13 +36,13 @@ export class ScreenShot {
       this.nodata = cfg.nodata;
     }
 
-    const context: CanvasRenderingContext2D | null = this.canvas.getContext("2d");
+    const context: CanvasRenderingContext2D | null = this.canvas.getContext('2d');
     if (context == null) {
-      throw new Error("Canvasの初期化に失敗しました");
+      throw new Error('Canvasの初期化に失敗しました');
     }
     this.context = context;
 
-    this.context.fillStyle = "#000000";
+    this.context.fillStyle = '#000000';
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     // テストのためbodyに追加

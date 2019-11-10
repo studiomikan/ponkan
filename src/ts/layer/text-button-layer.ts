@@ -1,12 +1,12 @@
-import { BaseLayer } from "../base/base-layer";
-import { CommandButton } from "./button";
-import { FrameAnimLayer } from "./frame-anim-layer";
+import { BaseLayer } from '../base/base-layer';
+import { CommandButton } from './button';
+import { FrameAnimLayer } from './frame-anim-layer';
 
 /**
  * テキストと背景色を指定できるボタン
  */
 export class TextButton extends CommandButton {
-  private txtBtnText: string = "";
+  private txtBtnText: string = '';
   public txtBtnNormalBackgroundColor: number = 0x000000;
   public txtBtnOverBackgroundColor: number = 0x000000;
   public txtBtnOnBackgroundColor: number = 0x000000;
@@ -22,16 +22,16 @@ export class TextButton extends CommandButton {
     countPage = true,
     isSystemButton = false,
     exp: string | null = null,
-    text = "",
+    text = '',
     normalBackgroundColor = 0x000000,
     overBackgroundColor = 0x000000,
     onBackgroundColor = 0x000000,
     normalBackgroundAlpha = 1.0,
     overBackgroundAlpha = 1.0,
     onBackgroundAlpha = 1.0,
-    onEnterSoundBuf = "",
-    onLeaveSoundBuf = "",
-    onClickSoundBuf = "",
+    onEnterSoundBuf = '',
+    onLeaveSoundBuf = '',
+    onClickSoundBuf = '',
   ): void {
     this.clearCommandButton();
     this.freeImage();
@@ -60,13 +60,13 @@ export class TextButton extends CommandButton {
 
     this.setBackgroundColor(normalBackgroundColor, normalBackgroundAlpha);
     this.addText(text);
-    this.setButtonStatus("disabled");
+    this.setButtonStatus('disabled');
   }
 
   public clearCommandButton(): void {
     super.clearCommandButton();
 
-    this.txtBtnText = "";
+    this.txtBtnText = '';
     this.txtBtnNormalBackgroundColor = 0x000000;
     this.txtBtnOverBackgroundColor = 0x000000;
     this.txtBtnOnBackgroundColor = 0x000000;
@@ -75,7 +75,7 @@ export class TextButton extends CommandButton {
     this.txtBtnOnBackgroundAlpha = 1.0;
   }
 
-  public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
+  public setButtonStatus(status: 'normal' | 'over' | 'on' | 'disabled'): void {
     super.setButtonStatus(status);
     this.resetTextButtonColors();
   }
@@ -84,16 +84,16 @@ export class TextButton extends CommandButton {
     let color: number | null = null;
     let alpha: number | null = null;
     switch (this.buttonStatus) {
-      case "normal":
-      case "disabled":
+      case 'normal':
+      case 'disabled':
         color = this.txtBtnNormalBackgroundColor;
         alpha = this.txtBtnNormalBackgroundAlpha;
         break;
-      case "over":
+      case 'over':
         color = this.txtBtnOverBackgroundColor;
         alpha = this.txtBtnOverBackgroundAlpha;
         break;
-      case "on":
+      case 'on':
         color = this.txtBtnOnBackgroundColor;
         alpha = this.txtBtnOnBackgroundAlpha;
         break;
@@ -108,13 +108,13 @@ export class TextButton extends CommandButton {
   }
 
   protected static textButtonStoreParams: string[] = [
-    "txtBtnText",
-    "txtBtnNormalBackgroundColor",
-    "txtBtnOverBackgroundColor",
-    "txtBtnOnBackgroundColor",
-    "txtBtnNormalBackgroundAlpha",
-    "txtBtnOverBackgroundAlpha",
-    "txtBtnOnBackgroundAlpha",
+    'txtBtnText',
+    'txtBtnNormalBackgroundColor',
+    'txtBtnOverBackgroundColor',
+    'txtBtnOnBackgroundColor',
+    'txtBtnNormalBackgroundAlpha',
+    'txtBtnOverBackgroundAlpha',
+    'txtBtnOnBackgroundAlpha',
   ];
 
   public store(tick: number): any {
@@ -159,7 +159,7 @@ export class TextButtonLayer extends FrameAnimLayer {
   protected textButtons: TextButton[] = [];
 
   public addTextButton(
-    btnName = "",
+    btnName = '',
     jump = true,
     call = false,
     filePath: string | null = null,
@@ -178,12 +178,12 @@ export class TextButtonLayer extends FrameAnimLayer {
     textMarginRight = 0,
     textMarginBottom = 0,
     textMarginLeft = 0,
-    textAlign: "left" | "center" | "right" = "center",
+    textAlign: 'left' | 'center' | 'right' = 'center',
     onEnterSoundBuf: string,
     onLeaveSoundBuf: string,
     onClickSoundBuf: string,
   ): void {
-    if (btnName == null || btnName === "") {
+    if (btnName == null || btnName === '') {
       btnName = `${this.textButtons.length}`;
     }
     const name = `TextButton ${btnName}`;
@@ -234,29 +234,29 @@ export class TextButtonLayer extends FrameAnimLayer {
     const dest: any = destLayer as any;
     const me: any = this as any;
     [
-      "textFontFamily",
-      "textFontSize",
-      "textFontWeight",
-      "textFontStyle",
-      "textColor",
-      "textShadowVisible",
-      "textShadowAlpha",
-      "textShadowAngle",
-      "textShadowBlur",
-      "textShadowColor",
-      "textShadowDistance",
-      "textEdgeColor",
-      "textEdgeWidth",
-      "textMarginTop",
-      "textMarginRight",
-      "textMarginBottom",
-      "textMarginLeft",
-      "textX",
-      "textY",
-      "textLineHeight",
-      "textLinePitch",
-      "textAutoReturn",
-      "textAlign",
+      'textFontFamily',
+      'textFontSize',
+      'textFontWeight',
+      'textFontStyle',
+      'textColor',
+      'textShadowVisible',
+      'textShadowAlpha',
+      'textShadowAngle',
+      'textShadowBlur',
+      'textShadowColor',
+      'textShadowDistance',
+      'textEdgeColor',
+      'textEdgeWidth',
+      'textMarginTop',
+      'textMarginRight',
+      'textMarginBottom',
+      'textMarginLeft',
+      'textX',
+      'textY',
+      'textLineHeight',
+      'textLinePitch',
+      'textAutoReturn',
+      'textAlign',
     ].forEach(param => {
       dest[param] = me[param];
     });
@@ -302,13 +302,13 @@ export class TextButtonLayer extends FrameAnimLayer {
 
   public lockButtons(): void {
     this.textButtons.forEach(textButton => {
-      textButton.setButtonStatus("disabled");
+      textButton.setButtonStatus('disabled');
     });
   }
 
   public unlockButtons(): void {
     this.textButtons.forEach(textButton => {
-      textButton.setButtonStatus("normal");
+      textButton.setButtonStatus('normal');
     });
   }
 

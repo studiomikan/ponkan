@@ -7,12 +7,12 @@ export function toRgb(color: number | string): string {
   let g = 0;
   let b = 0;
   switch (typeof color) {
-    case "string":
-      r = +("0x" + (color as string).substr(1, 2));
-      g = +("0x" + (color as string).substr(3, 2));
-      b = +("0x" + (color as string).substr(5, 2));
+    case 'string':
+      r = +('0x' + (color as string).substr(1, 2));
+      g = +('0x' + (color as string).substr(3, 2));
+      b = +('0x' + (color as string).substr(5, 2));
       break;
-    case "number":
+    case 'number':
       // tslint:disable
       r = Math.floor((color & 0xff0000) / 0x10000);
       g = Math.floor((color & 0x00ff00) / 0x100);
@@ -56,9 +56,9 @@ export function objClone(obj: any): any {
  */
 export function escapeHtml(html: string): string {
   return html
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }

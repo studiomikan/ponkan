@@ -1,4 +1,4 @@
-import { Tag } from "./tag";
+import { Tag } from './tag';
 
 export class ScriptParser2 {
   private scriptText: string;
@@ -12,7 +12,7 @@ export class ScriptParser2 {
   }
 
   public constructor(scriptText: string) {
-    this.scriptText = scriptText.replace(/\r\n/g, "\n");
+    this.scriptText = scriptText.replace(/\r\n/g, '\n');
     this.scriptTextLength = this.scriptText.length;
     this.currentLineNum = 0;
     this.parse();
@@ -29,32 +29,32 @@ export class ScriptParser2 {
       this.skipWhiteSpace();
       // let ch0: string = this.getChar();
       const ch0: string = this.readChar();
-      if (ch0 === "") {
+      if (ch0 === '') {
         break;
       }
 
       switch (ch0) {
-        case "#":
+        case '#':
           // コメント
           this.parseComment();
           break;
-        case "[":
+        case '[':
           // コマンド
           this.parseCommand();
           break;
-        case "*":
+        case '*':
           // ラベル
           this.parseLabel();
           break;
-        case "|":
+        case '|':
           // セーブ更新マーク
           this.parseSaveMark();
           break;
-        case "-":
+        case '-':
           // JavaScript
           this.parseJs();
           break;
-        case "=":
+        case '=':
           // JavaScript出力
           this.parseJsPrint();
           break;
@@ -63,7 +63,7 @@ export class ScriptParser2 {
           break;
       }
     }
-    this.addTag("s", { __body__: "s" });
+    this.addTag('s', { __body__: 's' });
   }
 
   private parseComment(): void {
@@ -76,7 +76,7 @@ export class ScriptParser2 {
     // コマンド名取得
     this.skipWhiteSpace();
     const commandName = this.getWord();
-    if (commandName === "" || commandName === "]") {
+    if (commandName === '' || commandName === ']') {
       throw new Error(`文法エラー：コマンド名がありません(line:${this.currentLineNum})`);
     }
 
@@ -86,33 +86,33 @@ export class ScriptParser2 {
     while (true) {
       this.skipWhiteSpace();
       // 終了判定
-      if (this.readChar() === "]") {
+      if (this.readChar() === ']') {
         this.getChar(); // "]" 読み捨て
         break;
       }
       // 値の名前
       this.skipWhiteSpace();
       const valueName = this.getWord();
-      if (valueName === "" || valueName === "") {
+      if (valueName === '' || valueName === '') {
         throw new Error(`文法エラー：値名がありません(line:${this.currentLineNum})`);
       }
       // イコール
       this.skipWhiteSpace();
       const equal = this.getChar();
-      if (equal !== "=") {
+      if (equal !== '=') {
         throw new Error(`文法エラー：=がありません(name:${commandName})(line:${this.currentLineNum})`);
       }
       // 値
       this.skipWhiteSpace();
       const value = this.getWord();
-      if (value === "" || value === "") {
+      if (value === '' || value === '') {
         throw new Error(`文法エラー：値がありません(name:${commandName})(line:${this.currentLineNum})`);
       }
 
       body += ` "${valueName}"="${value}"`;
       values[valueName] = value;
     }
-    body += "]";
+    body += ']';
     values.__body__ = body;
     this.addTag(commandName, values);
   }
@@ -120,69 +120,69 @@ export class ScriptParser2 {
   private parseLabel(): void {
     const line = this.readUntilLineBreak();
     const body = line.substring(1).trim();
-    this.addTag("__label__", { __body__: body });
+    this.addTag('__label__', { __body__: body });
   }
 
   private parseSaveMark(): void {
     const line = this.readUntilLineBreak();
     const body = line.substring(1).trim();
-    const p: number = body.indexOf(":");
+    const p: number = body.indexOf(':');
     if (p !== -1) {
       const name: string = body.substring(0, p);
       const comment: string = body.substring(p);
-      this.addTag("__save_mark__", { __body__: body, name, comment });
+      this.addTag('__save_mark__', { __body__: body, name, comment });
     } else if (body.length > 0) {
       const name = `__save_mark_${this.currentLineNum}__`;
-      this.addTag("__save_mark__", { __body__: body, name, comment: body });
+      this.addTag('__save_mark__', { __body__: body, name, comment: body });
     } else {
       const name = `__save_mark_${this.currentLineNum}__`;
-      this.addTag("__save_mark__", { __body__: body, name, comment: "" });
+      this.addTag('__save_mark__', { __body__: body, name, comment: '' });
     }
   }
 
   private parseJs(): void {
-    if (this.read3Char() === "---") {
+    if (this.read3Char() === '---') {
       this.readUntilLineBreak(); // "---" を読み捨てる
-      let js = "";
+      let js = '';
       while (true) {
         const tmp: string = this.readUntilLineBreak();
-        if (tmp === "" || tmp.trim() === "---") {
+        if (tmp === '' || tmp.trim() === '---') {
           break;
         }
-        js += tmp + "\n";
+        js += tmp + '\n';
       }
-      this.addTag("__js__", { __body__: js, print: false });
+      this.addTag('__js__', { __body__: js, print: false });
     } else {
       const line = this.readUntilLineBreak();
       const body = line.substring(1).trim();
-      this.addTag("__js__", { __body__: body, print: false });
+      this.addTag('__js__', { __body__: body, print: false });
     }
   }
 
   private parseJsPrint(): void {
     const line = this.readUntilLineBreak();
     const body = line.substring(1).trim();
-    this.addTag("__js__", { __body__: body, print: true });
+    this.addTag('__js__', { __body__: body, print: true });
   }
 
   private parseText(ch: string): void {
-    this.addTag("ch", { __body__: ch, text: ch });
+    this.addTag('ch', { __body__: ch, text: ch });
   }
 
   private dropUntilLineBreak(): void {
     while (true) {
       const ch: string = this.getChar();
-      if (ch === "" || this.isLineBreak(ch)) {
+      if (ch === '' || this.isLineBreak(ch)) {
         break;
       }
     }
   }
 
   private readUntilLineBreak(): string {
-    let str = "";
+    let str = '';
     while (true) {
       const ch: string = this.getChar();
-      if (ch === "" || this.isLineBreak(ch)) {
+      if (ch === '' || this.isLineBreak(ch)) {
         break;
       }
       str += ch;
@@ -192,22 +192,22 @@ export class ScriptParser2 {
 
   private getWord(): string {
     const ch0 = this.getChar();
-    if (ch0 === "") {
-      return "";
+    if (ch0 === '') {
+      return '';
     }
 
     if (ch0 === '"' || ch0 === "'") {
-      let word = "";
+      let word = '';
       let escapeFlag = false;
       while (true) {
         const ch = this.getChar();
-        if (ch === "") {
+        if (ch === '') {
           break;
         } else if (escapeFlag) {
           word += ch;
         } else if (ch === ch0) {
           break;
-        } else if (ch === "\\") {
+        } else if (ch === '\\') {
           escapeFlag = true;
         } else {
           word += ch;
@@ -219,15 +219,15 @@ export class ScriptParser2 {
       while (true) {
         const ch = this.readChar();
         switch (ch) {
-          case "":
+          case '':
           case '"':
           case "'":
-          case "\r":
-          case "\n":
-          case "\t":
-          case " ":
-          case "=":
-          case "]":
+          case '\r':
+          case '\n':
+          case '\t':
+          case ' ':
+          case '=':
+          case ']':
             return word;
           default:
             word += this.getChar();
@@ -239,7 +239,7 @@ export class ScriptParser2 {
 
   private getChar(): string {
     const ch: string = this.scriptText.charAt(this.parsePoint++);
-    if (ch === "\n") {
+    if (ch === '\n') {
       this.currentLineNum++;
     }
     return ch;
@@ -258,7 +258,7 @@ export class ScriptParser2 {
   private skipWhiteSpace(): void {
     while (true) {
       const ch: string = this.readChar();
-      if (ch === "") {
+      if (ch === '') {
         return;
       } else if (this.isWhiteSpace(ch)) {
         this.getChar();
@@ -270,10 +270,10 @@ export class ScriptParser2 {
 
   private isWhiteSpace(ch: string): boolean {
     switch (ch) {
-      case "\n":
-      case "\r":
-      case "\t":
-      case " ":
+      case '\n':
+      case '\r':
+      case '\t':
+      case ' ':
         return true;
     }
     return false;
@@ -281,8 +281,8 @@ export class ScriptParser2 {
 
   private isLineBreak(ch: string): boolean {
     switch (ch) {
-      case "\n":
-      case "\r":
+      case '\n':
+      case '\r':
         return true;
     }
     return false;

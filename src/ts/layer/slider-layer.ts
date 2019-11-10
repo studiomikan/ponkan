@@ -1,9 +1,9 @@
-import { BaseLayer } from "../base/base-layer";
-import { PonGame } from "../base/pon-game";
-import { PonMouseEvent } from "../base/pon-mouse-event";
-import { Resource } from "../base/resource";
-import { Button } from "./button";
-import { ToggleButtonLayer } from "./toggle-button-layer";
+import { BaseLayer } from '../base/base-layer';
+import { PonGame } from '../base/pon-game';
+import { PonMouseEvent } from '../base/pon-mouse-event';
+import { Resource } from '../base/resource';
+import { Button } from './button';
+import { ToggleButtonLayer } from './toggle-button-layer';
 
 export class SliderButton extends Button {
   private callbacks: any;
@@ -19,18 +19,18 @@ export class SliderButton extends Button {
     this.freeImage();
   }
 
-  public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
+  public setButtonStatus(status: 'normal' | 'over' | 'on' | 'disabled'): void {
     super.setButtonStatus(status);
 
     switch (status) {
-      case "normal":
-      case "disabled":
+      case 'normal':
+      case 'disabled':
         this.imageX = 0;
         break;
-      case "over":
+      case 'over':
         this.imageX = -Math.floor(this.imageWidth / 3);
         break;
-      case "on":
+      case 'on':
         this.imageX = -Math.floor((this.imageWidth / 3) * 2);
         break;
     }
@@ -63,14 +63,14 @@ export class Slider extends BaseLayer {
   protected button: SliderButton;
   protected locked: boolean = false;
   protected value: number = 0;
-  protected exp: string | ((v: number) => void) = "";
+  protected exp: string | ((v: number) => void) = '';
   protected down: boolean = false;
 
   constructor(name: string, resource: Resource, owner: PonGame) {
     super(name, resource, owner);
-    this.foreImage = new BaseLayer("slider fore", resource, owner);
+    this.foreImage = new BaseLayer('slider fore', resource, owner);
     this.addChild(this.foreImage);
-    this.button = new SliderButton("slider button", resource, owner);
+    this.button = new SliderButton('slider button', resource, owner);
     this.addChild(this.button);
     this.button.setCallbacks({
       onMouseDown: (e: PonMouseEvent) => {
@@ -118,7 +118,7 @@ export class Slider extends BaseLayer {
         this.button.x = 0;
         this.button.y = 0;
         this.button.visible = true;
-        this.button.setButtonStatus("normal");
+        this.button.setButtonStatus('normal');
       }),
     );
 
@@ -132,7 +132,7 @@ export class Slider extends BaseLayer {
   public clearSlider(): void {
     this.freeImage();
     this.value = 0;
-    this.exp = "";
+    this.exp = '';
     this.down = false;
 
     this.foreImage.freeImage();
@@ -145,12 +145,12 @@ export class Slider extends BaseLayer {
 
   public lock(): void {
     this.locked = true;
-    this.button.setButtonStatus("disabled");
+    this.button.setButtonStatus('disabled');
   }
 
   public unlock(): void {
     this.locked = false;
-    this.button.setButtonStatus("normal");
+    this.button.setButtonStatus('normal');
   }
 
   public setValueX(x: number): void {
@@ -230,9 +230,9 @@ export class Slider extends BaseLayer {
     if (this.down) {
       this.down = false;
       this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
-      if (this.exp != null && this.exp !== "") {
-        console.log("typeof", typeof this.exp);
-        if (typeof this.exp === "function") {
+      if (this.exp != null && this.exp !== '') {
+        console.log('typeof', typeof this.exp);
+        if (typeof this.exp === 'function') {
           this.exp(this.value);
         } else {
           this.resource.evalJs(this.exp as string);
@@ -243,7 +243,7 @@ export class Slider extends BaseLayer {
     }
   }
 
-  protected static sliderStoreParams: string[] = ["locked", "value", "exp"];
+  protected static sliderStoreParams: string[] = ['locked', 'value', 'exp'];
 
   public store(tick: number): any {
     const data: any = super.store(tick);
@@ -349,7 +349,7 @@ export class SliderLayer extends ToggleButtonLayer {
     await super.restore(data, tick, clear);
 
     if (data.sliders != null && data.sliders.length > 0) {
-      console.log("sliders", data.sliders);
+      console.log('sliders', data.sliders);
       if (data.sliders.length === this.sliders.length) {
         // 数が同じ場合
         await Promise.all(

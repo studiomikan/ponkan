@@ -1,15 +1,15 @@
 // import { Logger } from "./logger";
-import { PonEventHandler } from "./pon-event-handler";
-import { ReadUnread } from "./read-unread";
-import { Resource } from "./resource";
-import { Script } from "./script";
-import { Tag } from "./tag";
+import { PonEventHandler } from './pon-event-handler';
+import { ReadUnread } from './read-unread';
+import { Resource } from './resource';
+import { Script } from './script';
+import { Tag } from './tag';
 
 export interface IConductorEvent {
-  onLabel(labelName: string, line: number, tick: number): "continue" | "break";
-  onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): "continue" | "break";
-  onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break";
-  onTag(tag: Tag, line: number, tick: number): "continue" | "break";
+  onLabel(labelName: string, line: number, tick: number): 'continue' | 'break';
+  onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): 'continue' | 'break';
+  onJs(js: string, printFlag: boolean, line: number, tick: number): 'continue' | 'break';
+  onTag(tag: Tag, line: number, tick: number): 'continue' | 'break';
   onChangeStable(isStable: boolean): void;
   onError(e: any): void;
 }
@@ -24,7 +24,7 @@ export class Conductor {
   protected resource: Resource;
   public readonly name: string;
   protected eventCallbacks: IConductorEvent;
-  public latestScriptFilePath: string = ""; // パースエラー時のメッセージ用
+  public latestScriptFilePath: string = ''; // パースエラー時のメッセージ用
   protected _script: Script;
   public get script(): Script {
     return this._script;
@@ -36,20 +36,20 @@ export class Conductor {
 
   protected sleepStartTick: number = -1;
   protected sleepTime: number = -1;
-  public sleepSender: string = "";
+  public sleepSender: string = '';
   protected stableBuffer: boolean = false;
 
   protected eventHandlers: any = {};
   protected eventHandlersStack: any[] = [];
 
-  public latestSaveMarkName: string = "";
+  public latestSaveMarkName: string = '';
   public readUnread: ReadUnread;
 
   public constructor(resource: Resource, name: string, eventCallbacks: IConductorEvent) {
     this.resource = resource;
     this.name = name;
     this.eventCallbacks = eventCallbacks;
-    this._script = new Script(this.resource, "__dummy__", ";s");
+    this._script = new Script(this.resource, '__dummy__', ';s');
     this.readUnread = new ReadUnread(this.resource);
   }
 
@@ -74,9 +74,9 @@ export class Conductor {
   public async jump(filePath: string | null, label: string | null = null, countPage = true): Promise<void> {
     if (countPage) {
       this.passLatestSaveMark();
-      this.latestSaveMarkName = "";
+      this.latestSaveMarkName = '';
     }
-    if (filePath != null && filePath !== "") {
+    if (filePath != null && filePath !== '') {
       await this.loadScript(filePath);
       if (label != null) {
         this.script.goToLabel(label);
@@ -128,28 +128,28 @@ export class Conductor {
         tag = tag.clone();
       }
 
-      let tagReturnValue: "continue" | "break";
+      let tagReturnValue: 'continue' | 'break';
       switch (tag.name) {
-        case "__label__":
+        case '__label__':
           tagReturnValue = this.eventCallbacks.onLabel(tag.values.__body__, tag.line, tick);
           break;
-        case "__save_mark__":
+        case '__save_mark__':
           this.passLatestSaveMark();
           this.latestSaveMarkName = tag.values.name;
           tagReturnValue = this.eventCallbacks.onSaveMark(tag.values.name, tag.values.comment, tag.line, tick);
           break;
-        case "__js__":
+        case '__js__':
           tagReturnValue = this.eventCallbacks.onJs(tag.values.__body__, tag.values.print, tag.line, tick);
           break;
-        case "__line_break__":
-          if (this.resource.commandShortcut["\n"] != null) {
-            tag = this.script.callCommandShortcut(tag, this.resource.commandShortcut["\n"]);
+        case '__line_break__':
+          if (this.resource.commandShortcut['\n'] != null) {
+            tag = this.script.callCommandShortcut(tag, this.resource.commandShortcut['\n']);
             tagReturnValue = this.eventCallbacks.onTag(tag, tag.line, tick);
           } else {
-            tagReturnValue = "continue";
+            tagReturnValue = 'continue';
           }
           break;
-        case "ch":
+        case 'ch':
           // コマンドショートカットの反映
           if (this.resource.commandShortcut[tag.values.text] != null) {
             tag = this.script.callCommandShortcut(tag, this.resource.commandShortcut[tag.values.text]);
@@ -161,7 +161,7 @@ export class Conductor {
           break;
       }
 
-      if (tagReturnValue === "break") {
+      if (tagReturnValue === 'break') {
         break;
       }
       if (this.status !== ConductorState.Run) {
@@ -175,11 +175,11 @@ export class Conductor {
     for (const key in values) {
       if (Object.prototype.hasOwnProperty.call(values, key)) {
         const v: any = values[key];
-        if (typeof v !== "string") {
+        if (typeof v !== 'string') {
           continue;
         }
-        const value: string = ("" + v) as string;
-        if (value.length >= 2 && values.charAt(0) === "&") {
+        const value: string = ('' + v) as string;
+        if (value.length >= 2 && values.charAt(0) === '&') {
           const js: string = value.substring(1);
           values[key] = this.resource.evalJs(js);
         }
@@ -194,38 +194,38 @@ export class Conductor {
     this.stableBuffer = this.isStable;
   }
 
-  public start(): "continue" | "break" {
+  public start(): 'continue' | 'break' {
     this._status = ConductorState.Run;
     this.sleepTime = -1;
     this.sleepStartTick = -1;
-    this.sleepSender = "";
+    this.sleepSender = '';
     // Logger.debug(`Conductor start. (${this.name})`);
-    return "continue";
+    return 'continue';
   }
 
-  public stop(): "continue" | "break" {
+  public stop(): 'continue' | 'break' {
     this._status = ConductorState.Stop;
     // Logger.debug(`Conductor stop. (${this.name})`);
-    return "break";
+    return 'break';
   }
 
-  public sleep(tick: number, sleepTime: number, sender: string): "continue" | "break" {
+  public sleep(tick: number, sleepTime: number, sender: string): 'continue' | 'break' {
     this._status = ConductorState.Sleep;
     this.sleepStartTick = tick;
     this.sleepTime = sleepTime;
     this.sleepSender = sender;
     // Logger.debug(`Conductor sleep. (${this.name})`, sleepTime, sender);
-    return "break";
+    return 'break';
   }
 
   public get isStable(): boolean {
     return (
       this._status === ConductorState.Stop &&
-      !this.hasEventHandler("move") &&
-      !this.hasEventHandler("trans") &&
-      !this.hasEventHandler("frameanim") &&
-      !this.hasEventHandler("soundstop") &&
-      !this.hasEventHandler("soundfade")
+      !this.hasEventHandler('move') &&
+      !this.hasEventHandler('trans') &&
+      !this.hasEventHandler('frameanim') &&
+      !this.hasEventHandler('soundstop') &&
+      !this.hasEventHandler('soundfade')
     );
   }
 
@@ -290,7 +290,7 @@ export class Conductor {
   //   this.eventHandlers = this.eventHandlersStack.pop();
   // }
 
-  protected static conductorStoreParams = ["_status", "sleepStartTick", "sleepTime", "sleepSender"];
+  protected static conductorStoreParams = ['_status', 'sleepStartTick', 'sleepTime', 'sleepSender'];
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public store(saveMarkName: string, tick: number): any {
@@ -308,13 +308,13 @@ export class Conductor {
     //   throw new Error("サブルーチンの呼び出し中にセーブすることはできません");
     // }
     if (this.script.isInsideOfMacro()) {
-      throw new Error("マクロの中でセーブすることはできません");
+      throw new Error('マクロの中でセーブすることはできません');
     }
     if (this.script.isInsideOfForLoop()) {
-      throw new Error("for〜endforの中でセーブすることはできません");
+      throw new Error('for〜endforの中でセーブすることはできません');
     }
     if (this.script.isInsideOfIf()) {
-      throw new Error("if〜endifの中でセーブすることはできません");
+      throw new Error('if〜endifの中でセーブすることはできません');
     }
 
     return data;

@@ -1,5 +1,5 @@
-import { Resource } from "./resource";
-import { Script } from "./script";
+import { Resource } from './resource';
+import { Script } from './script';
 
 export class ReadUnread {
   protected resource: Resource;

@@ -1,7 +1,7 @@
-import { LayerFilter } from "./layer-filter";
+import { LayerFilter } from './layer-filter';
 
 export class BlurFilter extends LayerFilter {
-  public static readonly filterName: string = "blur";
+  public static readonly filterName: string = 'blur';
   public get filterName(): string {
     return BlurFilter.filterName;
   }
@@ -24,7 +24,7 @@ export class BlurFilter extends LayerFilter {
 
 export function createBlurFilter(params: any): BlurFilter {
   if (params == null) {
-    throw new Error("Cannot create BlurFilter, data is empty.");
+    throw new Error('Cannot create BlurFilter, data is empty.');
   }
   return new BlurFilter(params);
 }

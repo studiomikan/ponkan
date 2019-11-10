@@ -1,7 +1,7 @@
-import { LayerFilter } from "./layer-filter";
+import { LayerFilter } from './layer-filter';
 
 export class ColorMatrixFilter extends LayerFilter {
-  public static readonly filterName: string = "colormatrix";
+  public static readonly filterName: string = 'colormatrix';
   public get filterName(): string {
     return ColorMatrixFilter.filterName;
   }
@@ -12,60 +12,60 @@ export class ColorMatrixFilter extends LayerFilter {
   public constructor(params: any) {
     super(params);
     const filter = (this._filter = new PIXI.filters.ColorMatrixFilter());
-    console.log("ColorMatrixFilter type:", params.type);
+    console.log('ColorMatrixFilter type:', params.type);
     switch (params.type.toLowerCase()) {
-      case "negative":
+      case 'negative':
         filter.negative(true);
         break;
-      case "grayscale":
+      case 'grayscale':
         filter.greyscale(params.scale || 1, true);
         break;
-      case "brightness":
+      case 'brightness':
         filter.brightness(params.bright || 0.5, true);
         break;
-      case "browni":
+      case 'browni':
         filter.browni(true);
         break;
-      case "contrast":
+      case 'contrast':
         filter.contrast(params.contrast || 0.5, true);
         break;
-      case "desaturate":
+      case 'desaturate':
         filter.desaturate();
         break;
-      case "hue":
+      case 'hue':
         filter.hue(params.rotation || 0, true);
         break;
-      case "kodachrome":
+      case 'kodachrome':
         filter.kodachrome(true);
         break;
-      case "lsd":
+      case 'lsd':
         filter.lsd(true);
         break;
-      case "night":
+      case 'night':
         filter.night(params.intensity || 0, true);
         break;
-      case "polaroid":
+      case 'polaroid':
         filter.polaroid(true);
         break;
-      case "predator":
+      case 'predator':
         filter.predator(params.amount || 0, true);
         break;
-      case "saturate":
+      case 'saturate':
         filter.saturate(params.amount || 0, true);
         break;
-      case "sepia":
+      case 'sepia':
         filter.sepia(true);
         break;
-      case "technicolor":
+      case 'technicolor':
         filter.technicolor(true);
         break;
-      case "toBGR":
+      case 'toBGR':
         filter.toBGR(true);
         break;
-      case "vintage":
+      case 'vintage':
         filter.vintage(true);
         break;
-      case "colortone":
+      case 'colortone':
         filter.colorTone(params.desaturation, params.toned, params.lightColor, params.darkColor, true);
         break;
     }
@@ -78,7 +78,7 @@ export class ColorMatrixFilter extends LayerFilter {
 
 export function createColorMatrixFilter(params: any): ColorMatrixFilter {
   if (params == null) {
-    throw new Error("Cannot create ColorMatrixFilter, params is empty.");
+    throw new Error('Cannot create ColorMatrixFilter, params is empty.');
   }
   return new ColorMatrixFilter(params);
 }

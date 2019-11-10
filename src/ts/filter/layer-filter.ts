@@ -1,5 +1,5 @@
 export class LayerFilter {
-  public static readonly filterName: string = "LayerFilter(base class)";
+  public static readonly filterName: string = 'LayerFilter(base class)';
   public get filterName(): string {
     return LayerFilter.filterName;
   }

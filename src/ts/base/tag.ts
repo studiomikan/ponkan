@@ -1,4 +1,4 @@
-import { Logger } from "./logger";
+import { Logger } from './logger';
 
 export class Tag {
   public readonly name: string;
@@ -12,7 +12,7 @@ export class Tag {
   }
 
   public debugPrint(): void {
-    Logger.debug("TAG: ", this.name, this.values);
+    Logger.debug('TAG: ', this.name, this.values);
   }
 
   public clone(): Tag {

@@ -1,14 +1,14 @@
-import { BaseLayer } from "./base-layer";
-import { Conductor, IConductorEvent } from "./conductor";
-import { Logger } from "./logger";
-import { PonKeyEvent } from "./pon-key-event";
-import { PonMouseEvent } from "./pon-mouse-event";
-import { PonRenderer } from "./pon-renderer";
-import { PonWheelEvent } from "./pon-wheel-event";
-import { Resource } from "./resource";
-import { ScreenShot } from "./screen-shot";
-import { Tag } from "./tag";
-import { TransManager } from "./trans-manager";
+import { BaseLayer } from './base-layer';
+import { Conductor, IConductorEvent } from './conductor';
+import { Logger } from './logger';
+import { PonKeyEvent } from './pon-key-event';
+import { PonMouseEvent } from './pon-mouse-event';
+import { PonRenderer } from './pon-renderer';
+import { PonWheelEvent } from './pon-wheel-event';
+import { Resource } from './resource';
+import { ScreenShot } from './screen-shot';
+import { Tag } from './tag';
+import { TransManager } from './trans-manager';
 
 export enum ScaleMode {
   FIXED = 0,
@@ -69,13 +69,13 @@ export class PonGame implements IConductorEvent {
     this.foreRenderer = new PonRenderer(elm, config.width, config.height);
     this.backRenderer = new PonRenderer(elm, config.width, config.height);
 
-    elm.style.position = "relative";
-    elm.style.display = "block";
-    elm.style.padding = "0";
-    this.foreRenderer.canvasElm.style.display = "block";
-    this.backRenderer.canvasElm.style.display = "none";
-    this.foreRenderer.canvasElm.className = "ponkan-scale-target";
-    this.backRenderer.canvasElm.className = "ponkan-scale-target";
+    elm.style.position = 'relative';
+    elm.style.display = 'block';
+    elm.style.padding = '0';
+    this.foreRenderer.canvasElm.style.display = 'block';
+    this.backRenderer.canvasElm.style.display = 'none';
+    this.foreRenderer.canvasElm.className = 'ponkan-scale-target';
+    this.backRenderer.canvasElm.className = 'ponkan-scale-target';
 
     this.resource = new Resource(this, config.gameDataDir, config.gameVersion);
     this.resource.enableResourceCache = !config.developMode;
@@ -89,7 +89,7 @@ export class PonGame implements IConductorEvent {
     // this.initMouseEventOnCanvas(this.backRenderer.canvasElm);
     this.initKeyboardEvent();
 
-    this.conductorStack.push(new Conductor(this.resource, "Main Conductor", this));
+    this.conductorStack.push(new Conductor(this.resource, 'Main Conductor', this));
   }
 
   public destroy(): void {
@@ -138,15 +138,15 @@ export class PonGame implements IConductorEvent {
   private initWindowScale(): void {
     this._fixedScaleWidth = this.config.width;
     this._fixedScaleHeight = this.config.height;
-    window.addEventListener("resize", () => {
+    window.addEventListener('resize', () => {
       this.onWindowResize();
     });
     this.onWindowResize();
 
-    window.addEventListener("fullscreenchange", () => {
+    window.addEventListener('fullscreenchange', () => {
       this.onFullscreenChange();
     });
-    window.addEventListener("fullscreenerror", () => {
+    window.addEventListener('fullscreenerror', () => {
       this.onFullscreenChange();
     });
   }
@@ -249,14 +249,14 @@ export class PonGame implements IConductorEvent {
   public setCanvasScale(scaleX: number, scaleY: number): void {
     const width = this.config.width * scaleX;
     const height = this.config.height * scaleY;
-    const left = (this.parentElm.clientWidth - width) / 2 + "px";
-    const top = (this.parentElm.clientHeight - height) / 2 + "px";
+    const left = (this.parentElm.clientWidth - width) / 2 + 'px';
+    const top = (this.parentElm.clientHeight - height) / 2 + 'px';
     const transform = `scale(${scaleX},${scaleY})`;
-    document.querySelectorAll(".ponkan-scale-target").forEach((elm: any) => {
+    document.querySelectorAll('.ponkan-scale-target').forEach((elm: any) => {
       if (elm.style != null) {
-        elm.style.position = "absolute";
+        elm.style.position = 'absolute';
         elm.style.transform = transform;
-        elm.style["transform-origin"] = "0 0";
+        elm.style['transform-origin'] = '0 0';
         elm.style.left = left;
         elm.style.top = top;
       }
@@ -360,9 +360,9 @@ export class PonGame implements IConductorEvent {
    * @param forceStart 強制的にpb, lb, waitclickを終わらせるかどうか
    * @param countPage 既読処理をするかどうか
    */
-  public returnSubroutine(forceStart = false, countPage = true): "continue" | "break" {
+  public returnSubroutine(forceStart = false, countPage = true): 'continue' | 'break' {
     if (this.conductorStack.length === 1) {
-      throw new Error("returnで戻れませんでした。callとreturnの対応が取れていません");
+      throw new Error('returnで戻れませんでした。callとreturnの対応が取れていません');
     }
 
     // return前のシナリオの既読を済ませる
@@ -375,35 +375,35 @@ export class PonGame implements IConductorEvent {
     this.onReturnSubroutin(forceStart);
     if (forceStart) {
       const latestTag = this.conductor.script.getLatestTag();
-      if (latestTag != null && latestTag.name !== "s") {
+      if (latestTag != null && latestTag.name !== 's') {
         this.conductor.clearAllEventHandler();
         this.conductor.start();
       }
     }
-    this.conductor.trigger("return_subroutin");
+    this.conductor.trigger('return_subroutin');
     // console.log("AFTER", this.conductor.name, this.conductor.status);
     this.onChangeStable(this.conductor.isStable);
-    return "break";
+    return 'break';
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public onTag(tag: Tag, line: number, tick: number): "continue" | "break" {
-    return "continue";
+  public onTag(tag: Tag, line: number, tick: number): 'continue' | 'break' {
+    return 'continue';
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public onLabel(labelName: string, line: number, tick: number): "continue" | "break" {
-    return "continue";
+  public onLabel(labelName: string, line: number, tick: number): 'continue' | 'break' {
+    return 'continue';
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): "continue" | "break" {
-    return "continue";
+  public onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): 'continue' | 'break' {
+    return 'continue';
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break" {
-    return "continue";
+  public onJs(js: string, printFlag: boolean, line: number, tick: number): 'continue' | 'break' {
+    return 'continue';
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -511,7 +511,7 @@ export class PonGame implements IConductorEvent {
    * この時点で表ページ・裏ページの入れ替えは完了している。
    */
   public onCompleteTrans(): boolean {
-    this.conductor.trigger("trans");
+    this.conductor.trigger('trans');
     return true;
   }
 
@@ -520,10 +520,10 @@ export class PonGame implements IConductorEvent {
   // ============================================================
 
   private initWindowEvent(): void {
-    window.addEventListener("unload", () => {
+    window.addEventListener('unload', () => {
       this.onWindowClose();
     });
-    window.addEventListener("beforeunload", () => {
+    window.addEventListener('beforeunload', () => {
       this.onWindowClose();
     });
   }
@@ -537,7 +537,7 @@ export class PonGame implements IConductorEvent {
     // let down = "ontouchstart" in canvas ? "touchstart" : "mousedown";
     // let up = "ontouchend" in canvas ? "touchend" : "mouseup";
 
-    canvas.addEventListener("mouseenter", (e: MouseEvent) => {
+    canvas.addEventListener('mouseenter', (e: MouseEvent) => {
       try {
         e.preventDefault();
         if (this.isLocked) {
@@ -549,7 +549,7 @@ export class PonGame implements IConductorEvent {
       }
       return true;
     });
-    canvas.addEventListener("mouseleave", (e: MouseEvent) => {
+    canvas.addEventListener('mouseleave', (e: MouseEvent) => {
       try {
         e.preventDefault();
         if (this.isLocked) {
@@ -562,7 +562,7 @@ export class PonGame implements IConductorEvent {
         return true;
       }
     });
-    canvas.addEventListener("mousewheel", (e: Event) => {
+    canvas.addEventListener('mousewheel', (e: Event) => {
       try {
         e.preventDefault();
         if (this.isLocked) {
@@ -574,17 +574,17 @@ export class PonGame implements IConductorEvent {
       }
       return true;
     });
-    canvas.addEventListener("click", (e: MouseEvent) => {
+    canvas.addEventListener('click', (e: MouseEvent) => {
       e.preventDefault();
       return true;
     });
-    canvas.addEventListener("contextmenu", (e: MouseEvent) => {
+    canvas.addEventListener('contextmenu', (e: MouseEvent) => {
       e.preventDefault();
       return true;
     });
     // touchmove or mousemove
-    if ("ontouchmove" in canvas) {
-      (canvas as HTMLCanvasElement).addEventListener("touchmove", (e: TouchEvent) => {
+    if ('ontouchmove' in canvas) {
+      (canvas as HTMLCanvasElement).addEventListener('touchmove', (e: TouchEvent) => {
         try {
           e.preventDefault();
           if (this.isLocked) {
@@ -597,7 +597,7 @@ export class PonGame implements IConductorEvent {
         return true;
       });
     } else {
-      (canvas as HTMLCanvasElement).addEventListener("mousemove", (e: MouseEvent) => {
+      (canvas as HTMLCanvasElement).addEventListener('mousemove', (e: MouseEvent) => {
         try {
           e.preventDefault();
           if (this.isLocked) {
@@ -611,8 +611,8 @@ export class PonGame implements IConductorEvent {
       });
     }
     // touchstart or mousedown
-    if ("ontouchstart" in canvas) {
-      (canvas as HTMLCanvasElement).addEventListener("touchstart", (e: TouchEvent) => {
+    if ('ontouchstart' in canvas) {
+      (canvas as HTMLCanvasElement).addEventListener('touchstart', (e: TouchEvent) => {
         try {
           e.preventDefault();
           if (this.isLocked) {
@@ -624,7 +624,7 @@ export class PonGame implements IConductorEvent {
         }
       });
     } else {
-      (canvas as HTMLCanvasElement).addEventListener("mousedown", (e: MouseEvent) => {
+      (canvas as HTMLCanvasElement).addEventListener('mousedown', (e: MouseEvent) => {
         try {
           e.preventDefault();
           if (this.isLocked) {
@@ -637,8 +637,8 @@ export class PonGame implements IConductorEvent {
       });
     }
     // touchend or mouseup
-    if ("ontouchend" in canvas) {
-      (canvas as HTMLCanvasElement).addEventListener("touchend", (e: TouchEvent) => {
+    if ('ontouchend' in canvas) {
+      (canvas as HTMLCanvasElement).addEventListener('touchend', (e: TouchEvent) => {
         e.preventDefault();
         try {
           if (this.isLocked) {
@@ -652,7 +652,7 @@ export class PonGame implements IConductorEvent {
         return true;
       });
     } else {
-      (canvas as HTMLCanvasElement).addEventListener("mouseup", (e: MouseEvent) => {
+      (canvas as HTMLCanvasElement).addEventListener('mouseup', (e: MouseEvent) => {
         e.preventDefault();
         try {
           if (this.isLocked) {
@@ -706,7 +706,7 @@ export class PonGame implements IConductorEvent {
   /* eslint-enable @typescript-eslint/no-unused-vars */
 
   private initKeyboardEvent(): void {
-    window.addEventListener("keydown", (e: KeyboardEvent) => {
+    window.addEventListener('keydown', (e: KeyboardEvent) => {
       try {
         if (this.isLocked) {
           return;
@@ -716,7 +716,7 @@ export class PonGame implements IConductorEvent {
         this.error(ex);
       }
     });
-    window.addEventListener("keyup", (e: KeyboardEvent) => {
+    window.addEventListener('keyup', (e: KeyboardEvent) => {
       try {
         if (this.isLocked) {
           return;

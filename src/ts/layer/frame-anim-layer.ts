@@ -1,5 +1,5 @@
-import { BaseLayer } from "../base/base-layer";
-import { Logger } from "../base/logger";
+import { BaseLayer } from '../base/base-layer';
+import { Logger } from '../base/logger';
 
 // TODO pauseもできるようにする
 export class FrameAnimLayer extends BaseLayer {
@@ -12,7 +12,7 @@ export class FrameAnimLayer extends BaseLayer {
   protected frameAnimHeight: number = 32;
   protected frameAnimFrames: any[] = [];
   protected frameAnimStartTick: number = -1;
-  protected frameAnimState: "stop" | "run" = "stop";
+  protected frameAnimState: 'stop' | 'run' = 'stop';
 
   public initFrameAnim(loop: boolean, time: number, width: number, height: number, frames: any[]): void {
     this.stopFrameAnim(false);
@@ -28,24 +28,24 @@ export class FrameAnimLayer extends BaseLayer {
   }
 
   public get frameAnimRunning(): boolean {
-    return this.frameAnimState === "run";
+    return this.frameAnimState === 'run';
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public startFrameAnim(tick: number): void {
     if (this.frameAnimFrames.length === 0) {
-      throw new Error("アニメーション定義が未定義です");
+      throw new Error('アニメーション定義が未定義です');
     }
-    this.frameAnimState = "run";
+    this.frameAnimState = 'run';
     this.frameAnimStartTick = -1; // この時点では-1としておき、初めてのupdate時に設定する
   }
 
   public stopFrameAnim(triggerEvent = true): void {
-    if (this.frameAnimState === "run") {
-      this.frameAnimState = "stop";
+    if (this.frameAnimState === 'run') {
+      this.frameAnimState = 'stop';
       this.frameAnimStartTick = -1;
       if (triggerEvent) {
-        this.owner.conductor.trigger("frameanim");
+        this.owner.conductor.trigger('frameanim');
       }
     }
   }
@@ -104,13 +104,13 @@ export class FrameAnimLayer extends BaseLayer {
   }
 
   protected static frameAnimLayerStoreParams: string[] = [
-    "_frameAnimLoop",
-    "frameAnimTime",
-    "frameAnimWidth",
-    "frameAnimHeight",
-    "frameAnimFrames",
-    "frameAnimStartTick",
-    "frameAnimState",
+    '_frameAnimLoop',
+    'frameAnimTime',
+    'frameAnimWidth',
+    'frameAnimHeight',
+    'frameAnimFrames',
+    'frameAnimStartTick',
+    'frameAnimState',
   ];
 
   public store(tick: number): any {
@@ -137,9 +137,9 @@ export class FrameAnimLayer extends BaseLayer {
     });
 
     if (data.frameAnimFrames.length !== 0) {
-      if (data.frameAnimState === "run") {
+      if (data.frameAnimState === 'run') {
         this.startFrameAnim(tick);
-        Logger.debug("data.frameAnimState", data.frameAnimState, this.frameAnimState, this.frameAnimFrames);
+        Logger.debug('data.frameAnimState', data.frameAnimState, this.frameAnimState, this.frameAnimFrames);
       }
     }
   }

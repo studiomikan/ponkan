@@ -1,6 +1,6 @@
-import { Resource } from "../base/resource";
-import { Ponkan3 } from "../ponkan3";
-import { SliderLayer } from "./slider-layer";
+import { Resource } from '../base/resource';
+import { Ponkan3 } from '../ponkan3';
+import { SliderLayer } from './slider-layer';
 
 export interface IMovePosInfo {
   x: number;
@@ -12,8 +12,8 @@ export interface IMovePosInfo {
 
 export class MovableLayer extends SliderLayer {
   protected _isMoving: boolean = false;
-  protected moveType: "linear" | "bezier2" | "bezier3" | "catmullrom" = "linear";
-  protected moveEase: "none" | "in" | "out" | "both" = "none";
+  protected moveType: 'linear' | 'bezier2' | 'bezier3' | 'catmullrom' = 'linear';
+  protected moveEase: 'none' | 'in' | 'out' | 'both' = 'none';
   protected movePosList: IMovePosInfo[] = [];
   protected movePoint: number = 0;
   protected moveTime: number = 0;
@@ -38,21 +38,21 @@ export class MovableLayer extends SliderLayer {
     time: number,
     delay: number,
     path: IMovePosInfo[],
-    type: "linear" | "bezier2" | "bezier3" | "catmullrom",
-    ease: "none" | "in" | "out" | "both",
+    type: 'linear' | 'bezier2' | 'bezier3' | 'catmullrom',
+    ease: 'none' | 'in' | 'out' | 'both',
     loop: boolean,
   ): void {
-    if (type === "bezier2" && path.length !== 2) {
-      throw new Error("bezier2ではpathを2点指定する必要があります。");
+    if (type === 'bezier2' && path.length !== 2) {
+      throw new Error('bezier2ではpathを2点指定する必要があります。');
     }
-    if (type === "bezier3" && path.length !== 3) {
-      throw new Error("bezier3ではpathを3点指定する必要があります。");
+    if (type === 'bezier3' && path.length !== 3) {
+      throw new Error('bezier3ではpathを3点指定する必要があります。');
     }
-    if (type === "catmullrom" && path.length < 2) {
-      throw new Error("catmullromではpathを2点以上指定する必要があります。");
+    if (type === 'catmullrom' && path.length < 2) {
+      throw new Error('catmullromではpathを2点以上指定する必要があります。');
     }
-    if (loop && !(type === "linear" || type === "catmullrom")) {
-      throw new Error("自動移動をループできるのはlinearまたはcatmullromの場合のみです。");
+    if (loop && !(type === 'linear' || type === 'catmullrom')) {
+      throw new Error('自動移動をループできるのはlinearまたはcatmullromの場合のみです。');
     }
 
     this._isMoving = true;
@@ -91,7 +91,7 @@ export class MovableLayer extends SliderLayer {
     this.movePosList = posList;
 
     // bezier2、bezier3のときはmoveTime == moveTotalTimeとする
-    if (type === "bezier2" || type === "bezier3") {
+    if (type === 'bezier2' || type === 'bezier3') {
       this.moveTime = this.moveTotalTime;
     }
   }
@@ -108,7 +108,7 @@ export class MovableLayer extends SliderLayer {
       this.movePosList = [];
       this.moveLoop = false;
       if (triggerEvent) {
-        this.owner.conductor.trigger("move");
+        this.owner.conductor.trigger('move');
       }
     }
   }
@@ -143,13 +143,13 @@ export class MovableLayer extends SliderLayer {
 
       // easeの処理
       switch (this.moveEase) {
-        case "in":
+        case 'in':
           phase = this.moveEaseIn(phase);
           break;
-        case "out":
+        case 'out':
           phase = this.moveEaseOut(phase);
           break;
-        case "both":
+        case 'both':
           phase = this.moveEaseInOut(phase);
           break;
         // case 'none': phase = phase; break;
@@ -159,13 +159,13 @@ export class MovableLayer extends SliderLayer {
       }
       // 移動
       switch (this.moveType) {
-        case "bezier2":
+        case 'bezier2':
           this.moveBezierCurve2(tick, phase);
           break;
-        case "bezier3":
+        case 'bezier3':
           this.moveBezierCurve3(tick, phase);
           break;
-        case "catmullrom":
+        case 'catmullrom':
           this.moveCatmullRom(tick, phase);
           break;
         default:
@@ -386,17 +386,17 @@ export class MovableLayer extends SliderLayer {
   }
 
   protected static movableLayerStoreParams: string[] = [
-    "_isMoving",
-    "moveType",
-    "moveEase",
-    "movePosList",
-    "movePoint",
-    "moveTime",
-    "moveDelay",
-    "moveLoop",
-    "moveTotalTime",
-    "moveStartTick",
-    "moveDelayStartTick",
+    '_isMoving',
+    'moveType',
+    'moveEase',
+    'movePosList',
+    'movePoint',
+    'moveTime',
+    'moveDelay',
+    'moveLoop',
+    'moveTotalTime',
+    'moveStartTick',
+    'moveDelayStartTick',
   ];
 
   public store(tick: number): any {
