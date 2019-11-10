@@ -367,10 +367,16 @@ export class BaseLayer {
   public get textColor(): number | string | number[] | string[] | CanvasGradient | CanvasPattern {
     return this.textStyle.fill;
   }
-  public set textGradientType(gradientType: "vertical" | "horizontal") {
+  public set textGradientStops(gradientStops: number[]) {
+    this.textStyle.fillGradientStops = gradientStops;
+  }
+  public get textGradientStops(): number[] {
+    return this.textStyle.fillGradientStops;
+  }
+  public set textGradientType(gradientType: 'vertical' | 'horizontal') {
     this.textStyle.fillGradientType = {
-      'vertical': PIXI.TEXT_GRADIENT.LINEAR_VERTICAL,
-      'horizontal': PIXI.TEXT_GRADIENT.LINEAR_HORIZONTAL
+      vertical: PIXI.TEXT_GRADIENT.LINEAR_VERTICAL,
+      horizontal: PIXI.TEXT_GRADIENT.LINEAR_HORIZONTAL,
     }[gradientType];
   }
   public get textGradientType(): 'vertical' | 'horizontal' {

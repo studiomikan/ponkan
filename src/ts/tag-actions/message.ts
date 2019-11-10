@@ -32,6 +32,8 @@ export default function(p: Ponkan3): TagAction[] {
         new TagValue('color', 'number|array', false, null),
         /// @param 文字色グラデーションの切り替えポイント([0.0, 0.0, ...])
         new TagValue('gradientstops', 'array', false, null),
+        /// @param 文字色グラデーションのタイプ（方向）。"vertical" | "horizontal"。初期値は"vertical"
+        new TagValue('gradienttype', 'string', false, null),
         /// @param テキスト描画のマージン 上
         new TagValue('margint', 'number', false, null),
         /// @param テキスト描画のマージン 右
@@ -87,6 +89,12 @@ export default function(p: Ponkan3): TagAction[] {
           }
           if (values.color != null) {
             layer.textColor = values.color;
+          }
+          if (values.gradientstops != null) {
+            layer.textGradientStops = values.gradientstops;
+          }
+          if (values.gradienttype != null) {
+            layer.textGradientType = values.gradienttype;
           }
           if (values.margint != null) {
             layer.textMarginTop = values.margint;
