@@ -14,37 +14,56 @@ export interface IPonVideoCallbacks {
    * @param child 削除するスプライト
    */
   pixiContainerRemoveChild(child: PIXI.DisplayObject): void;
-
-  /**
-   * 再生終了時
-   */
-  // onComplete(): void;
 }
-
 
 /**
  * 動画スプライト
  */
 export class PonVideo {
-
   protected callbacks: IPonVideoCallbacks;
   protected videoTexture: PIXI.Texture;
   protected videoSprite: PIXI.Sprite;
 
-  public get source(): HTMLVideoElement { return this.videoTexture.baseTexture.source as HTMLVideoElement; }
+  public get texture(): PIXI.Texture {
+    return this.videoTexture;
+  }
+  public get sprite(): PIXI.Sprite {
+    return this.videoSprite;
+  }
+  public get source(): HTMLVideoElement {
+    return this.videoTexture.baseTexture.source as HTMLVideoElement;
+  }
 
-  public get width(): number { return this.videoSprite.width; }
-  public set width(width: number) { this.videoSprite.width = width; }
-  public get height(): number { return this.videoSprite.height; }
-  public set height(height: number) { this.videoSprite.height = height; }
+  public get width(): number {
+    return this.videoSprite.width;
+  }
+  public set width(width: number) {
+    this.videoSprite.width = width;
+  }
+  public get height(): number {
+    return this.videoSprite.height;
+  }
+  public set height(height: number) {
+    this.videoSprite.height = height;
+  }
 
-  public get loop(): boolean { return this.source.loop; }
-  public set loop(loop: boolean) { this.source.loop = loop; }
+  public get loop(): boolean {
+    return this.source.loop;
+  }
+  public set loop(loop: boolean) {
+    this.source.loop = loop;
+  }
 
-  public get volume(): number { return this.source.volume; }
-  public set volume(volume: number) { this.source.volume = volume; }
+  public get volume(): number {
+    return this.source.volume;
+  }
+  public set volume(volume: number) {
+    this.source.volume = volume;
+  }
 
-  public get playing(): boolean { return !this.source.ended; }
+  public get playing(): boolean {
+    return !this.source.ended;
+  }
 
   /**
    * @param callbacks コールバック

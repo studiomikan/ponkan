@@ -1,4 +1,3 @@
-import { AsyncTask } from "../base/async-task";
 import { BaseLayer } from "../base/base-layer";
 import { PonMouseEvent } from "../base/pon-mouse-event";
 
@@ -13,11 +12,7 @@ export class ToggleButton extends BaseLayer {
   protected isSystemButton: boolean = false;
   protected systemButtonLocked: boolean = false;
 
-  public initToggleButton(
-    varName: string,
-    isSystemButton: boolean,
-    exp: string | null,
-  ): void {
+  public initToggleButton(varName: string, isSystemButton: boolean, exp: string | null): void {
     this.insideFlag = false;
     this.varName = varName;
     this.isSystemButton = isSystemButton;
@@ -70,8 +65,12 @@ export class ToggleButton extends BaseLayer {
 
   public onChangeStable(isStable: boolean): void {
     super.onChangeStable(isStable);
-    if (!this.isSystemButton) { return; }
-    if (this.systemButtonLocked) { return; }
+    if (!this.isSystemButton) {
+      return;
+    }
+    if (this.systemButtonLocked) {
+      return;
+    }
     if (isStable) {
       this.setButtonStatus("enabled");
     } else {
@@ -107,7 +106,9 @@ export class ToggleButton extends BaseLayer {
 
   public onMouseUp(e: PonMouseEvent): void {
     super.onMouseUp(e);
-    if (!e.isLeft) { return; }
+    if (!e.isLeft) {
+      return;
+    }
 
     if (this.buttonStatus !== "disabled") {
       this.setValue(!this.getValue());
@@ -135,9 +136,9 @@ export class ToggleButton extends BaseLayer {
     return data;
   }
 
-  public restore(asyncTask: AsyncTask, data: any, tick: number, clear: boolean): void {
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
     this.clearToggleButton();
-    super.restore(asyncTask, data, tick, clear);
+    await super.restore(data, tick, clear);
   }
 
   public restoreAfterLoadImage(data: any, tick: number): void {

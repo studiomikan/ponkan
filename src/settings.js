@@ -46,6 +46,14 @@ window.PONKAN3_SETTINGS = {
     nodata: "sysimage/nodata.png",
   },
 
+  // テキストのスピード
+  textspeed: {
+    // 未読文章のスピード（ユーザーモード）
+    unread: 20,
+    // 既読文章のスピード（ユーザーモード）
+    read: 20,
+  },
+
   // デフォルトのレイヤ設定
   // レイヤーのデフォルト値を変更したい場合は、ここで設定することもできます。
   layersDefault: {

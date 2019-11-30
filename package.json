@@ -21,6 +21,7 @@
     "doc": "typedoc --out ./doc ./src/ts",
     "lint": "eslint ./src/**/*.ts",
     "lint-fix": "eslint --fix ./src/**/*.ts",
+    "prettier": "prettier --write ./src/**/*.ts",
     "build-test": "webpack --config webpack.config.test.js --mode=development",
     "start-test": "webpack-dev-server --config webpack.config.test.js --mode=development",
     "test": "npm run start-test"

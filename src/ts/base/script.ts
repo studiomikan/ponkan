@@ -15,7 +15,9 @@ export interface IForLoopInfo {
 export class Script {
   protected resource: Resource;
   protected _filePath: string;
-  public get filePath(): string { return this._filePath; }
+  public get filePath(): string {
+    return this._filePath;
+  }
 
   protected parser: ScriptParser;
   protected tagPoint: number = 0;
@@ -54,8 +56,12 @@ export class Script {
   }
 
   public goTo(point: number): void {
-    if (point < 0) { point = 0; }
-    if (point >= this.parser.tags.length) { point = this.parser.tags.length - 1; }
+    if (point < 0) {
+      point = 0;
+    }
+    if (point >= this.parser.tags.length) {
+      point = this.parser.tags.length - 1;
+    }
     this.tagPoint = point;
   }
 
@@ -132,7 +138,7 @@ export class Script {
       if (tags.length <= this.tagPoint) {
         return null;
       } else {
-        const tag: Tag = this.latestTagBuffer = tags[this.tagPoint++];
+        const tag: Tag = (this.latestTagBuffer = tags[this.tagPoint++]);
         if (this.resource.hasMacro(tag.name)) {
           this.callMacro(tag);
           return this.getNextTag();
@@ -142,7 +148,7 @@ export class Script {
       }
     } else {
       const macro: Macro = this.macroStack[this.macroStack.length - 1];
-      const tag: Tag | null = this.latestTagBuffer = macro.getNextTag();
+      const tag: Tag | null = (this.latestTagBuffer = macro.getNextTag());
       this.resource.setMacroParams(macro.params);
       if (tag != null) {
         if (this.resource.hasMacro(tag.name)) {
@@ -403,7 +409,7 @@ export class Script {
       } else if (tag.name === "endfor") {
         if (depth === 0) {
           break;
-        } else  {
+        } else {
           depth--;
         }
       }

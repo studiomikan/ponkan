@@ -1,5 +1,4 @@
 import { Howl, Howler } from "howler";
-import { AsyncCallbacks } from "./async-callbacks";
 import { Logger } from "./logger";
 import { Macro } from "./macro";
 import { PonGame } from "./pon-game";
@@ -96,7 +95,7 @@ export class Resource {
   }
 
   public debugClearSystemData(): void {
-    Object.keys(this.systemVar).forEach((key) => {
+    Object.keys(this.systemVar).forEach(key => {
       delete this.systemVar[key];
     });
   }
@@ -109,7 +108,7 @@ export class Resource {
     const sv = this.systemVar;
     const mp = this.macroParams;
     /* eslint-enable */
-    return (function(): any{
+    return (function(): any {
       return eval(js);
     })();
   }
@@ -142,7 +141,9 @@ export class Resource {
     if (this.enableResourceCache) {
       path += `?v=${this.gameVersion}`;
     } else {
-      path += `?x=${Math.random().toString(36).slice(-8)}`;
+      path += `?x=${Math.random()
+        .toString(36)
+        .slice(-8)}`;
     }
     return path;
   }
@@ -160,23 +161,21 @@ export class Resource {
    * @param filePath ファイルパス（basePathからの相対パス）
    * @return コールバックオブジェクト
    */
-  public loadText(filePath: string): AsyncCallbacks {
-    const cb = new AsyncCallbacks();
-    const xhr = new XMLHttpRequest();
-
-    xhr.onload = (): void => {
-      if (200 <= xhr.status && xhr.status < 300) {
-        Logger.debug("AJAX SUCCESS: ", xhr);
-        cb.callDone(xhr.responseText);
-      } else {
-        Logger.debug("AJAX FAILED: ", xhr);
-        cb.callFail(xhr.responseText);
-      }
-    };
-    xhr.open("GET", this.getPath(filePath), true);
-    xhr.send();
-
-    return cb;
+  public async loadText(filePath: string): Promise<string> {
+    return new Promise<string>((resolve, reject): void => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = (): void => {
+        if (200 <= xhr.status && xhr.status < 300) {
+          Logger.debug("AJAX SUCCESS: ", xhr);
+          resolve(xhr.responseText);
+        } else {
+          Logger.debug("AJAX FAILED: ", xhr);
+          reject(xhr.responseText);
+        }
+      };
+      xhr.open("GET", this.getPath(filePath), true);
+      xhr.send();
+    });
   }
 
   /**
@@ -184,33 +183,26 @@ export class Resource {
    * @param filePath ファイルパス（basePathからの相対パス）
    * @return コールバックオブジェクト
    */
-  public loadScript(filePath: string): AsyncCallbacks {
-    const cb = new AsyncCallbacks();
+  public async loadScript(filePath: string): Promise<Script> {
     if (this.enableResourceCache && this.enabledScriptCache && this.scriptCache[filePath] != null) {
       // キャッシュから
-      window.setTimeout(() => {
-        cb.callDone(this.scriptCache[filePath].clone());
-      }, 0);
+      return this.scriptCache[filePath].clone();
     } else {
       // 新規読み込み
-      this.loadText(filePath).done((text) => {
-        try {
-          const script: Script = new Script(this, filePath, text);
-          if (this.enabledScriptCache) {
-            this.scriptCache[filePath] = script;
-            cb.callDone(script.clone());
-          } else {
-            cb.callDone(script);
-          }
-        } catch (e) {
-          Logger.error(e);
-          cb.callFail(e);
+      try {
+        const text: string = await this.loadText(filePath);
+        const script: Script = new Script(this, filePath, text);
+        if (this.enabledScriptCache) {
+          this.scriptCache[filePath] = script;
+          return script.clone();
+        } else {
+          return script;
         }
-      }).fail(() => {
-        cb.callFail(new Error(`ファイルが読み込めませんでした(${filePath})`));
-      });
+      } catch (e) {
+        Logger.error(e);
+        throw e;
+      }
     }
-    return cb;
   }
 
   /**
@@ -218,50 +210,47 @@ export class Resource {
    * @param filePath ファイルパス（basePathからの相対パス）
    * @return コールバックオブジェクト
    */
-  public loadImage(filePath: string): AsyncCallbacks {
-    const cb = new AsyncCallbacks();
-    const path: string = this.getPath(filePath);
-    const image: HTMLImageElement = new Image();
-    let loaded = false;
+  public async loadImage(filePath: string): Promise<HTMLImageElement> {
+    return new Promise<HTMLImageElement>((resolve, reject): void => {
+      const path: string = this.getPath(filePath);
+      const image: HTMLImageElement = new Image();
+      let loaded = false;
 
-    image.onload = (): void => {
-      loaded = true;
-      cb.callDone(image);
-    };
-    image.onerror = (): void => {
-      // 画像がキャッシュされているとき、サーバが302を返すことがある。
-      // その時は、onloadとonerrorの両方が呼ばれてしまうので、
-      // すでにonloadが呼ばれて読み込み済みだとわかっている場合はエラーを無視する。
-      if (!loaded) {
-        cb.callFail(image);
+      image.onload = (): void => {
+        loaded = true;
+        resolve(image);
+      };
+      image.onerror = (): void => {
+        // 画像がキャッシュされているとき、サーバが302を返すことがある。
+        // その時は、onloadとonerrorの両方が呼ばれてしまうので、
+        // すでにonloadが呼ばれて読み込み済みだとわかっている場合はエラーを無視する。
+        if (!loaded) {
+          reject(image);
+        }
+      };
+      if (filePath.indexOf("data:image/") === 0) {
+        image.src = filePath;
+      } else {
+        image.src = path;
       }
-    };
-    if (filePath.indexOf("data:image/") === 0) {
-      image.src = filePath;
-    } else {
-      image.src = path;
-    }
-
-    return cb;
+    });
   }
 
-  public loadSoundHowler(filePath: string): AsyncCallbacks {
-    const cb = new AsyncCallbacks();
-
-    const h: Howl = new Howl({
-      src: [this.getPath(filePath)],
-      loop: true,
-      volume: 1,
-      autoplay: false,
-      onload: (): void => {
-        cb.callDone(h);
-      },
-      onloaderror: (): void => {
-        cb.callFail(filePath);
-      },
+  public loadSoundHowler(filePath: string): Promise<Howl> {
+    return new Promise<Howl>((resolve, reject): void => {
+      const h: Howl = new Howl({
+        src: [this.getPath(filePath)],
+        loop: true,
+        volume: 1,
+        autoplay: false,
+        onload: (): void => {
+          resolve(h);
+        },
+        onloaderror: (): void => {
+          reject(h);
+        },
+      });
     });
-
-    return cb;
   }
 
   public loadVideoTexture(filePath: string, autoPlay: boolean): PIXI.Texture {
@@ -332,5 +321,4 @@ export class Resource {
   //   return JSON.parse(dataStr)
   // }
   //
-
 }

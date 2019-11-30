@@ -50,5 +50,4 @@ export class PonMouseEvent {
   public get forceStopFlag(): boolean {
     return this._forceStopFlag;
   }
-
 }

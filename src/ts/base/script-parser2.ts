@@ -7,7 +7,9 @@ export class ScriptParser2 {
   private currentLineNum: number = 1;
   private _tags: Tag[] = [];
 
-  public get tags(): Tag[] { return this._tags; }
+  public get tags(): Tag[] {
+    return this._tags;
+  }
 
   public constructor(scriptText: string) {
     this.scriptText = scriptText.replace(/\r\n/g, "\n");
@@ -17,7 +19,7 @@ export class ScriptParser2 {
   }
 
   public debugPrint(): void {
-    this.tags.forEach((tag) => {
+    this.tags.forEach(tag => {
       tag.debugPrint();
     });
   }
@@ -27,7 +29,9 @@ export class ScriptParser2 {
       this.skipWhiteSpace();
       // let ch0: string = this.getChar();
       const ch0: string = this.readChar();
-      if (ch0 === "") { break; }
+      if (ch0 === "") {
+        break;
+      }
 
       switch (ch0) {
         case "#":
@@ -76,7 +80,7 @@ export class ScriptParser2 {
       throw new Error(`文法エラー：コマンド名がありません(line:${this.currentLineNum})`);
     }
 
-    let body = `[${commandName}` ;
+    let body = `[${commandName}`;
     const values: any = {};
 
     while (true) {
@@ -96,15 +100,13 @@ export class ScriptParser2 {
       this.skipWhiteSpace();
       const equal = this.getChar();
       if (equal !== "=") {
-        throw new Error(
-          `文法エラー：=がありません(name:${commandName})(line:${this.currentLineNum})`);
+        throw new Error(`文法エラー：=がありません(name:${commandName})(line:${this.currentLineNum})`);
       }
       // 値
       this.skipWhiteSpace();
       const value = this.getWord();
       if (value === "" || value === "") {
-        throw new Error(
-          `文法エラー：値がありません(name:${commandName})(line:${this.currentLineNum})`);
+        throw new Error(`文法エラー：値がありません(name:${commandName})(line:${this.currentLineNum})`);
       }
 
       body += ` "${valueName}"="${value}"`;
@@ -143,8 +145,10 @@ export class ScriptParser2 {
       this.readUntilLineBreak(); // "---" を読み捨てる
       let js = "";
       while (true) {
-        const tmp: string  = this.readUntilLineBreak();
-        if (tmp === "" || tmp.trim() === "---") { break; }
+        const tmp: string = this.readUntilLineBreak();
+        if (tmp === "" || tmp.trim() === "---") {
+          break;
+        }
         js += tmp + "\n";
       }
       this.addTag("__js__", { __body__: js, print: false });
@@ -162,7 +166,7 @@ export class ScriptParser2 {
   }
 
   private parseText(ch: string): void {
-    this.addTag("ch", { __body__: ch, text: ch});
+    this.addTag("ch", { __body__: ch, text: ch });
   }
 
   private dropUntilLineBreak(): void {
@@ -188,9 +192,11 @@ export class ScriptParser2 {
 
   private getWord(): string {
     const ch0 = this.getChar();
-    if (ch0 === "") { return ""; }
+    if (ch0 === "") {
+      return "";
+    }
 
-    if (ch0 === "\"" || ch0 === "'") {
+    if (ch0 === '"' || ch0 === "'") {
       let word = "";
       let escapeFlag = false;
       while (true) {
@@ -213,9 +219,15 @@ export class ScriptParser2 {
       while (true) {
         const ch = this.readChar();
         switch (ch) {
-          case "": case "\"": case "'":
-          case "\r": case "\n": case "\t": case " ":
-          case "=": case "]":
+          case "":
+          case '"':
+          case "'":
+          case "\r":
+          case "\n":
+          case "\t":
+          case " ":
+          case "=":
+          case "]":
             return word;
           default:
             word += this.getChar();
@@ -240,9 +252,7 @@ export class ScriptParser2 {
   private read3Char(): string {
     const script = this.scriptText;
     const point = this.parsePoint;
-    return script.charAt(point) +
-           script.charAt(point + 1) +
-           script.charAt(point + 2);
+    return script.charAt(point) + script.charAt(point + 1) + script.charAt(point + 2);
   }
 
   private skipWhiteSpace(): void {
@@ -260,7 +270,10 @@ export class ScriptParser2 {
 
   private isWhiteSpace(ch: string): boolean {
     switch (ch) {
-      case "\n": case "\r": case "\t": case " ":
+      case "\n":
+      case "\r":
+      case "\t":
+      case " ":
         return true;
     }
     return false;
@@ -268,7 +281,8 @@ export class ScriptParser2 {
 
   private isLineBreak(ch: string): boolean {
     switch (ch) {
-      case "\n": case "\r":
+      case "\n":
+      case "\r":
         return true;
     }
     return false;

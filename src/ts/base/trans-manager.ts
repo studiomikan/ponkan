@@ -1,4 +1,3 @@
-import { AsyncCallbacks } from "./async-callbacks";
 import { PonGame } from "./pon-game";
 import { Resource } from "./resource";
 
@@ -97,13 +96,8 @@ export class TransManager {
 
   private startTick: number = -1;
   private time: number = 1000;
-  private method: "univ" |
-                  "scroll-to-right" |
-                  "scroll-to-left" |
-                  "scroll-to-top" |
-                  "scroll-to-bottom" |
-                  "crossfade"
-                  = "crossfade";
+  private method: "univ" | "scroll-to-right" | "scroll-to-left" | "scroll-to-top" | "scroll-to-bottom" | "crossfade" =
+    "crossfade";
   private ruleFilePath: string | null = null;
   private ruleImage: HTMLImageElement | null = null;
   private ruleSprite: PIXI.Sprite | null = null;
@@ -123,22 +117,16 @@ export class TransManager {
       "scroll-to-left": null,
       "scroll-to-top": null,
       "scroll-to-bottom": null,
-      "univ": new UnivTransFilter(),
-      "crossfade": new CrossFadeFilter(),
+      univ: new UnivTransFilter(),
+      crossfade: new CrossFadeFilter(),
     };
     this.filter = this.filters.crossfade;
   }
 
-  public initTrans(
+  public async initTrans(
     time: number,
-    method: "scroll-to-right" |
-            "scroll-to-left" |
-            "scroll-to-top" |
-            "scroll-to-bottom" |
-            "univ" |
-            "crossfade",
-  ): AsyncCallbacks {
-    const cb = new AsyncCallbacks();
+    method: "scroll-to-right" | "scroll-to-left" | "scroll-to-top" | "scroll-to-bottom" | "univ" | "crossfade",
+  ): Promise<void> {
     if (this.isRunning) {
       this.stop();
     }
@@ -152,43 +140,38 @@ export class TransManager {
       throw new Error(`存在しないmethodです(${this.method})`);
     }
 
-    window.setTimeout(() => {
-      cb.callDone();
-    }, 0);
-
-    return cb;
+    // TODO: return Promise.resolveでも問題ないのか調べる
+    return new Promise((resolve): void => {
+      setTimeout(() => {
+        resolve();
+      }, 0);
+    });
   }
 
-  public initUnivTrans(
-    time: number,
-    ruleFilePath: string,
-    vague = 0.25,
-  ): AsyncCallbacks {
-
+  public async initUnivTrans(time: number, ruleFilePath: string, vague = 0.25): Promise<void> {
     this.initTrans(time, "univ");
     this.ruleFilePath = ruleFilePath;
 
-    if (vague < 0) { vague = 0; }
-    if (vague > 1.0) { vague = 1.0; }
+    if (vague < 0) {
+      vague = 0;
+    }
+    if (vague > 1.0) {
+      vague = 1.0;
+    }
     this.vague = vague;
 
     const width = this.game.width;
     const height = this.game.height;
 
-    const cb = this.resource.loadImage(ruleFilePath);
-    cb.done((ruleImage: HTMLImageElement) => {
-      this.ruleImage = ruleImage;
-      this.ruleSprite = PIXI.Sprite.from(ruleImage);
-      this.ruleSprite.width = width;
-      this.ruleSprite.height = height;
+    this.ruleImage = await this.resource.loadImage(ruleFilePath);
+    this.ruleSprite = PIXI.Sprite.from(this.ruleImage);
+    this.ruleSprite.width = width;
+    this.ruleSprite.height = height;
 
-      const maskSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
-      maskSprite.width = width;
-      maskSprite.height = height;
-      this.ruleSprite.mask = maskSprite;
-    });
-
-    return cb;
+    const maskSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
+    maskSprite.width = width;
+    maskSprite.height = height;
+    this.ruleSprite.mask = maskSprite;
   }
 
   public get isRunning(): boolean {
@@ -251,13 +234,27 @@ export class TransManager {
     this.game.backRenderer.draw(tick);
     this.game.backRenderer.texture.update();
     switch (this.method) {
-      case "scroll-to-right":  this.drawScrollHorizontal(tick, elapsedTime, "right"); break;
-      case "scroll-to-left":   this.drawScrollHorizontal(tick, elapsedTime, "left"); break;
-      case "scroll-to-top":    this.drawScrollVertical(tick, elapsedTime, "top"); break;
-      case "scroll-to-bottom": this.drawScrollVertical(tick, elapsedTime, "bottom"); break;
-      case "univ":             this.drawUniv(tick, elapsedTime); break;
-      case "crossfade":        this.drawCrossFade(tick, elapsedTime); break;
-      default:                 this.drawCrossFade(tick, elapsedTime); break;
+      case "scroll-to-right":
+        this.drawScrollHorizontal(tick, elapsedTime, "right");
+        break;
+      case "scroll-to-left":
+        this.drawScrollHorizontal(tick, elapsedTime, "left");
+        break;
+      case "scroll-to-top":
+        this.drawScrollVertical(tick, elapsedTime, "top");
+        break;
+      case "scroll-to-bottom":
+        this.drawScrollVertical(tick, elapsedTime, "bottom");
+        break;
+      case "univ":
+        this.drawUniv(tick, elapsedTime);
+        break;
+      case "crossfade":
+        this.drawCrossFade(tick, elapsedTime);
+        break;
+      default:
+        this.drawCrossFade(tick, elapsedTime);
+        break;
     }
     this.game.foreRenderer.draw(tick);
   }
@@ -265,34 +262,46 @@ export class TransManager {
   public drawScrollHorizontal(tick: number, elapsedTime: number, to: "left" | "right"): void {
     const width: number = this.game.width;
     let d: number = width * (elapsedTime / this.time);
-    if (d < 0) { d = 0; }
-    if (d > width) { d = width; }
+    if (d < 0) {
+      d = 0;
+    }
+    if (d > width) {
+      d = width;
+    }
 
-    this.game.backRenderer.sprite.x = (to === "right") ? (d - width) : (width - d);
+    this.game.backRenderer.sprite.x = to === "right" ? d - width : width - d;
   }
 
   public drawScrollVertical(tick: number, elapsedTime: number, to: "top" | "bottom"): void {
     const height: number = this.game.height;
     let d: number = height * (elapsedTime / this.time);
-    if (d < 0) { d = 0; }
-    if (d > height) { d = height; }
+    if (d < 0) {
+      d = 0;
+    }
+    if (d > height) {
+      d = height;
+    }
 
-    this.game.backRenderer.sprite.y = (to === "bottom") ? (d - height) : (height - d);
+    this.game.backRenderer.sprite.y = to === "bottom" ? d - height : height - d;
   }
 
   public drawCrossFade(tick: number, elapsedTime: number): void {
     let alpha: number = 1.0 * (elapsedTime / this.time);
-    if (alpha < 0) { alpha = 0; }
-    if (alpha > 1.0) { alpha = 1.0; }
+    if (alpha < 0) {
+      alpha = 0;
+    }
+    if (alpha > 1.0) {
+      alpha = 1.0;
+    }
 
-    const uniforms = (this.filter.uniforms as any);
+    const uniforms = this.filter.uniforms as any;
     uniforms.backAlpha = 1.0 - alpha;
     uniforms.foreAlpha = alpha;
     uniforms.subSampler = this.game.backRenderer.texture;
   }
 
   public drawUniv(tick: number, elapsedTime: number): void {
-    const uniforms = (this.filter.uniforms as any);
+    const uniforms = this.filter.uniforms as any;
 
     uniforms.subSampler = this.game.backRenderer.texture;
     uniforms.ruleSampler = (this.ruleSprite as PIXI.Sprite).texture;
@@ -304,6 +313,6 @@ export class TransManager {
     // uniforms.phaseMax = 255 + this.vague;
     // uniforms.phase = Math.floor(elapsedTime * uniforms.phaseMax / this.time) - this.vague;
     uniforms.phaseMax = 1.0 + this.vague;
-    uniforms.phase = (elapsedTime * uniforms.phaseMax / this.time) - this.vague;
+    uniforms.phase = (elapsedTime * uniforms.phaseMax) / this.time - this.vague;
   }
 }
