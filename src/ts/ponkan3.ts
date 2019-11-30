@@ -195,6 +195,27 @@ export class Ponkan3 extends PonGame {
     super.stop();
   }
 
+  /**
+   * Ponkan3を一時停止する。
+   * HTMLファイルによるシステム画面などを表示する際は、このメソッドで停止する。
+   * 再開にはresumeメソッドを使う。
+   */
+  public pause(countPage = false, stopSkip = true): void {
+    if (countPage) {
+      this.conductor.passLatestSaveMark();
+    }
+    this.conductor.stop();
+    if (stopSkip) {
+      this.stopSkip();
+    }
+    this.lock(); // 操作できないようにロック
+  }
+
+  public resume(): void {
+    this.conductor.start();
+    this.unlock();
+  }
+
   protected update(tick: number): void {
     // オートモードによるクリックエミュレーション
     if (this.autoModeFlag && this.autoModeStartTick >= 0) {
