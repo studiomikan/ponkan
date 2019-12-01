@@ -20,7 +20,8 @@ export class SoundBuffer {
   protected callback: ISoundBufferCallbacks;
   protected resource: Resource;
 
-  protected howl: Howl | null = null;
+  // TODO: readonlyにする
+  public howl: Howl | null = null;
   public filePath: string | null = null;
 
   protected _state: SoundState = SoundState.Stop;

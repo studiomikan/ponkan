@@ -57,7 +57,7 @@ export default function(p: Ponkan3): TagAction[] {
     ///   出力先のレイヤーを切り替えたい場合は、このコマンドで切り替えるか、
     ///   もしくは [`ch`](#ch) コマンドなどを使用して出力してください。
     new TagAction(
-      ["messagelayer", "messagelay", "meslay", "meslay"],
+      ["messagelayer", "messagelay", "meslay"],
       [
         /// @param 対象レイヤー
         new TagValue("lay", "number", true, null),

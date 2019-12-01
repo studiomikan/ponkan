@@ -22,6 +22,14 @@ export interface IPonSpriteCallbacks {
   pixiContainerRemoveChild(child: PIXI.DisplayObject): void;
 }
 
+export enum SpriteType {
+  Unknown = 0,
+  Image,
+  Color,
+  Text,
+  Canvas,
+}
+
 /**
  * スプライト
  */
@@ -39,6 +47,7 @@ export class PonSprite {
   private _textPitch: number = 0;
   /** PIXIのスプライト */
   private pixiSprite: PIXI.Text | PIXI.Sprite | PIXI.Graphics | null = null;
+  private type: SpriteType = SpriteType.Unknown;
 
   /** x座標 */
   public get x(): number {
@@ -197,6 +206,7 @@ export class PonSprite {
         this.pixiSprite.destroy();
       }
       this.pixiSprite = null;
+      this.type = SpriteType.Unknown;
     } catch (e) {
       console.error(e);
       throw e;
@@ -223,6 +233,7 @@ export class PonSprite {
     this._width = this.pixiSprite.width;
     this._height = this.pixiSprite.height;
     this.callbacks.pixiContainerAddChild(this.pixiSprite);
+    this.type = SpriteType.Text;
   }
 
   /**
@@ -244,6 +255,7 @@ export class PonSprite {
     this.pixiSprite.scale.x = this.scaleX;
     this.pixiSprite.scale.y = this.scaleY;
     this.callbacks.pixiContainerAddChild(this.pixiSprite);
+    this.type = SpriteType.Color;
   }
 
   /**
@@ -252,11 +264,13 @@ export class PonSprite {
   public clearColor(): void {
     if (this.pixiSprite != null && this.pixiSprite instanceof PIXI.Graphics) {
       this.pixiSprite.clear();
+      this.type = SpriteType.Unknown;
     }
   }
 
   /**
    * 画像を設定する
+   * @param image 画像
    */
   public setImage(image: HTMLImageElement): void {
     this.clear();
@@ -270,15 +284,36 @@ export class PonSprite {
     this._width = this.pixiSprite.width;
     this._height = this.pixiSprite.height;
     this.callbacks.pixiContainerAddChild(this.pixiSprite);
+    this.type = SpriteType.Image;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public onUpdate(tick: number): void {
-    // TODO 実装
+  /**
+   * キャンバスを設定する
+   * @param canvas キャンバス
+   */
+  public setCanvas(canvas: HTMLCanvasElement): void {
+    this.clear();
+    const texture: PIXI.Texture = PIXI.Texture.from(canvas);
+    this.pixiSprite = new PIXI.Sprite(texture);
+    this.pixiSprite.x = this.x;
+    this.pixiSprite.y = this.y;
+    this.pixiSprite.anchor.set(0);
+    this.pixiSprite.scale.x = this.scaleX;
+    this.pixiSprite.scale.y = this.scaleY;
+    this._width = this.pixiSprite.width;
+    this._height = this.pixiSprite.height;
+    this.callbacks.pixiContainerAddChild(this.pixiSprite);
+    this.type = SpriteType.Canvas;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public onDraw(tick: number): void {
-    // TODO 実装
+  public beforeDraw(): void {
+    if (this.pixiSprite != null && this.type === SpriteType.Canvas) {
+      (this.pixiSprite as PIXI.Sprite).texture.update();
+    }
   }
+
+  // // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // public onDraw(tick: number): void {
+  //   // TODO 実装
+  // }
 }

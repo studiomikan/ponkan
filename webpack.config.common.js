@@ -23,23 +23,23 @@ module.exports = {
   plugins: [
     // new UglifyJSPlugin(),
     new CopyWebpackPlugin(
-      [ { from: '', to: 'gamedata/', }, ],
+      [ { from: '.', to: 'gamedata/', }, ],
       { context: path.join(__dirname, 'src/gamedata') }
     ),
     new CopyWebpackPlugin(
-      [ { from: '', to: 'fonts/', }, ],
+      [ { from: '.', to: 'fonts/', }, ],
       { context: path.join(__dirname, 'src/fonts') }
     ),
     new CopyWebpackPlugin(
-      [ { from: '', to: '', ignore: '!*.html' }, ],
+      [ { from: '.', to: '', ignore: '!*.html' }, ],
       { context: path.join(__dirname, 'src') }
     ),
     new CopyWebpackPlugin(
-      [ { from: '', to: '', ignore: '!*.js' }, ],
+      [ { from: '.', to: '', ignore: '!*.js' }, ],
       { context: path.join(__dirname, 'src') }
     ),
     new CopyWebpackPlugin(
-      [ { from: '', to: '', ignore: '!*.ico' }, ],
+      [ { from: '.', to: '', ignore: '!*.ico' }, ],
       { context: path.join(__dirname, 'src') }
     ),
     new WriteFilePlugin(),
