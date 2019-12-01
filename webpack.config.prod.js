@@ -23,7 +23,7 @@ module.exports = merge(common, {
   plugins: [
     new DtsBundleWebpack({
       name: 'ponkan3',
-      main: 'dist/d.ts/ponkan3.d.ts',
+      main: 'dist/ponkan3.d.ts',
       baseDir: 'dist',
       out: 'ponkan3.d.ts',
       indent: '  ',
