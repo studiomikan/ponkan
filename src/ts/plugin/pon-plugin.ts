@@ -1,18 +1,8 @@
-import { Ponkan3 } from "../ponkan3";
-import { PonLayer } from "../layer/pon-layer";
-
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /**
- * Ponkan3プラグインクラス。
- * すべてのプラグインはこのクラスを継承して作成する。
+ * Ponkan3プラグイン
  */
 export class PonPlugin {
-  protected ponkan: Ponkan3;
-
-  constructor(ponkan: Ponkan3) {
-    this.ponkan = ponkan;
-  }
-
   /**
    * プラグインを破棄するときに呼ばれる
    */
@@ -86,7 +76,7 @@ export class PonPlugin {
    * @param srcpage コピー元ページ
    * @param destpage コピー先ページ
    */
-  public onCopylay(srcLayers: PonLayer[], destLayers: PonLayer[], srcpage: string, destpage: string): void {
+  public onCopylay(srcLayers: any[], destLayers: any[], srcpage: string, destpage: string): void {
     return;
   }
 
