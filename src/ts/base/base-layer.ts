@@ -249,6 +249,7 @@ export class BaseLayer {
   protected childSpriteCallbacks: IPonSpriteCallbacks;
   protected imageContainer: PIXI.Container;
   protected imageSpriteCallbacks: IPonSpriteCallbacks;
+  protected canvasSpriteCallbacks: IPonVideoCallbacks;
   protected videoCallbacks: IPonVideoCallbacks;
 
   /** 読み込んでいる画像 */
@@ -261,6 +262,16 @@ export class BaseLayer {
   }
   public get imageHeight(): number {
     return this.image !== null ? this.image.height : 0;
+  }
+
+  /** 読み込んでいるCanvas */
+  protected canvas: HTMLCanvasElement | null = null;
+  protected canvasSprite: PonSprite | null = null;
+  public get canvasWidth(): number {
+    return this.canvas !== null ? this.canvas.width : 0;
+  }
+  public get canvasHeight(): number {
+    return this.canvas !== null ? this.canvas.height : 0;
   }
 
   /** 動画スプライト */
@@ -539,6 +550,23 @@ export class BaseLayer {
     }
   }
 
+  public get canvasX(): number {
+    return this.canvasSprite === null ? 0 : this.canvasSprite.x;
+  }
+  public set canvasX(canvasX: number) {
+    if (this.canvasSprite !== null) {
+      this.canvasSprite.x = canvasX;
+    }
+  }
+  public get canvasY(): number {
+    return this.canvasSprite === null ? 0 : this.canvasSprite.y;
+  }
+  public set canvasY(canvasY: number) {
+    if (this.canvasSprite !== null) {
+      this.canvasSprite.y = canvasY;
+    }
+  }
+
   public get scaleX(): number {
     return this.container.scale.x;
   }
@@ -568,6 +596,14 @@ export class BaseLayer {
     this.imageContainer = new PIXI.Container();
     this.container.addChild(this.imageContainer);
     this.imageSpriteCallbacks = {
+      pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
+        this.imageContainer.addChild(child);
+      },
+      pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
+        this.imageContainer.removeChild(child);
+      },
+    };
+    this.canvasSpriteCallbacks = {
       pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
         this.imageContainer.addChild(child);
       },
@@ -620,10 +656,18 @@ export class BaseLayer {
   public destroy(): void {
     this.clearText();
     this.freeImage();
+    this.freeCanvas();
+    this.freeVideo();
     this.maskSprite.destroy();
     this.backgroundSprite.destroy();
     if (this.imageSprite != null) {
       this.imageSprite.destroy();
+    }
+    if (this.canvasSprite != null) {
+      this.canvasSprite.destroy();
+    }
+    if (this.video != null) {
+      this.video.destroy();
     }
 
     this.textContainer.destroy();
@@ -686,6 +730,9 @@ export class BaseLayer {
       this.debugBorder.drawRect(0, 0, this.debugBorder.width, this.debugBorder.height);
       this.debugText.text = `${this.name}: x=${this.x} y=${this.y} width=${this.width} height=${this.height}`;
     }
+    if (this.visible && this.canvas !== null && this.canvasSprite !== null) {
+      this.canvasSprite.beforeDraw();
+    }
     this.children.forEach(child => {
       child.beforeDraw(tick);
     });
@@ -738,7 +785,7 @@ export class BaseLayer {
   //
   // 基本的にイベントは子レイヤー→親レイヤーの順番で処理することとする。
   // 同レベルの子レイヤーはレイヤー番号の降順に呼ばれる。
-  // このルールを守るため、すべてのレイヤはイベント処理の最初で以下の処理を実行するべき。
+  // このルールを守るため、すべてのレイヤはイベント処理の最初で以下の処理を実行する。
   //   ```
   //   super.onMouseXXXXX(e);
   //   if (e.stopPropagationFlag || e.forceStopFlag) { return; }
@@ -930,6 +977,7 @@ export class BaseLayer {
    */
   public setBackgroundColor(color: number, alpha = 1.0): void {
     this.freeImage();
+    this.freeCanvas();
     this.freeVideo();
     this.backgroundSprite.fillColor(color, alpha);
     this._backgroundColor = color;
@@ -1254,6 +1302,7 @@ export class BaseLayer {
     // Logger.debug("BaseLayer.loadImage call: ", filePath);
     this.clearBackgroundColor();
     this.freeImage();
+    this.freeCanvas();
     this.freeVideo();
     try {
       this.image = await this.resource.loadImage(filePath);
@@ -1283,6 +1332,50 @@ export class BaseLayer {
     this.imageFilePath = null;
   }
 
+  /**
+   * キャンバスを読み込む。
+   * 同時に、レイヤサイズをキャンバスに合わせて変更する。
+   * @param canvask
+   */
+  public loadCanvas(canvas: HTMLCanvasElement): void {
+    this.clearBackgroundColor();
+    this.freeImage();
+    this.freeCanvas();
+    this.freeVideo();
+    try {
+      this.canvas = canvas;
+      this.canvasSprite = new PonSprite(this.canvasSpriteCallbacks);
+      this.canvasSprite.setCanvas(canvas);
+      this.width = this.canvasSprite.width;
+      this.height = this.canvasSprite.height;
+      this.canvasX = 0;
+      this.canvasY = 0;
+    } catch (e) {
+      Logger.error(e);
+      throw e;
+    }
+  }
+
+  /**
+   * 画像を開放する
+   */
+  public freeCanvas(): void {
+    if (this.canvasSprite != null) {
+      this.canvasSprite.destroy();
+    }
+    this.canvasSprite = null;
+    this.canvas = null;
+  }
+
+  /**
+   * 動画を読み込む。
+   * @param filePath ファイルパス
+   * @param width 動画の幅
+   * @param height 動画の高さ
+   * @param autoPlay 自動再生するかどうか
+   * @param loop ループ再生するかどうか
+   * @param volume 音量
+   */
   public loadVideo(
     filePath: string,
     width: number,
@@ -1293,6 +1386,7 @@ export class BaseLayer {
   ): Promise<BaseLayer> {
     this.clearBackgroundColor();
     this.freeImage();
+    this.freeCanvas();
     this.freeVideo();
 
     const videoTexture = this.resource.loadVideoTexture(filePath, autoPlay);
@@ -1378,6 +1472,8 @@ export class BaseLayer {
     "imageFilePath",
     "imageX",
     "imageY",
+    "canvasX",
+    "canvasY",
     "videoFilePath",
     "videoWidth",
     "videoHeight",
@@ -1458,7 +1554,9 @@ export class BaseLayer {
       this.setBackgroundColor(data.backgroundColor, data.backgroundAlpha);
     }
 
+    // MEMO: 画像、動画は復元されるが、キャンバスは復元されない。
     this.freeImage();
+    this.freeCanvas();
     this.freeVideo();
     if (data.imageFilePath != null && data.imageFilePath !== "" && data.imageFilePath !== this.imageFilePath) {
       // 画像がある場合は非同期で読み込んでその後にサイズ等を復元する
@@ -1533,6 +1631,14 @@ export class BaseLayer {
       dest.imageSprite = new PonSprite(dest.imageSpriteCallbacks);
       dest.imageSprite.setImage(this.image);
       dest.image = this.image;
+    }
+
+    // キャンバスのコピー
+    dest.freeCanvas();
+    if (this.canvas !== null) {
+      dest.canvasSprite = new PonSprite(dest.canvasSpriteCallbacks);
+      dest.canvasSprite.setCanvas(this.canvas);
+      dest.canvas = this.canvas;
     }
 
     // 動画のコピー

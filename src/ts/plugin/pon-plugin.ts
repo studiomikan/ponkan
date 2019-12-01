@@ -1,4 +1,5 @@
 import { Ponkan3 } from "../ponkan3";
+import { PonLayer } from "../layer/pon-layer";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /**
@@ -40,6 +41,22 @@ export class PonPlugin {
   }
 
   /**
+   * 状態更新時
+   * @param tick 時間
+   */
+  public onUpdate(tick: number): void {
+    return;
+  }
+
+  /**
+   * 描画前
+   * @param tick 時間
+   */
+  public beforeDraw(tick: number): void {
+    return;
+  }
+
+  /**
    * ゲーム進行の状態が変化したときに呼ばれる
    * @param isStable 安定していればtrue
    */
@@ -57,9 +74,19 @@ export class PonPlugin {
 
   /**
    * backlayなどでレイヤーがコピーされるときに呼ばれる
-   * @param toback 表→裏へのコピーならtrue、それ以外はfalse
    */
-  public onCopyLayer(toback: boolean): void {
+  public onBacklay(): void {
+    return;
+  }
+
+  /**
+   * backlayなどでレイヤーがコピーされるときに呼ばれる
+   * @param srcLayers コピー元レイヤ
+   * @param destLayers コピー先レイヤ
+   * @param srcpage コピー元ページ
+   * @param destpage コピー先ページ
+   */
+  public onCopylay(srcLayers: PonLayer[], destLayers: PonLayer[], srcpage: string, destpage: string): void {
     return;
   }
 
