@@ -8,5 +8,6 @@ rmdir /S /Q dist\base
 rmdir /S /Q dist\filter
 rmdir /S /Q dist\layer
 rmdir /S /Q dist\tag-actions
+rmdir /S /Q dist\plugin
 pause
 @echo on
