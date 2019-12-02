@@ -27,7 +27,8 @@ module.exports = merge(common, {
       baseDir: 'dist',
       out: 'ponkan3.d.ts',
       indent: '  ',
-      removeSource: true
+      removeSource: true,
+      newline: '\n',
     })
   ],
 });
