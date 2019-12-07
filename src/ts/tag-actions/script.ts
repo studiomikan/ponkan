@@ -145,6 +145,7 @@ export default function(p: Ponkan3): TagAction[] {
       ["endif"],
       [],
       (values: any, tick: number): TagActionResult => {
+        p.conductor.script.endif();
         return "continue";
       },
     ),

@@ -327,6 +327,18 @@ export class Script {
   }
 
   /**
+   * endifタグの動作
+   */
+  public endif(): void {
+    // タグ動作としてelseにきたときは、単に前のif/elsif/elseブロックの終わりを示すため、
+    // ifDepthを下げるだけでよい。
+    this.ifDepth--;
+    if (this.ifDepth < 0) {
+      throw new Error("条件分岐エラー。if/else/elsif/endifの対応が取れていません");
+    }
+  }
+
+  /**
    * endifまでジャンプする。
    */
   protected goToEndifFromElse(): void {

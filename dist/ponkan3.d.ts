@@ -1564,6 +1564,10 @@ declare module 'ponkan3/base/script' {
         */
       elseJump(): void;
       /**
+        * endifタグの動作
+        */
+      endif(): void;
+      /**
         * endifまでジャンプする。
         */
       protected goToEndifFromElse(): void;
