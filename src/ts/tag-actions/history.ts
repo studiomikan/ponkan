@@ -21,7 +21,7 @@ export default function(p: Ponkan3): TagAction[] {
       ],
       (values: any, tick: number): TagActionResult => {
         if (values.output != null) {
-          p.historyLayer.outputFlag = values.output;
+          p.historyLayer.enableOutput = values.output;
         }
         if (values.enabled != null) {
           p.enabledHistory = values.enabled;
