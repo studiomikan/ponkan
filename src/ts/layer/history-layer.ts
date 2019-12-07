@@ -468,7 +468,7 @@ export class HistoryLayer extends BaseLayer {
   protected scrollBar: ScrollBar;
   protected closeButton: HistoryButton;
   public wheelScrollCount: number = 3;
-  public outputFlag: boolean = true;
+  public enableOutput: boolean = true;
 
   public constructor(name: string, resource: Resource, owner: PonGame) {
     super(name, resource, owner);
@@ -606,7 +606,7 @@ export class HistoryLayer extends BaseLayer {
   }
 
   public addHistoryChar(ch: string): void {
-    if (this.outputFlag) {
+    if (this.enableOutput) {
       this.textLayer.add(ch);
       if (this.visible) {
         this.textLayer.redraw();
@@ -616,7 +616,7 @@ export class HistoryLayer extends BaseLayer {
   }
 
   public addHistoryTextReturn(): void {
-    if (this.outputFlag) {
+    if (this.enableOutput) {
       this.textLayer.textReturn();
       if (this.visible) {
         this.textLayer.redraw();
@@ -735,5 +735,19 @@ export class HistoryLayer extends BaseLayer {
       this.scrollDown(this.wheelScrollCount);
     }
     return false;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public store(tick: number): any {
+    return {
+      enableOutput: this.enableOutput,
+    };
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
+    if (data.enableOutput != null) {
+      this.enableOutput = data.enableOutput;
+    }
   }
 }

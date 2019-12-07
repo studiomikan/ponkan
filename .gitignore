@@ -3,6 +3,12 @@ logs
 npm-debug.log*
 node_modules/
 doc/
+dist/base
+dist/filter
+dist/layer
+dist/tag-actions
+dist/plugin
+dist/tag-action.d.ts
 dist_dev/
 dist_test/
 game_template/node_modules/

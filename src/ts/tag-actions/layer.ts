@@ -80,15 +80,26 @@ export default function(p: Ponkan3): TagAction[] {
       [
         /// @param グリフとして使用するレイヤー
         new TagValue("lay", "number", false, null),
-        /// @param グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。
+        /// @param グリフの表示位置。
         ///        "eol"を指定すると文章の末尾に表示。
         ///        "relative"を指定するとメッセージレイヤーとの相対位置で固定表示。
         ///        "absolute"を指定すると画面上の絶対位置で固定表示。
         new TagValue("pos", "string", false, null),
-        /// @param グリフの表示位置（メッセージレイヤーからの相対位置）
+        /// @param グリフの縦方向の揃え位置。
+        ///        "top"を指定すると行の上端に揃えて表示。
+        ///        "middle"を指定すると行の中央に揃えて表示。
+        ///        "bottom"を指定すると行の下端に揃えて表示。
+        ///        "text-top"を指定すると直前の一文字の上端に揃えて表示。
+        ///        "text-middle"を指定すると直前の一文字の中央に揃えて表示。
+        new TagValue("verticalalign", "string", false, null),
+        /// @param グリフの表示位置。`pos: "relative"` または `pos: "absolute"` の場合のみ有効。
         new TagValue("x", "number", false, null),
-        /// @param グリフの表示位置（メッセージレイヤーからの相対位置）
+        /// @param グリフの表示位置。`pos: "relative"` または `pos: "absolute"` の場合のみ有効。
         new TagValue("y", "number", false, null),
+        /// @param グリフの表示位置のマージン。`pos: "relative"` の場合のみ有効。この値分だけ、本来の位置から補正されます。
+        new TagValue("marginx", "number", false, null),
+        /// @param グリフの表示位置のマージン。`pos: "relative"` の場合のみ有効。この値分だけ、本来の位置から補正されます。
+        new TagValue("marginy", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         if (values.lay != null) {
@@ -97,11 +108,20 @@ export default function(p: Ponkan3): TagAction[] {
         if (values.pos != null) {
           p.lineBreakGlyphPos = values.pos;
         }
+        if (values.verticalalign != null) {
+          p.lineBreakGlyphVerticalAlign = values.verticalalign;
+        }
         if (values.x != null) {
           p.lineBreakGlyphX = values.x;
         }
         if (values.y != null) {
           p.lineBreakGlyphY = values.y;
+        }
+        if (values.marginx != null) {
+          p.lineBreakGlyphMarginX = values.marginx;
+        }
+        if (values.marginy != null) {
+          p.lineBreakGlyphMarginY = values.marginy;
         }
         return "continue";
       },
@@ -115,15 +135,26 @@ export default function(p: Ponkan3): TagAction[] {
       [
         /// @param グリフとして使用するレイヤー
         new TagValue("lay", "number", false, null),
-        /// @param グリフの表示位置。"eol"を指定すると文章の末尾に表示。"fixed"を指定すると固定位置で表示。
+        /// @param グリフの表示位置。
         ///        "eol"を指定すると文章の末尾に表示。
         ///        "relative"を指定するとメッセージレイヤーとの相対位置で固定表示。
         ///        "absolute"を指定すると画面上の絶対位置で固定表示。
         new TagValue("pos", "string", false, null),
-        /// @param グリフの表示位置（メッセージレイヤーからの相対位置）
+        /// @param グリフの縦方向の揃え位置。
+        ///        "top"を指定すると行の上端に揃えて表示。
+        ///        "middle"を指定すると行の中央に揃えて表示。
+        ///        "bottom"を指定すると行の下端に揃えて表示。
+        ///        "text-top"を指定すると直前の一文字の上端に揃えて表示。
+        ///        "text-middle"を指定すると直前の一文字の中央に揃えて表示。
+        new TagValue("verticalalign", "string", false, null),
+        /// @param グリフの表示位置。`pos: "relative"` または `pos: "absolute"` の場合のみ有効。
         new TagValue("x", "number", false, null),
-        /// @param グリフの表示位置（メッセージレイヤーからの相対位置）
+        /// @param グリフの表示位置。`pos: "relative"` または `pos: "absolute"` の場合のみ有効。
         new TagValue("y", "number", false, null),
+        /// @param グリフの表示位置のマージン。ここで指定した分だけ、本来の位置から補正されます。
+        new TagValue("marginx", "number", false, null),
+        /// @param グリフの表示位置のマージン。ここで指定した分だけ、本来の位置から補正されます。
+        new TagValue("marginy", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         if (values.lay != null) {
@@ -132,11 +163,20 @@ export default function(p: Ponkan3): TagAction[] {
         if (values.pos != null) {
           p.pageBreakGlyphPos = values.pos;
         }
+        if (values.verticalalign != null) {
+          p.pageBreakGlyphVerticalAlign = values.verticalalign;
+        }
         if (values.x != null) {
           p.pageBreakGlyphX = values.x;
         }
         if (values.y != null) {
           p.pageBreakGlyphY = values.y;
+        }
+        if (values.marginx != null) {
+          p.pageBreakGlyphMarginX = values.marginx;
+        }
+        if (values.marginy != null) {
+          p.pageBreakGlyphMarginY = values.marginy;
         }
         return "continue";
       },

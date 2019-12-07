@@ -20,6 +20,8 @@ export enum SkipType {
   WHILE_PRESSING_CTRL,
 }
 
+export type GlyphVerticalAlignType = "bottom" | "middle" | "top" | "text-top" | "text-middle";
+
 const DEFAULT_LAYER_COUNT = 40;
 const DEFAULT_MESSAGE_LAYER_NUM = 20;
 const DEFAULT_LINE_BREAK_LAYER_NUM = 21;
@@ -93,8 +95,11 @@ export class Ponkan3 extends PonGame {
     this._lineBreakGlyphLayerNum = num;
   }
   public lineBreakGlyphPos: "eol" | "relative" | "absolute" = "eol";
+  public lineBreakGlyphVerticalAlign: GlyphVerticalAlignType = "middle";
   public lineBreakGlyphX: number = 0;
   public lineBreakGlyphY: number = 0;
+  public lineBreakGlyphMarginX: number = 10;
+  public lineBreakGlyphMarginY: number = 0;
 
   protected _pageBreakGlyphLayerNum: number = DEFAULT_PAGE_BREAK_LAYER_NUM;
   public get pageBreakGlyphLayerNum(): number {
@@ -104,8 +109,11 @@ export class Ponkan3 extends PonGame {
     this._pageBreakGlyphLayerNum = num;
   }
   public pageBreakGlyphPos: "eol" | "relative" | "absolute" = "eol";
+  public pageBreakGlyphVerticalAlign: GlyphVerticalAlignType = "middle";
   public pageBreakGlyphX: number = 0;
   public pageBreakGlyphY: number = 0;
+  public pageBreakGlyphMarginX: number = 10;
+  public pageBreakGlyphMarginY: number = 0;
 
   // 右クリック
   public rightClickJump: boolean = false;
@@ -1073,8 +1081,11 @@ export class Ponkan3 extends PonGame {
       tick,
       this.lineBreakGlyphLayer,
       this.lineBreakGlyphPos,
+      this.lineBreakGlyphVerticalAlign,
       this.lineBreakGlyphX,
       this.lineBreakGlyphY,
+      this.lineBreakGlyphMarginX,
+      this.lineBreakGlyphMarginY,
     );
   }
 
@@ -1083,19 +1094,25 @@ export class Ponkan3 extends PonGame {
       tick,
       this.pageBreakGlyphLayer,
       this.pageBreakGlyphPos,
+      this.pageBreakGlyphVerticalAlign,
       this.pageBreakGlyphX,
       this.pageBreakGlyphY,
+      this.pageBreakGlyphMarginX,
+      this.pageBreakGlyphMarginY,
     );
   }
 
   public showBreakGlyph(
     tick: number,
     lay: PonLayer,
-    pos: "eol" | "relative" | "absolute" = "eol",
+    pos: "eol" | "relative" | "absolute",
+    verticalAlign: GlyphVerticalAlignType,
     x: number,
     y: number,
+    marginX: number,
+    marginY: number,
   ): void {
-    this.resetBreakGlyphPos(lay, pos, x, y);
+    this.resetBreakGlyphPos(lay, pos, verticalAlign, x, y, marginX, marginY);
     if (lay.hasFrameAnim) {
       lay.stopFrameAnim();
       lay.startFrameAnim(tick);
@@ -1107,8 +1124,11 @@ export class Ponkan3 extends PonGame {
     this.resetBreakGlyphPos(
       this.lineBreakGlyphLayer,
       this.lineBreakGlyphPos,
+      this.lineBreakGlyphVerticalAlign,
       this.lineBreakGlyphX,
       this.lineBreakGlyphY,
+      this.lineBreakGlyphMarginX,
+      this.lineBreakGlyphMarginY,
     );
   }
 
@@ -1116,17 +1136,52 @@ export class Ponkan3 extends PonGame {
     this.resetBreakGlyphPos(
       this.pageBreakGlyphLayer,
       this.pageBreakGlyphPos,
+      this.pageBreakGlyphVerticalAlign,
       this.pageBreakGlyphX,
       this.pageBreakGlyphY,
+      this.pageBreakGlyphMarginX,
+      this.pageBreakGlyphMarginY,
     );
   }
 
-  private resetBreakGlyphPos(lay: PonLayer, pos: "eol" | "relative" | "absolute" = "eol", x: number, y: number): void {
+  private resetBreakGlyphPos(
+    lay: PonLayer,
+    pos: "eol" | "relative" | "absolute",
+    verticalAlign: GlyphVerticalAlignType,
+    x: number,
+    y: number,
+    marginX: number,
+    marginY: number,
+  ): void {
     const mesLay = this.messageLayer;
     if (pos === "eol") {
       const glyphPos = mesLay.getNextTextPos(lay.width);
       lay.x = mesLay.x + glyphPos.x;
-      lay.y = mesLay.y + glyphPos.y;
+      // 縦位置についてはデフォルトがtopなので、修正する
+      const lineHeight = mesLay.textLineHeight;
+      switch (verticalAlign) {
+        case "bottom":
+          lay.y = mesLay.y + (glyphPos.y + lineHeight) - lay.height;
+          break;
+        case "top":
+          lay.y = mesLay.y + glyphPos.y;
+          break;
+        default:
+        case "middle":
+          lay.y = mesLay.y + glyphPos.y + (mesLay.textLineHeight - lay.height) / 2;
+          break;
+        case "text-top":
+          lay.y = mesLay.y + glyphPos.y + lineHeight - mesLay.textFontSize;
+          break;
+        case "text-middle":
+          {
+            const textTop = glyphPos.y + lineHeight - mesLay.textFontSize;
+            lay.y = mesLay.y + textTop + (mesLay.textFontSize - lay.height) / 2;
+          }
+          break;
+      }
+      lay.x += marginX;
+      lay.y += marginY;
     } else if (pos === "relative") {
       lay.x = mesLay.x + x;
       lay.y = mesLay.y + y;
@@ -1447,12 +1502,18 @@ export class Ponkan3 extends PonGame {
     "messageLayerNum",
     "lineBreakGlyphLayerNum",
     "lineBreakGlyphPos",
+    "lineBreakGlyphVerticalAlign",
     "lineBreakGlyphX",
     "lineBreakGlyphY",
+    "lineBreakGlyphMarginX",
+    "lineBreakGlyphMarginY",
     "pageBreakGlyphLayerNum",
+    "pageBreakGlyphVerticalAlign",
     "pageBreakGlyphPos",
     "pageBreakGlyphX",
     "pageBreakGlyphY",
+    "pageBreakGlyphMarginX",
+    "pageBreakGlyphMarginY",
     "rightClickJump",
     "rightClickCall",
     "rightClickFilePath",
@@ -1487,6 +1548,8 @@ export class Ponkan3 extends PonGame {
     this.backLayers.forEach(layer => {
       data.backLayers.push(layer.store(tick));
     });
+
+    data.historyLayer = this.historyLayer.store(tick);
 
     data.soundBuffers = [];
     this.soundBuffers.forEach(sound => {
@@ -1528,6 +1591,9 @@ export class Ponkan3 extends PonGame {
       await this.foreLayers[i].restore(data.foreLayers[i], tick, true);
       await this.backLayers[i].restore(data.backLayers[i], tick, true);
     }
+
+    // history layer
+    await this.historyLayer.restore(data.historyLayer, tick, false);
 
     // sound
     this.soundBuffers.forEach(sb => {
@@ -1583,6 +1649,9 @@ export class Ponkan3 extends PonGame {
         await this.backLayers[i].restore(data.backLayers[i], tick, false);
       }
     }
+
+    // MEMO: history layer は対象外
+    await this.historyLayer.restore(data.historyLayer, tick, false);
 
     // sound
     if (sound) {

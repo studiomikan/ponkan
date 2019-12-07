@@ -19,6 +19,7 @@ declare module 'ponkan3' {
       UNTIL_S = 2,
       WHILE_PRESSING_CTRL = 3
   }
+  export type GlyphVerticalAlignType = "bottom" | "middle" | "top" | "text-top" | "text-middle";
   export class Ponkan3 extends PonGame {
       raiseError: any;
       skipMode: SkipType;
@@ -59,13 +60,19 @@ declare module 'ponkan3' {
       protected _lineBreakGlyphLayerNum: number;
       lineBreakGlyphLayerNum: number;
       lineBreakGlyphPos: "eol" | "relative" | "absolute";
+      lineBreakGlyphVerticalAlign: GlyphVerticalAlignType;
       lineBreakGlyphX: number;
       lineBreakGlyphY: number;
+      lineBreakGlyphMarginX: number;
+      lineBreakGlyphMarginY: number;
       protected _pageBreakGlyphLayerNum: number;
       pageBreakGlyphLayerNum: number;
       pageBreakGlyphPos: "eol" | "relative" | "absolute";
+      pageBreakGlyphVerticalAlign: GlyphVerticalAlignType;
       pageBreakGlyphX: number;
       pageBreakGlyphY: number;
+      pageBreakGlyphMarginX: number;
+      pageBreakGlyphMarginY: number;
       rightClickJump: boolean;
       rightClickCall: boolean;
       rightClickFilePath: string | null;
@@ -184,7 +191,7 @@ declare module 'ponkan3' {
       readonly pageBreakGlyphLayer: PonLayer;
       showLineBreakGlyph(tick: number): void;
       showPageBreakGlyph(tick: number): void;
-      showBreakGlyph(tick: number, lay: PonLayer, pos: "eol" | "relative" | "absolute" | undefined, x: number, y: number): void;
+      showBreakGlyph(tick: number, lay: PonLayer, pos: "eol" | "relative" | "absolute", verticalAlign: GlyphVerticalAlignType, x: number, y: number, marginX: number, marginY: number): void;
       hideBreakGlyph(): void;
       hideMessages(): void;
       showMessages(): void;
@@ -880,7 +887,7 @@ declare module 'ponkan3/layer/history-layer' {
     protected scrollBar: ScrollBar;
     protected closeButton: HistoryButton;
     wheelScrollCount: number;
-    outputFlag: boolean;
+    enableOutput: boolean;
     constructor(name: string, resource: Resource, owner: PonGame);
     init(config?: any): Promise<void>;
     protected initScrollButtons(config: any): void;
@@ -905,6 +912,8 @@ declare module 'ponkan3/layer/history-layer' {
     onMouseDown(e: PonMouseEvent): void;
     onMouseUp(e: PonMouseEvent): void;
     onMouseWheel(e: PonWheelEvent): boolean;
+    store(tick: number): any;
+    restore(data: any, tick: number, clear: boolean): Promise<void>;
   }
   export {};
 }

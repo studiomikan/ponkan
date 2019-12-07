@@ -21,7 +21,6 @@ module.exports = {
     extensions:['.ts', '.js', '.json']
   },
   plugins: [
-    // new UglifyJSPlugin(),
     new CopyWebpackPlugin(
       [ { from: '.', to: 'gamedata/', }, ],
       { context: path.join(__dirname, 'src/gamedata') }
@@ -43,6 +42,6 @@ module.exports = {
       { context: path.join(__dirname, 'src') }
     ),
     new WriteFilePlugin(),
-  ]
+  ],
 }
 
