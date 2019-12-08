@@ -30,8 +30,12 @@ export default function(p: Ponkan3): TagAction[] {
         new TagValue("file", "string", false, null),
         /// @param ボタン押下時にjumpまたはcallするラベル名
         new TagValue("label", "string", false, null),
+        /// @param マウスポインタが重なったタイミングで実行するJavaScript
+        new TagValue("onclick", "string", false, null),
+        /// @param マウスポインタが出ていったタイミングで実行するJavaScript
+        new TagValue("onleave", "string", false, null),
         /// @param ボタン押下時に実行するJavaScript
-        new TagValue("exp", "string", false, null),
+        new TagValue("onclick", "string", false, null),
         /// @param テキスト
         new TagValue("text", "string", false, ""),
         /// @param x座標(px)
@@ -76,7 +80,9 @@ export default function(p: Ponkan3): TagAction[] {
             values.file,
             values.label,
             values.countpage,
-            values.exp,
+            values.onenter,
+            values.onleave,
+            values.onclick,
             values.text,
             values.x,
             values.y,
@@ -190,8 +196,12 @@ export default function(p: Ponkan3): TagAction[] {
         new TagValue("file", "string", false, null),
         /// @param ボタン押下時にjumpまたはcallするラベル名
         new TagValue("label", "string", false, null),
+        /// @param マウスポインタが重なったタイミングで実行するJavaScript
+        new TagValue("onclick", "string", false, null),
+        /// @param マウスポインタが出ていったタイミングで実行するJavaScript
+        new TagValue("onleave", "string", false, null),
         /// @param ボタン押下時に実行するJavaScript
-        new TagValue("exp", "string", false, null),
+        new TagValue("onclick", "string", false, null),
         /// @param ボタンにする画像ファイル
         new TagValue("imagefile", "string", true, null),
         /// @param x座標(px)
@@ -220,7 +230,9 @@ export default function(p: Ponkan3): TagAction[] {
               values.file,
               values.label,
               values.countpage,
-              values.exp,
+              values.onenter,
+              values.onleave,
+              values.onclick,
               values.imagefile,
               values.x,
               values.y,

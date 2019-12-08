@@ -1408,12 +1408,14 @@ declare module 'ponkan3/layer/button' {
     protected label: string | null;
     protected countPage: boolean;
     protected isSystemButton: boolean;
-    protected exp: string | null;
-    protected onEnterSoundBuf: string;
-    protected onLeaveSoundBuf: string;
-    protected onClickSoundBuf: string;
+    protected onEnterExp: string | null;
+    protected onLeaveExp: string | null;
+    protected onClickExp: string | null;
+    protected onEnterSoundBuf: string | null;
+    protected onLeaveSoundBuf: string | null;
+    protected onClickSoundBuf: string | null;
     protected systemButtonLocked: boolean;
-    initCommandButton(jump?: boolean, call?: boolean, filePath?: string | null, label?: string | null, countPage?: boolean, isSystemButton?: boolean, exp?: string | null, onEnterSoundBuf?: string, onLeaveSoundBuf?: string, onClickSoundBuf?: string): void;
+    initCommandButton(jump?: boolean, call?: boolean, filePath?: string | null, label?: string | null, countPage?: boolean, isSystemButton?: boolean, onEnterExp?: string | null, onLeaveExp?: string | null, onClickExp?: string | null, onEnterSoundBuf?: string | null, onLeaveSoundBuf?: string | null, onClickSoundBuf?: string | null): void;
     clearCommandButton(): void;
     lockSystemButton(): void;
     unlockSystemButton(): void;
@@ -1813,7 +1815,7 @@ declare module 'ponkan3/layer/image-button-layer' {
   import { TextButtonLayer } from "ponkan3/layer/text-button-layer";
   export class CommandImageButton extends CommandButton {
     protected direction: "horizontal" | "vertical";
-    initImageButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, isSystemButton: boolean | undefined, exp: string | null | undefined, file: string, direction: "horizontal" | "vertical", onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string): Promise<void>;
+    initImageButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, isSystemButton: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, file: string, direction: "horizontal" | "vertical", onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string): Promise<void>;
     clearCommandButton(): void;
     setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void;
     protected static imageButtonStoreParams: string[];
@@ -1823,7 +1825,7 @@ declare module 'ponkan3/layer/image-button-layer' {
     copyTo(dest: CommandImageButton): void;
   }
   export class ImageButtonLayer extends TextButtonLayer {
-    addImageButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, exp: string | null | undefined, file: string, x: number, y: number, direction: "horizontal" | "vertical", isSystemButton: boolean, onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string): Promise<void>;
+    addImageButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, file: string, x: number, y: number, direction: "horizontal" | "vertical", isSystemButton: boolean, onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string): Promise<void>;
     clearImageButtons(): void;
     lockButtons(): void;
     unlockButtons(): void;
@@ -1883,7 +1885,7 @@ declare module 'ponkan3/layer/text-button-layer' {
       txtBtnNormalBackgroundAlpha: number;
       txtBtnOverBackgroundAlpha: number;
       txtBtnOnBackgroundAlpha: number;
-      initTextButton(jump?: boolean, call?: boolean, filePath?: string | null, label?: string | null, countPage?: boolean, isSystemButton?: boolean, exp?: string | null, text?: string, normalBackgroundColor?: number, overBackgroundColor?: number, onBackgroundColor?: number, normalBackgroundAlpha?: number, overBackgroundAlpha?: number, onBackgroundAlpha?: number, onEnterSoundBuf?: string, onLeaveSoundBuf?: string, onClickSoundBuf?: string): void;
+      initTextButton(jump?: boolean, call?: boolean, filePath?: string | null, label?: string | null, countPage?: boolean, isSystemButton?: boolean, onEnterExp?: string | null, onLeaveExp?: string | null, onClickExp?: string | null, text?: string, normalBackgroundColor?: number, overBackgroundColor?: number, onBackgroundColor?: number, normalBackgroundAlpha?: number, overBackgroundAlpha?: number, onBackgroundAlpha?: number, onEnterSoundBuf?: string, onLeaveSoundBuf?: string, onClickSoundBuf?: string): void;
       clearCommandButton(): void;
       setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void;
       resetTextButtonColors(): void;
@@ -1897,7 +1899,7 @@ declare module 'ponkan3/layer/text-button-layer' {
     */
   export class TextButtonLayer extends FrameAnimLayer {
       protected textButtons: TextButton[];
-      addTextButton(btnName: string | undefined, jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, exp: string | null | undefined, text: string, x: number, y: number, width: number, height: number, backgroundColors: number[], backgroundAlphas: number[], isSystemButton: boolean, textMarginTop: number | undefined, textMarginRight: number | undefined, textMarginBottom: number | undefined, textMarginLeft: number | undefined, textAlign: "left" | "center" | "right" | undefined, onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string): void;
+      addTextButton(btnName: string | undefined, jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, text: string, x: number, y: number, width: number, height: number, backgroundColors: number[], backgroundAlphas: number[], isSystemButton: boolean, textMarginTop: number | undefined, textMarginRight: number | undefined, textMarginBottom: number | undefined, textMarginLeft: number | undefined, textAlign: "left" | "center" | "right" | undefined, onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string): void;
       copyTextParams(destLayer: BaseLayer): void;
       clearTextButtons(): void;
       changeTextButtonColors(btnName: string, backgroundColors: number[]): void;

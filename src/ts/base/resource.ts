@@ -170,7 +170,7 @@ export class Resource {
           resolve(xhr.responseText);
         } else {
           Logger.debug("AJAX FAILED: ", xhr);
-          reject(xhr.responseText);
+          reject(xhr.statusText);
         }
       };
       xhr.open("GET", this.getPath(filePath), true);
@@ -200,7 +200,11 @@ export class Resource {
         }
       } catch (e) {
         Logger.error(e);
-        throw e;
+        if (typeof e === "string") {
+          throw new Error(e);
+        } else {
+          throw e;
+        }
       }
     }
   }
