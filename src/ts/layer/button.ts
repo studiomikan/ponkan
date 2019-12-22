@@ -247,13 +247,13 @@ export class CommandButton extends Button {
         p.getSoundBuffer(this.onClickSoundBuf).play();
       }
       if (this.filePath != null || this.label != null) {
-        if (this.jump) {
-          p.conductor.stop();
-          await p.conductor.jump(this.filePath, this.label, this.countPage);
-          p.conductor.start();
-        } else if (this.call) {
+        if (this.call) {
           p.conductor.stop();
           await p.callSubroutine(this.filePath, this.label, this.countPage);
+          p.conductor.start();
+        } else if (this.jump) {
+          p.conductor.stop();
+          await p.conductor.jump(this.filePath, this.label, this.countPage);
           p.conductor.start();
         }
       }

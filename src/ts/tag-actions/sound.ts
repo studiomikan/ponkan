@@ -126,6 +126,43 @@ export default function(p: Ponkan3): TagAction[] {
       },
     ),
     /// @category サウンド
+    /// @description 音声の設定
+    /// @details
+    ///   音声が停止したときの動作を設定します。
+    ///   音声が変更された、または音声が停止されたときに、これらの設定はクリアされます。
+    new TagAction(
+      ["setsoundstop"],
+      [
+        /// @param バッファ番号
+        new TagValue("buf", "string", true, null),
+        /// @param jumpする場合はtrue
+        new TagValue("jump", "boolean", false, true),
+        /// @param callする場合はtrue
+        new TagValue("call", "boolean", false, false),
+        /// @param jumpまたはcallするスクリプトファイル名
+        new TagValue("file", "string", false, null),
+        /// @param jumpまたはcallするラベル名
+        new TagValue("label", "string", false, null),
+      ],
+      (values: any, tick: number): TagActionResult => {
+        const sb: SoundBuffer = p.getSoundBuffer(values.buf);
+        if (values.jump != null) {
+          sb.onStopJump = values.jump;
+        }
+        if (values.call != null) {
+          sb.onStopCall = values.call;
+        }
+        if (values.file != null) {
+          sb.onStopFile = values.file;
+        }
+        if (values.label != null) {
+          sb.onStopLabel = values.label;
+        }
+        return "continue";
+      },
+    ),
+
+    /// @category サウンド
     /// @description 音声を再生する
     /// @details
     ///   指定の音声バッファに読み込まれた音声を再生します。

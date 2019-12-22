@@ -2,7 +2,7 @@ import { Logger } from "./logger";
 import { Resource } from "./resource";
 
 export interface ISoundBufferCallbacks {
-  onStop(bufferNum: number): void;
+  onStop(bufferNum: number, jump: boolean, call: boolean, file: string | null, label: string | null): void;
   onFadeComplete(bufferNum: number): void;
 }
 
@@ -34,6 +34,12 @@ export class SoundBuffer {
   protected fadeTime: number = 0;
   protected stopAfterFade: boolean = false;
 
+  public onStopJump: boolean = false;
+  public onStopCall: boolean = false;
+  public onStopExp: string | null = null;
+  public onStopFile: string | null = null;
+  public onStopLabel: string | null = null;
+
   public constructor(resource: Resource, bufferNum: number, callback: ISoundBufferCallbacks) {
     this.resource = resource;
     this.bufferNum = bufferNum;
@@ -45,6 +51,7 @@ export class SoundBuffer {
     this.filePath = filePath;
 
     try {
+      this.stop();
       this.howl = await this.resource.loadSoundHowler(filePath);
       Logger.debug("SoundBuffer.loadSound success: ", this.howl);
       this.setHowlerEvent();
@@ -65,6 +72,14 @@ export class SoundBuffer {
       this.howl.unload();
       this.howl = null;
     }
+  }
+
+  public clearOnStop(): void {
+    this.onStopJump = false;
+    this.onStopCall = false;
+    this.onStopExp = null;
+    this.onStopFile = null;
+    this.onStopLabel = null;
   }
 
   protected setHowlerEvent(): void {
@@ -175,7 +190,11 @@ export class SoundBuffer {
       this.volume = this.fadeTargetVolume;
     }
     this._state = SoundState.Stop;
-    this.callback.onStop(this.bufferNum);
+    if (this.onStopExp !== null) {
+      this.resource.evalJs(this.onStopExp);
+    }
+    this.callback.onStop(this.bufferNum, this.onStopJump, this.onStopCall, this.onStopFile, this.onStopLabel);
+    this.clearOnStop();
   }
 
   public pause(): void {
@@ -268,6 +287,11 @@ export class SoundBuffer {
     "fadeTargetVolume",
     "fadeTime",
     "stopAfterFade",
+    "jump",
+    "call",
+    "onStopExp",
+    "onStopFile",
+    "onStopLabel",
   ];
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
