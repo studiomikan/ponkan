@@ -146,7 +146,7 @@ declare module 'ponkan3' {
       stopAutoMode(): void;
       reserveAutoClick(tick: number): void;
       getSoundBuffer(num: string): SoundBuffer;
-      onSoundStop(bufferNum: number, jump: boolean, call: boolean, file: string | null, label: string | null): Promise<void>;
+      onSoundStop(bufferNum: number, stopBy: string, jump: boolean, call: boolean, file: string | null, label: string | null): Promise<void>;
       onSoundFadeComplete(bufferNum: number): void;
       waitSoundCompleteCallback(sb: SoundBuffer): void;
       waitSoundStopClickCallback(sb: SoundBuffer): void;
@@ -722,7 +722,7 @@ declare module 'ponkan3/base/pon-wheel-event' {
 declare module 'ponkan3/base/sound' {
   import { Resource } from "ponkan3/base/resource";
   export interface ISoundBufferCallbacks {
-    onStop(bufferNum: number, jump: boolean, call: boolean, file: string | null, label: string | null): void;
+    onStop(bufferNum: number, stopBy: string, jump: boolean, call: boolean, file: string | null, label: string | null): void;
     onFadeComplete(bufferNum: number): void;
   }
   export enum SoundState {
@@ -768,7 +768,7 @@ declare module 'ponkan3/base/sound' {
     readonly playing: boolean;
     readonly fading: boolean;
     play(): void;
-    stop(): void;
+    stop(stopBy?: string): void;
     pause(): void;
     fade(volume: number, time: number, autoStop: boolean): void;
     fadein(volume: number, time: number): void;

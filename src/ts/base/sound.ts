@@ -2,7 +2,14 @@ import { Logger } from "./logger";
 import { Resource } from "./resource";
 
 export interface ISoundBufferCallbacks {
-  onStop(bufferNum: number, jump: boolean, call: boolean, file: string | null, label: string | null): void;
+  onStop(
+    bufferNum: number,
+    stopBy: string,
+    jump: boolean,
+    call: boolean,
+    file: string | null,
+    label: string | null,
+  ): void;
   onFadeComplete(bufferNum: number): void;
 }
 
@@ -51,7 +58,7 @@ export class SoundBuffer {
     this.filePath = filePath;
 
     try {
-      this.stop();
+      this.stop("loadSound");
       this.howl = await this.resource.loadSoundHowler(filePath);
       Logger.debug("SoundBuffer.loadSound success: ", this.howl);
       this.setHowlerEvent();
@@ -66,7 +73,7 @@ export class SoundBuffer {
   }
 
   public freeSound(): void {
-    this.stop();
+    this.stop("freeSound");
     this.filePath = null;
     if (this.howl != null) {
       this.howl.unload();
@@ -89,7 +96,7 @@ export class SoundBuffer {
       });
       this.howl.off("end").on("end", () => {
         if (!this.loop) {
-          this.stop();
+          this.stop("onEndEvent");
         }
       });
       this.howl.off("fade").on("fade", () => {
@@ -168,7 +175,7 @@ export class SoundBuffer {
       throw new Error("音声が読み込まれていません");
     }
     if (this.playing) {
-      this.stop();
+      this.stop("play");
     }
     if (this.fading) {
       this.endFade();
@@ -179,7 +186,7 @@ export class SoundBuffer {
     this._state = SoundState.Play;
   }
 
-  public stop(): void {
+  public stop(stopBy = "unknown"): void {
     if (this.howl != null) {
       this.howl.stop();
       this.howl.off("fade");
@@ -193,7 +200,7 @@ export class SoundBuffer {
     if (this.onStopExp !== null) {
       this.resource.evalJs(this.onStopExp);
     }
-    this.callback.onStop(this.bufferNum, this.onStopJump, this.onStopCall, this.onStopFile, this.onStopLabel);
+    this.callback.onStop(this.bufferNum, stopBy, this.onStopJump, this.onStopCall, this.onStopFile, this.onStopLabel);
     this.clearOnStop();
   }
 
@@ -224,7 +231,7 @@ export class SoundBuffer {
     if (this.howl == null) {
       throw new Error("音声が読み込まれていません");
     }
-    this.stop();
+    this.stop("fadein");
     this.fadeStartVolume = 0;
     this.fadeTargetVolume = volume;
     this.fadeTime = time;
@@ -260,7 +267,7 @@ export class SoundBuffer {
     }
     this._volume = this.fadeTargetVolume;
     if (this.stopAfterFade) {
-      this.stop();
+      this.stop("endFade");
     } else {
       this._state = SoundState.Play;
     }
@@ -314,7 +321,7 @@ export class SoundBuffer {
       me[param] = data[param];
     });
 
-    this.stop();
+    this.stop("restore");
 
     if (data.hasSound) {
       await this.loadSound(data.filePath);

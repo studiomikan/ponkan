@@ -733,8 +733,15 @@ export class Ponkan3 extends PonGame {
     }
 
     const callbacks: ISoundBufferCallbacks = {
-      onStop: (bufferNum: number, jump: boolean, call: boolean, file: string | null, label: string | null) => {
-        this.onSoundStop(bufferNum, jump, call, file, label);
+      onStop: (
+        bufferNum: number,
+        stopBy: string,
+        jump: boolean,
+        call: boolean,
+        file: string | null,
+        label: string | null,
+      ) => {
+        this.onSoundStop(bufferNum, stopBy, jump, call, file, label);
       },
       onFadeComplete: (bufferNum: number) => {
         this.onSoundFadeComplete(bufferNum);
@@ -769,13 +776,14 @@ export class Ponkan3 extends PonGame {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async onSoundStop(
     bufferNum: number,
+    stopBy: string,
     jump: boolean,
     call: boolean,
     file: string | null,
     label: string | null,
   ): Promise<void> {
     this.conductor.trigger("soundstop");
-    if (file != null || label != null) {
+    if (stopBy === "onEndEvent" && (file != null || label != null)) {
       if (call) {
         this.conductor.stop();
         await this.callSubroutine(file, label);

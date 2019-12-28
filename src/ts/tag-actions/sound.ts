@@ -128,8 +128,9 @@ export default function(p: Ponkan3): TagAction[] {
     /// @category サウンド
     /// @description 音声の設定
     /// @details
-    ///   音声が停止したときの動作を設定します。
+    ///   音声が最後まで再生されて停止したときの動作を設定します。
     ///   音声が変更された、または音声が停止されたときに、これらの設定はクリアされます。
+    ///   また、stopsoundなどのタグで停止された場合には動作しません。
     new TagAction(
       ["setsoundstop"],
       [
@@ -188,7 +189,7 @@ export default function(p: Ponkan3): TagAction[] {
         new TagValue("buf", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getSoundBuffer(values.buf).stop();
+        p.getSoundBuffer(values.buf).stop("tag");
         return "continue";
       },
     ),
