@@ -1,15 +1,17 @@
 import { Logger } from "./logger";
 import { Resource } from "./resource";
 
+export interface IOnSoundStopParams {
+  bufferNum: number;
+  stopBy: string;
+  jump: boolean;
+  call: boolean;
+  file: string | null;
+  label: string | null;
+}
+
 export interface ISoundBufferCallbacks {
-  onStop(
-    bufferNum: number,
-    stopBy: string,
-    jump: boolean,
-    call: boolean,
-    file: string | null,
-    label: string | null,
-  ): void;
+  onStop(param: IOnSoundStopParams): void;
   onFadeComplete(bufferNum: number): void;
 }
 
@@ -200,7 +202,14 @@ export class SoundBuffer {
     if (this.onStopExp !== null) {
       this.resource.evalJs(this.onStopExp);
     }
-    this.callback.onStop(this.bufferNum, stopBy, this.onStopJump, this.onStopCall, this.onStopFile, this.onStopLabel);
+    this.callback.onStop({
+      bufferNum: this.bufferNum,
+      stopBy: stopBy,
+      jump: this.onStopJump,
+      call: this.onStopCall,
+      file: this.onStopFile,
+      label: this.onStopLabel,
+    });
     this.clearOnStop();
   }
 

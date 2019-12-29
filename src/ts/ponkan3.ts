@@ -5,7 +5,7 @@ import { PonGame } from "./base/pon-game";
 import { PonKeyEvent } from "./base/pon-key-event";
 import { PonMouseEvent } from "./base/pon-mouse-event";
 import { PonWheelEvent } from "./base/pon-wheel-event";
-import { ISoundBufferCallbacks, SoundBuffer } from "./base/sound";
+import { ISoundBufferCallbacks, IOnSoundStopParams, SoundBuffer } from "./base/sound";
 import { Tag } from "./base/tag";
 import * as Util from "./base/util";
 import { HistoryLayer } from "./layer/history-layer";
@@ -130,6 +130,8 @@ export class Ponkan3 extends PonGame {
   public soundBufferAlias: any = {};
   public soundBufferCount: number = DEFAULT_SOUND_BUFFER_COUNT;
   public readonly soundBuffers: SoundBuffer[] = [];
+  protected onSoundStopParamsList: IOnSoundStopParams[] = [];
+  protected currentOnSoundStopParams: IOnSoundStopParams | null | undefined = null;
 
   // セーブ＆ロード
   protected saveDataPrefix: string = "ponkan-game";
@@ -264,13 +266,42 @@ export class Ponkan3 extends PonGame {
       }
     }
 
+    // コンダクタの処理
     this.conductor.conduct(tick);
+
+    // onStopSoundが予約されていれば実行
+    if (this.conductor.isStable && this.onSoundStopParamsList.length > 0 && this.currentOnSoundStopParams == null) {
+      const p = (this.currentOnSoundStopParams = this.onSoundStopParamsList.pop());
+      if (p != null) {
+        this.conductor.stop();
+        const promise = p.call ? this.callSubroutine(p.file, p.label) : this.conductor.jump(p.file, p.label);
+        promise.then(() => {
+          this.conductor.start();
+          this.currentOnSoundStopParams = null;
+        });
+      }
+      // this.onSoundStopParamsList = null;
+      // if (p.call) {
+      //   this.conductor.stop();
+      //   this.callSubroutine(p.file, p.label).then(() => {
+      //     this.conductor.start();
+      //   });
+      // } else if (p.jump) {
+      //   this.conductor.stop();
+      //   this.conductor.jump(p.file, p.label).then(() => {
+      //     this.conductor.start();
+      //   });
+      // }
+    }
+
+    // レイヤーの更新
     this.forePrimaryLayer.update(tick);
     this.backPrimaryLayer.update(tick);
     this.historyLayer.update(tick);
 
     // オートモード中は強制的に状態を表示
     this.autoModeLayer.visible = this.autoModeFlag;
+
     // グリフの位置を調整
     this.resetLineBreakGlyphPos();
     this.resetPageBreakGlyphPos();
@@ -733,15 +764,8 @@ export class Ponkan3 extends PonGame {
     }
 
     const callbacks: ISoundBufferCallbacks = {
-      onStop: (
-        bufferNum: number,
-        stopBy: string,
-        jump: boolean,
-        call: boolean,
-        file: string | null,
-        label: string | null,
-      ) => {
-        this.onSoundStop(bufferNum, stopBy, jump, call, file, label);
+      onStop: (params: IOnSoundStopParams) => {
+        this.onSoundStop(params);
       },
       onFadeComplete: (bufferNum: number) => {
         this.onSoundFadeComplete(bufferNum);
@@ -774,25 +798,11 @@ export class Ponkan3 extends PonGame {
   // }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public async onSoundStop(
-    bufferNum: number,
-    stopBy: string,
-    jump: boolean,
-    call: boolean,
-    file: string | null,
-    label: string | null,
-  ): Promise<void> {
+  public async onSoundStop(params: IOnSoundStopParams): Promise<void> {
     this.conductor.trigger("soundstop");
-    if (stopBy === "onEndEvent" && (file != null || label != null)) {
-      if (call) {
-        this.conductor.stop();
-        await this.callSubroutine(file, label);
-        this.conductor.start();
-      } else if (jump) {
-        this.conductor.stop();
-        await this.conductor.jump(file, label);
-        this.conductor.start();
-      }
+    if (params.stopBy === "onEndEvent" && (params.file != null || params.label != null)) {
+      // ここでは予約のみ行い、次のupdateのタイミングで実行する
+      this.onSoundStopParamsList.push(params);
     }
   }
 
