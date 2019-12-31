@@ -151,17 +151,6 @@ export class CommandButton extends Button {
     this.onClickSoundBuf = "";
   }
 
-  // public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
-  //   const cursor: string = "auto";
-  //   if (this.isSystemButton && this.systemButtonLocked) {
-  //     this.buttonStatus = "disabled";
-  //   } else {
-  //     this.buttonStatus = status;
-  //   }
-  //   if (this.buttonStatus === "disabled") { this.down = false; }
-  //   this.resource.getForeCanvasElm().style.cursor = this.resource.cursor[status];
-  // }
-
   public lockSystemButton(): void {
     if (this.isSystemButton) {
       this.systemButtonLocked = true;
@@ -223,13 +212,6 @@ export class CommandButton extends Button {
     }
   }
 
-  // public onMouseDown(e: PonMouseEvent): void {
-  //   super.onMouseDown(e);
-  //   // if (this.isInsideEvent(e) && this.buttonStatus !== "disabled") {
-  //   //   this.setButtonStatus("on");
-  //   // }
-  // }
-
   public async onMouseUp(e: PonMouseEvent): Promise<void> {
     const down = this.down; // super.onMouseUpでfalseになってしまうのでキャッシュしておく
 
@@ -239,6 +221,8 @@ export class CommandButton extends Button {
     }
 
     if (down && this.isInsideEvent(e) && this.buttonStatus !== "disabled") {
+      e.stopPropagation();
+      e.forceStop();
       const p: Ponkan3 = this.owner as Ponkan3;
       if (this.onClickExp !== null && this.onClickExp !== "") {
         this.resource.evalJs(this.onClickExp);
@@ -262,8 +246,6 @@ export class CommandButton extends Button {
       } else {
         this.setButtonStatus("disabled");
       }
-      e.stopPropagation();
-      e.forceStop();
     }
   }
 
