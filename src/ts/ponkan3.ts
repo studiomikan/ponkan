@@ -78,7 +78,7 @@ export class Ponkan3 extends PonGame {
   public nowaitModeFlag: boolean = false;
   public addCharWithBackFlag: boolean = false;
   public hideMessageFlag: boolean = false;
-  public hideMessageByRlickFlag: boolean = false;
+  public hideMessageByRClickFlag: boolean = false;
   protected _messageLayerNum: number = DEFAULT_MESSAGE_LAYER_NUM;
   public get messageLayerNum(): number {
     return this._messageLayerNum;
@@ -440,9 +440,9 @@ export class Ponkan3 extends PonGame {
 
   public onPrimaryClick(): boolean {
     // 右クリックによるメッセージ隠し状態なら、解除して終わり
-    if (this.hideMessageByRlickFlag) {
+    if (this.hideMessageByRClickFlag) {
       this.showMessages();
-      this.hideMessageByRlickFlag = false;
+      this.hideMessageByRClickFlag = false;
       return true;
     }
 
@@ -497,7 +497,7 @@ export class Ponkan3 extends PonGame {
     } else {
       // デフォルト動作：メッセージレイヤを隠す／戻す
       if (this.hideMessageFlag) {
-        if (this.hideMessageByRlickFlag) {
+        if (this.hideMessageByRClickFlag) {
           // 右クリックによるメッセージ隠し中
           this.showMessagesByRightClick();
         } else {
@@ -1266,16 +1266,16 @@ export class Ponkan3 extends PonGame {
   }
 
   public hideMessagesByRightClick(): void {
-    if (this.conductor.isStable && this.conductor === this.mainConductor) {
+    if (this.conductor.isStable) {
       this.hideMessages();
-      this.hideMessageByRlickFlag = true;
+      this.hideMessageByRClickFlag = true;
     }
   }
 
   public showMessagesByRightClick(): void {
-    if (this.hideMessageByRlickFlag) {
+    if (this.hideMessageByRClickFlag) {
       this.showMessages();
-      this.hideMessageByRlickFlag = false;
+      this.hideMessageByRClickFlag = false;
     }
   }
 
@@ -1618,6 +1618,8 @@ export class Ponkan3 extends PonGame {
 
     Logger.debug("LOAD! ", data);
 
+    this.goToMainConductor();
+
     Ponkan3.ponkanStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
@@ -1656,7 +1658,7 @@ export class Ponkan3 extends PonGame {
     this.stopAutoMode();
 
     // プラグイン
-    // TODO: Promise.allする
+    // TODO: 並列化する
     this.plugins.forEach(async p => {
       if (p.onRestore != null) {
         await p.onRestore(data, tick, false, true, false);

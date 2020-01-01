@@ -192,7 +192,7 @@ export class TextButtonLayer extends FrameAnimLayer {
     if (btnName == null || btnName === "") {
       btnName = `${this.textButtons.length}`;
     }
-    const name = `TextButton ${btnName} in ${this.name}`;
+    const name = `TextButton ${btnName}`;
     const btn = new TextButton(name, this.resource, this.owner);
     this.addChild(btn);
     this.textButtons.push(btn);
