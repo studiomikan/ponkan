@@ -865,6 +865,9 @@ export class BaseLayer {
 
   // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる
   private callChildrenMouseEnterLeave(e: PonMouseEvent): void {
+    // イベント発生フラグを立てる
+    const enterTargets = [];
+    const leaveTargets = [];
     for (let i = this.children.length - 1; i >= 0; i--) {
       const child: BaseLayer = this.children[i];
       if (!child.visible) {
@@ -874,20 +877,34 @@ export class BaseLayer {
       if (isInside !== child.isInsideBuffer) {
         const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
         if (isInside) {
-          child._onMouseEnter(e2);
+          enterTargets.push({ child, e2 });
         } else {
-          child._onMouseLeave(e2);
+          leaveTargets.push({ child, e2 });
         }
-        child.isInsideBuffer = isInside;
-        if (e2.stopPropagationFlag) {
-          e.stopPropagation();
-        }
-        if (e2.forceStopFlag) {
-          e.forceStop();
-          return;
-        }
-      } else {
-        child.isInsideBuffer = isInside;
+      }
+      child.isInsideBuffer = isInside;
+    }
+    // leave -> enter の順に発生させる
+    for (let i = 0; i < leaveTargets.length; i++) {
+      const info = leaveTargets[i];
+      info.child._onMouseLeave(info.e2);
+      if (info.e2.stopPropagationFlag) {
+        e.stopPropagation();
+      }
+      if (info.e2.forceStopFlag) {
+        e.forceStop();
+        return;
+      }
+    }
+    for (let i = 0; i < enterTargets.length; i++) {
+      const info = enterTargets[i];
+      info.child._onMouseEnter(info.e2);
+      if (info.e2.stopPropagationFlag) {
+        e.stopPropagation();
+      }
+      if (info.e2.forceStopFlag) {
+        e.forceStop();
+        return;
       }
     }
   }
