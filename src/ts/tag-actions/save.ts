@@ -88,7 +88,7 @@ export default function(p: Ponkan3): TagAction[] {
             p.conductor.start();
           })
           .catch(() => {
-            throw new Error(`セーブデータのロードに失敗しました(${values.num})`);
+            p.error(new Error(`セーブデータのロードに失敗しました(${values.num})`));
           });
         return p.conductor.stop();
       },
