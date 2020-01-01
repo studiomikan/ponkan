@@ -393,7 +393,11 @@ export class Ponkan3 extends PonGame {
     this.eventReceivesLayer._onMouseLeave(e);
   }
   public onMouseMove(e: PonMouseEvent): void {
-    this.eventReceivesLayer._onMouseMove(e);
+    const primaryLay = this.eventReceivesLayer;
+    primaryLay._preCallMouseEnterLeave(e);
+    primaryLay._callOnMouseLeave(e);
+    primaryLay._callOnMouseEnter(e);
+    primaryLay._onMouseMove(e);
   }
   public onMouseDown(e: PonMouseEvent): void {
     this.eventReceivesLayer._onMouseDown(e);

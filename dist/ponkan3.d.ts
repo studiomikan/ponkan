@@ -427,10 +427,15 @@ declare module 'ponkan3/base/base-layer' {
       _onMouseEnter(e: PonMouseEvent): void;
       onMouseLeave(e: PonMouseEvent): void;
       _onMouseLeave(e: PonMouseEvent): void;
-      /** onMouseEnter等を発生させるためのバッファ */
-      protected isInsideBuffer: boolean;
       onMouseMove(e: PonMouseEvent): void;
       _onMouseMove(e: PonMouseEvent): void;
+      /** onMouseEnter等を発生させるためのバッファ */
+      protected isInsideBuffer: boolean;
+      callMouseEnterTargetChild: BaseLayer[];
+      protected callMouseLeaveTargetChild: BaseLayer[];
+      _preCallMouseEnterLeave(e: PonMouseEvent): void;
+      _callOnMouseEnter(e: PonMouseEvent): void;
+      _callOnMouseLeave(e: PonMouseEvent): void;
       onMouseDown(e: PonMouseEvent): void;
       _onMouseDown(e: PonMouseEvent): void;
       onMouseUp(e: PonMouseEvent): void;
