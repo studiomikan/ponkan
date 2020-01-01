@@ -233,11 +233,19 @@ export class CommandButton extends Button {
       if (this.filePath != null || this.label != null) {
         if (this.call) {
           p.conductor.stop();
-          await p.callSubroutine(this.filePath, this.label, this.countPage);
+          try {
+            await p.callSubroutine(this.filePath, this.label, this.countPage);
+          } catch (e) {
+            p.error(e);
+          }
           p.conductor.start();
         } else if (this.jump) {
           p.conductor.stop();
-          await p.conductor.jump(this.filePath, this.label, this.countPage);
+          try {
+            await p.conductor.jump(this.filePath, this.label, this.countPage);
+          } catch (e) {
+            p.error(e);
+          }
           p.conductor.start();
         }
       }

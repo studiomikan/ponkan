@@ -246,7 +246,7 @@ export default function(p: Ponkan3): TagAction[] {
               p.conductor.start();
             })
             .catch(() => {
-              p.error(new Error(`画像読み込みに失敗しました。(${values.file})`));
+              p.error(new Error(`画像読み込みに失敗しました。(${values.imagefile})`));
             });
         });
         return p.conductor.stop();
@@ -318,7 +318,7 @@ export default function(p: Ponkan3): TagAction[] {
               p.conductor.start();
             })
             .catch(() => {
-              p.error(new Error(`画像読み込みに失敗しました。(${values.file})`));
+              p.error(new Error(`画像読み込みに失敗しました。(${values.imagefile})`));
             });
         });
         return p.conductor.stop();
@@ -464,7 +464,7 @@ export default function(p: Ponkan3): TagAction[] {
               p.conductor.start();
             })
             .catch(() => {
-              p.error(new Error(`画像読み込みに失敗しました。(${values.file})`));
+              p.error(new Error(`画像読み込みに失敗しました。(${values.back})(${values.fore})(${values.button})`));
             });
         });
         return p.conductor.stop();

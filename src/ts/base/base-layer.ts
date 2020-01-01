@@ -193,6 +193,12 @@ export class BaseLayerTextLine {
     this.y = src.y;
     this._textX = src._textX;
   }
+
+  public beforeDraw(tick: number): void {
+    this.chList.forEach(ch => {
+      ch.sp.beforeDraw(tick);
+    });
+  }
 }
 
 /**
@@ -730,8 +736,11 @@ export class BaseLayer {
       this.debugBorder.drawRect(0, 0, this.debugBorder.width, this.debugBorder.height);
       this.debugText.text = `${this.name}: x=${this.x} y=${this.y} width=${this.width} height=${this.height}`;
     }
+    this.textLines.forEach(textLine => {
+      textLine.beforeDraw(tick);
+    });
     if (this.visible && this.canvas !== null && this.canvasSprite !== null) {
-      this.canvasSprite.beforeDraw();
+      this.canvasSprite.beforeDraw(tick);
     }
     this.children.forEach(child => {
       child.beforeDraw(tick);
