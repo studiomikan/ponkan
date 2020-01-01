@@ -64,6 +64,7 @@ export class MovableLayer extends SliderLayer {
     this.moveLoop = loop;
     this.moveTotalTime = time * (path.length - 1);
     this.moveStartTick = -1; // この時点では-1としておき、初めてのupdate時に設定する
+    this.moveDelayStartTick = -1;
 
     // this.movePosList = this.clonePath(path);
     // this.movePosList.unshift({ x: this.x, y: this.y, alpha: this.alpha });
