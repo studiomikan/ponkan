@@ -69,7 +69,7 @@ export default function(p: Ponkan3): TagAction[] {
             p.conductor.start();
           })
           .catch(() => {
-            throw new Error(`音声のロードに失敗しました(${values.file})`);
+            p.error(new Error(`音声のロードに失敗しました(${values.file})`));
           });
         return p.conductor.stop();
       },
@@ -126,6 +126,46 @@ export default function(p: Ponkan3): TagAction[] {
       },
     ),
     /// @category サウンド
+    /// @description 音声の設定
+    /// @details
+    ///   音声が最後まで再生されて停止したときの動作を設定します。
+    ///   この設定は、音声が変更された、または音声が停止されたときにクリアされます。
+    ///
+    ///   stopsoundなどのタグで停止された場合には動作しません。
+    ///   このコマンドを実行した場合は、できるだけ速く`s`コマンドでスクリプトを停止してください。
+    new TagAction(
+      ["setsoundstop"],
+      [
+        /// @param バッファ番号
+        new TagValue("buf", "string", true, null),
+        /// @param jumpする場合はtrue
+        new TagValue("jump", "boolean", false, true),
+        /// @param callする場合はtrue
+        new TagValue("call", "boolean", false, false),
+        /// @param jumpまたはcallするスクリプトファイル名
+        new TagValue("file", "string", false, null),
+        /// @param jumpまたはcallするラベル名
+        new TagValue("label", "string", false, null),
+      ],
+      (values: any, tick: number): TagActionResult => {
+        const sb: SoundBuffer = p.getSoundBuffer(values.buf);
+        if (values.jump != null) {
+          sb.onStopJump = values.jump;
+        }
+        if (values.call != null) {
+          sb.onStopCall = values.call;
+        }
+        if (values.file != null) {
+          sb.onStopFile = values.file;
+        }
+        if (values.label != null) {
+          sb.onStopLabel = values.label;
+        }
+        return "continue";
+      },
+    ),
+
+    /// @category サウンド
     /// @description 音声を再生する
     /// @details
     ///   指定の音声バッファに読み込まれた音声を再生します。
@@ -151,7 +191,7 @@ export default function(p: Ponkan3): TagAction[] {
         new TagValue("buf", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getSoundBuffer(values.buf).stop();
+        p.getSoundBuffer(values.buf).stop("tag");
         return "continue";
       },
     ),

@@ -325,9 +325,9 @@ export default function(p: Ponkan3): TagAction[] {
           })
           .catch(() => {
             if (p.config && p.config.developMode) {
-              throw new Error(`画像読み込みに失敗しました。(${values.file})`);
+              p.error(new Error(`画像読み込みに失敗しました。(${values.file})`));
             } else {
-              throw new Error(`画像読み込みに失敗しました。`);
+              p.error(new Error(`画像読み込みに失敗しました。`));
             }
           });
         return p.conductor.stop();
@@ -363,7 +363,7 @@ export default function(p: Ponkan3): TagAction[] {
             p.conductor.start();
           })
           .catch(() => {
-            throw new Error("追加の画像読み込みに失敗しました。");
+            p.error(new Error("追加の画像読み込みに失敗しました。"));
           });
         return p.conductor.stop();
       },

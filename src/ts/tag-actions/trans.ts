@@ -112,7 +112,7 @@ export default function(p: Ponkan3): TagAction[] {
                 p.conductor.start();
               })
               .catch(() => {
-                throw new Error(`トランジションの処理に失敗しました。(${values.method}, ${values.rule})`);
+                p.error(new Error(`トランジションの処理に失敗しました。(${values.method}, ${values.rule})`));
               });
             return p.conductor.stop();
           } else {
@@ -123,7 +123,7 @@ export default function(p: Ponkan3): TagAction[] {
                 p.conductor.start();
               })
               .catch(() => {
-                throw new Error(`トランジションの処理に失敗しました。(${values.method})`);
+                p.error(new Error(`トランジションの処理に失敗しました。(${values.method})`));
               });
             return p.conductor.stop();
           }

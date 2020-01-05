@@ -8,7 +8,7 @@ declare module 'ponkan3' {
   import { PonKeyEvent } from "ponkan3/base/pon-key-event";
   import { PonMouseEvent } from "ponkan3/base/pon-mouse-event";
   import { PonWheelEvent } from "ponkan3/base/pon-wheel-event";
-  import { SoundBuffer } from "ponkan3/base/sound";
+  import { IOnSoundStopParams, SoundBuffer } from "ponkan3/base/sound";
   import { Tag } from "ponkan3/base/tag";
   import { HistoryLayer } from "ponkan3/layer/history-layer";
   import { PonLayer } from "ponkan3/layer/pon-layer";
@@ -83,6 +83,8 @@ declare module 'ponkan3' {
       soundBufferAlias: any;
       soundBufferCount: number;
       readonly soundBuffers: SoundBuffer[];
+      protected onSoundStopParamsList: IOnSoundStopParams[];
+      protected currentOnSoundStopParams: IOnSoundStopParams | null | undefined;
       protected saveDataPrefix: string;
       protected latestSaveComment: string;
       protected latestSaveData: any;
@@ -146,7 +148,7 @@ declare module 'ponkan3' {
       stopAutoMode(): void;
       reserveAutoClick(tick: number): void;
       getSoundBuffer(num: string): SoundBuffer;
-      onSoundStop(bufferNum: number): void;
+      onSoundStop(params: IOnSoundStopParams): Promise<void>;
       onSoundFadeComplete(bufferNum: number): void;
       waitSoundCompleteCallback(sb: SoundBuffer): void;
       waitSoundStopClickCallback(sb: SoundBuffer): void;
@@ -425,10 +427,15 @@ declare module 'ponkan3/base/base-layer' {
       _onMouseEnter(e: PonMouseEvent): void;
       onMouseLeave(e: PonMouseEvent): void;
       _onMouseLeave(e: PonMouseEvent): void;
-      /** onMouseEnter等を発生させるためのバッファ */
-      protected isInsideBuffer: boolean;
       onMouseMove(e: PonMouseEvent): void;
       _onMouseMove(e: PonMouseEvent): void;
+      /** onMouseEnter等を発生させるためのバッファ */
+      protected isInsideBuffer: boolean;
+      callMouseEnterTargetChild: BaseLayer[];
+      protected callMouseLeaveTargetChild: BaseLayer[];
+      _preCallMouseEnterLeave(e: PonMouseEvent): void;
+      _callOnMouseEnter(e: PonMouseEvent): void;
+      _callOnMouseLeave(e: PonMouseEvent): void;
       onMouseDown(e: PonMouseEvent): void;
       _onMouseDown(e: PonMouseEvent): void;
       onMouseUp(e: PonMouseEvent): void;
@@ -721,8 +728,16 @@ declare module 'ponkan3/base/pon-wheel-event' {
 
 declare module 'ponkan3/base/sound' {
   import { Resource } from "ponkan3/base/resource";
+  export interface IOnSoundStopParams {
+    bufferNum: number;
+    stopBy: string;
+    jump: boolean;
+    call: boolean;
+    file: string | null;
+    label: string | null;
+  }
   export interface ISoundBufferCallbacks {
-    onStop(bufferNum: number): void;
+    onStop(param: IOnSoundStopParams): void;
     onFadeComplete(bufferNum: number): void;
   }
   export enum SoundState {
@@ -748,10 +763,16 @@ declare module 'ponkan3/base/sound' {
     protected fadeTargetVolume: number;
     protected fadeTime: number;
     protected stopAfterFade: boolean;
+    onStopJump: boolean;
+    onStopCall: boolean;
+    onStopExp: string | null;
+    onStopFile: string | null;
+    onStopLabel: string | null;
     constructor(resource: Resource, bufferNum: number, callback: ISoundBufferCallbacks);
     loadSound(filePath: string): Promise<void>;
     readonly hasSound: boolean;
     freeSound(): void;
+    clearOnStop(): void;
     protected setHowlerEvent(): void;
     protected setHowlerOptions(): void;
     readonly state: SoundState;
@@ -762,7 +783,7 @@ declare module 'ponkan3/base/sound' {
     readonly playing: boolean;
     readonly fading: boolean;
     play(): void;
-    stop(): void;
+    stop(stopBy?: string): void;
     pause(): void;
     fade(volume: number, time: number, autoStop: boolean): void;
     fadein(volume: number, time: number): void;
@@ -1408,12 +1429,14 @@ declare module 'ponkan3/layer/button' {
     protected label: string | null;
     protected countPage: boolean;
     protected isSystemButton: boolean;
-    protected exp: string | null;
-    protected onEnterSoundBuf: string;
-    protected onLeaveSoundBuf: string;
-    protected onClickSoundBuf: string;
+    protected onEnterExp: string | null;
+    protected onLeaveExp: string | null;
+    protected onClickExp: string | null;
+    protected onEnterSoundBuf: string | null;
+    protected onLeaveSoundBuf: string | null;
+    protected onClickSoundBuf: string | null;
     protected systemButtonLocked: boolean;
-    initCommandButton(jump?: boolean, call?: boolean, filePath?: string | null, label?: string | null, countPage?: boolean, isSystemButton?: boolean, exp?: string | null, onEnterSoundBuf?: string, onLeaveSoundBuf?: string, onClickSoundBuf?: string): void;
+    initCommandButton(jump?: boolean, call?: boolean, filePath?: string | null, label?: string | null, countPage?: boolean, isSystemButton?: boolean, onEnterExp?: string | null, onLeaveExp?: string | null, onClickExp?: string | null, onEnterSoundBuf?: string | null, onLeaveSoundBuf?: string | null, onClickSoundBuf?: string | null): void;
     clearCommandButton(): void;
     lockSystemButton(): void;
     unlockSystemButton(): void;
@@ -1813,7 +1836,7 @@ declare module 'ponkan3/layer/image-button-layer' {
   import { TextButtonLayer } from "ponkan3/layer/text-button-layer";
   export class CommandImageButton extends CommandButton {
     protected direction: "horizontal" | "vertical";
-    initImageButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, isSystemButton: boolean | undefined, exp: string | null | undefined, file: string, direction: "horizontal" | "vertical", onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string): Promise<void>;
+    initImageButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, isSystemButton: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, file: string, direction: "horizontal" | "vertical", onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string): Promise<void>;
     clearCommandButton(): void;
     setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void;
     protected static imageButtonStoreParams: string[];
@@ -1823,7 +1846,7 @@ declare module 'ponkan3/layer/image-button-layer' {
     copyTo(dest: CommandImageButton): void;
   }
   export class ImageButtonLayer extends TextButtonLayer {
-    addImageButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, exp: string | null | undefined, file: string, x: number, y: number, direction: "horizontal" | "vertical", isSystemButton: boolean, onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string): Promise<void>;
+    addImageButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, file: string, x: number, y: number, direction: "horizontal" | "vertical", isSystemButton: boolean, onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string): Promise<void>;
     clearImageButtons(): void;
     lockButtons(): void;
     unlockButtons(): void;
@@ -1883,7 +1906,7 @@ declare module 'ponkan3/layer/text-button-layer' {
       txtBtnNormalBackgroundAlpha: number;
       txtBtnOverBackgroundAlpha: number;
       txtBtnOnBackgroundAlpha: number;
-      initTextButton(jump?: boolean, call?: boolean, filePath?: string | null, label?: string | null, countPage?: boolean, isSystemButton?: boolean, exp?: string | null, text?: string, normalBackgroundColor?: number, overBackgroundColor?: number, onBackgroundColor?: number, normalBackgroundAlpha?: number, overBackgroundAlpha?: number, onBackgroundAlpha?: number, onEnterSoundBuf?: string, onLeaveSoundBuf?: string, onClickSoundBuf?: string): void;
+      initTextButton(jump?: boolean, call?: boolean, filePath?: string | null, label?: string | null, countPage?: boolean, isSystemButton?: boolean, onEnterExp?: string | null, onLeaveExp?: string | null, onClickExp?: string | null, text?: string, normalBackgroundColor?: number, overBackgroundColor?: number, onBackgroundColor?: number, normalBackgroundAlpha?: number, overBackgroundAlpha?: number, onBackgroundAlpha?: number, onEnterSoundBuf?: string, onLeaveSoundBuf?: string, onClickSoundBuf?: string): void;
       clearCommandButton(): void;
       setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void;
       resetTextButtonColors(): void;
@@ -1897,7 +1920,7 @@ declare module 'ponkan3/layer/text-button-layer' {
     */
   export class TextButtonLayer extends FrameAnimLayer {
       protected textButtons: TextButton[];
-      addTextButton(btnName: string | undefined, jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, exp: string | null | undefined, text: string, x: number, y: number, width: number, height: number, backgroundColors: number[], backgroundAlphas: number[], isSystemButton: boolean, textMarginTop: number | undefined, textMarginRight: number | undefined, textMarginBottom: number | undefined, textMarginLeft: number | undefined, textAlign: "left" | "center" | "right" | undefined, onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string): void;
+      addTextButton(btnName: string | undefined, jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, text: string, x: number, y: number, width: number, height: number, backgroundColors: number[], backgroundAlphas: number[], isSystemButton: boolean, textMarginTop: number | undefined, textMarginRight: number | undefined, textMarginBottom: number | undefined, textMarginLeft: number | undefined, textAlign: "left" | "center" | "right" | undefined, onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string): void;
       copyTextParams(destLayer: BaseLayer): void;
       clearTextButtons(): void;
       changeTextButtonColors(btnName: string, backgroundColors: number[]): void;

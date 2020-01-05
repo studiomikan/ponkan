@@ -101,10 +101,12 @@ export class CommandButton extends Button {
   protected label: string | null = null;
   protected countPage: boolean = true;
   protected isSystemButton: boolean = false;
-  protected exp: string | null = null;
-  protected onEnterSoundBuf: string = "";
-  protected onLeaveSoundBuf: string = "";
-  protected onClickSoundBuf: string = "";
+  protected onEnterExp: string | null = null;
+  protected onLeaveExp: string | null = null;
+  protected onClickExp: string | null = null;
+  protected onEnterSoundBuf: string | null = null;
+  protected onLeaveSoundBuf: string | null = null;
+  protected onClickSoundBuf: string | null = null;
   protected systemButtonLocked: boolean = false;
 
   public initCommandButton(
@@ -114,10 +116,12 @@ export class CommandButton extends Button {
     label: string | null = null,
     countPage = true,
     isSystemButton = false,
-    exp: string | null = null,
-    onEnterSoundBuf = "",
-    onLeaveSoundBuf = "",
-    onClickSoundBuf = "",
+    onEnterExp: string | null = null,
+    onLeaveExp: string | null = null,
+    onClickExp: string | null = null,
+    onEnterSoundBuf: string | null = null,
+    onLeaveSoundBuf: string | null = null,
+    onClickSoundBuf: string | null = null,
   ): void {
     this.initButton();
     this.jump = jump;
@@ -126,7 +130,9 @@ export class CommandButton extends Button {
     this.label = label;
     this.countPage = countPage;
     this.isSystemButton = isSystemButton;
-    this.exp = exp;
+    this.onEnterExp = onEnterExp;
+    this.onLeaveExp = onLeaveExp;
+    this.onClickExp = onClickExp;
     this.visible = true;
     this.onEnterSoundBuf = onEnterSoundBuf;
     this.onLeaveSoundBuf = onLeaveSoundBuf;
@@ -139,22 +145,11 @@ export class CommandButton extends Button {
     this.call = false;
     this.filePath = null;
     this.label = null;
-    this.exp = null;
+    this.onClickExp = null;
     this.onEnterSoundBuf = "";
     this.onLeaveSoundBuf = "";
     this.onClickSoundBuf = "";
   }
-
-  // public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
-  //   const cursor: string = "auto";
-  //   if (this.isSystemButton && this.systemButtonLocked) {
-  //     this.buttonStatus = "disabled";
-  //   } else {
-  //     this.buttonStatus = status;
-  //   }
-  //   if (this.buttonStatus === "disabled") { this.down = false; }
-  //   this.resource.getForeCanvasElm().style.cursor = this.resource.cursor[status];
-  // }
 
   public lockSystemButton(): void {
     if (this.isSystemButton) {
@@ -193,7 +188,10 @@ export class CommandButton extends Button {
     super.onMouseEnter(e);
 
     if (this.buttonStatus !== "disabled") {
-      if (this.onEnterSoundBuf !== "") {
+      if (this.onEnterExp != null && this.onEnterExp !== "") {
+        this.resource.evalJs(this.onEnterExp);
+      }
+      if (this.onEnterSoundBuf != null && this.onEnterSoundBuf !== "") {
         const p: Ponkan3 = this.owner as Ponkan3;
         p.getSoundBuffer(this.onEnterSoundBuf).play();
       }
@@ -204,19 +202,15 @@ export class CommandButton extends Button {
     super.onMouseLeave(e);
 
     if (this.buttonStatus !== "disabled") {
-      if (this.onLeaveSoundBuf !== "") {
+      if (this.onLeaveExp != null && this.onLeaveExp !== "") {
+        this.resource.evalJs(this.onLeaveExp);
+      }
+      if (this.onLeaveSoundBuf != null && this.onLeaveSoundBuf !== "") {
         const p: Ponkan3 = this.owner as Ponkan3;
         p.getSoundBuffer(this.onLeaveSoundBuf).play();
       }
     }
   }
-
-  // public onMouseDown(e: PonMouseEvent): void {
-  //   super.onMouseDown(e);
-  //   // if (this.isInsideEvent(e) && this.buttonStatus !== "disabled") {
-  //   //   this.setButtonStatus("on");
-  //   // }
-  // }
 
   public async onMouseUp(e: PonMouseEvent): Promise<void> {
     const down = this.down; // super.onMouseUpでfalseになってしまうのでキャッシュしておく
@@ -227,21 +221,31 @@ export class CommandButton extends Button {
     }
 
     if (down && this.isInsideEvent(e) && this.buttonStatus !== "disabled") {
+      e.stopPropagation();
+      e.forceStop();
       const p: Ponkan3 = this.owner as Ponkan3;
-      if (this.exp !== null && this.exp !== "") {
-        this.resource.evalJs(this.exp);
+      if (this.onClickExp !== null && this.onClickExp !== "") {
+        this.resource.evalJs(this.onClickExp);
       }
-      if (this.onClickSoundBuf !== "") {
+      if (this.onClickSoundBuf != null && this.onClickSoundBuf !== "") {
         p.getSoundBuffer(this.onClickSoundBuf).play();
       }
       if (this.filePath != null || this.label != null) {
-        if (this.jump) {
+        if (this.call) {
           p.conductor.stop();
-          await p.conductor.jump(this.filePath, this.label, this.countPage);
+          try {
+            await p.callSubroutine(this.filePath, this.label, this.countPage);
+          } catch (e) {
+            p.error(e);
+          }
           p.conductor.start();
-        } else if (this.call) {
+        } else if (this.jump) {
           p.conductor.stop();
-          await p.callSubroutine(this.filePath, this.label, this.countPage);
+          try {
+            await p.conductor.jump(this.filePath, this.label, this.countPage);
+          } catch (e) {
+            p.error(e);
+          }
           p.conductor.start();
         }
       }
@@ -250,8 +254,6 @@ export class CommandButton extends Button {
       } else {
         this.setButtonStatus("disabled");
       }
-      e.stopPropagation();
-      e.forceStop();
     }
   }
 
@@ -262,7 +264,10 @@ export class CommandButton extends Button {
     "label",
     "countPage",
     "isSystemButton",
-    "exp",
+    "onC",
+    "onEnterExp",
+    "onLeaveExp",
+    "onClickExp",
     "onEnterSoundBuf",
     "onLeaveSoundBuf",
     "onClickSoundBuf",

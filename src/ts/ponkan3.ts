@@ -5,7 +5,7 @@ import { PonGame } from "./base/pon-game";
 import { PonKeyEvent } from "./base/pon-key-event";
 import { PonMouseEvent } from "./base/pon-mouse-event";
 import { PonWheelEvent } from "./base/pon-wheel-event";
-import { ISoundBufferCallbacks, SoundBuffer } from "./base/sound";
+import { ISoundBufferCallbacks, IOnSoundStopParams, SoundBuffer } from "./base/sound";
 import { Tag } from "./base/tag";
 import * as Util from "./base/util";
 import { HistoryLayer } from "./layer/history-layer";
@@ -78,7 +78,7 @@ export class Ponkan3 extends PonGame {
   public nowaitModeFlag: boolean = false;
   public addCharWithBackFlag: boolean = false;
   public hideMessageFlag: boolean = false;
-  public hideMessageByRlickFlag: boolean = false;
+  public hideMessageByRClickFlag: boolean = false;
   protected _messageLayerNum: number = DEFAULT_MESSAGE_LAYER_NUM;
   public get messageLayerNum(): number {
     return this._messageLayerNum;
@@ -130,6 +130,8 @@ export class Ponkan3 extends PonGame {
   public soundBufferAlias: any = {};
   public soundBufferCount: number = DEFAULT_SOUND_BUFFER_COUNT;
   public readonly soundBuffers: SoundBuffer[] = [];
+  protected onSoundStopParamsList: IOnSoundStopParams[] = [];
+  protected currentOnSoundStopParams: IOnSoundStopParams | null | undefined = null;
 
   // セーブ＆ロード
   protected saveDataPrefix: string = "ponkan-game";
@@ -264,13 +266,42 @@ export class Ponkan3 extends PonGame {
       }
     }
 
+    // コンダクタの処理
     this.conductor.conduct(tick);
+
+    // onStopSoundが予約されていれば実行
+    if (this.conductor.isStable && this.onSoundStopParamsList.length > 0 && this.currentOnSoundStopParams == null) {
+      const p = (this.currentOnSoundStopParams = this.onSoundStopParamsList.pop());
+      if (p != null) {
+        this.conductor.stop();
+        const promise = p.call ? this.callSubroutine(p.file, p.label) : this.conductor.jump(p.file, p.label);
+        promise.then(() => {
+          this.conductor.start();
+          this.currentOnSoundStopParams = null;
+        });
+      }
+      // this.onSoundStopParamsList = null;
+      // if (p.call) {
+      //   this.conductor.stop();
+      //   this.callSubroutine(p.file, p.label).then(() => {
+      //     this.conductor.start();
+      //   });
+      // } else if (p.jump) {
+      //   this.conductor.stop();
+      //   this.conductor.jump(p.file, p.label).then(() => {
+      //     this.conductor.start();
+      //   });
+      // }
+    }
+
+    // レイヤーの更新
     this.forePrimaryLayer.update(tick);
     this.backPrimaryLayer.update(tick);
     this.historyLayer.update(tick);
 
     // オートモード中は強制的に状態を表示
     this.autoModeLayer.visible = this.autoModeFlag;
+
     // グリフの位置を調整
     this.resetLineBreakGlyphPos();
     this.resetPageBreakGlyphPos();
@@ -362,7 +393,11 @@ export class Ponkan3 extends PonGame {
     this.eventReceivesLayer._onMouseLeave(e);
   }
   public onMouseMove(e: PonMouseEvent): void {
-    this.eventReceivesLayer._onMouseMove(e);
+    const primaryLay = this.eventReceivesLayer;
+    primaryLay._preCallMouseEnterLeave(e);
+    primaryLay._callOnMouseLeave(e);
+    primaryLay._callOnMouseEnter(e);
+    primaryLay._onMouseMove(e);
   }
   public onMouseDown(e: PonMouseEvent): void {
     this.eventReceivesLayer._onMouseDown(e);
@@ -405,9 +440,9 @@ export class Ponkan3 extends PonGame {
 
   public onPrimaryClick(): boolean {
     // 右クリックによるメッセージ隠し状態なら、解除して終わり
-    if (this.hideMessageByRlickFlag) {
+    if (this.hideMessageByRClickFlag) {
       this.showMessages();
-      this.hideMessageByRlickFlag = false;
+      this.hideMessageByRClickFlag = false;
       return true;
     }
 
@@ -462,7 +497,7 @@ export class Ponkan3 extends PonGame {
     } else {
       // デフォルト動作：メッセージレイヤを隠す／戻す
       if (this.hideMessageFlag) {
-        if (this.hideMessageByRlickFlag) {
+        if (this.hideMessageByRClickFlag) {
           // 右クリックによるメッセージ隠し中
           this.showMessagesByRightClick();
         } else {
@@ -733,8 +768,8 @@ export class Ponkan3 extends PonGame {
     }
 
     const callbacks: ISoundBufferCallbacks = {
-      onStop: (bufferNum: number) => {
-        this.onSoundStop(bufferNum);
+      onStop: (params: IOnSoundStopParams) => {
+        this.onSoundStop(params);
       },
       onFadeComplete: (bufferNum: number) => {
         this.onSoundFadeComplete(bufferNum);
@@ -767,8 +802,12 @@ export class Ponkan3 extends PonGame {
   // }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public onSoundStop(bufferNum: number): void {
+  public async onSoundStop(params: IOnSoundStopParams): Promise<void> {
     this.conductor.trigger("soundstop");
+    if (params.stopBy === "onEndEvent" && (params.file != null || params.label != null)) {
+      // ここでは予約のみ行い、次のupdateのタイミングで実行する
+      this.onSoundStopParamsList.push(params);
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1227,16 +1266,16 @@ export class Ponkan3 extends PonGame {
   }
 
   public hideMessagesByRightClick(): void {
-    if (this.conductor.isStable && this.conductor === this.mainConductor) {
+    if (this.conductor.isStable) {
       this.hideMessages();
-      this.hideMessageByRlickFlag = true;
+      this.hideMessageByRClickFlag = true;
     }
   }
 
   public showMessagesByRightClick(): void {
-    if (this.hideMessageByRlickFlag) {
+    if (this.hideMessageByRClickFlag) {
       this.showMessages();
-      this.hideMessageByRlickFlag = false;
+      this.hideMessageByRClickFlag = false;
     }
   }
 
@@ -1579,6 +1618,8 @@ export class Ponkan3 extends PonGame {
 
     Logger.debug("LOAD! ", data);
 
+    this.goToMainConductor();
+
     Ponkan3.ponkanStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
@@ -1617,7 +1658,7 @@ export class Ponkan3 extends PonGame {
     this.stopAutoMode();
 
     // プラグイン
-    // TODO: Promise.allする
+    // TODO: 並列化する
     this.plugins.forEach(async p => {
       if (p.onRestore != null) {
         await p.onRestore(data, tick, false, true, false);

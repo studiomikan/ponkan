@@ -49,6 +49,14 @@ export class PonSprite {
   private pixiSprite: PIXI.Text | PIXI.Sprite | PIXI.Graphics | null = null;
   private type: SpriteType = SpriteType.Unknown;
 
+  private animType: string = "alpha";
+  private animTime: number = 100;
+  private animStartTick: number = -1;
+  private animOffsetX: number = 0;
+  private animOffsetY: number = 0;
+  private animStartAlpha: number = 0;
+  private animEndAlpha: number = 1;
+
   /** x座標 */
   public get x(): number {
     return this._x;
@@ -207,6 +215,11 @@ export class PonSprite {
       }
       this.pixiSprite = null;
       this.type = SpriteType.Unknown;
+      // this.animType = "alpha";
+      // this.animTime = 100;
+      // this.animStartTick = -1;
+      // this.animStartAlpha = 0;
+      // this.animEndAlpha = 1;
     } catch (e) {
       console.error(e);
       throw e;
@@ -306,9 +319,28 @@ export class PonSprite {
     this.type = SpriteType.Canvas;
   }
 
-  public beforeDraw(): void {
-    if (this.pixiSprite != null && this.type === SpriteType.Canvas) {
-      (this.pixiSprite as PIXI.Sprite).texture.update();
+  public beforeDraw(tick: number): void {
+    if (this.pixiSprite != null) {
+      if (this.type === SpriteType.Canvas) {
+        (this.pixiSprite as PIXI.Sprite).texture.update();
+      }
+
+      if (this.animType != "") {
+        if (this.animStartTick === -1) {
+          this.animStartTick = tick;
+        }
+        const elapsedTime = tick - this.animStartTick;
+        if (this.animType.indexOf("alpha") >= 0) {
+          let phase = elapsedTime / this.animTime;
+          if (phase < 0) phase = 0;
+          if (phase > 1) phase = 1;
+          this.pixiSprite.alpha = this.animStartAlpha + (this.animEndAlpha - this.animStartAlpha) * phase;
+          // console.log("animType", this.animType, elapsedTime, this.pixiSprite.alpha);
+        }
+        if (elapsedTime >= this.animTime) {
+          this.animType = ""; // 終了
+        }
+      }
     }
   }
 

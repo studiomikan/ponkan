@@ -386,6 +386,12 @@ export class PonGame implements IConductorEvent {
     return "break";
   }
 
+  public goToMainConductor(): void {
+    while (this.conductorStack.length > 1) {
+      this.conductorStack.pop();
+    }
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onTag(tag: Tag, line: number, tick: number): "continue" | "break" {
     return "continue";
