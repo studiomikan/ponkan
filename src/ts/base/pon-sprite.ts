@@ -30,6 +30,13 @@ export enum SpriteType {
   Canvas,
 }
 
+export type InEffectType = "none" | "alpha";
+
+enum InEffectState {
+  Stop = 0,
+  Run,
+}
+
 /**
  * スプライト
  */
@@ -49,13 +56,10 @@ export class PonSprite {
   private pixiSprite: PIXI.Text | PIXI.Sprite | PIXI.Graphics | null = null;
   private type: SpriteType = SpriteType.Unknown;
 
-  private animType: string = "alpha";
-  private animTime: number = 100;
-  private animStartTick: number = -1;
-  private animOffsetX: number = 0;
-  private animOffsetY: number = 0;
-  private animStartAlpha: number = 0;
-  private animEndAlpha: number = 1;
+  private inEffectType: InEffectType = "none";
+  private inEffectState: InEffectState = InEffectState.Stop;
+  private inEffectTime: number = 100;
+  private inEffectStartTick: number = -1;
 
   /** x座標 */
   public get x(): number {
@@ -215,11 +219,9 @@ export class PonSprite {
       }
       this.pixiSprite = null;
       this.type = SpriteType.Unknown;
-      // this.animType = "alpha";
-      // this.animTime = 100;
-      // this.animStartTick = -1;
-      // this.animStartAlpha = 0;
-      // this.animEndAlpha = 1;
+      this.inEffectType = "none";
+      this.inEffectTime = 100;
+      this.inEffectStartTick = -1;
     } catch (e) {
       console.error(e);
       throw e;
@@ -319,33 +321,55 @@ export class PonSprite {
     this.type = SpriteType.Canvas;
   }
 
+  public copyTextFrom(src: PonSprite): void {
+    if (src.type !== SpriteType.Text) {
+      return;
+    }
+    const srcText = src.pixiSprite as PIXI.Text;
+    this.createText(srcText.text, src.textStyle as PIXI.TextStyle, src.textPitch);
+    this.x = src.x;
+    this.y = src.y;
+    this.copyEffectStateFrom(src);
+  }
+
+  private copyEffectStateFrom(src: PonSprite): void {
+    this.inEffectType = src.inEffectType;
+    this.inEffectState = src.inEffectState;
+    this.inEffectStartTick = src.inEffectStartTick;
+    this.inEffectTime = src.inEffectTime;
+  }
+
+  public initInEffect(type: InEffectType, time: number): void {
+    this.inEffectType = type;
+    this.inEffectState = InEffectState.Run;
+    this.inEffectStartTick = -1;
+    this.inEffectTime = time;
+  }
+
   public beforeDraw(tick: number): void {
     if (this.pixiSprite != null) {
       if (this.type === SpriteType.Canvas) {
         (this.pixiSprite as PIXI.Sprite).texture.update();
       }
 
-      if (this.animType != "") {
-        if (this.animStartTick === -1) {
-          this.animStartTick = tick;
+      if (this.inEffectState === InEffectState.Run) {
+        if (this.inEffectStartTick === -1) {
+          this.inEffectStartTick = tick;
         }
-        const elapsedTime = tick - this.animStartTick;
-        if (this.animType.indexOf("alpha") >= 0) {
-          let phase = elapsedTime / this.animTime;
-          if (phase < 0) phase = 0;
-          if (phase > 1) phase = 1;
-          this.pixiSprite.alpha = this.animStartAlpha + (this.animEndAlpha - this.animStartAlpha) * phase;
-          // console.log("animType", this.animType, elapsedTime, this.pixiSprite.alpha);
+        const elapsedTime = tick - this.inEffectStartTick;
+        let phase = elapsedTime / this.inEffectTime;
+        if (phase < 0) phase = 0;
+        if (phase > 1) phase = 1;
+        switch (this.inEffectType) {
+          case "alpha":
+            // this.InEffectAlpha(elapsedTime, phase);
+            this.pixiSprite.alpha = phase;
+            break;
         }
-        if (elapsedTime >= this.animTime) {
-          this.animType = ""; // 終了
+        if (elapsedTime >= this.inEffectTime) {
+          this.inEffectState = InEffectState.Stop;
         }
       }
     }
   }
-
-  // // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // public onDraw(tick: number): void {
-  //   // TODO 実装
-  // }
 }

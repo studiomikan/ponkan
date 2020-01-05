@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 // import { Logger } from "./logger";
 import { PonGame } from "./pon-game";
 import { PonMouseEvent } from "./pon-mouse-event";
-import { IPonSpriteCallbacks, PonSprite } from "./pon-sprite";
+import { IPonSpriteCallbacks, PonSprite, InEffectType } from "./pon-sprite";
 import { IPonVideoCallbacks, PonVideo } from "./pon-video";
 import { PonWheelEvent } from "./pon-wheel-event";
 import { Resource } from "./resource";
@@ -18,9 +18,7 @@ export class BaseLayerChar {
 
   public clone(spriteCallbacks: IPonSpriteCallbacks): BaseLayerChar {
     const sp = new PonSprite(spriteCallbacks);
-    sp.createText(this.ch, this.sp.textStyle as PIXI.TextStyle, this.sp.textPitch);
-    sp.x = this.sp.x;
-    sp.y = this.sp.y;
+    sp.copyTextFrom(this.sp);
     return new BaseLayerChar(this.ch, sp);
   }
 
@@ -119,15 +117,24 @@ export class BaseLayerTextLine {
     this.chList.splice(0, this.chList.length);
   }
 
-  public addChar(ch: string, textStyle: PIXI.TextStyle, pitch: number, lineHeight: number): void {
+  public addChar(
+    ch: string,
+    textStyle: PIXI.TextStyle,
+    pitch: number,
+    lineHeight: number,
+    inEffectType: InEffectType,
+    inEffectTime: number,
+  ): void {
     const sp: PonSprite = new PonSprite(this.spriteCallbacks);
     sp.createText(ch, textStyle, pitch);
     sp.x = this._textX;
     sp.y = lineHeight - +textStyle.fontSize;
+    if (inEffectType !== "none") {
+      sp.initInEffect(inEffectType, inEffectTime);
+    }
     this._textX += sp.textWidth;
     this.chList.push(new BaseLayerChar(ch, sp));
-
-    // TODO ルビがあったら追加する
+    // ルビがあったら追加する
     if (this.rubyText !== "") {
       this.addRubyText(sp, textStyle);
       this.rubyText = "";
@@ -476,6 +483,8 @@ export class BaseLayer {
   public rubyFontSize: number = 10;
   public rubyOffset: number = 2;
   public rubyPitch: number = 2;
+  public textInEffectType: "none" | "alpha" = "none";
+  public textInEffectTime: number = 120;
 
   /** 禁則文字（行頭禁則文字） */
   public static headProhibitionChar: string =
@@ -1162,10 +1171,16 @@ export class BaseLayer {
     }
 
     // いったん、現在の行に文字を追加する
-    const currentLine = this.currentTextLine;
-    const tail = currentLine.getTailCh();
+    const tail = this.currentTextLine.getTailCh();
 
-    currentLine.addChar(ch, this.textStyle, this.textPitch, this.textLineHeight);
+    this.currentTextLine.addChar(
+      ch,
+      this.textStyle,
+      this.textPitch,
+      this.textLineHeight,
+      this.textInEffectType,
+      this.textInEffectTime,
+    );
     this.alignCurrentTextLine();
 
     // 自動改行判定
@@ -1184,7 +1199,14 @@ export class BaseLayer {
       this.alignCurrentTextLine();
       // 改行して、改めて文字を追加する。
       this.addTextReturn();
-      this.currentTextLine.addChar(ch, this.textStyle, this.textPitch, this.textLineHeight);
+      this.currentTextLine.addChar(
+        ch,
+        this.textStyle,
+        this.textPitch,
+        this.textLineHeight,
+        this.textInEffectType,
+        this.textInEffectTime,
+      );
       this.alignCurrentTextLine();
     }
   }

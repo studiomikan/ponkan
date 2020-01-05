@@ -54,7 +54,7 @@ declare module 'ponkan3' {
       nowaitModeFlag: boolean;
       addCharWithBackFlag: boolean;
       hideMessageFlag: boolean;
-      hideMessageByRlickFlag: boolean;
+      hideMessageByRClickFlag: boolean;
       protected _messageLayerNum: number;
       messageLayerNum: number;
       protected _lineBreakGlyphLayerNum: number;
@@ -243,7 +243,7 @@ declare module 'ponkan3/base/base-layer' {
   import * as PIXI from "pixi.js";
   import { PonGame } from "ponkan3/base/pon-game";
   import { PonMouseEvent } from "ponkan3/base/pon-mouse-event";
-  import { IPonSpriteCallbacks, PonSprite } from "ponkan3/base/pon-sprite";
+  import { IPonSpriteCallbacks, PonSprite, InEffectType } from "ponkan3/base/pon-sprite";
   import { IPonVideoCallbacks, PonVideo } from "ponkan3/base/pon-video";
   import { PonWheelEvent } from "ponkan3/base/pon-wheel-event";
   import { Resource } from "ponkan3/base/resource";
@@ -277,12 +277,13 @@ declare module 'ponkan3/base/base-layer' {
         * このテキスト行の文字をすべてクリアする。
         */
       clear(): void;
-      addChar(ch: string, textStyle: PIXI.TextStyle, pitch: number, lineHeight: number): void;
+      addChar(ch: string, textStyle: PIXI.TextStyle, pitch: number, lineHeight: number, inEffectType: InEffectType, inEffectTime: number): void;
       reserveRubyText(rubyText: string, rubyFontSize: number, rubyOffset: number, rubyPitch: number): void;
       getCh(index: number): BaseLayerChar;
       getTailCh(): BaseLayerChar;
       backspace(): void;
       copyFrom(src: BaseLayerTextLine): void;
+      beforeDraw(tick: number): void;
   }
   /**
     * 基本レイヤ。PIXI.Containerをラップしたもの
@@ -379,6 +380,8 @@ declare module 'ponkan3/base/base-layer' {
       rubyFontSize: number;
       rubyOffset: number;
       rubyPitch: number;
+      textInEffectType: "none" | "alpha";
+      textInEffectTime: number;
       /** 禁則文字（行頭禁則文字） */
       static headProhibitionChar: string;
       /** 禁則文字（行末禁則文字） */
@@ -646,6 +649,7 @@ declare module 'ponkan3/base/pon-game' {
         * @param countPage 既読処理をするかどうか
         */
       returnSubroutine(forceStart?: boolean, countPage?: boolean): "continue" | "break";
+      goToMainConductor(): void;
       onTag(tag: Tag, line: number, tick: number): "continue" | "break";
       onLabel(labelName: string, line: number, tick: number): "continue" | "break";
       onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): "continue" | "break";
@@ -1070,6 +1074,7 @@ declare module 'ponkan3/base/pon-sprite' {
       Text = 3,
       Canvas = 4
   }
+  export type InEffectType = "none" | "alpha";
   /**
     * スプライト
     */
@@ -1139,7 +1144,9 @@ declare module 'ponkan3/base/pon-sprite' {
         * @param canvas キャンバス
         */
       setCanvas(canvas: HTMLCanvasElement): void;
-      beforeDraw(): void;
+      copyTextFrom(src: PonSprite): void;
+      initInEffect(type: InEffectType, time: number): void;
+      beforeDraw(tick: number): void;
   }
 }
 

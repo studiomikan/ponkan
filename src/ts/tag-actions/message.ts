@@ -158,6 +158,40 @@ export default function(p: Ponkan3): TagAction[] {
       },
     ),
     /// @category メッセージ操作
+    /// @description 文字表示時エフェクトの設定
+    /// @details
+    ///   文字を表示する際のエフェクトを設定します。\n
+    ///   ゲーム起動時には、何もエフェクトをかけない（none）設定になっています。
+    ///
+    ///   `type` に設定した値によって、文字を表示する際にエフェクトがかかります。
+    ///
+    ///    - `none` ： エフェクトなし。
+    ///    - `alpha` ： alpha値をフェードしながら表示（フェードイン）
+    new TagAction(
+      ["messageineffect", "mesineffect"],
+      [
+        /// @param 対象レイヤー
+        new TagValue("lay", "string", false, "message"),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+        /// @param エフェクトの種類。"alpha" | "none"
+        new TagValue("type", "string", false, null),
+        /// @param エフェクトにかける時間(ms)。ゲーム起動時には120msに設定されています。
+        new TagValue("time", "number", false, null),
+      ],
+      (values: any, tick: number): TagActionResult => {
+        p.getLayers(values).forEach((layer: PonLayer) => {
+          if (values.type != null) {
+            layer.textInEffectType = values.type;
+          }
+          if (values.time != null) {
+            layer.textInEffectTime = values.time;
+          }
+        });
+        return "continue";
+      },
+    ),
+    /// @category メッセージ操作
     /// @description 文字を出力する
     /// @details
     ///   指定したレイヤーに文字を出力します。\n
