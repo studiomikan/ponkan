@@ -1632,6 +1632,8 @@ export class BaseLayer {
     "rubyFontSize",
     "rubyOffset",
     "rubyPitch",
+    "textInEffectType",
+    "textInEffectTime",
   ];
 
   protected static baseLayerIgnoreParams: string[] = [
