@@ -168,7 +168,7 @@ export default function(p: Ponkan3): TagAction[] {
     ///    - `none` ： エフェクトなし。
     ///    - `alpha` ： alpha値をフェードしながら表示（フェードイン）
     new TagAction(
-      ["messageineffect", "mesineffect"],
+      ["chineffect"],
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", false, "message"),
