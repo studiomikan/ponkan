@@ -1,7 +1,7 @@
 import { PonGame } from "./pon-game";
 import { Resource } from "./resource";
 
-class CrossFadeFilter extends PIXI.Filter<any> {
+class CrossFadeFilter extends PIXI.Filter {
   public constructor() {
     const fragmentShader = `
       varying vec2 vTextureCoord;
@@ -29,7 +29,7 @@ class CrossFadeFilter extends PIXI.Filter<any> {
   }
 }
 
-class UnivTransFilter extends PIXI.Filter<any> {
+class UnivTransFilter extends PIXI.Filter {
   public constructor() {
     const fragmentShader = `
       varying vec2 vTextureCoord;
@@ -106,7 +106,7 @@ export class TransManager {
   private status: "stop" | "run" = "stop";
 
   private filters: any;
-  private filter: PIXI.Filter<any>;
+  private filter: PIXI.Filter;
 
   public constructor(game: PonGame, resource: Resource) {
     this.game = game;
@@ -164,7 +164,7 @@ export class TransManager {
     const height = this.game.height;
 
     this.ruleImage = await this.resource.loadImage(ruleFilePath);
-    this.ruleSprite = PIXI.Sprite.from(this.ruleImage);
+    this.ruleSprite = PIXI.Sprite.from(PIXI.Texture.from(this.ruleImage));
     this.ruleSprite.width = width;
     this.ruleSprite.height = height;
 
@@ -195,8 +195,8 @@ export class TransManager {
     // レンダラーの入れ替え
     this.game.resetPrimaryLayersRenderer();
     // フィルタをクリア
-    this.game.foreRenderer.container.filters = null;
-    this.game.backRenderer.container.filters = null;
+    this.game.foreRenderer.container.filters = [];
+    this.game.backRenderer.container.filters = [];
 
     // 完了イベント
     this.game.onCompleteTrans();

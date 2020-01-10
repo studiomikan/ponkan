@@ -8,7 +8,7 @@ import { ColorMatrixFilter, createColorMatrixFilter } from "../filter/color-matr
 import { LayerFilter } from "../filter/layer-filter";
 
 export class FilteredLayer extends MovableLayer {
-  public get pixiFilters(): Array<PIXI.Filter<any>> {
+  public get pixiFilters(): Array<PIXI.Filter> {
     return this.container.filters == null ? [] : this.container.filters;
   }
 
@@ -44,7 +44,7 @@ export class FilteredLayer extends MovableLayer {
 
   protected addLayerFilter(filter: LayerFilter): void {
     this.filters.push(filter);
-    const buf: Array<PIXI.Filter<any>> = [];
+    const buf: Array<PIXI.Filter> = [];
     this.filters.forEach(f => {
       buf.push(f.pixiFilter);
     });

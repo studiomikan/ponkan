@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const WriteFilePlugin = require('write-file-webpack-plugin');
@@ -21,6 +22,9 @@ module.exports = {
     extensions:['.ts', '.js', '.json']
   },
   plugins: [
+    new webpack.ProvidePlugin({
+      PIXI: 'pixi.js'
+    }),
     new CopyWebpackPlugin(
       [ { from: '.', to: 'gamedata/', }, ],
       { context: path.join(__dirname, 'src/gamedata') }

@@ -259,7 +259,16 @@ export class Resource {
 
   public loadVideoTexture(filePath: string, autoPlay: boolean): PIXI.Texture {
     const path: string = this.getPath(filePath);
-    return PIXI.Texture.fromVideo(path, PIXI.SCALE_MODES.NEAREST, true, autoPlay);
+    // return PIXI.Texture.fromVideo(path, PIXI.SCALE_MODES.NEAREST, true, autoPlay);
+    const texture: PIXI.Texture = PIXI.Texture.from(
+      path,
+      {
+        scaleMode: PIXI.SCALE_MODES.NEAREST,
+      },
+      true,
+    );
+    // TODO: autoPlay
+    return texture;
   }
 
   public isEnabledLocalStorage(): boolean {

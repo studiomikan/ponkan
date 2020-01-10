@@ -4,7 +4,7 @@ export class PonRenderer {
   private _width: number;
   private _height: number;
   private parentElm: HTMLElement;
-  public readonly renderer: PIXI.WebGLRenderer;
+  public readonly renderer: PIXI.Renderer;
   private _texture: PIXI.Texture;
   private _sprite: PIXI.Sprite;
   private _canvasElm: HTMLCanvasElement;
@@ -36,18 +36,19 @@ export class PonRenderer {
     this._height = height;
     this.parentElm = parentElm;
 
-    const renderer = PIXI.autoDetectRenderer(this._width, this._height, {
+    // const renderer = PIXI.autoDetectRenderer({
+    const renderer = new PIXI.Renderer({
+      width: this._width,
+      height: this._height,
       backgroundColor: 0xff000000,
       // transparent: true,
     });
-    if (renderer instanceof PIXI.CanvasRenderer) {
-      throw new Error("WebGLに対応していません");
-    }
     this.renderer = renderer;
     parentElm.appendChild(this.renderer.view);
 
-    this._texture = PIXI.Texture.from(this.renderer.view);
-    this._sprite = PIXI.Sprite.from(this._texture as any);
+    // this._texture = PIXI.Texture.from(this.renderer.view);
+    this._sprite = PIXI.Sprite.from(this.renderer.view);
+    this._texture = this._sprite.texture;
     this._sprite.width = width;
     this._sprite.height = height;
     this._canvasElm = this.renderer.view;
