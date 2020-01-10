@@ -30,6 +30,14 @@ $ npm run build
 
 TODO
 
+## Browser Support
+
+- Current Active Support
+  - Google Chrome (latest)
+- TODO:
+  - Firefox (latest)
+  - Edge (latest)
+
 ## External Libraries used by Ponkan3
 
 ### Libraries
