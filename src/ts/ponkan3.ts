@@ -620,13 +620,17 @@ export class Ponkan3 extends PonGame {
     Logger.debug("onTag: ", tag.name, tag.values, tag);
     const tagAction: TagAction = this.tagActions[tag.name];
     if (tagAction === null || tagAction === undefined) {
-      // Logger.debug("Unknown Tag: ", tag.name, tag);
       if (this.raiseError.unknowncommand) {
         throw new Error(`${tag.name}というタグは存在しません`);
       } else {
         return "continue";
       }
     }
+    // if属性適用
+    if (tag.values["if"] != null && tag.values["if"] != "" && !this.resource.evalJs(tag.values["if"])) {
+      return "continue";
+    }
+    // エンティティ適用、値のキャスト、必須チェック
     applyJsEntity(this.resource, tag.values);
     castTagValues(tag, tagAction);
     tagAction.values.forEach((def: TagValue) => {
@@ -640,6 +644,7 @@ export class Ponkan3 extends PonGame {
         }
       }
     });
+    // 実行
     return tagAction.action(tag.values, tick);
   }
 
