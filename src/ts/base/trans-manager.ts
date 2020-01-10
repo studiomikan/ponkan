@@ -58,20 +58,7 @@ class UnivTransFilter extends PIXI.Filter {
           if (tmp > 1.0) { tmp = 1.0; }
           gl_FragColor = scolor * tmp + color * (1.0 - tmp);
         }
-        // float a = 255.0 * (rcolor.r + rcolor.g + rcolor.b) / 3.0;
-        // if (a < phase) {
-        //   gl_FragColor = bcolor;
-        // } else if (a >= phaseMax) {
-        //   gl_FragColor = fcolor;
-        // } else {
-        //   float tmp = 255.0 - ((a - phase) * 255.0 / vague);
-        //   if (tmp < 0.0) { tmp = 0.0; }
-        //   if (tmp > 255.0) { tmp = 255.0; }
-        //   float alpha = tmp / 255.0;
-        //   gl_FragColor = bcolor * alpha + fcolor * (1.0 - alpha);
-        // }
       }
-
     `;
     super(
       undefined, // vertex shader
