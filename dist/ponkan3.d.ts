@@ -1529,7 +1529,6 @@ declare module 'ponkan3/base/script' {
       getPoint(): number;
       /**
         * 指定のラベルの位置へ移動する。
-        * ラベルの検索はファイルの先頭から実施するため、
         * ファイル内に同じラベルが2つ以上あった場合は、1番目の位置へ移動する。
         * ラベルが見つからなかった場合はエラーになる。
         * @param label 移動先ラベル
@@ -1537,7 +1536,6 @@ declare module 'ponkan3/base/script' {
       goToLabel(label: string): void;
       /**
         * 指定のセーブマーク位置まで移動する
-        * 検索はファイルの先頭から実施するため、
         * ファイル内に同じセーブマークが2つ以上あった場合は、1番目の位置へ移動する。
         * ラベルが見つからなかった場合はエラーになる。
         * @param saveMarkName セーブマーク名
@@ -1747,9 +1745,21 @@ declare module 'ponkan3/base/script-parser' {
   import { Resource } from "ponkan3/base/resource";
   import { Tag } from "ponkan3/base/tag";
   export class ScriptParser {
-    readonly tags: Tag[];
-    constructor(resource: Resource, scriptText: string);
-    debugPrint(): void;
+      readonly tags: Tag[];
+      constructor(resource: Resource, scriptText: string);
+      debugPrint(): void;
+      /**
+        * 指定のラベルの位置を返す。
+        * @param labelName ラベル名
+        * @return ラベルの位置。見つからなかったときは-1
+        */
+      getLabelPos(labelName: string): number;
+      /**
+        * 指定のセーブマークの位置を返す。
+        * @param labelName セーブマーク名
+        * @return セーブマークの位置。見つからなかったときは-1
+        */
+      getSaveMarkPos(saveMarkName: string): number;
   }
 }
 
