@@ -1361,7 +1361,7 @@ declare module 'ponkan3/base/logger' {
 declare module 'ponkan3/base/pon-renderer' {
   import * as PIXI from "pixi.js";
   export class PonRenderer {
-    readonly renderer: PIXI.WebGLRenderer;
+    readonly renderer: PIXI.Renderer;
     readonly width: number;
     readonly height: number;
     readonly canvasElm: HTMLCanvasElement;
@@ -1467,7 +1467,7 @@ declare module 'ponkan3/layer/filtered-layer' {
   import { MovableLayer } from "ponkan3/layer/movable-layer";
   import { LayerFilter } from "ponkan3/filter/layer-filter";
   export class FilteredLayer extends MovableLayer {
-    readonly pixiFilters: Array<PIXI.Filter<any>>;
+    readonly pixiFilters: Array<PIXI.Filter>;
     protected _filters: LayerFilter[];
     readonly filters: LayerFilter[];
     protected static filterClassList: any;
@@ -1716,8 +1716,8 @@ declare module 'ponkan3/filter/layer-filter' {
   export class LayerFilter {
     static readonly filterName: string;
     readonly filterName: string;
-    readonly pixiFilter: PIXI.Filter<any>;
-    protected _filter: PIXI.Filter<any>;
+    readonly pixiFilter: PIXI.Filter;
+    protected _filter: PIXI.Filter;
     protected params: any;
     constructor(params: any, permitedList?: string[]);
     protected permitParams(params: any, list: string[]): any;

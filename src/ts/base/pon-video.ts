@@ -31,8 +31,7 @@ export class PonVideo {
     return this.videoSprite;
   }
   public get source(): HTMLVideoElement {
-    // return this.videoTexture.baseTexture.source as HTMLVideoElement;
-    return {} as HTMLVideoElement;
+    return (this.videoTexture.baseTexture.resource as PIXI.resources.VideoResource).source as HTMLVideoElement;
   }
 
   public get width(): number {

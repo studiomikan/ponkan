@@ -164,7 +164,7 @@ export class TransManager {
     const height = this.game.height;
 
     this.ruleImage = await this.resource.loadImage(ruleFilePath);
-    this.ruleSprite = PIXI.Sprite.from(PIXI.Texture.from(this.ruleImage));
+    this.ruleSprite = new PIXI.Sprite(PIXI.Texture.from(this.ruleImage));
     this.ruleSprite.width = width;
     this.ruleSprite.height = height;
 
