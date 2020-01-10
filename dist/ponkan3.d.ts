@@ -277,7 +277,7 @@ declare module 'ponkan3/base/base-layer' {
         * このテキスト行の文字をすべてクリアする。
         */
       clear(): void;
-      addChar(ch: string, textStyle: PIXI.TextStyle, pitch: number, lineHeight: number, inEffectType: InEffectType, inEffectTime: number): void;
+      addChar(ch: string, textStyle: PIXI.TextStyle, pitch: number, lineHeight: number, inEffectTypes: InEffectType[], inEffectTime: number, inEffectEase: "none" | "in" | "out" | "both", inEffectOptions: any): void;
       reserveRubyText(rubyText: string, rubyFontSize: number, rubyOffset: number, rubyPitch: number): void;
       getCh(index: number): BaseLayerChar;
       getTailCh(): BaseLayerChar;
@@ -380,8 +380,10 @@ declare module 'ponkan3/base/base-layer' {
       rubyFontSize: number;
       rubyOffset: number;
       rubyPitch: number;
-      textInEffectType: "none" | "alpha";
+      textInEffectTypes: InEffectType[];
       textInEffectTime: number;
+      textInEffectEase: "none" | "in" | "out" | "both";
+      textInEffectOptions: any;
       /** 禁則文字（行頭禁則文字） */
       static headProhibitionChar: string;
       /** 禁則文字（行末禁則文字） */
@@ -1074,7 +1076,7 @@ declare module 'ponkan3/base/pon-sprite' {
       Text = 3,
       Canvas = 4
   }
-  export type InEffectType = "none" | "alpha";
+  export type InEffectType = "alpha" | "move" | "alphamove";
   /**
     * スプライト
     */
@@ -1145,7 +1147,7 @@ declare module 'ponkan3/base/pon-sprite' {
         */
       setCanvas(canvas: HTMLCanvasElement): void;
       copyTextFrom(src: PonSprite): void;
-      initInEffect(type: InEffectType, time: number): void;
+      initInEffect(types: InEffectType[], time: number, ease: "none" | "in" | "out" | "both", options: any): void;
       beforeDraw(tick: number): void;
   }
 }
@@ -1669,24 +1671,6 @@ declare module 'ponkan3/layer/movable-layer' {
       startMove(tick: number, time: number, delay: number, path: IMovePosInfo[], type: "linear" | "bezier2" | "bezier3" | "catmullrom", ease: "none" | "in" | "out" | "both", loop: boolean): void;
       stopMove(triggerEvent?: boolean): void;
       update(tick: number): void;
-      /**
-        * 緩やかに開始する（2次関数補間）
-        * @param phase フェーズ（0～1の値）
-        * @return 補正後のフェーズ（0～1の値）
-        */
-      protected moveEaseIn(phase: number): number;
-      /**
-        * 緩やかに停止する（2次関数補間）
-        * @param phase フェーズ（0～1の値）
-        * @return 補正後のフェーズ（0～1の値）
-        */
-      protected moveEaseOut(phase: number): number;
-      /**
-        * 緩やかに開始・終了する（3次関数補間）
-        * @param phase フェーズ（0～1の値）
-        * @return 補正後のフェーズ（0～1の値）
-        */
-      protected moveEaseInOut(phase: number): number;
       /**
         * 直線移動する
         * @param tick 時刻

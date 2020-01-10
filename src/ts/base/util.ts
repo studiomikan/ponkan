@@ -62,3 +62,33 @@ export function escapeHtml(html: string): string {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 }
+
+export const Ease = {
+  /**
+   * 緩やかに開始する（2次関数補間）
+   * @param phase フェーズ（0～1の値）
+   * @return 補正後のフェーズ（0～1の値）
+   */
+  in(phase: number): number {
+    return phase * phase;
+  },
+
+  /**
+   * 緩やかに停止する（2次関数補間）
+   * @param phase フェーズ（0～1の値）
+   * @return 補正後のフェーズ（0～1の値）
+   */
+  out(phase: number): number {
+    return phase * (2 - phase);
+  },
+
+  /**
+   * 緩やかに開始・終了する（3次関数補間）
+   * @param phase フェーズ（0～1の値）
+   * @return 補正後のフェーズ（0～1の値）
+   */
+  inOut(phase: number): number {
+    // v(t) = -2t^3 + 3t^2 = t^2(3-2t)
+    return phase * phase * (3 - 2 * phase);
+  },
+};

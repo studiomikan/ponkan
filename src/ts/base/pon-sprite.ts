@@ -1,4 +1,5 @@
 import * as PIXI from "pixi.js";
+import { Ease } from "../base/util";
 
 const DEFAULT_WIDTH = 32;
 const DEFAULT_HEIGHT = 32;
@@ -30,7 +31,7 @@ export enum SpriteType {
   Canvas,
 }
 
-export type InEffectType = "none" | "alpha";
+export type InEffectType = "alpha" | "move" | "alphamove";
 
 enum InEffectState {
   Stop = 0,
@@ -45,6 +46,8 @@ export class PonSprite {
   private callbacks: IPonSpriteCallbacks;
   private _x: number = 0;
   private _y: number = 0;
+  private _offsetX: number = 0;
+  private _offsetY: number = 0;
   private _width: number = DEFAULT_WIDTH;
   private _height: number = DEFAULT_HEIGHT;
   private _scaleX: number = 1.0;
@@ -56,7 +59,9 @@ export class PonSprite {
   private pixiSprite: PIXI.Text | PIXI.Sprite | PIXI.Graphics | null = null;
   private type: SpriteType = SpriteType.Unknown;
 
-  private inEffectType: InEffectType = "none";
+  private inEffectTypes: InEffectType[] = [];
+  private inEffectOptions: any = {};
+  private inEffectEase: "none" | "in" | "out" | "both" = "none";
   private inEffectState: InEffectState = InEffectState.Stop;
   private inEffectTime: number = 100;
   private inEffectStartTick: number = -1;
@@ -69,7 +74,7 @@ export class PonSprite {
   public set x(x) {
     this._x = x;
     if (this.pixiSprite != null) {
-      this.pixiSprite.x = x;
+      this.pixiSprite.x = x + this._offsetX;
     }
   }
   /** y座標 */
@@ -80,7 +85,7 @@ export class PonSprite {
   public set y(y) {
     this._y = y;
     if (this.pixiSprite != null) {
-      this.pixiSprite.y = y;
+      this.pixiSprite.y = y + this._offsetY;
     }
   }
   /** 幅 */
@@ -219,7 +224,7 @@ export class PonSprite {
       }
       this.pixiSprite = null;
       this.type = SpriteType.Unknown;
-      this.inEffectType = "none";
+      this.inEffectTypes = [];
       this.inEffectTime = 100;
       this.inEffectStartTick = -1;
     } catch (e) {
@@ -333,17 +338,32 @@ export class PonSprite {
   }
 
   private copyEffectStateFrom(src: PonSprite): void {
-    this.inEffectType = src.inEffectType;
+    this.inEffectTypes = src.inEffectTypes;
+    this.inEffectOptions = src.inEffectOptions;
+    this.inEffectEase = src.inEffectEase;
     this.inEffectState = src.inEffectState;
     this.inEffectStartTick = src.inEffectStartTick;
     this.inEffectTime = src.inEffectTime;
   }
 
-  public initInEffect(type: InEffectType, time: number): void {
-    this.inEffectType = type;
+  public initInEffect(types: InEffectType[], time: number, ease: "none" | "in" | "out" | "both", options: any): void {
+    this.inEffectTypes = types;
+    this.inEffectEase = ease;
+    this.inEffectOptions = options;
     this.inEffectState = InEffectState.Run;
     this.inEffectStartTick = -1;
     this.inEffectTime = time;
+    if (types.includes("move")) {
+      if (options == null) {
+        options = {};
+      }
+      if (options.offsetx == null) {
+        options.offsetx = 0;
+      }
+      if (options.offsety == null) {
+        options.offsety = 0;
+      }
+    }
   }
 
   public beforeDraw(tick: number): void {
@@ -360,16 +380,41 @@ export class PonSprite {
         let phase = elapsedTime / this.inEffectTime;
         if (phase < 0) phase = 0;
         if (phase > 1) phase = 1;
-        switch (this.inEffectType) {
-          case "alpha":
-            // this.InEffectAlpha(elapsedTime, phase);
-            this.pixiSprite.alpha = phase;
+        // easeの処理
+        switch (this.inEffectEase) {
+          case "in":
+            phase = Ease.in(phase);
             break;
+          case "out":
+            phase = Ease.out(phase);
+            break;
+          case "both":
+            phase = Ease.inOut(phase);
+            break;
+          // case 'none': phase = phase; break;
+        }
+        // エフェクトをかける
+        if (this.inEffectTypes.includes("alpha")) {
+          this.InEffectAlpha(this.pixiSprite, elapsedTime, phase);
+        }
+        if (this.inEffectTypes.includes("move")) {
+          this.InEffectMove(this.pixiSprite, elapsedTime, phase);
         }
         if (elapsedTime >= this.inEffectTime) {
           this.inEffectState = InEffectState.Stop;
         }
       }
     }
+  }
+
+  private InEffectAlpha(sprite: PIXI.Container, elapsedTime: number, phase: number): void {
+    sprite.alpha = phase;
+  }
+
+  private InEffectMove(sprite: PIXI.Container, elapsedTime: number, phase: number): void {
+    this._offsetX = Math.floor(this.inEffectOptions.offsetx * (1 - phase));
+    this._offsetY = Math.floor(this.inEffectOptions.offsety * (1 - phase));
+    sprite.x = this._x + this._offsetX;
+    sprite.y = this._y + this._offsetY;
   }
 }

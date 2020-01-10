@@ -1,6 +1,7 @@
 import { Resource } from "../base/resource";
 import { Ponkan3 } from "../ponkan3";
 import { SliderLayer } from "./slider-layer";
+import { Ease } from "../base/util";
 
 export interface IMovePosInfo {
   x: number;
@@ -145,13 +146,13 @@ export class MovableLayer extends SliderLayer {
       // easeの処理
       switch (this.moveEase) {
         case "in":
-          phase = this.moveEaseIn(phase);
+          phase = Ease.in(phase);
           break;
         case "out":
-          phase = this.moveEaseOut(phase);
+          phase = Ease.out(phase);
           break;
         case "both":
-          phase = this.moveEaseInOut(phase);
+          phase = Ease.inOut(phase);
           break;
         // case 'none': phase = phase; break;
       }
@@ -174,34 +175,6 @@ export class MovableLayer extends SliderLayer {
           break;
       }
     }
-  }
-
-  /**
-   * 緩やかに開始する（2次関数補間）
-   * @param phase フェーズ（0～1の値）
-   * @return 補正後のフェーズ（0～1の値）
-   */
-  protected moveEaseIn(phase: number): number {
-    return phase * phase;
-  }
-
-  /**
-   * 緩やかに停止する（2次関数補間）
-   * @param phase フェーズ（0～1の値）
-   * @return 補正後のフェーズ（0～1の値）
-   */
-  protected moveEaseOut(phase: number): number {
-    return phase * (2 - phase);
-  }
-
-  /**
-   * 緩やかに開始・終了する（3次関数補間）
-   * @param phase フェーズ（0～1の値）
-   * @return 補正後のフェーズ（0～1の値）
-   */
-  protected moveEaseInOut(phase: number): number {
-    // v(t) = -2t^3 + 3t^2 = t^2(3-2t)
-    return phase * phase * (3 - 2 * phase);
   }
 
   /**

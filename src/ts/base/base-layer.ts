@@ -122,15 +122,17 @@ export class BaseLayerTextLine {
     textStyle: PIXI.TextStyle,
     pitch: number,
     lineHeight: number,
-    inEffectType: InEffectType,
+    inEffectTypes: InEffectType[],
     inEffectTime: number,
+    inEffectEase: "none" | "in" | "out" | "both",
+    inEffectOptions: any,
   ): void {
     const sp: PonSprite = new PonSprite(this.spriteCallbacks);
     sp.createText(ch, textStyle, pitch);
     sp.x = this._textX;
     sp.y = lineHeight - +textStyle.fontSize;
-    if (inEffectType !== "none") {
-      sp.initInEffect(inEffectType, inEffectTime);
+    if (inEffectTypes != null && inEffectTypes.length > 0) {
+      sp.initInEffect(inEffectTypes, inEffectTime, inEffectEase, inEffectOptions);
     }
     this._textX += sp.textWidth;
     this.chList.push(new BaseLayerChar(ch, sp));
@@ -483,8 +485,10 @@ export class BaseLayer {
   public rubyFontSize: number = 10;
   public rubyOffset: number = 2;
   public rubyPitch: number = 2;
-  public textInEffectType: "none" | "alpha" = "none";
+  public textInEffectTypes: InEffectType[] = [];
   public textInEffectTime: number = 120;
+  public textInEffectEase: "none" | "in" | "out" | "both" = "none";
+  public textInEffectOptions: any = {};
 
   /** 禁則文字（行頭禁則文字） */
   public static headProhibitionChar: string =
@@ -1178,8 +1182,10 @@ export class BaseLayer {
       this.textStyle,
       this.textPitch,
       this.textLineHeight,
-      this.textInEffectType,
+      this.textInEffectTypes,
       this.textInEffectTime,
+      this.textInEffectEase,
+      this.textInEffectOptions,
     );
     this.alignCurrentTextLine();
 
@@ -1204,8 +1210,10 @@ export class BaseLayer {
         this.textStyle,
         this.textPitch,
         this.textLineHeight,
-        this.textInEffectType,
+        this.textInEffectTypes,
         this.textInEffectTime,
+        this.textInEffectEase,
+        this.textInEffectOptions,
       );
       this.alignCurrentTextLine();
     }
@@ -1632,8 +1640,10 @@ export class BaseLayer {
     "rubyFontSize",
     "rubyOffset",
     "rubyPitch",
-    "textInEffectType",
+    "textInEffectTypes",
     "textInEffectTime",
+    "textInEffectEase",
+    "textInEffectOptions",
   ];
 
   protected static baseLayerIgnoreParams: string[] = [

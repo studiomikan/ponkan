@@ -10,7 +10,8 @@ export type TagValueType =
   | "object"
   | "function"
   | "string|function"
-  | "number|array";
+  | "number|array"
+  | "string|array";
 
 export class TagValue {
   public readonly name: string;
@@ -98,6 +99,13 @@ export function castTagValues(tag: Tag, tagAction: TagAction): void {
             if (isNaN(tag.values[def.name])) {
               throw new Error(`${tag.name}タグの${def.name}を数値に変換できませんでした(${str})`);
             }
+          } else {
+            tag.values[def.name] = value;
+          }
+          break;
+        case "string|array":
+          if (typeof value === "string") {
+            tag.values[def.name] = str;
           } else {
             tag.values[def.name] = value;
           }

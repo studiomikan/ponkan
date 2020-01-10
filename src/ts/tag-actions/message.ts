@@ -165,8 +165,11 @@ export default function(p: Ponkan3): TagAction[] {
     ///
     ///   `type` に設定した値によって、文字を表示する際にエフェクトがかかります。
     ///
-    ///    - `none` ： エフェクトなし。
     ///    - `alpha` ： alpha値をフェードしながら表示（フェードイン）
+    ///    - `move` ：  移動しながら表示
+    ///
+    ///   複数のエフェクトを設定することもできます。
+    ///   たとえば `type: ["alpha", "move"]` と設定すると、移動とフェードを同時に実行します。
     new TagAction(
       ["chineffect"],
       [
@@ -174,19 +177,32 @@ export default function(p: Ponkan3): TagAction[] {
         new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
-        /// @param エフェクトの種類。"alpha" | "none"
-        new TagValue("type", "string", false, null),
+        /// @param エフェクトの種類の配列。"alpha" | "move"。例：["alpha", "move"]
+        new TagValue("type", "string|array", false, null),
         /// @param エフェクトにかける時間(ms)。ゲーム起動時には120msに設定されています。
         new TagValue("time", "number", false, null),
+        /// @param エフェクトの入り・抜きの指定。"none" | "in" | "out" | "both"
+        new TagValue("ease", "string", false, "none"),
+        /// @param type: "move"の場合のみ有効。x方向の移動量
+        new TagValue("offsetx", "number", false, null),
+        /// @param type: "move"の場合のみ有効。y方向の移動量
+        new TagValue("offsety", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach((layer: PonLayer) => {
           if (values.type != null) {
-            layer.textInEffectType = values.type;
+            layer.textInEffectTypes = values.type;
           }
           if (values.time != null) {
             layer.textInEffectTime = values.time;
           }
+          if (values.ease != null) {
+            layer.textInEffectEase = values.ease;
+          }
+          layer.textInEffectOptions = {
+            offsetx: values.offsetx,
+            offsety: values.offsety,
+          };
         });
         return "continue";
       },
