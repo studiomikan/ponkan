@@ -29,6 +29,8 @@ declare module 'ponkan3' {
       autoModeInterval: number;
       autoModeStartTick: number;
       autoModeLayerNum: number;
+      waitUntilStartTick: number;
+      waitUntilTime: number;
       readonly tagActions: any;
       protected _layerCount: number;
       layerAlias: any;

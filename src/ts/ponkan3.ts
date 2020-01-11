@@ -42,6 +42,8 @@ export class Ponkan3 extends PonGame {
   public autoModeInterval: number = 1000;
   public autoModeStartTick: number = -1;
   public autoModeLayerNum: number = DEFAULT_AUTO_MODE_LAYER_NUM;
+  public waitUntilStartTick: number = -1;
+  public waitUntilTime: number = 0;
   // public canStopSkipByTag: boolean = false;
 
   // タグ関係
@@ -1628,6 +1630,7 @@ export class Ponkan3 extends PonGame {
     Ponkan3.ponkanStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
+    this.waitUntilStartTick = -1;
 
     // layer
     // TODO: 並列化
