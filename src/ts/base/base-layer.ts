@@ -341,164 +341,164 @@ export class BaseLayer {
   public blockWheelFlag: boolean = false;
 
   // 文字関係
-  protected textCanvas: LayerTextCanvas = new LayerTextCanvas();
-  public textStyle: PIXI.TextStyle = new PIXI.TextStyle({
-    fontFamily: ["GenShinGothic", "monospace"],
-    fontSize: 24,
-    fontWeight: "normal",
-    fontStyle: "normal",
-    fill: 0xffffff,
-    textBaseline: "alphabetic",
-    dropShadow: false,
-    dropShadowAlpha: 0.7,
-    dropShadowAngle: Math.PI / 6,
-    dropShadowBlur: 5,
-    dropShadowColor: 0x000000,
-    dropShadowDistance: 2,
-    stroke: 0x000000,
-    strokeThickness: 0,
-    trim: false,
-  });
-  public set textFontFamily(fontFamily: string[]) {
-    this.textStyle.fontFamily = fontFamily;
-  }
-  public get textFontFamily(): string[] {
-    if (typeof this.textStyle.fontFamily === "string") {
-      return [this.textStyle.fontFamily];
-    } else {
-      return this.textStyle.fontFamily;
-    }
-  }
-  public set textFontSize(fontSize: number) {
-    this.textStyle.fontSize = fontSize;
-    if (this.textLineHeight < fontSize) {
-      this.textLineHeight = fontSize;
-    }
-  }
-  public get textFontSize(): number {
-    return +this.textStyle.fontSize;
-  }
-  public set textFontWeight(fontWeight: string) {
-    this.textStyle.fontWeight = fontWeight;
-  }
-  public get textFontWeight(): string {
-    return this.textStyle.fontWeight;
-  }
-  public set textFontStyle(fontStyle: string) {
-    this.textStyle.fontStyle = fontStyle;
-  }
-  public get textFontStyle(): string {
-    return this.textStyle.fontStyle;
-  }
-  public set textColor(color: number | string | number[] | string[] | CanvasGradient | CanvasPattern) {
-    this.textStyle.fill = color;
-  }
-  public get textColor(): number | string | number[] | string[] | CanvasGradient | CanvasPattern {
-    return this.textStyle.fill;
-  }
-  public set textGradientStops(gradientStops: number[]) {
-    this.textStyle.fillGradientStops = gradientStops;
-  }
-  public get textGradientStops(): number[] {
-    return this.textStyle.fillGradientStops;
-  }
-  public set textGradientType(gradientType: "vertical" | "horizontal") {
-    this.textStyle.fillGradientType = {
-      vertical: PIXI.TEXT_GRADIENT.LINEAR_VERTICAL,
-      horizontal: PIXI.TEXT_GRADIENT.LINEAR_HORIZONTAL,
-    }[gradientType];
-  }
-  public get textGradientType(): "vertical" | "horizontal" {
-    if (this.textStyle.fillGradientType === PIXI.TEXT_GRADIENT.LINEAR_VERTICAL) {
-      return "vertical";
-    } else {
-      return "horizontal";
-    }
-  }
-  public set textShadowVisible(visible: boolean) {
-    this.textStyle.dropShadow = visible;
-  }
-  public get textShadowVisible(): boolean {
-    return this.textStyle.dropShadow;
-  }
-  public set textShadowAlpha(alpha: number) {
-    this.textStyle.dropShadowAlpha = alpha;
-  }
-  public get textShadowAlpha(): number {
-    return this.textStyle.dropShadowAlpha;
-  }
-  public set textShadowAngle(angle: number) {
-    this.textStyle.dropShadowAngle = angle;
-  }
-  public get textShadowAngle(): number {
-    return this.textStyle.dropShadowAngle;
-  }
-  public set textShadowBlur(blur: number) {
-    this.textStyle.dropShadowBlur = blur;
-  }
-  public get textShadowBlur(): number {
-    return this.textStyle.dropShadowBlur;
-  }
-  public set textShadowColor(color: number | string) {
-    this.textStyle.dropShadowColor = color;
-  }
-  public get textShadowColor(): number | string {
-    return this.textStyle.dropShadowColor;
-  }
-  public set textShadowDistance(distance: number) {
-    this.textStyle.dropShadowDistance = distance;
-  }
-  public get textShadowDistance(): number {
-    return this.textStyle.dropShadowDistance;
-  }
-  public set textEdgeColor(color: number | string) {
-    this.textStyle.stroke = color;
-  }
-  public get textEdgeColor(): number | string {
-    if (typeof this.textStyle.stroke === "number") {
-      return this.textStyle.stroke;
-    } else {
-      return this.textStyle.stroke as string;
-    }
-  }
-  public set textEdgeWidth(width: number) {
-    this.textStyle.strokeThickness = width;
-  }
-  public get textEdgeWidth(): number {
-    return this.textStyle.strokeThickness;
-  }
+  public textCanvas: LayerTextCanvas = new LayerTextCanvas();
+  // public textStyle: PIXI.TextStyle = new PIXI.TextStyle({
+  //   fontFamily: ["GenShinGothic", "monospace"],
+  //   fontSize: 24,
+  //   fontWeight: "normal",
+  //   fontStyle: "normal",
+  //   fill: 0xffffff,
+  //   textBaseline: "alphabetic",
+  //   dropShadow: false,
+  //   dropShadowAlpha: 0.7,
+  //   dropShadowAngle: Math.PI / 6,
+  //   dropShadowBlur: 5,
+  //   dropShadowColor: 0x000000,
+  //   dropShadowDistance: 2,
+  //   stroke: 0x000000,
+  //   strokeThickness: 0,
+  //   trim: false,
+  // });
+  // public set textFontFamily(fontFamily: string[]) {
+  //   this.textStyle.fontFamily = fontFamily;
+  // }
+  // public get textFontFamily(): string[] {
+  //   if (typeof this.textStyle.fontFamily === "string") {
+  //     return [this.textStyle.fontFamily];
+  //   } else {
+  //     return this.textStyle.fontFamily;
+  //   }
+  // }
+  // public set textFontSize(fontSize: number) {
+  //   this.textStyle.fontSize = fontSize;
+  //   if (this.textLineHeight < fontSize) {
+  //     this.textLineHeight = fontSize;
+  //   }
+  // }
+  // public get textFontSize(): number {
+  //   return +this.textStyle.fontSize;
+  // }
+  // public set textFontWeight(fontWeight: string) {
+  //   this.textStyle.fontWeight = fontWeight;
+  // }
+  // public get textFontWeight(): string {
+  //   return this.textStyle.fontWeight;
+  // }
+  // public set textFontStyle(fontStyle: string) {
+  //   this.textStyle.fontStyle = fontStyle;
+  // }
+  // public get textFontStyle(): string {
+  //   return this.textStyle.fontStyle;
+  // }
+  // public set textColor(color: number | string | number[] | string[] | CanvasGradient | CanvasPattern) {
+  //   this.textStyle.fill = color;
+  // }
+  // public get textColor(): number | string | number[] | string[] | CanvasGradient | CanvasPattern {
+  //   return this.textStyle.fill;
+  // }
+  // public set textGradientStops(gradientStops: number[]) {
+  //   this.textStyle.fillGradientStops = gradientStops;
+  // }
+  // public get textGradientStops(): number[] {
+  //   return this.textStyle.fillGradientStops;
+  // }
+  // public set textGradientType(gradientType: "vertical" | "horizontal") {
+  //   this.textStyle.fillGradientType = {
+  //     vertical: PIXI.TEXT_GRADIENT.LINEAR_VERTICAL,
+  //     horizontal: PIXI.TEXT_GRADIENT.LINEAR_HORIZONTAL,
+  //   }[gradientType];
+  // }
+  // public get textGradientType(): "vertical" | "horizontal" {
+  //   if (this.textStyle.fillGradientType === PIXI.TEXT_GRADIENT.LINEAR_VERTICAL) {
+  //     return "vertical";
+  //   } else {
+  //     return "horizontal";
+  //   }
+  // }
+  // public set textShadowVisible(visible: boolean) {
+  //   this.textStyle.dropShadow = visible;
+  // }
+  // public get textShadowVisible(): boolean {
+  //   return this.textStyle.dropShadow;
+  // }
+  // public set textShadowAlpha(alpha: number) {
+  //   this.textStyle.dropShadowAlpha = alpha;
+  // }
+  // public get textShadowAlpha(): number {
+  //   return this.textStyle.dropShadowAlpha;
+  // }
+  // public set textShadowAngle(angle: number) {
+  //   this.textStyle.dropShadowAngle = angle;
+  // }
+  // public get textShadowAngle(): number {
+  //   return this.textStyle.dropShadowAngle;
+  // }
+  // public set textShadowBlur(blur: number) {
+  //   this.textStyle.dropShadowBlur = blur;
+  // }
+  // public get textShadowBlur(): number {
+  //   return this.textStyle.dropShadowBlur;
+  // }
+  // public set textShadowColor(color: number | string) {
+  //   this.textStyle.dropShadowColor = color;
+  // }
+  // public get textShadowColor(): number | string {
+  //   return this.textStyle.dropShadowColor;
+  // }
+  // public set textShadowDistance(distance: number) {
+  //   this.textStyle.dropShadowDistance = distance;
+  // }
+  // public get textShadowDistance(): number {
+  //   return this.textStyle.dropShadowDistance;
+  // }
+  // public set textEdgeColor(color: number | string) {
+  //   this.textStyle.stroke = color;
+  // }
+  // public get textEdgeColor(): number | string {
+  //   if (typeof this.textStyle.stroke === "number") {
+  //     return this.textStyle.stroke;
+  //   } else {
+  //     return this.textStyle.stroke as string;
+  //   }
+  // }
+  // public set textEdgeWidth(width: number) {
+  //   this.textStyle.strokeThickness = width;
+  // }
+  // public get textEdgeWidth(): number {
+  //   return this.textStyle.strokeThickness;
+  // }
 
-  public textMarginTop: number = 10;
-  public textMarginRight: number = 10;
-  public textMarginBottom: number = 10;
-  public textMarginLeft: number = 10;
-  /** 次の文字を描画する予定の位置。予定であって、自動改行等が発生した場合は次の行になるため注意。 */
-  // public textX: number = NaN;
-  /** 次の文字を描画する予定の位置。予定であって、自動改行等が発生した場合は次の行になるため注意。 */
-  // public textY: number = NaN;
-  public textPitch: number = 0;
-  public textLineHeight: number = 24;
-  public textLinePitch: number = 5;
-  public textAutoReturn: boolean = true;
-  public textLocatePoint: number | null = null;
-  public textIndentPoint: number | null = null;
-  public reservedTextIndentPoint: number | null = null;
-  public reservedTextIndentClear: boolean = false;
-  public textAlign: "left" | "center" | "right" = "left";
-  public rubyFontSize: number = 10;
-  public rubyOffset: number = 2;
-  public rubyPitch: number = 2;
-  public textInEffectTypes: InEffectType[] = [];
-  public textInEffectTime: number = 120;
-  public textInEffectEase: "none" | "in" | "out" | "both" = "none";
-  public textInEffectOptions: any = {};
+  // public textMarginTop: number = 10;
+  // public textMarginRight: number = 10;
+  // public textMarginBottom: number = 10;
+  // public textMarginLeft: number = 10;
+  // /** 次の文字を描画する予定の位置。予定であって、自動改行等が発生した場合は次の行になるため注意。 */
+  // // public textX: number = NaN;
+  // /** 次の文字を描画する予定の位置。予定であって、自動改行等が発生した場合は次の行になるため注意。 */
+  // // public textY: number = NaN;
+  // public textPitch: number = 0;
+  // public textLineHeight: number = 24;
+  // public textLinePitch: number = 5;
+  // public textAutoReturn: boolean = true;
+  // public textLocatePoint: number | null = null;
+  // public textIndentPoint: number | null = null;
+  // public reservedTextIndentPoint: number | null = null;
+  // public reservedTextIndentClear: boolean = false;
+  // public textAlign: "left" | "center" | "right" = "left";
+  // public rubyFontSize: number = 10;
+  // public rubyOffset: number = 2;
+  // public rubyPitch: number = 2;
+  // public textInEffectTypes: InEffectType[] = [];
+  // public textInEffectTime: number = 120;
+  // public textInEffectEase: "none" | "in" | "out" | "both" = "none";
+  // public textInEffectOptions: any = {};
 
-  /** 禁則文字（行頭禁則文字） */
-  public static headProhibitionChar: string =
-    '%),:;]}｡｣ﾞﾟ。，、．：；゛゜ヽヾゝ"ゞ々’”）〕］｝〉》」』】°′″℃￠％‰' +
-    "!.?､･ｧｨｩｪｫｬｭｮｯｰ・？！ーぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ";
-  /** 禁則文字（行末禁則文字） */
-  public static tailProhibitionChar: string = "\\$([{｢‘“（〔［｛〈《「『【￥＄￡";
+  // /** 禁則文字（行頭禁則文字） */
+  // public static headProhibitionChar: string =
+  //   '%),:;]}｡｣ﾞﾟ。，、．：；゛゜ヽヾゝ"ゞ々’”）〕］｝〉》」』】°′″℃￠％‰' +
+  //   "!.?､･ｧｨｩｪｫｬｭｮｯｰ・？！ーぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ";
+  // /** 禁則文字（行末禁則文字） */
+  // public static tailProhibitionChar: string = "\\$([{｢‘“（〔［｛〈《「『【￥＄￡";
 
   public get children(): BaseLayer[] {
     return this._children;
@@ -521,15 +521,21 @@ export class BaseLayer {
     return this.maskSprite.width;
   }
   public set width(width: number) {
-    this.clearText();
-    this.maskSprite.width = this.backgroundSprite.width = this.textCanvas.width = width;
+    this.maskSprite.width = this.backgroundSprite.width = width;
+    if (this.textCanvas.width != width) {
+      this.clearText();
+      this.textCanvas.width = width;
+    }
   }
   public get height(): number {
     return this.maskSprite.height;
   }
   public set height(height: number) {
-    this.clearText();
-    this.maskSprite.height = this.backgroundSprite.height = this.textCanvas.height = height;
+    this.maskSprite.height = this.backgroundSprite.height = height;
+    if (this.textCanvas.height != height) {
+      this.clearText();
+      this.textCanvas.height = height;
+    }
   }
   public get visible(): boolean {
     return this.container.visible;
@@ -658,8 +664,6 @@ export class BaseLayer {
     this.container.addChild(this.textContainer);
     this.textCanvas.width = this.width;
     this.textCanvas.height = this.height;
-    // this.textCanvas.width = 800;
-    // this.textCanvas.height = 600;
     this.textContainer.addChild(this.textCanvas.sprite);
     // document.body.appendChild(this.textCanvas.canvas);
     this.clearText();
@@ -1459,6 +1463,7 @@ export class BaseLayer {
     const data: any = {};
     const me: any = this as any;
     BaseLayer.baseLayerStoreParams.forEach(p => (data[p] = me[p]));
+    data.textCanvas = this.textCanvas.store(tick);
     return data;
   }
   /* eslint-enalbe @typescript-eslint/no-unused-vars */
@@ -1477,10 +1482,8 @@ export class BaseLayer {
       restoreParams.forEach(p => (me[p] = data[p]));
     };
 
-    // テキストはクリアする
-    if (clear) {
-      this.clearText();
-    }
+    // テキスト
+    this.textCanvas.restore(data.textCanvas, tick, clear);
 
     // 背景色
     this.clearBackgroundColor();
@@ -1581,7 +1584,7 @@ export class BaseLayer {
     );
     params.forEach(p => (you[p] = me[p]));
 
-    // TODO: テキストのコピー
+    // テキストのコピー
     dest.clearText();
     this.textCanvas.copyTo(dest.textCanvas);
   }

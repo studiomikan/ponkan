@@ -27,12 +27,13 @@ export class TextStyle {
   public edgeColor: number | string = 0x000000;
   public edgeWidth: number = 2;
   public pitch: number = 2;
+  // TODO: グラデーション
+  public fillGradientStops: number[] = [];
+  public fillGradientType: "vertical" | "horizontal" = "vertical";
   public inEffectTypes: InEffectType[] = [];
   public inEffectTime: number = 100;
   public inEffectEase: "none" | "in" | "out" | "both" = "none";
-  public inEffectOptions: any = {
-    offsetx: 100,
-  };
+  public inEffectOptions: any = {};
 
   public get fontFamilyStr(): string {
     return this.fontFamily.map(ff => `"${ff}"`).join(",");
@@ -85,12 +86,6 @@ export class TextStyle {
     context.shadowOffsetY = 0;
   }
 
-  public clone(): TextStyle {
-    const ts = new TextStyle();
-    Object.assign(ts, this);
-    return ts;
-  }
-
   public checkOptions(): void {
     if (this.inEffectTypes.includes("move")) {
       if (this.inEffectOptions == null) {
@@ -103,6 +98,24 @@ export class TextStyle {
         this.inEffectOptions.offsety = 0;
       }
     }
+  }
+
+  public clone(): TextStyle {
+    const ts = new TextStyle();
+    Object.assign(ts, this);
+    return ts;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public store(tick: number): any {
+    const data: any = {};
+    Object.assign(data, this.clone());
+    return data;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
+    Object.assign(this, data);
   }
 }
 
@@ -214,7 +227,6 @@ export class LayerChar {
 export class LayerTextLine {
   public x: number = 0;
   public y: number = 0;
-  public text: string = "";
   public lineHeight: number = 0;
   public readonly chList: LayerChar[] = [];
   public readonly rubyList: LayerChar[] = [];
@@ -226,6 +238,9 @@ export class LayerTextLine {
   private rubyOffset: number = 2;
   private rubyPitch: number = 2;
 
+  public get text(): string {
+    return this.chList.map(layerChar => layerChar.ch).join("");
+  }
   public get textX(): number {
     return this._textX;
   }
@@ -271,10 +286,6 @@ export class LayerTextLine {
     if (this.lineHeight < lineHeight) {
       this.lineHeight = lineHeight;
     }
-    // TODO: アニメーション
-    // if (inEffectTypes != null && inEffectTypes.length > 0) {
-    //   sp.initInEffect(inEffectTypes, inEffectTime, inEffectEase, inEffectOptions);
-    // }
     this._textX += c.width;
     this.chList.push(c);
     // ルビがあったら追加する
@@ -330,19 +341,6 @@ export class LayerTextLine {
     this.chList.splice(this.chList.length - 1, 1);
   }
 
-  public copyTo(context: CanvasRenderingContext2D, dest: LayerTextLine): void {
-    dest.clear();
-    this.chList.forEach((layerChar: LayerChar) => {
-      dest.chList.push(layerChar.clone(context));
-    });
-    this.rubyList.forEach((layerRuby: LayerChar) => {
-      dest.rubyList.push(layerRuby.clone(context));
-    });
-    dest.x = this.x;
-    dest.y = this.y;
-    dest._textX = this._textX;
-  }
-
   public beforeDraw(tick: number): void {
     this.chList.forEach(ch => {
       ch.beforeDraw(tick);
@@ -356,6 +354,48 @@ export class LayerTextLine {
     this.rubyList.forEach((layerChar: LayerChar) => {
       layerChar.draw(context, tick, this.x, this.y);
     });
+  }
+
+  private static storeParams: string[] = [
+    "x",
+    "y",
+    "lineHeight",
+    "_textX",
+    "rubyText",
+    "rubyFontSize",
+    "rubyOffset",
+    "rubyPitch",
+  ];
+
+  public copyTo(context: CanvasRenderingContext2D, dest: LayerTextLine): void {
+    dest.clear();
+
+    const me: any = this as any;
+    const you: any = dest as any;
+    LayerTextLine.storeParams.forEach(p => (you[p] = me[p]));
+
+    this.chList.forEach((layerChar: LayerChar) => {
+      dest.chList.push(layerChar.clone(context));
+    });
+    this.rubyList.forEach((layerRuby: LayerChar) => {
+      dest.rubyList.push(layerRuby.clone(context));
+    });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public store(tick: number): any {
+    const data: any = {};
+    const me: any = this as any;
+    LayerTextLine.storeParams.forEach(p => (data[p] = me[p]));
+    return data;
+  }
+
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
+    if (clear) {
+      this.clear();
+    }
+    const me: any = this as any;
+    LayerTextLine.storeParams.forEach(p => (me[p] = data[p]));
   }
 }
 
@@ -372,8 +412,8 @@ export class LayerTextCanvas {
   public static tailProhibitionChar: string = "\\$([{｢‘“（〔［｛〈《「『【￥＄￡";
 
   private lines: LayerTextLine[] = [];
-  public style: TextStyle = new TextStyle();
 
+  public style: TextStyle = new TextStyle();
   public lineHeight: number = 0;
   public linePitch: number = 5;
 
@@ -700,7 +740,7 @@ export class LayerTextCanvas {
     this.currentLine.y = this.marginTop;
   }
 
-  public static copyTarget: string[] = [
+  private static storeParams: string[] = [
     "lineHeight",
     "linePitch",
     "marginTop",
@@ -722,10 +762,11 @@ export class LayerTextCanvas {
     dest.clear();
     dest.width = this.width;
     dest.height = this.height;
+    dest.style = this.style.clone();
 
     const me = this as any;
     const you = dest as any;
-    LayerTextCanvas.copyTarget.forEach(key => (you[key] = me[key]));
+    LayerTextCanvas.storeParams.forEach(p => (you[p] = me[p]));
 
     dest.lines = [];
     this.lines.forEach(line => {
@@ -734,37 +775,78 @@ export class LayerTextCanvas {
       dest.lines.push(destLine);
     });
   }
+
+  public store(tick: number): any {
+    const data: any = {};
+    const me: any = this as any;
+    LayerTextCanvas.storeParams.forEach(p => (data[p] = me[p]));
+    this.lines.forEach(line => {
+      line.store(tick);
+    });
+    data.width = this.width;
+    data.height = this.height;
+    data.style = this.style.store(tick);
+
+    return data;
+  }
+
+  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
+    const me: any = this as any;
+    LayerTextCanvas.storeParams.forEach(p => (me[p] = data[p]));
+    this.lines.forEach(line => {
+      line.restore(data, tick, clear);
+    });
+    this.style.restore(data, tick, clear);
+
+    if (clear) {
+      this.clear();
+      this.width = data.width;
+      this.height = data.height;
+    } else {
+      // MEMO:
+      //   テキストをクリアしない場合でも、キャンバスのサイズが変化しているなら、
+      //   しょうがないのでサイズ変更する。
+      if (this.width != data.width) {
+        this.clear();
+        this.width = data.width;
+      }
+      if (this.height != data.height) {
+        this.clear();
+        this.height = data.height;
+      }
+    }
+  }
 }
 
-(window as any).test = () => {
-  const layerTextCanvas: LayerTextCanvas = new LayerTextCanvas();
-  console.log(layerTextCanvas);
-  console.log(layerTextCanvas.canvas);
-  document.getElementById("ponkan3game")!.appendChild(layerTextCanvas.canvas);
-  layerTextCanvas.canvas.width = 800;
-  layerTextCanvas.canvas.height = 600;
-  layerTextCanvas.canvas.style.border = "solid 1px red";
+// (window as any).test = () => {
+//   const layerTextCanvas: LayerTextCanvas = new LayerTextCanvas();
+//   console.log(layerTextCanvas);
+//   console.log(layerTextCanvas.canvas);
+//   document.getElementById("ponkan3game")!.appendChild(layerTextCanvas.canvas);
+//   layerTextCanvas.canvas.width = 800;
+//   layerTextCanvas.canvas.height = 600;
+//   layerTextCanvas.canvas.style.border = "solid 1px red";
 
-  const mes =
-    "拙者親方と申すは、お立会の中に御存じのお方もござりましょうが、お江戸を発って二十里上方、相州小田原一色町をお過ぎなされて、青物町を登りへおいでなさるれば、欄干橋虎屋藤衛門、只今は剃髪致して、円斉と名のりまする。元朝より、大晦日まで、お手に入れまする此の薬は、昔ちんの国の唐人、外郎という人、わが朝ちょうへ来たり、帝へ参内の折りから、この薬を深く籠め置き、用ゆる時は一粒ずつ、冠のすき間より取り出いだす。依って、その名を帝より、「とうちんこう」と賜わる。即ち文字には、「頂き、透く、香い」と書いて「とうちんこう」と申す。";
-  // layerTextCanvas.reserveRubyText("せっ");
-  // layerTextCanvas.addText(mes);
+//   const mes =
+//     "拙者親方と申すは、お立会の中に御存じのお方もござりましょうが、お江戸を発って二十里上方、相州小田原一色町をお過ぎなされて、青物町を登りへおいでなさるれば、欄干橋虎屋藤衛門、只今は剃髪致して、円斉と名のりまする。元朝より、大晦日まで、お手に入れまする此の薬は、昔ちんの国の唐人、外郎という人、わが朝ちょうへ来たり、帝へ参内の折りから、この薬を深く籠め置き、用ゆる時は一粒ずつ、冠のすき間より取り出いだす。依って、その名を帝より、「とうちんこう」と賜わる。即ち文字には、「頂き、透く、香い」と書いて「とうちんこう」と申す。";
+//   // layerTextCanvas.reserveRubyText("せっ");
+//   // layerTextCanvas.addText(mes);
 
-  // layerTextCanvas.addText("aiueo");
-  // layerTextCanvas.addText("あいうえお");
-  // layerTextCanvas.addText("おわり。");
-  // layerTextCanvas.draw(Date.now());
-  // const mes = "あいうえおかきくけこ";
-  let i = 0;
-  setTimeout(() => {
-    setInterval(() => {
-      if (i < mes.length) {
-        layerTextCanvas.addChar(mes[i]);
-      }
-      const tick = Date.now();
-      layerTextCanvas.beforeDraw(tick);
-      layerTextCanvas.draw(tick);
-      i++;
-    }, 16);
-  }, 1000);
-};
+//   // layerTextCanvas.addText("aiueo");
+//   // layerTextCanvas.addText("あいうえお");
+//   // layerTextCanvas.addText("おわり。");
+//   // layerTextCanvas.draw(Date.now());
+//   // const mes = "あいうえおかきくけこ";
+//   let i = 0;
+//   setTimeout(() => {
+//     setInterval(() => {
+//       if (i < mes.length) {
+//         layerTextCanvas.addChar(mes[i]);
+//       }
+//       const tick = Date.now();
+//       layerTextCanvas.beforeDraw(tick);
+//       layerTextCanvas.draw(tick);
+//       i++;
+//     }, 16);
+//   }, 1000);
+// };
