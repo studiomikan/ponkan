@@ -27,9 +27,9 @@ export class TextStyle {
   public edgeColor: number | string = 0x000000;
   public edgeWidth: number = 2;
   public pitch: number = 2;
-  public inEffectTypes: InEffectType[] = ["alpha", "move"];
-  public inEffectTime: number = 1000;
-  public inEffectEase: "none" | "in" | "out" | "both" = "both";
+  public inEffectTypes: InEffectType[] = [];
+  public inEffectTime: number = 100;
+  public inEffectEase: "none" | "in" | "out" | "both" = "none";
   public inEffectOptions: any = {
     offsetx: 100,
   };
@@ -136,8 +136,14 @@ export class LayerChar {
 
   public clone(context: CanvasRenderingContext2D): LayerChar {
     const c = new LayerChar(context, this.ch, this.style);
+    c.x = this.x;
+    c.y = this.y;
+    c.width = this.width;
+    c.alpha = this.alpha;
     c.inEffectState = this.inEffectState;
     c.inEffectStartTick = this.inEffectStartTick;
+    c._offsetX = this._offsetX;
+    c._offsetY = this._offsetY;
     return c;
   }
 
@@ -324,14 +330,17 @@ export class LayerTextLine {
     this.chList.splice(this.chList.length - 1, 1);
   }
 
-  public copyFrom(context: CanvasRenderingContext2D, src: LayerTextLine): void {
-    this.clear();
-    src.chList.forEach((srcLayerChar: LayerChar) => {
-      this.chList.push(srcLayerChar.clone(context));
+  public copyTo(context: CanvasRenderingContext2D, dest: LayerTextLine): void {
+    dest.clear();
+    this.chList.forEach((layerChar: LayerChar) => {
+      dest.chList.push(layerChar.clone(context));
     });
-    this.x = src.x;
-    this.y = src.y;
-    this._textX = src._textX;
+    this.rubyList.forEach((layerRuby: LayerChar) => {
+      dest.rubyList.push(layerRuby.clone(context));
+    });
+    dest.x = this.x;
+    dest.y = this.y;
+    dest._textX = this._textX;
   }
 
   public beforeDraw(tick: number): void {
@@ -353,6 +362,7 @@ export class LayerTextLine {
 export class LayerTextCanvas {
   public readonly canvas: HTMLCanvasElement;
   public readonly context: CanvasRenderingContext2D;
+  public readonly sprite: PIXI.Sprite;
 
   /** 禁則文字（行頭禁則文字） */
   public static headProhibitionChar: string =
@@ -362,7 +372,6 @@ export class LayerTextCanvas {
   public static tailProhibitionChar: string = "\\$([{｢‘“（〔［｛〈《「『【￥＄￡";
 
   private lines: LayerTextLine[] = [];
-
   public style: TextStyle = new TextStyle();
 
   public lineHeight: number = 0;
@@ -381,30 +390,47 @@ export class LayerTextCanvas {
   public rubyFontSize: number = 10;
   public rubyOffset: number = 2;
   public rubyPitch: number = 2;
-  // public textInEffectTypes: InEffectType[] = [];
-  // public textInEffectTime: number = 120;
-  // public textInEffectEase: "none" | "in" | "out" | "both" = "none";
-  // public textInEffectOptions: any = {};
 
   public get width(): number {
     return this.canvas.width;
   }
+  public set width(width: number) {
+    this.canvas.width = width;
+    this.clear();
+  }
 
   public get height(): number {
     return this.canvas.height;
+  }
+  public set height(height: number) {
+    this.canvas.height = height;
+    this.clear();
+  }
+
+  public get text(): string {
+    return this.lines.map(line => line.text).join("\n");
   }
 
   public constructor() {
     this.canvas = document.createElement("canvas");
     this.context = this.canvas.getContext("2d")!; // eslint-disable-line @typescript-eslint/no-non-null-assertion
     this.lineHeight = this.style.fontSize;
+
+    this.canvas.width = 800;
+    this.canvas.height = 32;
     this.clear();
+
+    this.sprite = new PIXI.Sprite(PIXI.Texture.from(this.canvas));
+    this.sprite.anchor.set(0);
+    this.sprite.x = 0;
+    this.sprite.y = 0;
   }
 
   public beforeDraw(tick: number): void {
     this.lines.forEach(line => {
       line.beforeDraw(tick);
     });
+    this.sprite.texture.update();
   }
 
   public draw(tick: number): void {
@@ -463,6 +489,54 @@ export class LayerTextCanvas {
       this.currentLine.addChar(this.context, ch, this.style, this.lineHeight);
       this.alignCurrentTextLine();
     }
+  }
+
+  /**
+   * 次の文字の表示位置を取得する
+   * @param chWidth 追加しようとしている文字の横幅
+   * @return 表示位置
+   */
+  public getNextTextPos(chWidth: number): { x: number; y: number; newLineFlag: boolean } {
+    const currentLine = this.currentLine;
+    const right = currentLine.x + currentLine.width;
+    let x = 0;
+    let y = currentLine.y;
+    let newLineFlag = false;
+    switch (this.align) {
+      case "left":
+        if (this.shouldBeNewTextLine(chWidth)) {
+          x = this.getTextLineBasePoint();
+          y = this.currentLine.y + this.lineHeight + this.linePitch;
+          newLineFlag = true;
+        } else {
+          x = right;
+          y = currentLine.y;
+        }
+        break;
+      case "center":
+        if (this.shouldBeNewTextLine(chWidth)) {
+          x = this.getTextLineBasePoint() - chWidth / 2;
+          y = this.currentLine.y + this.lineHeight + this.linePitch;
+          newLineFlag = true;
+        } else {
+          x = right + chWidth / 2;
+          y = currentLine.y;
+        }
+        break;
+      case "right":
+        x = right;
+        y = currentLine.y;
+        if (this.shouldBeNewTextLine(chWidth)) {
+          x = this.getTextLineBasePoint() - chWidth;
+          y = this.currentLine.y + this.lineHeight + this.linePitch;
+          newLineFlag = true;
+        } else {
+          x = right;
+          y = currentLine.y;
+        }
+        break;
+    }
+    return { x, y, newLineFlag };
   }
 
   /**
@@ -624,6 +698,41 @@ export class LayerTextCanvas {
 
     this.currentLine.x = this.getTextLineBasePoint();
     this.currentLine.y = this.marginTop;
+  }
+
+  public static copyTarget: string[] = [
+    "lineHeight",
+    "linePitch",
+    "marginTop",
+    "marginRight",
+    "marginBottom",
+    "marginLeft",
+    "autoReturn",
+    "locatePoint",
+    "indentPoint",
+    "reservedIndentPoint",
+    "reservedIndentClear",
+    "align",
+    "rubyFontSize",
+    "rubyOffset",
+    "rubyPitch",
+  ];
+
+  public copyTo(dest: LayerTextCanvas): void {
+    dest.clear();
+    dest.width = this.width;
+    dest.height = this.height;
+
+    const me = this as any;
+    const you = dest as any;
+    LayerTextCanvas.copyTarget.forEach(key => (you[key] = me[key]));
+
+    dest.lines = [];
+    this.lines.forEach(line => {
+      const destLine = new LayerTextLine();
+      line.copyTo(this.context, destLine);
+      dest.lines.push(destLine);
+    });
   }
 }
 
