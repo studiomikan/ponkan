@@ -321,14 +321,12 @@ export class Conductor {
   }
 
   /* eslint-disable @typescript-eslint/no-unused-vars */
-  /**
-   * 復元。ステータスの値は復元されるが、再スタートなどはしないので注意。
-   */
   public async restore(data: any, tick: number): Promise<void> {
     const me: any = this as any;
     Conductor.conductorStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
+    this.stop(); // 強制的に停止
 
     // script
     await this.loadScript(data.scriptFilePath);

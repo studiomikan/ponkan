@@ -1498,7 +1498,8 @@ export class Ponkan3 extends PonGame {
       throw new Error("セーブデータの保存に失敗しました。JSON文字列に変換できません");
     }
     this.resource.storeToLocalStorage(this.getSaveDataName(num), saveStr);
-    console.log("SAVE! ", this.latestSaveData);
+    // console.log("SAVE! ", this.latestSaveData);
+    Logger.debug("SAVE! ", this.latestSaveData);
 
     // システムデータの保存
     if (this.systemVar.saveDataInfo == null) {
@@ -1582,7 +1583,7 @@ export class Ponkan3 extends PonGame {
     });
 
     data.gameVar = Util.objClone(this.gameVar);
-    data.conductor = this.conductor.store(saveMarkName, tick);
+    data.conductor = this.mainConductor.store(saveMarkName, tick);
 
     data.forePrimaryLayer = this.forePrimaryLayer.store(tick);
     data.foreLayers = [];
@@ -1626,6 +1627,7 @@ export class Ponkan3 extends PonGame {
     Logger.debug("LOAD! ", data);
 
     this.goToMainConductor();
+    this.mainConductor.stop();
 
     Ponkan3.ponkanStoreParams.forEach((param: string) => {
       me[param] = data[param];
@@ -1655,7 +1657,7 @@ export class Ponkan3 extends PonGame {
     }
 
     // conductor
-    this.conductor.restore(data.conductor, tick);
+    await this.mainConductor.restore(data.conductor, tick);
 
     if (data.gameVar != null) {
       this.resource.gameVar = Util.objClone(data.gameVar);
@@ -1672,6 +1674,8 @@ export class Ponkan3 extends PonGame {
         await p.onRestore(data, tick, false, true, false);
       }
     });
+
+    this.conductor.stop();
   }
 
   public async tempLoad(tick: number, num: number, sound = false, toBack = false): Promise<void> {
