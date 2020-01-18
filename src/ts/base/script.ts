@@ -71,41 +71,31 @@ export class Script {
 
   /**
    * 指定のラベルの位置へ移動する。
-   * ラベルの検索はファイルの先頭から実施するため、
    * ファイル内に同じラベルが2つ以上あった場合は、1番目の位置へ移動する。
    * ラベルが見つからなかった場合はエラーになる。
    * @param label 移動先ラベル
    */
   public goToLabel(label: string): void {
-    this.goToStart();
-    while (true) {
-      const tag: Tag | null = this.getNextTagWithoutMacro();
-      if (tag == null) {
-        throw new Error(`${this.filePath}内に、ラベル ${label} が見つかりませんでした`);
-      }
-      if (tag.name === "__label__" && tag.values.__body__ === label) {
-        break;
-      }
+    const labelPos: number = this.parser.getLabelPos(label);
+    if (labelPos === -1) {
+      throw new Error(`${this.filePath}内に、ラベル ${label} が見つかりませんでした`);
+    } else {
+      this.goTo(labelPos + 1);
     }
   }
 
   /**
    * 指定のセーブマーク位置まで移動する
-   * 検索はファイルの先頭から実施するため、
    * ファイル内に同じセーブマークが2つ以上あった場合は、1番目の位置へ移動する。
    * ラベルが見つからなかった場合はエラーになる。
    * @param saveMarkName セーブマーク名
    */
   public goToSaveMark(saveMarkName: string): void {
-    this.goToStart();
-    while (true) {
-      const tag: Tag | null = this.getNextTagWithoutMacro();
-      if (tag == null) {
-        throw new Error(`${this.filePath}内に、セーブマーク ${saveMarkName} が見つかりませんでした`);
-      }
-      if (tag.name === "__save_mark__" && tag.values.name === saveMarkName) {
-        break;
-      }
+    const saveMarkPos: number = this.parser.getSaveMarkPos(saveMarkName);
+    if (saveMarkPos === -1) {
+      throw new Error(`${this.filePath}内に、セーブマーク ${saveMarkName} が見つかりませんでした`);
+    } else {
+      this.goTo(saveMarkPos + 1);
     }
   }
 
@@ -434,26 +424,4 @@ export class Script {
   public isInsideOfForLoop(): boolean {
     return this.forLoopStack.length !== 0;
   }
-
-  // public store(tick: number): any {
-  //   let data: any = {};
-  //   let me: any = <any> this;
-  //
-  //   [
-  //     "filePath",
-  //     "tagPoint",
-  //   ].forEach((param: string) => {
-  //     data[param] = me[param];
-  //   });
-  //
-  //   return data;
-  // }
-  //
-  // public static createFromStoredData(resource: Resource, data: any): AsyncCallbacks {
-  //   let cb = resource.loadScript(data.filePath);
-  //   cb.done((script: Script) => {
-  //     script.goTo(data.tagPoint);
-  //   });
-  //   return cb;
-  // }
 }

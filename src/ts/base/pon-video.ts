@@ -31,7 +31,7 @@ export class PonVideo {
     return this.videoSprite;
   }
   public get source(): HTMLVideoElement {
-    return this.videoTexture.baseTexture.source as HTMLVideoElement;
+    return (this.videoTexture.baseTexture.resource as PIXI.resources.VideoResource).source as HTMLVideoElement;
   }
 
   public get width(): number {
@@ -92,8 +92,10 @@ export class PonVideo {
    * そのままの状態を保つ。
    */
   public clear(): void {
+    this.stop();
     this.callbacks.pixiContainerRemoveChild(this.videoSprite);
     this.videoSprite.destroy();
+    this.videoTexture.destroy();
   }
 
   public play(): void {

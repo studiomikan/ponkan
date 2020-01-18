@@ -3,10 +3,10 @@ export class LayerFilter {
   public get filterName(): string {
     return LayerFilter.filterName;
   }
-  public get pixiFilter(): PIXI.Filter<any> {
+  public get pixiFilter(): PIXI.Filter {
     return this._filter;
   }
-  protected _filter: PIXI.Filter<any>;
+  protected _filter: PIXI.Filter;
   protected params: any = {};
 
   public constructor(params: any, permitedList: string[] = []) {

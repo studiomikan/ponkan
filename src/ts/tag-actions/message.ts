@@ -30,7 +30,7 @@ export default function(p: Ponkan3): TagAction[] {
         new TagValue("fontstyle", "string", false, null),
         /// @param 文字色。0xRRGGBBで指定すると単色、[0xRRGGBB, 0xRRGGBB, ...]のように配列で指定するとグラデーションになります。
         new TagValue("color", "number|array", false, null),
-        /// @param 文字色グラデーションの切り替えポイント([0.0, 0.0, ...])
+        /// @param 文字色グラデーションの色の位置。0.0～1.0の数値の配列。([0.0, 0.5, ...])
         new TagValue("gradientstops", "array", false, null),
         /// @param 文字色グラデーションのタイプ（方向）。"vertical" | "horizontal"。初期値は"vertical"
         new TagValue("gradienttype", "string", false, null),
@@ -76,83 +76,133 @@ export default function(p: Ponkan3): TagAction[] {
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach((layer: PonLayer) => {
           if (values.fontfamily != null) {
-            layer.textFontFamily = values.fontfamily;
+            layer.textCanvas.style.fontFamily = values.fontfamily;
           }
           if (values.fontsize != null) {
-            layer.textFontSize = values.fontsize;
+            layer.textCanvas.style.fontSize = values.fontsize;
           }
           if (values.fontweight != null) {
-            layer.textFontWeight = values.fontweight;
+            layer.textCanvas.style.fontWeight = values.fontweight;
           }
           if (values.fontstyle != null) {
-            layer.textFontStyle = values.fontstyle;
+            layer.textCanvas.style.fontStyle = values.fontstyle;
           }
           if (values.color != null) {
-            layer.textColor = values.color;
+            layer.textCanvas.style.setColor(values.color);
           }
           if (values.gradientstops != null) {
-            layer.textGradientStops = values.gradientstops;
+            layer.textCanvas.style.fillGradientStops = values.gradientstops;
           }
           if (values.gradienttype != null) {
-            layer.textGradientType = values.gradienttype;
+            layer.textCanvas.style.fillGradientType = values.gradienttype;
           }
           if (values.margint != null) {
-            layer.textMarginTop = values.margint;
+            layer.textCanvas.marginTop = values.margint;
           }
           if (values.marginr != null) {
-            layer.textMarginRight = values.marginr;
+            layer.textCanvas.marginRight = values.marginr;
           }
           if (values.marginb != null) {
-            layer.textMarginBottom = values.marginb;
+            layer.textCanvas.marginBottom = values.marginb;
           }
           if (values.marginl != null) {
-            layer.textMarginLeft = values.marginl;
+            layer.textCanvas.marginLeft = values.marginl;
           }
           if (values.pitch != null) {
-            layer.textPitch = values.pitch;
+            layer.textCanvas.style.pitch = values.pitch;
           }
           if (values.lineheight != null) {
-            layer.textLineHeight = values.lineheight;
+            layer.textCanvas.lineHeight = values.lineheight;
           }
           if (values.linepitch != null) {
-            layer.textLinePitch = values.linepitch;
+            layer.textCanvas.linePitch = values.linepitch;
           }
           if (values.align != null) {
-            layer.textAlign = values.align;
+            layer.textCanvas.align = values.align;
           }
           if (values.shadow != null) {
-            layer.textShadowVisible = values.shadow;
+            layer.textCanvas.style.shadow = values.shadow;
           }
           if (values.shadowalpha != null) {
-            layer.textShadowAlpha = values.shadowalpha;
+            layer.textCanvas.style.shadowAlpha = values.shadowalpha;
           }
           if (values.shadowangle != null) {
-            layer.textShadowAngle = values.shadowangle;
+            layer.textCanvas.style.shadowAngle = values.shadowangle;
           }
           if (values.shadowblur != null) {
-            layer.textShadowBlur = values.shadowblur;
+            layer.textCanvas.style.shadowBlur = values.shadowblur;
           }
           if (values.shadowcolor != null) {
-            layer.textShadowColor = values.shadowcolor;
+            layer.textCanvas.style.setShadowColor(values.shadowcolor);
           }
           if (values.shadowdistance != null) {
-            layer.textShadowDistance = values.shadowdistance;
+            layer.textCanvas.style.shadowDistance = values.shadowdistance;
           }
           if (values.edgewidth != null) {
-            layer.textEdgeWidth = values.edgewidth;
+            layer.textCanvas.style.edgeWidth = values.edgewidth;
           }
           if (values.edgecolor != null) {
-            layer.textEdgeColor = values.edgecolor;
+            layer.textCanvas.style.setEdgeColor(values.edgecolor);
           }
           if (values.rubysize != null) {
-            layer.rubyFontSize = values.rubysize;
+            layer.textCanvas.rubyFontSize = values.rubysize;
           }
           if (values.rubypitch != null) {
-            layer.rubyPitch = values.rubypitch;
+            layer.textCanvas.rubyPitch = values.rubypitch;
           }
           if (values.rubyoffset != null) {
-            layer.rubyOffset = values.rubyoffset;
+            layer.textCanvas.rubyOffset = values.rubyoffset;
           }
+        });
+        return "continue";
+      },
+    ),
+    /// @category メッセージ操作
+    /// @description 文字表示時エフェクトの設定
+    /// @details
+    ///   文字を表示する際のエフェクトを設定します。\n
+    ///   ゲーム起動時には、何もエフェクトをかけない（none）設定になっています。
+    ///
+    ///   `type` に設定した値によって、文字を表示する際にエフェクトがかかります。
+    ///
+    ///    - `alpha` ： alpha値をフェードしながら表示（フェードイン）
+    ///    - `move` ：  移動しながら表示
+    ///
+    ///   複数のエフェクトを設定することもできます。
+    ///   たとえば `type: ["alpha", "move"]` と設定すると、移動とフェードを同時に実行します。
+    new TagAction(
+      ["chineffect"],
+      [
+        /// @param 対象レイヤー
+        new TagValue("lay", "string", false, "message"),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+        /// @param エフェクトの種類の配列。"alpha" | "move"。例：["alpha", "move"]
+        new TagValue("type", "string|array", false, null),
+        /// @param エフェクトにかける時間(ms)。ゲーム起動時には120msに設定されています。
+        new TagValue("time", "number", false, null),
+        /// @param エフェクトの入り・抜きの指定。"none" | "in" | "out" | "both"
+        new TagValue("ease", "string", false, "none"),
+        /// @param type: "move"の場合のみ有効。x方向の移動量
+        new TagValue("offsetx", "number", false, null),
+        /// @param type: "move"の場合のみ有効。y方向の移動量
+        new TagValue("offsety", "number", false, null),
+      ],
+      (values: any, tick: number): TagActionResult => {
+        p.getLayers(values).forEach((layer: PonLayer) => {
+          if (values.type != null) {
+            layer.textCanvas.style.inEffectTypes = values.type;
+          }
+          if (values.time != null) {
+            layer.textCanvas.style.inEffectTime = values.time;
+          }
+          if (values.ease != null) {
+            layer.textCanvas.style.inEffectEase = values.ease;
+          }
+          layer.textCanvas.style.inEffectOptions = {
+            offsetx: values.offsetx,
+            offsety: values.offsety,
+          };
         });
         return "continue";
       },

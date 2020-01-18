@@ -79,8 +79,9 @@ export default function(p: Ponkan3): TagAction[] {
           .then(() => {
             p.conductor.start();
           })
-          .catch(() => {
-            throw new Error(`動画読み込みに失敗しました。(${values.file})`);
+          .catch(e => {
+            console.error(e);
+            p.error(new Error(`動画読み込みに失敗しました。(${values.file})`));
           });
         return p.conductor.stop();
       },
@@ -203,7 +204,6 @@ export default function(p: Ponkan3): TagAction[] {
         new TagValue("canskip", "boolean", false, true),
       ],
       (values: any, tick: number): TagActionResult => {
-        console.log("@@waitvideo", values);
         if (!p.hasPlayingVideoLayer) {
           return "continue";
         }

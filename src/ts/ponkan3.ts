@@ -42,6 +42,8 @@ export class Ponkan3 extends PonGame {
   public autoModeInterval: number = 1000;
   public autoModeStartTick: number = -1;
   public autoModeLayerNum: number = DEFAULT_AUTO_MODE_LAYER_NUM;
+  public waitUntilStartTick: number = -1;
+  public waitUntilTime: number = 0;
   // public canStopSkipByTag: boolean = false;
 
   // タグ関係
@@ -95,7 +97,7 @@ export class Ponkan3 extends PonGame {
     this._lineBreakGlyphLayerNum = num;
   }
   public lineBreakGlyphPos: "eol" | "relative" | "absolute" = "eol";
-  public lineBreakGlyphVerticalAlign: GlyphVerticalAlignType = "middle";
+  public lineBreakGlyphVerticalAlign: GlyphVerticalAlignType = "bottom";
   public lineBreakGlyphX: number = 0;
   public lineBreakGlyphY: number = 0;
   public lineBreakGlyphMarginX: number = 10;
@@ -109,7 +111,7 @@ export class Ponkan3 extends PonGame {
     this._pageBreakGlyphLayerNum = num;
   }
   public pageBreakGlyphPos: "eol" | "relative" | "absolute" = "eol";
-  public pageBreakGlyphVerticalAlign: GlyphVerticalAlignType = "middle";
+  public pageBreakGlyphVerticalAlign: GlyphVerticalAlignType = "bottom";
   public pageBreakGlyphX: number = 0;
   public pageBreakGlyphY: number = 0;
   public pageBreakGlyphMarginX: number = 10;
@@ -620,13 +622,17 @@ export class Ponkan3 extends PonGame {
     Logger.debug("onTag: ", tag.name, tag.values, tag);
     const tagAction: TagAction = this.tagActions[tag.name];
     if (tagAction === null || tagAction === undefined) {
-      // Logger.debug("Unknown Tag: ", tag.name, tag);
       if (this.raiseError.unknowncommand) {
         throw new Error(`${tag.name}というタグは存在しません`);
       } else {
         return "continue";
       }
     }
+    // if属性適用
+    if (tag.values["if"] != null && tag.values["if"] != "" && !this.resource.evalJs(tag.values["if"])) {
+      return "continue";
+    }
+    // エンティティ適用、値のキャスト、必須チェック
     applyJsEntity(this.resource, tag.values);
     castTagValues(tag, tagAction);
     tagAction.values.forEach((def: TagValue) => {
@@ -640,6 +646,7 @@ export class Ponkan3 extends PonGame {
         }
       }
     });
+    // 実行
     return tagAction.action(tag.values, tick);
   }
 
@@ -1197,7 +1204,7 @@ export class Ponkan3 extends PonGame {
       const glyphPos = mesLay.getNextTextPos(lay.width);
       lay.x = mesLay.x + glyphPos.x;
       // 縦位置についてはデフォルトがtopなので、修正する
-      const lineHeight = mesLay.textLineHeight;
+      const lineHeight = mesLay.textCanvas.lineHeight;
       switch (verticalAlign) {
         case "bottom":
           lay.y = mesLay.y + (glyphPos.y + lineHeight) - lay.height;
@@ -1207,15 +1214,15 @@ export class Ponkan3 extends PonGame {
           break;
         default:
         case "middle":
-          lay.y = mesLay.y + glyphPos.y + (mesLay.textLineHeight - lay.height) / 2;
+          lay.y = mesLay.y + glyphPos.y + (lineHeight - lay.height) / 2;
           break;
         case "text-top":
-          lay.y = mesLay.y + glyphPos.y + lineHeight - mesLay.textFontSize;
+          lay.y = mesLay.y + glyphPos.y + lineHeight - mesLay.textCanvas.style.fontSize;
           break;
         case "text-middle":
           {
-            const textTop = glyphPos.y + lineHeight - mesLay.textFontSize;
-            lay.y = mesLay.y + textTop + (mesLay.textFontSize - lay.height) / 2;
+            const textTop = glyphPos.y + lineHeight - mesLay.textCanvas.style.fontSize;
+            lay.y = mesLay.y + textTop + (mesLay.textCanvas.style.fontSize - lay.height) / 2;
           }
           break;
       }
@@ -1491,7 +1498,8 @@ export class Ponkan3 extends PonGame {
       throw new Error("セーブデータの保存に失敗しました。JSON文字列に変換できません");
     }
     this.resource.storeToLocalStorage(this.getSaveDataName(num), saveStr);
-    console.log("SAVE! ", this.latestSaveData);
+    // console.log("SAVE! ", this.latestSaveData);
+    Logger.debug("SAVE! ", this.latestSaveData);
 
     // システムデータの保存
     if (this.systemVar.saveDataInfo == null) {
@@ -1575,7 +1583,7 @@ export class Ponkan3 extends PonGame {
     });
 
     data.gameVar = Util.objClone(this.gameVar);
-    data.conductor = this.conductor.store(saveMarkName, tick);
+    data.conductor = this.mainConductor.store(saveMarkName, tick);
 
     data.forePrimaryLayer = this.forePrimaryLayer.store(tick);
     data.foreLayers = [];
@@ -1619,10 +1627,12 @@ export class Ponkan3 extends PonGame {
     Logger.debug("LOAD! ", data);
 
     this.goToMainConductor();
+    this.mainConductor.stop();
 
     Ponkan3.ponkanStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
+    this.waitUntilStartTick = -1;
 
     // layer
     // TODO: 並列化
@@ -1647,7 +1657,7 @@ export class Ponkan3 extends PonGame {
     }
 
     // conductor
-    this.conductor.restore(data.conductor, tick);
+    await this.mainConductor.restore(data.conductor, tick);
 
     if (data.gameVar != null) {
       this.resource.gameVar = Util.objClone(data.gameVar);
@@ -1664,6 +1674,8 @@ export class Ponkan3 extends PonGame {
         await p.onRestore(data, tick, false, true, false);
       }
     });
+
+    this.conductor.stop();
   }
 
   public async tempLoad(tick: number, num: number, sound = false, toBack = false): Promise<void> {

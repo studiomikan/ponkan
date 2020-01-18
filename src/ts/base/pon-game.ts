@@ -388,7 +388,10 @@ export class PonGame implements IConductorEvent {
 
   public goToMainConductor(): void {
     while (this.conductorStack.length > 1) {
-      this.conductorStack.pop();
+      const c = this.conductorStack.pop();
+      if (c != null) {
+        c.stop();
+      }
     }
   }
 

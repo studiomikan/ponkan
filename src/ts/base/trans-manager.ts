@@ -1,7 +1,7 @@
 import { PonGame } from "./pon-game";
 import { Resource } from "./resource";
 
-class CrossFadeFilter extends PIXI.Filter<any> {
+class CrossFadeFilter extends PIXI.Filter {
   public constructor() {
     const fragmentShader = `
       varying vec2 vTextureCoord;
@@ -29,7 +29,7 @@ class CrossFadeFilter extends PIXI.Filter<any> {
   }
 }
 
-class UnivTransFilter extends PIXI.Filter<any> {
+class UnivTransFilter extends PIXI.Filter {
   public constructor() {
     const fragmentShader = `
       varying vec2 vTextureCoord;
@@ -58,20 +58,7 @@ class UnivTransFilter extends PIXI.Filter<any> {
           if (tmp > 1.0) { tmp = 1.0; }
           gl_FragColor = scolor * tmp + color * (1.0 - tmp);
         }
-        // float a = 255.0 * (rcolor.r + rcolor.g + rcolor.b) / 3.0;
-        // if (a < phase) {
-        //   gl_FragColor = bcolor;
-        // } else if (a >= phaseMax) {
-        //   gl_FragColor = fcolor;
-        // } else {
-        //   float tmp = 255.0 - ((a - phase) * 255.0 / vague);
-        //   if (tmp < 0.0) { tmp = 0.0; }
-        //   if (tmp > 255.0) { tmp = 255.0; }
-        //   float alpha = tmp / 255.0;
-        //   gl_FragColor = bcolor * alpha + fcolor * (1.0 - alpha);
-        // }
       }
-
     `;
     super(
       undefined, // vertex shader
@@ -106,7 +93,7 @@ export class TransManager {
   private status: "stop" | "run" = "stop";
 
   private filters: any;
-  private filter: PIXI.Filter<any>;
+  private filter: PIXI.Filter;
 
   public constructor(game: PonGame, resource: Resource) {
     this.game = game;
@@ -164,7 +151,7 @@ export class TransManager {
     const height = this.game.height;
 
     this.ruleImage = await this.resource.loadImage(ruleFilePath);
-    this.ruleSprite = PIXI.Sprite.from(this.ruleImage);
+    this.ruleSprite = new PIXI.Sprite(PIXI.Texture.from(this.ruleImage));
     this.ruleSprite.width = width;
     this.ruleSprite.height = height;
 
@@ -195,8 +182,8 @@ export class TransManager {
     // レンダラーの入れ替え
     this.game.resetPrimaryLayersRenderer();
     // フィルタをクリア
-    this.game.foreRenderer.container.filters = null;
-    this.game.backRenderer.container.filters = null;
+    this.game.foreRenderer.container.filters = [];
+    this.game.backRenderer.container.filters = [];
 
     // 完了イベント
     this.game.onCompleteTrans();

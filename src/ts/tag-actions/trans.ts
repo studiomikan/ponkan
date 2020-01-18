@@ -111,7 +111,8 @@ export default function(p: Ponkan3): TagAction[] {
                 p.transManager.start();
                 p.conductor.start();
               })
-              .catch(() => {
+              .catch(e => {
+                console.error(e);
                 p.error(new Error(`トランジションの処理に失敗しました。(${values.method}, ${values.rule})`));
               });
             return p.conductor.stop();
@@ -122,7 +123,8 @@ export default function(p: Ponkan3): TagAction[] {
                 p.transManager.start();
                 p.conductor.start();
               })
-              .catch(() => {
+              .catch(e => {
+                console.error(e);
                 p.error(new Error(`トランジションの処理に失敗しました。(${values.method})`));
               });
             return p.conductor.stop();

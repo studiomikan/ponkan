@@ -259,7 +259,18 @@ export class Resource {
 
   public loadVideoTexture(filePath: string, autoPlay: boolean): PIXI.Texture {
     const path: string = this.getPath(filePath);
-    return PIXI.Texture.fromVideo(path, PIXI.SCALE_MODES.NEAREST, true, autoPlay);
+    const texture: PIXI.Texture = PIXI.Texture.from(path, {
+      scaleMode: PIXI.SCALE_MODES.NEAREST,
+    });
+    (texture.baseTexture.resource as PIXI.resources.VideoResource).autoPlay = autoPlay;
+    return texture;
+  }
+
+  public cloneVideoTexture(src: PIXI.Texture): PIXI.Texture {
+    // return src.clone();
+    const source = (src.baseTexture.resource as PIXI.resources.VideoResource).source as HTMLVideoElement;
+    const texture: PIXI.Texture = PIXI.Texture.from(source);
+    return texture;
   }
 
   public isEnabledLocalStorage(): boolean {

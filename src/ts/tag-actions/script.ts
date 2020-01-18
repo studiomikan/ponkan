@@ -300,6 +300,67 @@ export default function(p: Ponkan3): TagAction[] {
       },
     ),
     /// @category スクリプト制御
+    /// @description `resetwait`からの経過時間で待つ
+    /// @details
+    ///   `resetwait` コマンドを実行指定した時点から、指定の時間が経過するまで、スクリプトの動作を停止します。\n
+    ///   `canskip: false` とした場合、スキップ処理やクリック等でスキップできなくなります。
+    ///    イベントシーンなどでは `false` にしたほうが良いでしょう。
+    ///
+    ///   `resetwait` と `waituntil` との間には、セーブマークを記述しないでください。
+    new TagAction(
+      ["waituntil"],
+      [
+        /// @param `resetwait`からの経過時間(ms)
+        new TagValue("time", "number", true, null),
+        /// @param スキップ可能かどうか
+        new TagValue("canskip", "boolean", false, true),
+      ],
+      (values: any, tick: number): TagActionResult => {
+        p.waitUntilTime = 0;
+        if (p.isSkipping && values.canskip) {
+          return "continue";
+        } else if (p.waitUntilStartTick == -1) {
+          return "continue";
+        } else {
+          const tick2 = Date.now();
+          const elapsed = tick2 - p.waitUntilStartTick;
+          if (elapsed >= values.time) {
+            // すでに待ち時間を過ぎているとき
+            return "continue";
+          } else {
+            // 待つとき
+            if (values.canskip) {
+              p.conductor.addEventHandler(
+                new PonEventHandler(
+                  "click",
+                  (): void => {
+                    p.conductor.start();
+                    p.stopUntilClickSkip(); // 次のlb,pbまで飛ばされるのを防ぐ
+                  },
+                  "waituntil",
+                ),
+              );
+            }
+            p.waitUntilTime = values.time - elapsed;
+            return p.conductor.sleep(tick2, p.waitUntilTime, "wait");
+          }
+        }
+      },
+    ),
+    /// @category スクリプト制御
+    /// @description `resetwait`からの経過時間で待つ
+    /// @details
+    ///   `waituntil` コマンドで待つときの時間計測開始地点を設定します。
+    ///   `resetwait` と `waituntil` との間には、セーブマークを記述しないでください。
+    new TagAction(
+      ["resetwait"],
+      [],
+      (values: any, tick: number): TagActionResult => {
+        p.waitUntilStartTick = Date.now();
+        return "continue";
+      },
+    ),
+    /// @category スクリプト制御
     /// @description クリック待ちで停止する
     /// @details
     ///   マウスのクリック・画面のタップなどの操作待ちでスクリプトを停止します。\n

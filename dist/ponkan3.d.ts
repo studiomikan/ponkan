@@ -29,6 +29,8 @@ declare module 'ponkan3' {
       autoModeInterval: number;
       autoModeStartTick: number;
       autoModeLayerNum: number;
+      waitUntilStartTick: number;
+      waitUntilTime: number;
       readonly tagActions: any;
       protected _layerCount: number;
       layerAlias: any;
@@ -54,7 +56,7 @@ declare module 'ponkan3' {
       nowaitModeFlag: boolean;
       addCharWithBackFlag: boolean;
       hideMessageFlag: boolean;
-      hideMessageByRlickFlag: boolean;
+      hideMessageByRClickFlag: boolean;
       protected _messageLayerNum: number;
       messageLayerNum: number;
       protected _lineBreakGlyphLayerNum: number;
@@ -247,48 +249,12 @@ declare module 'ponkan3/base/base-layer' {
   import { IPonVideoCallbacks, PonVideo } from "ponkan3/base/pon-video";
   import { PonWheelEvent } from "ponkan3/base/pon-wheel-event";
   import { Resource } from "ponkan3/base/resource";
-  export class BaseLayerChar {
-      readonly ch: string;
-      readonly sp: PonSprite;
-      constructor(ch: string, sp: PonSprite);
-      clone(spriteCallbacks: IPonSpriteCallbacks): BaseLayerChar;
-      destroy(): void;
-  }
-  export class BaseLayerTextLine {
-      readonly container: PIXI.Container;
-      readonly spriteCallbacks: IPonSpriteCallbacks;
-      readonly chList: BaseLayerChar[];
-      readonly rubyList: BaseLayerChar[];
-      x: number;
-      y: number;
-      readonly textX: number;
-      readonly text: string;
-      readonly tailChar: string;
-      readonly length: number;
-      readonly width: number;
-      constructor();
-      forEach(func: (ch: BaseLayerChar, index: number) => void): void;
-      /**
-        * このテキスト行を破棄する。
-        * 以後、テキストを追加したりするとエラーになる。
-        */
-      destroy(): void;
-      /**
-        * このテキスト行の文字をすべてクリアする。
-        */
-      clear(): void;
-      addChar(ch: string, textStyle: PIXI.TextStyle, pitch: number, lineHeight: number): void;
-      reserveRubyText(rubyText: string, rubyFontSize: number, rubyOffset: number, rubyPitch: number): void;
-      getCh(index: number): BaseLayerChar;
-      getTailCh(): BaseLayerChar;
-      backspace(): void;
-      copyFrom(src: BaseLayerTextLine): void;
-  }
+  import { LayerTextCanvas } from "ponkan3/base/base-layer-text";
   /**
-    * 基本レイヤ。PIXI.Containerをラップしたもの
+    * すべてのレイヤーの基本となるレイヤー
     */
   export class BaseLayer {
-      /** レイヤ名 */
+      /** レイヤー名 */
       name: string;
       /** リソース */
       protected resource: Resource;
@@ -314,6 +280,7 @@ declare module 'ponkan3/base/base-layer' {
       protected _backgroundColor: number;
       protected _backgroundAlpha: number;
       protected textContainer: PIXI.Container;
+      protected textSpriteCallbacks: IPonSpriteCallbacks;
       protected childContainer: PIXI.Container;
       protected childSpriteCallbacks: IPonSpriteCallbacks;
       protected imageContainer: PIXI.Container;
@@ -345,44 +312,7 @@ declare module 'ponkan3/base/base-layer' {
       blockCenterClickFlag: boolean;
       blockMouseMove: boolean;
       blockWheelFlag: boolean;
-      protected textLines: BaseLayerTextLine[];
-      textStyle: PIXI.TextStyle;
-      textFontFamily: string[];
-      textFontSize: number;
-      textFontWeight: string;
-      textFontStyle: string;
-      textColor: number | string | number[] | string[] | CanvasGradient | CanvasPattern;
-      textGradientStops: number[];
-      textGradientType: "vertical" | "horizontal";
-      textShadowVisible: boolean;
-      textShadowAlpha: number;
-      textShadowAngle: number;
-      textShadowBlur: number;
-      textShadowColor: number | string;
-      textShadowDistance: number;
-      textEdgeColor: number | string;
-      textEdgeWidth: number;
-      textMarginTop: number;
-      textMarginRight: number;
-      textMarginBottom: number;
-      textMarginLeft: number;
-      /** 次の文字を描画する予定の位置。予定であって、自動改行等が発生した場合は次の行になるため注意。 */
-      textPitch: number;
-      textLineHeight: number;
-      textLinePitch: number;
-      textAutoReturn: boolean;
-      textLocatePoint: number | null;
-      textIndentPoint: number | null;
-      reservedTextIndentPoint: number | null;
-      reservedTextIndentClear: boolean;
-      textAlign: "left" | "center" | "right";
-      rubyFontSize: number;
-      rubyOffset: number;
-      rubyPitch: number;
-      /** 禁則文字（行頭禁則文字） */
-      static headProhibitionChar: string;
-      /** 禁則文字（行末禁則文字） */
-      static tailProhibitionChar: string;
+      textCanvas: LayerTextCanvas;
       readonly children: BaseLayer[];
       x: number;
       y: number;
@@ -452,8 +382,6 @@ declare module 'ponkan3/base/base-layer' {
         * 背景色をクリアする
         */
       clearBackgroundColor(): void;
-      readonly preTextLine: BaseLayerTextLine;
-      readonly currentTextLine: BaseLayerTextLine;
       readonly text: string;
       /**
         * 表示しているテキストの内容を文字列で取得
@@ -479,26 +407,9 @@ declare module 'ponkan3/base/base-layer' {
           newLineFlag: boolean;
       };
       /**
-        * 改行が必要かどうかを返す（自動改行の判定用）
-        * @param chWidth 追加する文字の幅
-        * @return 改行が必要ならtrue
-        */
-      protected shouldBeNewTextLine(chWidth?: number): boolean;
-      /**
         * テキストを改行する
         */
       addTextReturn(): void;
-      /**
-        * 現在描画中のテキスト行をの位置をtextAlignにそろえる
-        */
-      alignCurrentTextLine(): void;
-      /**
-        * テキスト行の描画時、ベースとなる点(x)を取得する。
-        * 左揃えの時: 左端の位置
-        * 中央揃えの時：中央の位置
-        * 右揃えの時：右端の位置
-        */
-      protected getTextLineBasePoint(): number;
       /**
         * テキストの表示位置を指定する。
         * 内部的には、指定前とは別の行として扱われる。
@@ -646,6 +557,7 @@ declare module 'ponkan3/base/pon-game' {
         * @param countPage 既読処理をするかどうか
         */
       returnSubroutine(forceStart?: boolean, countPage?: boolean): "continue" | "break";
+      goToMainConductor(): void;
       onTag(tag: Tag, line: number, tick: number): "continue" | "break";
       onLabel(labelName: string, line: number, tick: number): "continue" | "break";
       onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): "continue" | "break";
@@ -1070,6 +982,7 @@ declare module 'ponkan3/base/pon-sprite' {
       Text = 3,
       Canvas = 4
   }
+  export type InEffectType = "alpha" | "move" | "alphamove";
   /**
     * スプライト
     */
@@ -1139,7 +1052,9 @@ declare module 'ponkan3/base/pon-sprite' {
         * @param canvas キャンバス
         */
       setCanvas(canvas: HTMLCanvasElement): void;
-      beforeDraw(): void;
+      copyTextFrom(src: PonSprite): void;
+      initInEffect(types: InEffectType[], time: number, ease: "none" | "in" | "out" | "both", options: any): void;
+      beforeDraw(tick: number): void;
   }
 }
 
@@ -1250,10 +1165,204 @@ declare module 'ponkan3/base/resource' {
       loadImage(filePath: string): Promise<HTMLImageElement>;
       loadSoundHowler(filePath: string): Promise<Howl>;
       loadVideoTexture(filePath: string, autoPlay: boolean): PIXI.Texture;
+      cloneVideoTexture(src: PIXI.Texture): PIXI.Texture;
       isEnabledLocalStorage(): boolean;
       storeToLocalStorage(name: string, data: string): void;
       restoreFromLocalStorage(name: string): string;
       copyLocalStorage(srcName: string, destName: string): boolean;
+  }
+}
+
+declare module 'ponkan3/base/base-layer-text' {
+  import * as PIXI from "pixi.js";
+  export type InEffectType = "alpha" | "move" | "alphamove";
+  /**
+    * テキストスタイル
+    */
+  export class TextStyle {
+      static METRICS_STRING: string;
+      fontFamily: string[];
+      fontSize: number;
+      fontWeight: string | number;
+      fontStyle: "normal" | "italic";
+      color: string[];
+      textBaseline: CanvasTextBaseline;
+      shadow: boolean;
+      shadowAlpha: number;
+      shadowAngle: number;
+      shadowBlur: number;
+      shadowColor: string;
+      shadowDistance: number;
+      edgeColor: string;
+      edgeWidth: number;
+      pitch: number;
+      fillGradientStops: number[];
+      fillGradientType: "vertical" | "horizontal";
+      inEffectTypes: InEffectType[];
+      inEffectTime: number;
+      inEffectEase: "none" | "in" | "out" | "both";
+      inEffectOptions: any;
+      setColor(color: number | string | any[]): void;
+      setShadowColor(c: number | string): void;
+      setEdgeColor(c: number | string): void;
+      readonly fontFamilyStr: string;
+      readonly font: string;
+      readonly shadowColorStr: string;
+      getChWidth(context: CanvasRenderingContext2D, ch: string): number;
+      applyStyleTo(context: CanvasRenderingContext2D, offsetX: number, offsetY: number): void;
+      applyShadowTo(context: CanvasRenderingContext2D): void;
+      clearShadowFrom(context: CanvasRenderingContext2D): void;
+      checkOptions(): void;
+      clone(): TextStyle;
+      resetGradientBuffer(): void;
+      store(tick: number): any;
+      restore(data: any, tick: number, clear: boolean): Promise<void>;
+  }
+  /**
+    * レイヤーに描画する文字の情報。
+    * 文字と位置などの情報のみ持ち、canvasなどは持たない。
+    */
+  export class LayerChar {
+      readonly ch: string;
+      readonly style: TextStyle;
+      x: number;
+      y: number;
+      width: number;
+      alpha: number;
+      constructor(context: CanvasRenderingContext2D, ch: string, style: TextStyle, x: number, y: number);
+      clone(context: CanvasRenderingContext2D): LayerChar;
+      /**
+        * 描画前の更新
+        * @param tick 時刻
+        * @return 更新があった場合はtrue
+        */
+      beforeDraw(tick: number): boolean;
+      draw(context: CanvasRenderingContext2D, tick: number, offsetX: number, offsetY: number): void;
+  }
+  export class LayerTextLine {
+      x: number;
+      y: number;
+      lineHeight: number;
+      readonly chList: LayerChar[];
+      readonly rubyList: LayerChar[];
+      readonly text: string;
+      readonly textX: number;
+      readonly tailChar: string;
+      readonly length: number;
+      readonly width: number;
+      forEach(func: (ch: LayerChar, index: number) => void): void;
+      destroy(): void;
+      clear(): void;
+      addChar(context: CanvasRenderingContext2D, ch: string, style: TextStyle, lineHeight: number): void;
+      reserveRubyText(rubyText: string, rubyFontSize: number, rubyOffset: number, rubyPitch: number): void;
+      getCh(index: number): LayerChar;
+      getTailCh(): LayerChar;
+      backspace(): void;
+      /**
+        * 描画前更新
+        * @param tick 時刻
+        * @return 更新があった場合はtrue
+        */
+      beforeDraw(tick: number): boolean;
+      draw(context: CanvasRenderingContext2D, tick: number): void;
+      copyTo(context: CanvasRenderingContext2D, dest: LayerTextLine): void;
+      store(tick: number): any;
+      restore(data: any, tick: number, clear: boolean): Promise<void>;
+  }
+  export class LayerTextCanvas {
+      readonly canvas: HTMLCanvasElement;
+      readonly context: CanvasRenderingContext2D;
+      readonly sprite: PIXI.Sprite;
+      /** 禁則文字（行頭禁則文字） */
+      static headProhibitionChar: string;
+      /** 禁則文字（行末禁則文字） */
+      static tailProhibitionChar: string;
+      style: TextStyle;
+      lineHeight: number;
+      linePitch: number;
+      marginTop: number;
+      marginRight: number;
+      marginBottom: number;
+      marginLeft: number;
+      autoReturn: boolean;
+      locatePoint: number | null;
+      indentPoint: number | null;
+      reservedIndentPoint: number | null;
+      reservedIndentClear: boolean;
+      align: "left" | "center" | "right";
+      rubyFontSize: number;
+      rubyOffset: number;
+      rubyPitch: number;
+      width: number;
+      height: number;
+      readonly text: string;
+      constructor();
+      beforeDraw(tick: number): void;
+      draw(tick: number): void;
+      readonly currentLine: LayerTextLine;
+      addText(text: string): void;
+      addChar(ch: string): void;
+      /**
+        * 次の文字の表示位置を取得する
+        * @param chWidth 追加しようとしている文字の横幅
+        * @return 表示位置
+        */
+      getNextTextPos(chWidth: number): {
+          x: number;
+          y: number;
+          newLineFlag: boolean;
+      };
+      /**
+        * 改行が必要かどうかを返す（自動改行の判定用）
+        * @param chWidth 追加する文字の幅
+        * @return 改行が必要ならtrue
+        */
+      protected shouldBeNewTextLine(chWidth?: number): boolean;
+      /**
+        * テキストを改行する
+        */
+      addTextReturn(): void;
+      /**
+        * 現在描画中のテキスト行をの位置をtextAlignにそろえる
+        */
+      alignCurrentTextLine(): void;
+      /**
+        * テキスト行の描画時、ベースとなる点(x)を取得する。
+        * 左揃えの時: 左端の位置
+        * 中央揃えの時：中央の位置
+        * 右揃えの時：右端の位置
+        */
+      protected getTextLineBasePoint(): number;
+      /**
+        * テキストの表示位置を指定する。
+        * 内部的には、指定前とは別の行として扱われる。
+        * @param x x座標
+        * @param y y座標
+        */
+      setCharLocate(x: number | null, y: number | null): void;
+      /**
+        * 現在のテキスト描画位置でインデントするように設定する
+        */
+      setIndentPoint(): void;
+      /**
+        * インデント位置をクリアする
+        */
+      clearIndentPoint(): void;
+      /**
+        * ルビの設定を予約
+        * @param rubyText ルビ文字
+        */
+      reserveRubyText(rubyText: string): void;
+      /**
+        * テキストをクリアする。
+        * 描画していたテキストは全削除される。
+        * テキストの描画開始位置は初期化される。
+        * インデント位置は初期化される。
+        */
+      clear(): void;
+      copyTo(dest: LayerTextCanvas): void;
+      store(tick: number): any;
+      restore(data: any, tick: number, clear: boolean): Promise<void>;
   }
 }
 
@@ -1326,9 +1435,6 @@ declare module 'ponkan3/base/conductor' {
       clearEventHandlerByName(eventName: string): void;
       protected static conductorStoreParams: string[];
       store(saveMarkName: string, tick: number): any;
-      /**
-        * 復元。ステータスの値は復元されるが、再スタートなどはしないので注意。
-        */
       restore(data: any, tick: number): Promise<void>;
   }
 }
@@ -1352,7 +1458,7 @@ declare module 'ponkan3/base/logger' {
 declare module 'ponkan3/base/pon-renderer' {
   import * as PIXI from "pixi.js";
   export class PonRenderer {
-    readonly renderer: PIXI.WebGLRenderer;
+    readonly renderer: PIXI.Renderer;
     readonly width: number;
     readonly height: number;
     readonly canvasElm: HTMLCanvasElement;
@@ -1458,7 +1564,7 @@ declare module 'ponkan3/layer/filtered-layer' {
   import { MovableLayer } from "ponkan3/layer/movable-layer";
   import { LayerFilter } from "ponkan3/filter/layer-filter";
   export class FilteredLayer extends MovableLayer {
-    readonly pixiFilters: Array<PIXI.Filter<any>>;
+    readonly pixiFilters: Array<PIXI.Filter>;
     protected _filters: LayerFilter[];
     readonly filters: LayerFilter[];
     protected static filterClassList: any;
@@ -1522,7 +1628,6 @@ declare module 'ponkan3/base/script' {
       getPoint(): number;
       /**
         * 指定のラベルの位置へ移動する。
-        * ラベルの検索はファイルの先頭から実施するため、
         * ファイル内に同じラベルが2つ以上あった場合は、1番目の位置へ移動する。
         * ラベルが見つからなかった場合はエラーになる。
         * @param label 移動先ラベル
@@ -1530,7 +1635,6 @@ declare module 'ponkan3/base/script' {
       goToLabel(label: string): void;
       /**
         * 指定のセーブマーク位置まで移動する
-        * 検索はファイルの先頭から実施するため、
         * ファイル内に同じセーブマークが2つ以上あった場合は、1番目の位置へ移動する。
         * ラベルが見つからなかった場合はエラーになる。
         * @param saveMarkName セーブマーク名
@@ -1665,24 +1769,6 @@ declare module 'ponkan3/layer/movable-layer' {
       stopMove(triggerEvent?: boolean): void;
       update(tick: number): void;
       /**
-        * 緩やかに開始する（2次関数補間）
-        * @param phase フェーズ（0～1の値）
-        * @return 補正後のフェーズ（0～1の値）
-        */
-      protected moveEaseIn(phase: number): number;
-      /**
-        * 緩やかに停止する（2次関数補間）
-        * @param phase フェーズ（0～1の値）
-        * @return 補正後のフェーズ（0～1の値）
-        */
-      protected moveEaseOut(phase: number): number;
-      /**
-        * 緩やかに開始・終了する（3次関数補間）
-        * @param phase フェーズ（0～1の値）
-        * @return 補正後のフェーズ（0～1の値）
-        */
-      protected moveEaseInOut(phase: number): number;
-      /**
         * 直線移動する
         * @param tick 時刻
         * @param phase フェーズ（0～1の値）
@@ -1727,8 +1813,8 @@ declare module 'ponkan3/filter/layer-filter' {
   export class LayerFilter {
     static readonly filterName: string;
     readonly filterName: string;
-    readonly pixiFilter: PIXI.Filter<any>;
-    protected _filter: PIXI.Filter<any>;
+    readonly pixiFilter: PIXI.Filter;
+    protected _filter: PIXI.Filter;
     protected params: any;
     constructor(params: any, permitedList?: string[]);
     protected permitParams(params: any, list: string[]): any;
@@ -1740,9 +1826,21 @@ declare module 'ponkan3/base/script-parser' {
   import { Resource } from "ponkan3/base/resource";
   import { Tag } from "ponkan3/base/tag";
   export class ScriptParser {
-    readonly tags: Tag[];
-    constructor(resource: Resource, scriptText: string);
-    debugPrint(): void;
+      readonly tags: Tag[];
+      constructor(resource: Resource, scriptText: string);
+      debugPrint(): void;
+      /**
+        * 指定のラベルの位置を返す。
+        * @param labelName ラベル名
+        * @return ラベルの位置。見つからなかったときは-1
+        */
+      getLabelPos(labelName: string): number;
+      /**
+        * 指定のセーブマークの位置を返す。
+        * @param labelName セーブマーク名
+        * @return セーブマークの位置。見つからなかったときは-1
+        */
+      getSaveMarkPos(saveMarkName: string): number;
   }
 }
 
@@ -1893,7 +1991,6 @@ declare module 'ponkan3/layer/toggle-button' {
 }
 
 declare module 'ponkan3/layer/text-button-layer' {
-  import { BaseLayer } from "ponkan3/base/base-layer";
   import { CommandButton } from "ponkan3/layer/button";
   import { FrameAnimLayer } from "ponkan3/layer/frame-anim-layer";
   /**
@@ -1921,7 +2018,6 @@ declare module 'ponkan3/layer/text-button-layer' {
   export class TextButtonLayer extends FrameAnimLayer {
       protected textButtons: TextButton[];
       addTextButton(btnName: string | undefined, jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, text: string, x: number, y: number, width: number, height: number, backgroundColors: number[], backgroundAlphas: number[], isSystemButton: boolean, textMarginTop: number | undefined, textMarginRight: number | undefined, textMarginBottom: number | undefined, textMarginLeft: number | undefined, textAlign: "left" | "center" | "right" | undefined, onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string): void;
-      copyTextParams(destLayer: BaseLayer): void;
       clearTextButtons(): void;
       changeTextButtonColors(btnName: string, backgroundColors: number[]): void;
       changeTextButtonAlphas(btnName: string, backgroundAlphas: number[]): void;

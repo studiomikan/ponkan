@@ -9,6 +9,8 @@ export class ScriptParser {
   private currentLineNum: number = 0;
   private saveMarkCount: number = 0;
   private _tags: Tag[] = [];
+  private labelMap: any = {};
+  private saveMarkMap: any = {};
 
   public get tags(): Tag[] {
     return this._tags;
@@ -42,6 +44,32 @@ export class ScriptParser {
       return this.lines[this.currentLineNum++];
     } else {
       return null;
+    }
+  }
+
+  /**
+   * 指定のラベルの位置を返す。
+   * @param labelName ラベル名
+   * @return ラベルの位置。見つからなかったときは-1
+   */
+  public getLabelPos(labelName: string): number {
+    if (Object.prototype.hasOwnProperty.call(this.labelMap, labelName)) {
+      return this.labelMap[labelName];
+    } else {
+      return -1;
+    }
+  }
+
+  /**
+   * 指定のセーブマークの位置を返す。
+   * @param labelName セーブマーク名
+   * @return セーブマークの位置。見つからなかったときは-1
+   */
+  public getSaveMarkPos(saveMarkName: string): number {
+    if (Object.prototype.hasOwnProperty.call(this.saveMarkMap, saveMarkName)) {
+      return this.saveMarkMap[saveMarkName];
+    } else {
+      return -1;
     }
   }
 
@@ -146,6 +174,9 @@ export class ScriptParser {
   }
 
   private parseLabel(body: string): void {
+    if (!Object.prototype.hasOwnProperty.call(this.labelMap, body)) {
+      this.labelMap[body] = this._tags.length;
+    }
     this.addTag("__label__", { __body__: body });
   }
 
@@ -157,12 +188,21 @@ export class ScriptParser {
       if (name == null || name.length == 0) {
         name = `__save_mark_${this.saveMarkCount}__`;
       }
+      if (!Object.prototype.hasOwnProperty.call(this.saveMarkMap, name)) {
+        this.saveMarkMap[name] = this._tags.length;
+      }
       this.addTag("__save_mark__", { __body__: body, name, comment });
     } else if (body.length > 0) {
       const name = `__save_mark_${this.saveMarkCount}__`;
+      if (!Object.prototype.hasOwnProperty.call(this.saveMarkMap, name)) {
+        this.saveMarkMap[name] = this._tags.length;
+      }
       this.addTag("__save_mark__", { __body__: body, name, comment: body });
     } else {
       const name = `__save_mark_${this.saveMarkCount}__`;
+      if (!Object.prototype.hasOwnProperty.call(this.saveMarkMap, name)) {
+        this.saveMarkMap[name] = this._tags.length;
+      }
       this.addTag("__save_mark__", { __body__: body, name, comment: "" });
     }
     this.saveMarkCount++;
