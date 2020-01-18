@@ -212,7 +212,12 @@ export class LayerChar {
     return Object.assign(new LayerChar(context, this.ch, this.style, this.x, this.y), this);
   }
 
-  public beforeDraw(tick: number): void {
+  /**
+   * 描画前の更新
+   * @param tick 時刻
+   * @return 更新があった場合はtrue
+   */
+  public beforeDraw(tick: number): boolean {
     if (this.inEffectState === InEffectState.Run) {
       if (this.inEffectStartTick === -1) {
         this.inEffectStartTick = tick;
@@ -243,6 +248,9 @@ export class LayerChar {
       if (elapsedTime >= this.style.inEffectTime) {
         this.inEffectState = InEffectState.Stop;
       }
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -396,10 +404,19 @@ export class LayerTextLine {
     this.chList.splice(this.chList.length - 1, 1);
   }
 
-  public beforeDraw(tick: number): void {
+  /**
+   * 描画前更新
+   * @param tick 時刻
+   * @return 更新があった場合はtrue
+   */
+  public beforeDraw(tick: number): boolean {
+    let updated = false;
     this.chList.forEach(ch => {
-      ch.beforeDraw(tick);
+      if (ch.beforeDraw(tick)) {
+        updated = true;
+      }
     });
+    return updated;
   }
 
   public draw(context: CanvasRenderingContext2D, tick: number): void {
@@ -467,6 +484,7 @@ export class LayerTextCanvas {
   public static tailProhibitionChar: string = "\\$([{｢‘“（〔［｛〈《「『【￥＄￡";
 
   private lines: LayerTextLine[] = [];
+  private updated: boolean = true; // 描画しなおすかどうかフラグ
 
   public style: TextStyle = new TextStyle();
   public lineHeight: number = 0;
@@ -523,17 +541,22 @@ export class LayerTextCanvas {
 
   public beforeDraw(tick: number): void {
     this.lines.forEach(line => {
-      line.beforeDraw(tick);
+      if (line.beforeDraw(tick)) {
+        this.updated = true;
+      }
     });
-    this.sprite.texture.update();
   }
 
   public draw(tick: number): void {
+    // if (this.updated) {
     const context = this.context;
     context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.lines.forEach(line => {
       line.draw(context, tick);
     });
+    this.sprite.texture.update();
+    this.updated = false;
+    // }
   }
 
   public get currentLine(): LayerTextLine {
@@ -557,6 +580,7 @@ export class LayerTextCanvas {
       return this.addText(ch);
     }
 
+    this.updated = true; // 更新予約
     const currentLine = this.currentLine;
 
     // いったん、現在の行に文字を追加する
@@ -793,6 +817,7 @@ export class LayerTextCanvas {
 
     this.currentLine.x = this.getTextLineBasePoint();
     this.currentLine.y = this.marginTop;
+    this.updated = true;
   }
 
   private static storeParams: string[] = [
