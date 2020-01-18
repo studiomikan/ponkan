@@ -97,7 +97,7 @@ export class Ponkan3 extends PonGame {
     this._lineBreakGlyphLayerNum = num;
   }
   public lineBreakGlyphPos: "eol" | "relative" | "absolute" = "eol";
-  public lineBreakGlyphVerticalAlign: GlyphVerticalAlignType = "middle";
+  public lineBreakGlyphVerticalAlign: GlyphVerticalAlignType = "bottom";
   public lineBreakGlyphX: number = 0;
   public lineBreakGlyphY: number = 0;
   public lineBreakGlyphMarginX: number = 10;
@@ -111,7 +111,7 @@ export class Ponkan3 extends PonGame {
     this._pageBreakGlyphLayerNum = num;
   }
   public pageBreakGlyphPos: "eol" | "relative" | "absolute" = "eol";
-  public pageBreakGlyphVerticalAlign: GlyphVerticalAlignType = "middle";
+  public pageBreakGlyphVerticalAlign: GlyphVerticalAlignType = "bottom";
   public pageBreakGlyphX: number = 0;
   public pageBreakGlyphY: number = 0;
   public pageBreakGlyphMarginX: number = 10;

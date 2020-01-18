@@ -30,7 +30,7 @@ export default function(p: Ponkan3): TagAction[] {
         new TagValue("fontstyle", "string", false, null),
         /// @param 文字色。0xRRGGBBで指定すると単色、[0xRRGGBB, 0xRRGGBB, ...]のように配列で指定するとグラデーションになります。
         new TagValue("color", "number|array", false, null),
-        /// @param 文字色グラデーションの切り替えポイント([0.0, 0.0, ...])
+        /// @param 文字色グラデーションの色の位置。0.0～1.0の数値の配列。([0.0, 0.5, ...])
         new TagValue("gradientstops", "array", false, null),
         /// @param 文字色グラデーションのタイプ（方向）。"vertical" | "horizontal"。初期値は"vertical"
         new TagValue("gradienttype", "string", false, null),
@@ -88,7 +88,7 @@ export default function(p: Ponkan3): TagAction[] {
             layer.textCanvas.style.fontStyle = values.fontstyle;
           }
           if (values.color != null) {
-            layer.textCanvas.style.color = values.color;
+            layer.textCanvas.style.setColor(values.color);
           }
           if (values.gradientstops != null) {
             layer.textCanvas.style.fillGradientStops = values.gradientstops;
@@ -133,7 +133,7 @@ export default function(p: Ponkan3): TagAction[] {
             layer.textCanvas.style.shadowBlur = values.shadowblur;
           }
           if (values.shadowcolor != null) {
-            layer.textCanvas.style.shadowColor = values.shadowcolor;
+            layer.textCanvas.style.setShadowColor(values.shadowcolor);
           }
           if (values.shadowdistance != null) {
             layer.textCanvas.style.shadowDistance = values.shadowdistance;
@@ -142,7 +142,7 @@ export default function(p: Ponkan3): TagAction[] {
             layer.textCanvas.style.edgeWidth = values.edgewidth;
           }
           if (values.edgecolor != null) {
-            layer.textCanvas.style.edgeColor = values.edgecolor;
+            layer.textCanvas.style.setEdgeColor(values.edgecolor);
           }
           if (values.rubysize != null) {
             layer.textCanvas.rubyFontSize = values.rubysize;

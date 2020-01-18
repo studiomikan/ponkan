@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { Ease } from "../base/util";
+import { Ease } from "./util";
 
 export type InEffectType = "alpha" | "move" | "alphamove";
 
@@ -12,28 +12,50 @@ enum InEffectState {
  * テキストスタイル
  */
 export class TextStyle {
+  public static METRICS_STRING = "ぽン甘｜|gq";
+
   public fontFamily: string[] = ["GenShinGothic", "monospace"];
   public fontSize: number = 24;
   public fontWeight: string | number = "normal";
   public fontStyle: "normal" | "italic" = "normal";
-  public color: number | string = 0xffffff;
-  // public textBaseline: "alphabetic",
+  public color: string[] = ["#ffffff"];
+  public textBaseline: CanvasTextBaseline = "alphabetic";
   public shadow: boolean = true;
   public shadowAlpha: number = 1.0;
   public shadowAngle: number = Math.PI / 6;
   public shadowBlur: number = 5;
-  public shadowColor: number | string = 0x000000;
+  public shadowColor: string = "#000000";
   public shadowDistance: number = 2;
-  public edgeColor: number | string = 0x000000;
+  public edgeColor: string = "#000000";
   public edgeWidth: number = 2;
   public pitch: number = 2;
-  // TODO: グラデーション
   public fillGradientStops: number[] = [];
   public fillGradientType: "vertical" | "horizontal" = "vertical";
   public inEffectTypes: InEffectType[] = [];
   public inEffectTime: number = 100;
   public inEffectEase: "none" | "in" | "out" | "both" = "none";
   public inEffectOptions: any = {};
+  private gradient: CanvasGradient | null = null;
+
+  public setColor(color: number | string | any[]): void {
+    if (color == null) {
+      this.color = ["#ffffff"];
+    } else if (typeof color === "number") {
+      this.color = [PIXI.utils.hex2string(color)];
+    } else if (typeof color === "string") {
+      this.color = [color];
+    } else {
+      this.color = color.map(c => (typeof c === "number" ? PIXI.utils.hex2string(c) : "" + c));
+    }
+  }
+
+  public setShadowColor(c: number | string): void {
+    this.shadowColor = typeof c == "number" ? PIXI.utils.hex2string(c) : c;
+  }
+
+  public setEdgeColor(c: number | string): void {
+    this.edgeColor = typeof c == "number" ? PIXI.utils.hex2string(c) : c;
+  }
 
   public get fontFamilyStr(): string {
     return this.fontFamily.map(ff => `"${ff}"`).join(",");
@@ -41,10 +63,6 @@ export class TextStyle {
 
   public get font(): string {
     return `${this.fontStyle} ${this.fontWeight} ${this.fontSize}px ${this.fontFamilyStr}`;
-  }
-
-  public get colorStr(): string {
-    return typeof this.color === "number" ? PIXI.utils.hex2string(this.color) : this.color;
   }
 
   public get shadowColorStr(): string {
@@ -57,15 +75,46 @@ export class TextStyle {
     return `rgba(${rgb[0] * 255},${rgb[1] * 255},${rgb[2] * 255},${this.shadowAlpha})`;
   }
 
-  public get edgeColorStr(): string {
-    return typeof this.edgeColor === "number" ? PIXI.utils.hex2string(this.edgeColor) : this.edgeColor;
+  private genGradient(context: CanvasRenderingContext2D, offsetX: number, offsetY: number): CanvasGradient {
+    const textMetrix: TextMetrics = context.measureText(TextStyle.METRICS_STRING);
+    const x1 = offsetX;
+    const y1 = offsetY - textMetrix.actualBoundingBoxAscent;
+    const x2 = offsetX;
+    const y2 = offsetY + textMetrix.actualBoundingBoxDescent;
+    const g = context.createLinearGradient(x1, y1, x2, y2);
+    const length = this.color.length;
+    for (let i = 0; i < length; i++) {
+      let stop = this.fillGradientStops[i];
+      if (stop == null) {
+        stop = i / (length - 1);
+      }
+      g.addColorStop(stop, this.color[i]);
+    }
+    return g;
   }
 
-  public applyStyleTo(context: CanvasRenderingContext2D): void {
+  public getChWidth(context: CanvasRenderingContext2D, ch: string): number {
     context.font = this.font;
-    context.fillStyle = this.colorStr;
-    context.strokeStyle = this.edgeColorStr;
+    context.strokeStyle = this.edgeColor;
     context.lineWidth = this.edgeWidth;
+    context.fillStyle = "#FFFFFF";
+    context.textBaseline = this.textBaseline;
+    return context.measureText(ch).width;
+  }
+
+  public applyStyleTo(context: CanvasRenderingContext2D, offsetX: number, offsetY: number): void {
+    context.font = this.font;
+    context.strokeStyle = this.edgeColor;
+    context.lineWidth = this.edgeWidth;
+    context.textBaseline = this.textBaseline;
+    if (this.color.length > 1) {
+      if (this.gradient == null) {
+        this.gradient = this.genGradient(context, offsetX, offsetY);
+      }
+      context.fillStyle = this.gradient;
+    } else {
+      context.fillStyle = this.color[0];
+    }
   }
 
   public applyShadowTo(context: CanvasRenderingContext2D): void {
@@ -101,9 +150,11 @@ export class TextStyle {
   }
 
   public clone(): TextStyle {
-    const ts = new TextStyle();
-    Object.assign(ts, this);
-    return ts;
+    return Object.assign(new TextStyle(), this);
+  }
+
+  public resetGradientBuffer(): void {
+    this.gradient = null;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -136,28 +187,29 @@ export class LayerChar {
   private _offsetX: number = 0;
   private _offsetY: number = 0;
 
-  public constructor(context: CanvasRenderingContext2D, ch: string, style: TextStyle) {
+  public constructor(context: CanvasRenderingContext2D, ch: string, style: TextStyle, x: number, y: number) {
     this.ch = ch;
     this.style = style.clone();
-    this.style.applyStyleTo(context);
-    this.width = context.measureText(this.ch).width + style.pitch;
+    this.x = x;
+    this.y = y;
+    this.width = style.getChWidth(context, ch) + style.pitch;
     this.style.checkOptions();
+    this.style.resetGradientBuffer();
     if (this.style.inEffectTypes != null && this.style.inEffectTypes.length > 0) {
       this.inEffectState = InEffectState.Run;
     }
   }
 
   public clone(context: CanvasRenderingContext2D): LayerChar {
-    const c = new LayerChar(context, this.ch, this.style);
-    c.x = this.x;
-    c.y = this.y;
-    c.width = this.width;
-    c.alpha = this.alpha;
-    c.inEffectState = this.inEffectState;
-    c.inEffectStartTick = this.inEffectStartTick;
-    c._offsetX = this._offsetX;
-    c._offsetY = this._offsetY;
-    return c;
+    // const c = new LayerChar(context, this.ch, this.style, this.x, this.y);
+    // c.width = this.width;
+    // c.alpha = this.alpha;
+    // c.inEffectState = this.inEffectState;
+    // c.inEffectStartTick = this.inEffectStartTick;
+    // c._offsetX = this._offsetX;
+    // c._offsetY = this._offsetY;
+    // return c;
+    return Object.assign(new LayerChar(context, this.ch, this.style, this.x, this.y), this);
   }
 
   public beforeDraw(tick: number): void {
@@ -209,14 +261,15 @@ export class LayerChar {
     context.globalAlpha = this.alpha;
     if (this.style.edgeWidth > 0) {
       // 縁取りする場合：縁取りと影を描画->本体描画
-      this.style.applyStyleTo(context);
+      this.style.applyStyleTo(context, x, y);
       this.style.applyShadowTo(context);
       context.strokeText(this.ch, x, y);
       this.style.clearShadowFrom(context);
+      // this.style.applyStyleTo(context, x, y);
       context.fillText(this.ch, x, y); // 影なし
     } else {
       // 縁取りしない場合：本体と影を描画
-      this.style.applyStyleTo(context);
+      this.style.applyStyleTo(context, x, y);
       this.style.applyShadowTo(context);
       context.fillText(this.ch, x, y); // 影あり
     }
@@ -258,6 +311,7 @@ export class LayerTextLine {
     this.chList.forEach(layerChar => {
       width += layerChar.width;
     });
+    width -= this.chList[this.chList.length - 1].style.pitch; // 最後の一文字pitchは幅に含めない
     return width;
   }
 
@@ -280,12 +334,13 @@ export class LayerTextLine {
   }
 
   public addChar(context: CanvasRenderingContext2D, ch: string, style: TextStyle, lineHeight: number): void {
-    const c = new LayerChar(context, ch, style);
-    c.x = this._textX;
-    c.y = lineHeight;
-    if (this.lineHeight < lineHeight) {
-      this.lineHeight = lineHeight;
-    }
+    // if (this.lineHeight < lineHeight) {
+    //   // 自動で行の高さを拡張
+    //   this.lineHeight = lineHeight;
+    // }
+    const x = this._textX;
+    const y = lineHeight;
+    const c = new LayerChar(context, ch, style, x, y);
     this._textX += c.width;
     this.chList.push(c);
     // ルビがあったら追加する
@@ -304,7 +359,7 @@ export class LayerTextLine {
     const tmpRubyList: LayerChar[] = [];
     let rubyWidthSum = 0;
     for (let i = 0; i < rubyText.length; i++) {
-      const ruby = new LayerChar(context, rubyText.charAt(i), rubyStyle);
+      const ruby = new LayerChar(context, rubyText.charAt(i), rubyStyle, 0, 0); // 位置は一旦0,0で作る
       tmpRubyList.push(ruby);
       rubyWidthSum += ruby.width;
     }
@@ -780,8 +835,9 @@ export class LayerTextCanvas {
     const data: any = {};
     const me: any = this as any;
     LayerTextCanvas.storeParams.forEach(p => (data[p] = me[p]));
+    data.lines = [];
     this.lines.forEach(line => {
-      line.store(tick);
+      data.lines.push(line.store(tick));
     });
     data.width = this.width;
     data.height = this.height;
@@ -793,10 +849,10 @@ export class LayerTextCanvas {
   public async restore(data: any, tick: number, clear: boolean): Promise<void> {
     const me: any = this as any;
     LayerTextCanvas.storeParams.forEach(p => (me[p] = data[p]));
-    this.lines.forEach(line => {
-      line.restore(data, tick, clear);
+    this.lines.forEach((line, index) => {
+      line.restore(data.lines[index], tick, clear);
     });
-    this.style.restore(data, tick, clear);
+    this.style.restore(data.style, tick, clear);
 
     if (clear) {
       this.clear();
@@ -817,36 +873,3 @@ export class LayerTextCanvas {
     }
   }
 }
-
-// (window as any).test = () => {
-//   const layerTextCanvas: LayerTextCanvas = new LayerTextCanvas();
-//   console.log(layerTextCanvas);
-//   console.log(layerTextCanvas.canvas);
-//   document.getElementById("ponkan3game")!.appendChild(layerTextCanvas.canvas);
-//   layerTextCanvas.canvas.width = 800;
-//   layerTextCanvas.canvas.height = 600;
-//   layerTextCanvas.canvas.style.border = "solid 1px red";
-
-//   const mes =
-//     "拙者親方と申すは、お立会の中に御存じのお方もござりましょうが、お江戸を発って二十里上方、相州小田原一色町をお過ぎなされて、青物町を登りへおいでなさるれば、欄干橋虎屋藤衛門、只今は剃髪致して、円斉と名のりまする。元朝より、大晦日まで、お手に入れまする此の薬は、昔ちんの国の唐人、外郎という人、わが朝ちょうへ来たり、帝へ参内の折りから、この薬を深く籠め置き、用ゆる時は一粒ずつ、冠のすき間より取り出いだす。依って、その名を帝より、「とうちんこう」と賜わる。即ち文字には、「頂き、透く、香い」と書いて「とうちんこう」と申す。";
-//   // layerTextCanvas.reserveRubyText("せっ");
-//   // layerTextCanvas.addText(mes);
-
-//   // layerTextCanvas.addText("aiueo");
-//   // layerTextCanvas.addText("あいうえお");
-//   // layerTextCanvas.addText("おわり。");
-//   // layerTextCanvas.draw(Date.now());
-//   // const mes = "あいうえおかきくけこ";
-//   let i = 0;
-//   setTimeout(() => {
-//     setInterval(() => {
-//       if (i < mes.length) {
-//         layerTextCanvas.addChar(mes[i]);
-//       }
-//       const tick = Date.now();
-//       layerTextCanvas.beforeDraw(tick);
-//       layerTextCanvas.draw(tick);
-//       i++;
-//     }, 16);
-//   }, 1000);
-// };

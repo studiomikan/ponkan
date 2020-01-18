@@ -1,4 +1,3 @@
-import { BaseLayer } from "../base/base-layer";
 import { CommandButton } from "./button";
 import { FrameAnimLayer } from "./frame-anim-layer";
 
@@ -237,38 +236,6 @@ export class TextButtonLayer extends FrameAnimLayer {
       onClickSoundBuf,
     );
   }
-
-  // public copyTextParams(destLayer: BaseLayer): void {
-  //   const dest: any = destLayer as any;
-  //   const me: any = this as any;
-  //   [
-  //     "textFontFamily",
-  //     "textFontSize",
-  //     "textFontWeight",
-  //     "textFontStyle",
-  //     "textColor",
-  //     "textShadowVisible",
-  //     "textShadowAlpha",
-  //     "textShadowAngle",
-  //     "textShadowBlur",
-  //     "textShadowColor",
-  //     "textShadowDistance",
-  //     "textEdgeColor",
-  //     "textEdgeWidth",
-  //     "textMarginTop",
-  //     "textMarginRight",
-  //     "textMarginBottom",
-  //     "textMarginLeft",
-  //     "textX",
-  //     "textY",
-  //     "textLineHeight",
-  //     "textLinePitch",
-  //     "textAutoReturn",
-  //     "textAlign",
-  //   ].forEach(param => {
-  //     dest[param] = me[param];
-  //   });
-  // }
 
   public clearTextButtons(): void {
     this.textButtons.forEach(textButton => {
