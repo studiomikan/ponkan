@@ -1,4 +1,3 @@
-import { BaseLayer } from "../base/base-layer";
 import { CommandButton } from "./button";
 import { FrameAnimLayer } from "./frame-anim-layer";
 
@@ -204,16 +203,16 @@ export class TextButtonLayer extends FrameAnimLayer {
     const overAlpha: number = backgroundAlphas[1] != null ? +backgroundAlphas[1] : normalAlpha;
     const onAlpha: number = backgroundAlphas[2] != null ? +backgroundAlphas[2] : normalAlpha;
 
-    this.copyTextParams(btn);
+    this.textCanvas.copyTo(btn.textCanvas);
     btn.x = x;
     btn.y = y;
     btn.width = width;
     btn.height = height;
-    btn.textMarginTop = textMarginTop;
-    btn.textMarginRight = textMarginRight;
-    btn.textMarginBottom = textMarginBottom;
-    btn.textMarginLeft = textMarginLeft;
-    btn.textAlign = textAlign;
+    btn.textCanvas.marginTop = textMarginTop;
+    btn.textCanvas.marginRight = textMarginRight;
+    btn.textCanvas.marginBottom = textMarginBottom;
+    btn.textCanvas.marginLeft = textMarginLeft;
+    btn.textCanvas.align = textAlign;
     btn.clearText();
     btn.initTextButton(
       jump,
@@ -236,38 +235,6 @@ export class TextButtonLayer extends FrameAnimLayer {
       onLeaveSoundBuf,
       onClickSoundBuf,
     );
-  }
-
-  public copyTextParams(destLayer: BaseLayer): void {
-    const dest: any = destLayer as any;
-    const me: any = this as any;
-    [
-      "textFontFamily",
-      "textFontSize",
-      "textFontWeight",
-      "textFontStyle",
-      "textColor",
-      "textShadowVisible",
-      "textShadowAlpha",
-      "textShadowAngle",
-      "textShadowBlur",
-      "textShadowColor",
-      "textShadowDistance",
-      "textEdgeColor",
-      "textEdgeWidth",
-      "textMarginTop",
-      "textMarginRight",
-      "textMarginBottom",
-      "textMarginLeft",
-      "textX",
-      "textY",
-      "textLineHeight",
-      "textLinePitch",
-      "textAutoReturn",
-      "textAlign",
-    ].forEach(param => {
-      dest[param] = me[param];
-    });
   }
 
   public clearTextButtons(): void {

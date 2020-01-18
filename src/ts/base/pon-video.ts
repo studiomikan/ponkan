@@ -92,8 +92,10 @@ export class PonVideo {
    * そのままの状態を保つ。
    */
   public clear(): void {
+    this.stop();
     this.callbacks.pixiContainerRemoveChild(this.videoSprite);
     this.videoSprite.destroy();
+    this.videoTexture.destroy();
   }
 
   public play(): void {

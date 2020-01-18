@@ -97,7 +97,7 @@ export class Ponkan3 extends PonGame {
     this._lineBreakGlyphLayerNum = num;
   }
   public lineBreakGlyphPos: "eol" | "relative" | "absolute" = "eol";
-  public lineBreakGlyphVerticalAlign: GlyphVerticalAlignType = "middle";
+  public lineBreakGlyphVerticalAlign: GlyphVerticalAlignType = "bottom";
   public lineBreakGlyphX: number = 0;
   public lineBreakGlyphY: number = 0;
   public lineBreakGlyphMarginX: number = 10;
@@ -111,7 +111,7 @@ export class Ponkan3 extends PonGame {
     this._pageBreakGlyphLayerNum = num;
   }
   public pageBreakGlyphPos: "eol" | "relative" | "absolute" = "eol";
-  public pageBreakGlyphVerticalAlign: GlyphVerticalAlignType = "middle";
+  public pageBreakGlyphVerticalAlign: GlyphVerticalAlignType = "bottom";
   public pageBreakGlyphX: number = 0;
   public pageBreakGlyphY: number = 0;
   public pageBreakGlyphMarginX: number = 10;
@@ -1204,7 +1204,7 @@ export class Ponkan3 extends PonGame {
       const glyphPos = mesLay.getNextTextPos(lay.width);
       lay.x = mesLay.x + glyphPos.x;
       // 縦位置についてはデフォルトがtopなので、修正する
-      const lineHeight = mesLay.textLineHeight;
+      const lineHeight = mesLay.textCanvas.lineHeight;
       switch (verticalAlign) {
         case "bottom":
           lay.y = mesLay.y + (glyphPos.y + lineHeight) - lay.height;
@@ -1214,15 +1214,15 @@ export class Ponkan3 extends PonGame {
           break;
         default:
         case "middle":
-          lay.y = mesLay.y + glyphPos.y + (mesLay.textLineHeight - lay.height) / 2;
+          lay.y = mesLay.y + glyphPos.y + (lineHeight - lay.height) / 2;
           break;
         case "text-top":
-          lay.y = mesLay.y + glyphPos.y + lineHeight - mesLay.textFontSize;
+          lay.y = mesLay.y + glyphPos.y + lineHeight - mesLay.textCanvas.style.fontSize;
           break;
         case "text-middle":
           {
-            const textTop = glyphPos.y + lineHeight - mesLay.textFontSize;
-            lay.y = mesLay.y + textTop + (mesLay.textFontSize - lay.height) / 2;
+            const textTop = glyphPos.y + lineHeight - mesLay.textCanvas.style.fontSize;
+            lay.y = mesLay.y + textTop + (mesLay.textCanvas.style.fontSize - lay.height) / 2;
           }
           break;
       }

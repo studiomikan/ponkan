@@ -2,219 +2,18 @@ import * as PIXI from "pixi.js";
 // import { Logger } from "./logger";
 import { PonGame } from "./pon-game";
 import { PonMouseEvent } from "./pon-mouse-event";
-import { IPonSpriteCallbacks, PonSprite, InEffectType } from "./pon-sprite";
+import { IPonSpriteCallbacks, PonSprite } from "./pon-sprite";
 import { IPonVideoCallbacks, PonVideo } from "./pon-video";
 import { PonWheelEvent } from "./pon-wheel-event";
 import { Resource } from "./resource";
 import { Logger } from "./logger";
-
-export class BaseLayerChar {
-  public readonly ch: string;
-  public readonly sp: PonSprite;
-  public constructor(ch: string, sp: PonSprite) {
-    this.ch = ch;
-    this.sp = sp;
-  }
-
-  public clone(spriteCallbacks: IPonSpriteCallbacks): BaseLayerChar {
-    const sp = new PonSprite(spriteCallbacks);
-    sp.copyTextFrom(this.sp);
-    return new BaseLayerChar(this.ch, sp);
-  }
-
-  public destroy(): void {
-    this.sp.destroy();
-  }
-}
-
-export class BaseLayerTextLine {
-  public readonly container: PIXI.Container;
-  public readonly spriteCallbacks: IPonSpriteCallbacks;
-  public readonly chList: BaseLayerChar[] = [];
-  public readonly rubyList: BaseLayerChar[] = [];
-
-  private _textX: number = 0;
-
-  private rubyText: string = "";
-  private rubyFontSize: number = 2;
-  private rubyOffset: number = 2;
-  private rubyPitch: number = 2;
-
-  public get x(): number {
-    return this.container.x;
-  }
-  public set x(x: number) {
-    this.container.x = x;
-  }
-  public get y(): number {
-    return this.container.y;
-  }
-  public set y(y: number) {
-    this.container.y = y;
-  }
-  public get textX(): number {
-    return this._textX;
-  }
-  public get text(): string {
-    let str = "";
-    this.chList.forEach(blc => {
-      str += blc.ch;
-    });
-    return str;
-  }
-  public get tailChar(): string {
-    return this.chList[this.chList.length - 1].ch;
-  }
-  public get length(): number {
-    return this.chList.length;
-  }
-  public get width(): number {
-    if (this.chList.length === 0) {
-      return 0;
-    }
-    let width = 0;
-    this.chList.forEach(blc => {
-      width += blc.sp.textWidth;
-    });
-    return width;
-  }
-
-  public constructor() {
-    this.container = new PIXI.Container();
-    this.spriteCallbacks = {
-      pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
-        this.container.addChild(child);
-      },
-      pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
-        this.container.removeChild(child);
-      },
-    };
-  }
-
-  public forEach(func: (ch: BaseLayerChar, index: number) => void): void {
-    this.chList.forEach(func);
-  }
-
-  /**
-   * このテキスト行を破棄する。
-   * 以後、テキストを追加したりするとエラーになる。
-   */
-  public destroy(): void {
-    this.chList.forEach(blc => {
-      blc.destroy();
-    });
-    this.chList.splice(0, this.chList.length);
-    this.container.destroy();
-  }
-
-  /**
-   * このテキスト行の文字をすべてクリアする。
-   */
-  public clear(): void {
-    this.chList.forEach(blc => {
-      blc.destroy();
-    });
-    this.chList.splice(0, this.chList.length);
-  }
-
-  public addChar(
-    ch: string,
-    textStyle: PIXI.TextStyle,
-    pitch: number,
-    lineHeight: number,
-    inEffectTypes: InEffectType[],
-    inEffectTime: number,
-    inEffectEase: "none" | "in" | "out" | "both",
-    inEffectOptions: any,
-  ): void {
-    const sp: PonSprite = new PonSprite(this.spriteCallbacks);
-    sp.createText(ch, textStyle, pitch);
-    sp.x = this._textX;
-    sp.y = lineHeight - +textStyle.fontSize;
-    if (inEffectTypes != null && inEffectTypes.length > 0) {
-      sp.initInEffect(inEffectTypes, inEffectTime, inEffectEase, inEffectOptions);
-    }
-    this._textX += sp.textWidth;
-    this.chList.push(new BaseLayerChar(ch, sp));
-    // ルビがあったら追加する
-    if (this.rubyText !== "") {
-      this.addRubyText(sp, textStyle);
-      this.rubyText = "";
-    }
-  }
-
-  private addRubyText(targetSp: PonSprite, srcTextStyle: PIXI.TextStyle): void {
-    const rubyStyle = srcTextStyle.clone();
-    rubyStyle.fontSize = this.rubyFontSize;
-
-    const rubyText = this.rubyText;
-    const pitch = this.rubyPitch;
-    const center = targetSp.x + targetSp.textWidth / 2;
-    const tmpRubyList: BaseLayerChar[] = [];
-    let rubyWidthSum = 0;
-
-    for (let i = 0; i < rubyText.length; i++) {
-      const sp: PonSprite = new PonSprite(this.spriteCallbacks);
-      sp.createText(rubyText.charAt(i), rubyStyle, pitch);
-      tmpRubyList.push(new BaseLayerChar(this.rubyText, sp));
-      rubyWidthSum += sp.textWidth;
-    }
-    rubyWidthSum -= pitch; // 最後の一文字のpitchは幅に含めない
-
-    // 追加対象の文字に対して中央揃えとなるように配置する
-    const rubyY = targetSp.y - this.rubyFontSize - this.rubyOffset;
-    let rubyX = center - rubyWidthSum / 2;
-    tmpRubyList.forEach((ruby: BaseLayerChar) => {
-      ruby.sp.y = rubyY;
-      ruby.sp.x = rubyX;
-      rubyX += ruby.sp.textWidth;
-      this.rubyList.push(ruby);
-    });
-  }
-
-  public reserveRubyText(rubyText: string, rubyFontSize: number, rubyOffset: number, rubyPitch: number): void {
-    this.rubyText = rubyText;
-    this.rubyFontSize = rubyFontSize;
-    this.rubyOffset = rubyOffset;
-    this.rubyPitch = rubyPitch;
-  }
-
-  public getCh(index: number): BaseLayerChar {
-    return this.chList[index];
-  }
-
-  public getTailCh(): BaseLayerChar {
-    return this.chList[this.chList.length - 1];
-  }
-
-  public backspace(): void {
-    this.chList[this.chList.length - 1].destroy();
-    this.chList.splice(this.chList.length - 1, 1);
-  }
-
-  public copyFrom(src: BaseLayerTextLine): void {
-    this.clear();
-    src.chList.forEach((srcBlc: BaseLayerChar) => {
-      const newBlc = srcBlc.clone(this.spriteCallbacks);
-      this.chList.push(newBlc);
-    });
-    this.x = src.x;
-    this.y = src.y;
-    this._textX = src._textX;
-  }
-
-  public beforeDraw(tick: number): void {
-    this.chList.forEach(ch => {
-      ch.sp.beforeDraw(tick);
-    });
-  }
-}
+import { LayerTextCanvas } from "./base-layer-text";
 
 /**
- * 基本レイヤ。PIXI.Containerをラップしたもの
+ * すべてのレイヤーの基本となるレイヤー
  */
 export class BaseLayer {
-  /** レイヤ名 */
+  /** レイヤー名 */
   public name: string;
   /** リソース */
   protected resource: Resource;
@@ -259,7 +58,7 @@ export class BaseLayer {
   protected _backgroundAlpha: number = 1.0;
 
   protected textContainer: PIXI.Container;
-  // protected textSpriteCallbacks: IPonSpriteCallbacks;
+  protected textSpriteCallbacks: IPonSpriteCallbacks;
   protected childContainer: PIXI.Container;
   protected childSpriteCallbacks: IPonSpriteCallbacks;
   protected imageContainer: PIXI.Container;
@@ -338,164 +137,7 @@ export class BaseLayer {
   public blockWheelFlag: boolean = false;
 
   // 文字関係
-  protected textLines: BaseLayerTextLine[] = [new BaseLayerTextLine()];
-  public textStyle: PIXI.TextStyle = new PIXI.TextStyle({
-    fontFamily: ["GenShinGothic", "monospace"],
-    fontSize: 24,
-    fontWeight: "normal",
-    fontStyle: "normal",
-    fill: 0xffffff,
-    textBaseline: "alphabetic",
-    dropShadow: false,
-    dropShadowAlpha: 0.7,
-    dropShadowAngle: Math.PI / 6,
-    dropShadowBlur: 5,
-    dropShadowColor: 0x000000,
-    dropShadowDistance: 2,
-    stroke: 0x000000,
-    strokeThickness: 0,
-    trim: false,
-  });
-  public set textFontFamily(fontFamily: string[]) {
-    this.textStyle.fontFamily = fontFamily;
-  }
-  public get textFontFamily(): string[] {
-    if (typeof this.textStyle.fontFamily === "string") {
-      return [this.textStyle.fontFamily];
-    } else {
-      return this.textStyle.fontFamily;
-    }
-  }
-  public set textFontSize(fontSize: number) {
-    this.textStyle.fontSize = fontSize;
-    if (this.textLineHeight < fontSize) {
-      this.textLineHeight = fontSize;
-    }
-  }
-  public get textFontSize(): number {
-    return +this.textStyle.fontSize;
-  }
-  public set textFontWeight(fontWeight: string) {
-    this.textStyle.fontWeight = fontWeight;
-  }
-  public get textFontWeight(): string {
-    return this.textStyle.fontWeight;
-  }
-  public set textFontStyle(fontStyle: string) {
-    this.textStyle.fontStyle = fontStyle;
-  }
-  public get textFontStyle(): string {
-    return this.textStyle.fontStyle;
-  }
-  public set textColor(color: number | string | number[] | string[] | CanvasGradient | CanvasPattern) {
-    this.textStyle.fill = color;
-  }
-  public get textColor(): number | string | number[] | string[] | CanvasGradient | CanvasPattern {
-    return this.textStyle.fill;
-  }
-  public set textGradientStops(gradientStops: number[]) {
-    this.textStyle.fillGradientStops = gradientStops;
-  }
-  public get textGradientStops(): number[] {
-    return this.textStyle.fillGradientStops;
-  }
-  public set textGradientType(gradientType: "vertical" | "horizontal") {
-    this.textStyle.fillGradientType = {
-      vertical: PIXI.TEXT_GRADIENT.LINEAR_VERTICAL,
-      horizontal: PIXI.TEXT_GRADIENT.LINEAR_HORIZONTAL,
-    }[gradientType];
-  }
-  public get textGradientType(): "vertical" | "horizontal" {
-    if (this.textStyle.fillGradientType === PIXI.TEXT_GRADIENT.LINEAR_VERTICAL) {
-      return "vertical";
-    } else {
-      return "horizontal";
-    }
-  }
-  public set textShadowVisible(visible: boolean) {
-    this.textStyle.dropShadow = visible;
-  }
-  public get textShadowVisible(): boolean {
-    return this.textStyle.dropShadow;
-  }
-  public set textShadowAlpha(alpha: number) {
-    this.textStyle.dropShadowAlpha = alpha;
-  }
-  public get textShadowAlpha(): number {
-    return this.textStyle.dropShadowAlpha;
-  }
-  public set textShadowAngle(angle: number) {
-    this.textStyle.dropShadowAngle = angle;
-  }
-  public get textShadowAngle(): number {
-    return this.textStyle.dropShadowAngle;
-  }
-  public set textShadowBlur(blur: number) {
-    this.textStyle.dropShadowBlur = blur;
-  }
-  public get textShadowBlur(): number {
-    return this.textStyle.dropShadowBlur;
-  }
-  public set textShadowColor(color: number | string) {
-    this.textStyle.dropShadowColor = color;
-  }
-  public get textShadowColor(): number | string {
-    return this.textStyle.dropShadowColor;
-  }
-  public set textShadowDistance(distance: number) {
-    this.textStyle.dropShadowDistance = distance;
-  }
-  public get textShadowDistance(): number {
-    return this.textStyle.dropShadowDistance;
-  }
-  public set textEdgeColor(color: number | string) {
-    this.textStyle.stroke = color;
-  }
-  public get textEdgeColor(): number | string {
-    if (typeof this.textStyle.stroke === "number") {
-      return this.textStyle.stroke;
-    } else {
-      return this.textStyle.stroke as string;
-    }
-  }
-  public set textEdgeWidth(width: number) {
-    this.textStyle.strokeThickness = width;
-  }
-  public get textEdgeWidth(): number {
-    return this.textStyle.strokeThickness;
-  }
-
-  public textMarginTop: number = 10;
-  public textMarginRight: number = 10;
-  public textMarginBottom: number = 10;
-  public textMarginLeft: number = 10;
-  /** 次の文字を描画する予定の位置。予定であって、自動改行等が発生した場合は次の行になるため注意。 */
-  // public textX: number = NaN;
-  /** 次の文字を描画する予定の位置。予定であって、自動改行等が発生した場合は次の行になるため注意。 */
-  // public textY: number = NaN;
-  public textPitch: number = 0;
-  public textLineHeight: number = 24;
-  public textLinePitch: number = 5;
-  public textAutoReturn: boolean = true;
-  public textLocatePoint: number | null = null;
-  public textIndentPoint: number | null = null;
-  public reservedTextIndentPoint: number | null = null;
-  public reservedTextIndentClear: boolean = false;
-  public textAlign: "left" | "center" | "right" = "left";
-  public rubyFontSize: number = 10;
-  public rubyOffset: number = 2;
-  public rubyPitch: number = 2;
-  public textInEffectTypes: InEffectType[] = [];
-  public textInEffectTime: number = 120;
-  public textInEffectEase: "none" | "in" | "out" | "both" = "none";
-  public textInEffectOptions: any = {};
-
-  /** 禁則文字（行頭禁則文字） */
-  public static headProhibitionChar: string =
-    '%),:;]}｡｣ﾞﾟ。，、．：；゛゜ヽヾゝ"ゞ々’”）〕］｝〉》」』】°′″℃￠％‰' +
-    "!.?､･ｧｨｩｪｫｬｭｮｯｰ・？！ーぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ";
-  /** 禁則文字（行末禁則文字） */
-  public static tailProhibitionChar: string = "\\$([{｢‘“（〔［｛〈《「『【￥＄￡";
+  public textCanvas: LayerTextCanvas = new LayerTextCanvas();
 
   public get children(): BaseLayer[] {
     return this._children;
@@ -519,12 +161,20 @@ export class BaseLayer {
   }
   public set width(width: number) {
     this.maskSprite.width = this.backgroundSprite.width = width;
+    if (this.textCanvas.width != width) {
+      this.clearText();
+      this.textCanvas.width = width;
+    }
   }
   public get height(): number {
     return this.maskSprite.height;
   }
   public set height(height: number) {
     this.maskSprite.height = this.backgroundSprite.height = height;
+    if (this.textCanvas.height != height) {
+      this.clearText();
+      this.textCanvas.height = height;
+    }
   }
   public get visible(): boolean {
     return this.container.visible;
@@ -622,6 +272,14 @@ export class BaseLayer {
         this.imageContainer.removeChild(child);
       },
     };
+    this.textSpriteCallbacks = {
+      pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
+        this.textContainer.addChild(child);
+      },
+      pixiContainerRemoveChild: (child: PIXI.DisplayObject): void => {
+        this.textContainer.removeChild(child);
+      },
+    };
     this.canvasSpriteCallbacks = {
       pixiContainerAddChild: (child: PIXI.DisplayObject): void => {
         this.imageContainer.addChild(child);
@@ -643,7 +301,10 @@ export class BaseLayer {
 
     this.textContainer = new PIXI.Container();
     this.container.addChild(this.textContainer);
-    this.textContainer.addChild(this.currentTextLine.container);
+    this.textCanvas.width = this.width;
+    this.textCanvas.height = this.height;
+    this.textContainer.addChild(this.textCanvas.sprite);
+    // document.body.appendChild(this.textCanvas.canvas);
     this.clearText();
 
     this.childContainer = new PIXI.Container();
@@ -749,9 +410,8 @@ export class BaseLayer {
       this.debugBorder.drawRect(0, 0, this.debugBorder.width, this.debugBorder.height);
       this.debugText.text = `${this.name}: x=${this.x} y=${this.y} width=${this.width} height=${this.height}`;
     }
-    this.textLines.forEach(textLine => {
-      textLine.beforeDraw(tick);
-    });
+    this.textCanvas.beforeDraw(tick);
+    this.textCanvas.draw(tick);
     if (this.visible && this.canvas !== null && this.canvasSprite !== null) {
       this.canvasSprite.beforeDraw(tick);
     }
@@ -1109,34 +769,8 @@ export class BaseLayer {
     this.hasBackgroundColor = false;
   }
 
-  public get preTextLine(): BaseLayerTextLine {
-    return this.textLines[this.textLines.length - 2];
-  }
-
-  public get currentTextLine(): BaseLayerTextLine {
-    return this.textLines[this.textLines.length - 1];
-  }
-
-  private createBaseLayerTextLine(): BaseLayerTextLine {
-    const line = new BaseLayerTextLine();
-    this.textContainer.addChild(line.container);
-    return line;
-  }
-
-  private deleteBaseLayerTextLine(line: BaseLayerTextLine): void {
-    line.destroy();
-    this.textContainer.removeChild(line.container);
-  }
-
   public get text(): string {
-    let str = "";
-    this.textLines.forEach((textLine: BaseLayerTextLine) => {
-      if (str !== "") {
-        str += "\n";
-      }
-      str += textLine.text;
-    });
-    return str;
+    return this.textCanvas.text;
   }
 
   /**
@@ -1151,72 +785,14 @@ export class BaseLayer {
    * レイヤにテキストを追加する
    */
   public addText(text: string): void {
-    if (text === "") {
-      return;
-    }
-    for (let i = 0; i < text.length; i++) {
-      this.addChar(text.charAt(i));
-    }
+    this.textCanvas.addText(text);
   }
 
   /**
    * レイヤに1文字追加する
    */
   public addChar(ch: string): void {
-    if (ch === "") {
-      return;
-    }
-    if (ch.length > 1) {
-      return this.addText(ch);
-    }
-    if (ch === "\n" || ch === "\r") {
-      this.addTextReturn();
-      return;
-    }
-
-    // いったん、現在の行に文字を追加する
-    const tail = this.currentTextLine.getTailCh();
-
-    this.currentTextLine.addChar(
-      ch,
-      this.textStyle,
-      this.textPitch,
-      this.textLineHeight,
-      this.textInEffectTypes,
-      this.textInEffectTime,
-      this.textInEffectEase,
-      this.textInEffectOptions,
-    );
-    this.alignCurrentTextLine();
-
-    // 自動改行判定
-    let newLineFlag = this.textAutoReturn && this.shouldBeNewTextLine();
-    if (newLineFlag && tail != null && BaseLayer.tailProhibitionChar.indexOf(tail.ch) !== -1) {
-      // 改行すると行末禁止文字で終わってしまう場合は改行しない。
-      newLineFlag = false;
-    }
-    if (newLineFlag && BaseLayer.headProhibitionChar.indexOf(ch) !== -1) {
-      // 改行すると行頭禁止文字から始まってしまう場合は、自動改行しない。
-      newLineFlag = false;
-    }
-    if (newLineFlag) {
-      // 一度文字を追加してしまっているので、削除して行揃えし直す。
-      this.currentTextLine.backspace();
-      this.alignCurrentTextLine();
-      // 改行して、改めて文字を追加する。
-      this.addTextReturn();
-      this.currentTextLine.addChar(
-        ch,
-        this.textStyle,
-        this.textPitch,
-        this.textLineHeight,
-        this.textInEffectTypes,
-        this.textInEffectTime,
-        this.textInEffectEase,
-        this.textInEffectOptions,
-      );
-      this.alignCurrentTextLine();
-    }
+    this.textCanvas.addChar(ch);
   }
 
   /**
@@ -1225,124 +801,32 @@ export class BaseLayer {
    * @return 表示位置
    */
   public getNextTextPos(chWidth: number): { x: number; y: number; newLineFlag: boolean } {
-    const currentLine = this.currentTextLine;
-    const right = currentLine.x + currentLine.width;
-    let x = 0;
-    let y = currentLine.y;
-    let newLineFlag = false;
-    switch (this.textAlign) {
-      case "left":
-        if (this.shouldBeNewTextLine(chWidth)) {
-          x = this.getTextLineBasePoint();
-          y = this.currentTextLine.y + this.textLineHeight + this.textLinePitch;
-          newLineFlag = true;
-        } else {
-          x = right;
-          y = currentLine.y;
-        }
-        break;
-      case "center":
-        if (this.shouldBeNewTextLine(chWidth)) {
-          x = this.getTextLineBasePoint() - chWidth / 2;
-          y = this.currentTextLine.y + this.textLineHeight + this.textLinePitch;
-          newLineFlag = true;
-        } else {
-          x = right + chWidth / 2;
-          y = currentLine.y;
-        }
-        break;
-      case "right":
-        x = right;
-        y = currentLine.y;
-        if (this.shouldBeNewTextLine(chWidth)) {
-          x = this.getTextLineBasePoint() - chWidth;
-          y = this.currentTextLine.y + this.textLineHeight + this.textLinePitch;
-          newLineFlag = true;
-        } else {
-          x = right;
-          y = currentLine.y;
-        }
-        break;
-    }
-    return { x, y, newLineFlag };
-  }
-
-  /**
-   * 改行が必要かどうかを返す（自動改行の判定用）
-   * @param chWidth 追加する文字の幅
-   * @return 改行が必要ならtrue
-   */
-  protected shouldBeNewTextLine(chWidth = 0): boolean {
-    const currentLine = this.currentTextLine;
-    const left = currentLine.x;
-    const right = currentLine.x + currentLine.width;
-    switch (this.textAlign) {
-      case "left":
-        return right + chWidth > this.width - this.textMarginRight;
-      case "center":
-        return left - chWidth / 2 < this.textMarginLeft || right + chWidth / 2 > this.width - this.textMarginRight;
-      case "right":
-        return left - chWidth < this.textMarginLeft;
-    }
+    return this.textCanvas.getNextTextPos(chWidth);
   }
 
   /**
    * テキストを改行する
    */
   public addTextReturn(): void {
-    const preLineY = this.currentTextLine.y;
-    this.textLines.push(this.createBaseLayerTextLine());
-
-    if (this.reservedTextIndentPoint != null) {
-      this.textIndentPoint = this.reservedTextIndentPoint;
-    } else if (this.reservedTextIndentClear) {
-      this.textIndentPoint = null;
-      this.reservedTextIndentClear = false;
-    }
-    this.textLocatePoint = null;
-
-    this.alignCurrentTextLine();
-    this.currentTextLine.y = preLineY + this.textLineHeight + this.textLinePitch;
+    this.textCanvas.addTextReturn();
   }
 
-  /**
-   * 現在描画中のテキスト行をの位置をtextAlignにそろえる
-   */
-  public alignCurrentTextLine(): void {
-    switch (this.textAlign) {
-      case "left":
-        this.currentTextLine.x = this.getTextLineBasePoint();
-        break;
-      case "center":
-        this.currentTextLine.x = this.getTextLineBasePoint() - this.currentTextLine.width / 2;
-        break;
-      case "right":
-        this.currentTextLine.x = this.getTextLineBasePoint() - this.currentTextLine.width;
-        break;
-    }
-  }
-
-  /**
-   * テキスト行の描画時、ベースとなる点(x)を取得する。
-   * 左揃えの時: 左端の位置
-   * 中央揃えの時：中央の位置
-   * 右揃えの時：右端の位置
-   */
-  protected getTextLineBasePoint(): number {
-    if (this.textLocatePoint != null) {
-      return this.textLocatePoint;
-    }
-    switch (this.textAlign) {
-      case "left":
-        return this.textIndentPoint == null ? this.textMarginLeft : this.textIndentPoint;
-      case "center":
-        return this.textIndentPoint == null
-          ? (this.width - this.textMarginLeft - this.textMarginRight) / 2
-          : (this.width - this.textIndentPoint - this.textMarginRight) / 2;
-      case "right":
-        return this.textIndentPoint == null ? this.width - this.textMarginRight : this.textIndentPoint;
-    }
-  }
+  // /**
+  //  * 現在描画中のテキスト行をの位置をtextAlignにそろえる
+  //  */
+  // public alignCurrentTextLine(): void {
+  //   switch (this.textAlign) {
+  //     case "left":
+  //       this.currentTextLine.x = this.getTextLineBasePoint();
+  //       break;
+  //     case "center":
+  //       this.currentTextLine.x = this.getTextLineBasePoint() - this.currentTextLine.width / 2;
+  //       break;
+  //     case "right":
+  //       this.currentTextLine.x = this.getTextLineBasePoint() - this.currentTextLine.width;
+  //       break;
+  //   }
+  // }
 
   /**
    * テキストの表示位置を指定する。
@@ -1351,59 +835,25 @@ export class BaseLayer {
    * @param y y座標
    */
   public setCharLocate(x: number | null, y: number | null): void {
-    const preLine = this.currentTextLine;
-    this.addTextReturn();
-    const currentLine = this.currentTextLine;
-    if (x != null) {
-      this.textLocatePoint = x;
-    } else {
-      // yだけ変えるときのxを自動算出
-      switch (this.textAlign) {
-        case "left":
-          this.textLocatePoint = preLine.x + preLine.width;
-          break;
-        case "center":
-          this.textLocatePoint = preLine.x + preLine.width / 2;
-          break;
-        case "right":
-          this.textLocatePoint = preLine.x;
-          break;
-      }
-    }
-    if (y != null) {
-      currentLine.y = y;
-    } else {
-      // xだけ変えるときのy
-      currentLine.y = preLine.y;
-    }
+    this.textCanvas.setCharLocate(x, y);
   }
 
   /**
    * 現在のテキスト描画位置でインデントするように設定する
    */
   public setIndentPoint(): void {
-    const currentLine = this.currentTextLine;
-    switch (this.textAlign) {
-      case "left":
-      case "center":
-        this.reservedTextIndentPoint = currentLine.x + currentLine.width;
-        break;
-      case "right":
-        this.reservedTextIndentPoint = currentLine.x;
-        break;
-    }
+    this.textCanvas.setIndentPoint();
   }
 
   /**
    * インデント位置をクリアする
    */
   public clearIndentPoint(): void {
-    this.reservedTextIndentPoint = null;
-    this.reservedTextIndentClear = true;
+    this.textCanvas.clearIndentPoint();
   }
 
   public reserveRubyText(rubyText: string): void {
-    this.currentTextLine.reserveRubyText(rubyText, this.rubyFontSize, this.rubyOffset, this.rubyPitch);
+    this.textCanvas.reserveRubyText(rubyText);
   }
 
   /**
@@ -1413,17 +863,7 @@ export class BaseLayer {
    * インデント位置は初期化される。
    */
   public clearText(): void {
-    this.textLines.forEach((textLine: BaseLayerTextLine) => {
-      this.deleteBaseLayerTextLine(textLine);
-    });
-    this.textLines = [this.createBaseLayerTextLine()];
-    this.textLocatePoint = null;
-    this.textIndentPoint = null;
-    this.reservedTextIndentPoint = null;
-    this.reservedTextIndentClear = false;
-
-    this.currentTextLine.x = this.getTextLineBasePoint();
-    this.currentTextLine.y = this.textMarginTop;
+    this.textCanvas.clear();
   }
 
   /**
@@ -1612,38 +1052,38 @@ export class BaseLayer {
     "videoHeight",
     "videoLoop",
     "videoVolume",
-    "textFontFamily",
-    "textFontSize",
-    "textFontWeight",
-    "textFontStyle",
-    "textColor",
-    "textShadowVisible",
-    "textShadowAlpha",
-    "textShadowAngle",
-    "textShadowBlur",
-    "textShadowColor",
-    "textShadowDistance",
-    "textEdgeColor",
-    "textEdgeWidth",
-    "textMarginTop",
-    "textMarginRight",
-    "textMarginBottom",
-    "textMarginLeft",
-    "textPitch",
-    "textLineHeight",
-    "textLinePitch",
-    "textAutoReturn",
-    "textLocatePoint",
-    "textIndentPoint",
-    "reservedTextIndentPoint",
-    "textAlign",
-    "rubyFontSize",
-    "rubyOffset",
-    "rubyPitch",
-    "textInEffectTypes",
-    "textInEffectTime",
-    "textInEffectEase",
-    "textInEffectOptions",
+    // "textFontFamily",
+    // "textFontSize",
+    // "textFontWeight",
+    // "textFontStyle",
+    // "textColor",
+    // "textShadowVisible",
+    // "textShadowAlpha",
+    // "textShadowAngle",
+    // "textShadowBlur",
+    // "textShadowColor",
+    // "textShadowDistance",
+    // "textEdgeColor",
+    // "textEdgeWidth",
+    // "textMarginTop",
+    // "textMarginRight",
+    // "textMarginBottom",
+    // "textMarginLeft",
+    // "textPitch",
+    // "textLineHeight",
+    // "textLinePitch",
+    // "textAutoReturn",
+    // "textLocatePoint",
+    // "textIndentPoint",
+    // "reservedTextIndentPoint",
+    // "textAlign",
+    // "rubyFontSize",
+    // "rubyOffset",
+    // "rubyPitch",
+    // "textInEffectTypes",
+    // "textInEffectTime",
+    // "textInEffectEase",
+    // "textInEffectOptions",
   ];
 
   protected static baseLayerIgnoreParams: string[] = [
@@ -1662,6 +1102,7 @@ export class BaseLayer {
     const data: any = {};
     const me: any = this as any;
     BaseLayer.baseLayerStoreParams.forEach(p => (data[p] = me[p]));
+    data.textCanvas = this.textCanvas.store(tick);
     return data;
   }
   /* eslint-enalbe @typescript-eslint/no-unused-vars */
@@ -1680,10 +1121,8 @@ export class BaseLayer {
       restoreParams.forEach(p => (me[p] = data[p]));
     };
 
-    // テキストはクリアする
-    if (clear) {
-      this.clearText();
-    }
+    // テキスト
+    this.textCanvas.restore(data.textCanvas, tick, clear);
 
     // 背景色
     this.clearBackgroundColor();
@@ -1746,16 +1185,6 @@ export class BaseLayer {
   }
 
   public copyTo(dest: BaseLayer): void {
-    // テキストのコピー
-    dest.clearText();
-    this.textLines.forEach((srcTextLine: BaseLayerTextLine, index: number) => {
-      if (dest.textLines.length !== 0) {
-        dest.textLines.push(dest.createBaseLayerTextLine());
-      }
-      const destTextLine: BaseLayerTextLine = dest.textLines[dest.textLines.length - 1];
-      destTextLine.copyFrom(srcTextLine);
-    });
-
     // 背景色のコピー
     dest.clearBackgroundColor();
     if (this.hasBackgroundColor) {
@@ -1793,6 +1222,10 @@ export class BaseLayer {
       param => BaseLayer.baseLayerIgnoreParams.indexOf(param) === -1,
     );
     params.forEach(p => (you[p] = me[p]));
+
+    // テキストのコピー
+    dest.clearText();
+    this.textCanvas.copyTo(dest.textCanvas);
   }
 
   /**

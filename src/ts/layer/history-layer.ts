@@ -318,7 +318,7 @@ class HistoryTextLayer extends BaseLayer {
   public init(config: any): void {
     this.width = config.width;
     this.height = config.height;
-    this.textAutoReturn = false;
+    this.textCanvas.autoReturn = false;
 
     if (config.history != null && config.history.text) {
       this.applyConfig(config.history.text);
@@ -434,8 +434,9 @@ class HistoryTextLayer extends BaseLayer {
   }
 
   public get screenLineCount(): number {
-    const lineHeight = this.textLineHeight + this.textLinePitch;
-    const areaHeight = this.height - this.textMarginTop - this.textMarginBottom + this.textLinePitch;
+    const lineHeight = this.textCanvas.lineHeight + this.textCanvas.linePitch;
+    const areaHeight =
+      this.height - this.textCanvas.marginTop - this.textCanvas.marginBottom + this.textCanvas.linePitch;
     return Math.floor(areaHeight / lineHeight);
   }
 

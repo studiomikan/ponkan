@@ -204,7 +204,6 @@ export default function(p: Ponkan3): TagAction[] {
         new TagValue("canskip", "boolean", false, true),
       ],
       (values: any, tick: number): TagActionResult => {
-        console.log("@@waitvideo", values);
         if (!p.hasPlayingVideoLayer) {
           return "continue";
         }

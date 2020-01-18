@@ -94,7 +94,7 @@ export function castTagValues(tag: Tag, tagAction: TagAction): void {
           }
           break;
         case "number|array":
-          if (typeof value === "number") {
+          if (typeof value === "number" || typeof value === "string") {
             tag.values[def.name] = +str;
             if (isNaN(tag.values[def.name])) {
               throw new Error(`${tag.name}タグの${def.name}を数値に変換できませんでした(${str})`);
