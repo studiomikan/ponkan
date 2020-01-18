@@ -1266,8 +1266,6 @@ declare module 'ponkan3/base/base-layer-text' {
       beforeDraw(tick: number): boolean;
       draw(context: CanvasRenderingContext2D, tick: number): void;
       copyTo(context: CanvasRenderingContext2D, dest: LayerTextLine): void;
-      store(tick: number): any;
-      restore(data: any, tick: number, clear: boolean): Promise<void>;
   }
   export class LayerTextCanvas {
       readonly canvas: HTMLCanvasElement;
