@@ -266,6 +266,13 @@ export class Resource {
     return texture;
   }
 
+  public cloneVideoTexture(src: PIXI.Texture): PIXI.Texture {
+    // return src.clone();
+    const source = (src.baseTexture.resource as PIXI.resources.VideoResource).source as HTMLVideoElement;
+    const texture: PIXI.Texture = PIXI.Texture.from(source);
+    return texture;
+  }
+
   public isEnabledLocalStorage(): boolean {
     return window.localStorage != null;
   }

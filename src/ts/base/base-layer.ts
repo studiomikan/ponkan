@@ -968,6 +968,7 @@ export class BaseLayer {
     video.height = height;
     video.loop = loop;
     video.volume = volume;
+    video.source.autoplay = autoPlay;
 
     return new Promise<BaseLayer>((resolve, reject): void => {
       let timeoutTimer = -1;
@@ -1052,6 +1053,7 @@ export class BaseLayer {
     "videoHeight",
     "videoLoop",
     "videoVolume",
+    "isPlayingVideo",
     // "textFontFamily",
     // "textFontSize",
     // "textFontWeight",
@@ -1208,11 +1210,10 @@ export class BaseLayer {
     }
 
     // 動画のコピー
-    if (this.video === null) {
-      dest.freeVideo();
-    } else if (this.videoFilePath !== dest.videoFilePath) {
-      dest.freeVideo();
-      dest.video = new PonVideo(this.video.texture, dest.videoCallbacks);
+    dest.freeVideo();
+    if (this.video !== null && this.videoFilePath != null && this.videoFilePath !== dest.videoFilePath) {
+      const texture = this.resource.cloneVideoTexture(this.video.texture);
+      dest.video = new PonVideo(texture, dest.videoCallbacks);
     }
 
     // その他のパラメータのコピー
