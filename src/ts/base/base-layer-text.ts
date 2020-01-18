@@ -454,21 +454,21 @@ export class LayerTextLine {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public store(tick: number): any {
-    const data: any = {};
-    const me: any = this as any;
-    LayerTextLine.storeParams.forEach(p => (data[p] = me[p]));
-    return data;
-  }
+  // // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // public store(tick: number): any {
+  //   const data: any = {};
+  //   const me: any = this as any;
+  //   LayerTextLine.storeParams.forEach(p => (data[p] = me[p]));
+  //   return data;
+  // }
 
-  public async restore(data: any, tick: number, clear: boolean): Promise<void> {
-    if (clear) {
-      this.clear();
-    }
-    const me: any = this as any;
-    LayerTextLine.storeParams.forEach(p => (me[p] = data[p]));
-  }
+  // public async restore(data: any, tick: number, clear: boolean): Promise<void> {
+  //   if (clear) {
+  //     this.clear();
+  //   }
+  //   const me: any = this as any;
+  //   LayerTextLine.storeParams.forEach(p => (me[p] = data[p]));
+  // }
 }
 
 export class LayerTextCanvas {
@@ -860,10 +860,10 @@ export class LayerTextCanvas {
     const data: any = {};
     const me: any = this as any;
     LayerTextCanvas.storeParams.forEach(p => (data[p] = me[p]));
-    data.lines = [];
-    this.lines.forEach(line => {
-      data.lines.push(line.store(tick));
-    });
+    // data.lines = [];
+    // this.lines.forEach(line => {
+    //   data.lines.push(line.store(tick));
+    // });
     data.width = this.width;
     data.height = this.height;
     data.style = this.style.store(tick);
@@ -874,27 +874,20 @@ export class LayerTextCanvas {
   public async restore(data: any, tick: number, clear: boolean): Promise<void> {
     const me: any = this as any;
     LayerTextCanvas.storeParams.forEach(p => (me[p] = data[p]));
-    this.lines.forEach((line, index) => {
-      line.restore(data.lines[index], tick, clear);
-    });
-    this.style.restore(data.style, tick, clear);
 
     if (clear) {
       this.clear();
+    }
+    // MEMO:
+    //   テキストをクリアしない場合でも、キャンバスのサイズが変化しているなら、
+    //   しょうがないのでサイズ変更する。
+    if (this.width != data.width) {
+      this.clear();
       this.width = data.width;
+    }
+    if (this.height != data.height) {
+      this.clear();
       this.height = data.height;
-    } else {
-      // MEMO:
-      //   テキストをクリアしない場合でも、キャンバスのサイズが変化しているなら、
-      //   しょうがないのでサイズ変更する。
-      if (this.width != data.width) {
-        this.clear();
-        this.width = data.width;
-      }
-      if (this.height != data.height) {
-        this.clear();
-        this.height = data.height;
-      }
     }
   }
 }
