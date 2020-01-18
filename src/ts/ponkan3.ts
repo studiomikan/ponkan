@@ -1583,7 +1583,7 @@ export class Ponkan3 extends PonGame {
     });
 
     data.gameVar = Util.objClone(this.gameVar);
-    data.conductor = this.mainConductor.store(saveMarkName, tick);
+    data.conductor = this.conductor.store(saveMarkName, tick);
 
     data.forePrimaryLayer = this.forePrimaryLayer.store(tick);
     data.foreLayers = [];
