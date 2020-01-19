@@ -319,6 +319,7 @@ export class Ponkan3 extends PonGame {
   protected beforeDraw(tick: number): void {
     this.forePrimaryLayer.beforeDraw(tick);
     this.backPrimaryLayer.beforeDraw(tick);
+    this.historyLayer.beforeDraw(tick);
     this.quake(tick);
     this.plugins.forEach(p => {
       if (p.beforeDraw != null) {

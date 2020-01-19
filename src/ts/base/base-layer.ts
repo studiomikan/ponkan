@@ -1238,8 +1238,13 @@ export class BaseLayer {
     if (config != null) {
       const me = this as any;
       Object.keys(config).forEach(key => {
-        me[key] = config[key];
+        if (key in me) {
+          me[key] = config[key];
+        }
       });
+      if (config.textCanvasConfig != null) {
+        this.textCanvas.applyConfig(config.textCanvasConfig);
+      }
     }
   }
 }

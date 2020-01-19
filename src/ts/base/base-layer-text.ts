@@ -56,6 +56,9 @@ export class TextStyle {
   public get shadowColor(): string {
     return this._shadowColor;
   }
+  public set shadowColor(shadowColor: string) {
+    this._shadowColor = shadowColor;
+  }
   public setShadowColor(c: number | string): void {
     this._shadowColor = typeof c == "number" ? PIXI.utils.hex2string(c) : c;
     this.shadowColorStrBuf = this.shadowColorStr;
@@ -71,6 +74,9 @@ export class TextStyle {
 
   public get edgeColor(): string {
     return this._edgeColor;
+  }
+  public set edgeColor(edgeColor: string) {
+    this._edgeColor = edgeColor;
   }
   public setEdgeColor(c: number | string): void {
     this._edgeColor = typeof c == "number" ? PIXI.utils.hex2string(c) : c;
@@ -105,10 +111,18 @@ export class TextStyle {
 
   private genGradient(context: CanvasRenderingContext2D, offsetX: number, offsetY: number): CanvasGradient {
     const textMetrix: TextMetrics = context.measureText(TextStyle.METRICS_STRING);
+    let ascent = textMetrix.actualBoundingBoxAscent;
+    let descent = textMetrix.actualBoundingBoxDescent;
+    if (ascent == null) {
+      ascent = this.fontSize;
+    }
+    if (descent == null) {
+      descent = Math.floor(this.fontSize * 0.1);
+    }
     const x1 = offsetX;
-    const y1 = offsetY - textMetrix.actualBoundingBoxAscent;
+    const y1 = offsetY - ascent;
     const x2 = offsetX;
-    const y2 = offsetY + textMetrix.actualBoundingBoxDescent;
+    const y2 = offsetY + descent;
     const g = context.createLinearGradient(x1, y1, x2, y2);
     const length = this.color.length;
     for (let i = 0; i < length; i++) {
@@ -121,13 +135,17 @@ export class TextStyle {
     return g;
   }
 
-  public getChWidth(context: CanvasRenderingContext2D, ch: string): number {
+  public measureText(context: CanvasRenderingContext2D, text: string): TextMetrics {
     context.font = this.font;
     context.strokeStyle = this.edgeColor;
     context.lineWidth = this.edgeWidth;
     context.fillStyle = "#FFFFFF";
     context.textBaseline = this.textBaseline;
-    return context.measureText(ch).width;
+    return context.measureText(text);
+  }
+
+  public getChWidth(context: CanvasRenderingContext2D, ch: string): number {
+    return this.measureText(context, ch).width;
   }
 
   public applyStyleTo(context: CanvasRenderingContext2D, offsetX: number, offsetY: number): void {
@@ -185,6 +203,12 @@ export class TextStyle {
 
   public clone(): TextStyle {
     return Object.assign(new TextStyle(), this);
+  }
+
+  public applyConfig(config: any): void {
+    if (config != null) {
+      Object.assign(this, config);
+    }
   }
 
   public resetGradientBuffer(): void {
@@ -922,6 +946,29 @@ export class LayerTextCanvas {
     if (this.height != data.height) {
       this.clear();
       this.height = data.height;
+    }
+  }
+
+  public measureText(text: string = TextStyle.METRICS_STRING): TextMetrics {
+    return this.style.measureText(this.context, text);
+  }
+
+  /**
+   * コンフィグを反映する。
+   * このメソッドでは単純に値の設定のみ行うため、
+   * 画像読み込みなどの非同期処理が必要なものには対応していない。
+   */
+  public applyConfig(config: any): void {
+    if (config != null) {
+      const me = this as any;
+      Object.keys(config).forEach(key => {
+        if (key in me) {
+          me[key] = config[key];
+        }
+      });
+      if (config.styleConfig != null) {
+        this.style.applyConfig(config.styleConfig);
+      }
     }
   }
 }
