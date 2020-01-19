@@ -571,7 +571,7 @@ export class PonGame implements IConductorEvent {
         return true;
       }
     });
-    canvas.addEventListener("mousewheel", (e: Event) => {
+    canvas.addEventListener("wheel", (e: Event) => {
       try {
         e.preventDefault();
         if (this.isLocked) {
