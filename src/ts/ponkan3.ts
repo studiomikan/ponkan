@@ -628,8 +628,8 @@ export class Ponkan3 extends PonGame {
         return "continue";
       }
     }
-    // if属性適用
-    if (tag.values["if"] != null && tag.values["if"] != "" && !this.resource.evalJs(tag.values["if"])) {
+    // cond属性適用
+    if (tag.values.cond != null && tag.values.cond != "" && !this.resource.evalJs(tag.values.cond)) {
       return "continue";
     }
     // エンティティ適用、値のキャスト、必須チェック
