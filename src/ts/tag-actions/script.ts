@@ -348,7 +348,7 @@ export default function(p: Ponkan3): TagAction[] {
       },
     ),
     /// @category スクリプト制御
-    /// @description `resetwait`からの経過時間で待つ
+    /// @description `waituntil` の開始地点を設定する
     /// @details
     ///   `waituntil` コマンドで待つときの時間計測開始地点を設定します。
     ///   `resetwait` と `waituntil` との間には、セーブマークを記述しないでください。
