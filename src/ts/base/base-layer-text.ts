@@ -21,13 +21,14 @@ export class TextStyle {
   public color: string[] = ["#ffffff"];
   public textBaseline: CanvasTextBaseline = "alphabetic";
   public shadow: boolean = false;
-  public shadowAlpha: number = 1.0;
+  public _shadowAlpha: number = 1.0;
+  public _shadowColor: string = "#000000";
   public shadowAngle: number = Math.PI / 6;
   public shadowBlur: number = 5;
-  public shadowColor: string = "#000000";
   public shadowDistance: number = 2;
-  public edgeColor: string = "#000000";
   public edgeWidth: number = 0;
+  public _edgeColor: string = "#000000";
+  public _edgeAlpha: number = 1.0;
   public pitch: number = 0;
   public fillGradientStops: number[] = [];
   public fillGradientType: "vertical" | "horizontal" = "vertical";
@@ -35,7 +36,10 @@ export class TextStyle {
   public inEffectTime: number = 100;
   public inEffectEase: "none" | "in" | "out" | "both" = "none";
   public inEffectOptions: any = {};
+
   private gradient: CanvasGradient | null = null;
+  private shadowColorStrBuf: string = "";
+  private edgeColorStrBuf: string = "";
 
   public setColor(color: number | string | any[]): void {
     if (color == null) {
@@ -49,12 +53,36 @@ export class TextStyle {
     }
   }
 
+  public get shadowColor(): string {
+    return this._shadowColor;
+  }
   public setShadowColor(c: number | string): void {
-    this.shadowColor = typeof c == "number" ? PIXI.utils.hex2string(c) : c;
+    this._shadowColor = typeof c == "number" ? PIXI.utils.hex2string(c) : c;
+    this.shadowColorStrBuf = this.shadowColorStr;
   }
 
+  public get shadowAlpha(): number {
+    return this._shadowAlpha;
+  }
+  public set shadowAlpha(shadowAlpha: number) {
+    this._shadowAlpha = shadowAlpha;
+    this.shadowColorStrBuf = this.shadowColorStr;
+  }
+
+  public get edgeColor(): string {
+    return this._edgeColor;
+  }
   public setEdgeColor(c: number | string): void {
-    this.edgeColor = typeof c == "number" ? PIXI.utils.hex2string(c) : c;
+    this._edgeColor = typeof c == "number" ? PIXI.utils.hex2string(c) : c;
+    this.edgeColorStrBuf = this.edgeColorStr;
+  }
+
+  public get edgeAlpha(): number {
+    return this._edgeAlpha;
+  }
+  public set edgeAlpha(edgeAlpha: number) {
+    this._edgeAlpha = edgeAlpha;
+    this.edgeColorStrBuf = this.edgeColorStr;
   }
 
   public get fontFamilyStr(): string {
@@ -66,13 +94,13 @@ export class TextStyle {
   }
 
   public get shadowColorStr(): string {
-    let rgb: number[];
-    if (typeof this.shadowColor === "string") {
-      rgb = PIXI.utils.hex2rgb(PIXI.utils.string2hex(this.shadowColor));
-    } else {
-      rgb = PIXI.utils.hex2rgb(this.shadowColor);
-    }
-    return `rgba(${rgb[0] * 255},${rgb[1] * 255},${rgb[2] * 255},${this.shadowAlpha})`;
+    const rgb: number[] = PIXI.utils.hex2rgb(PIXI.utils.string2hex(this._shadowColor));
+    return `rgba(${rgb[0] * 255},${rgb[1] * 255},${rgb[2] * 255},${this._shadowAlpha})`;
+  }
+
+  public get edgeColorStr(): string {
+    const rgb: number[] = PIXI.utils.hex2rgb(PIXI.utils.string2hex(this._edgeColor));
+    return `rgba(${rgb[0] * 255},${rgb[1] * 255},${rgb[2] * 255},${this._edgeAlpha})`;
   }
 
   private genGradient(context: CanvasRenderingContext2D, offsetX: number, offsetY: number): CanvasGradient {
@@ -103,8 +131,11 @@ export class TextStyle {
   }
 
   public applyStyleTo(context: CanvasRenderingContext2D, offsetX: number, offsetY: number): void {
+    if (this.edgeColorStrBuf === "") {
+      this.edgeColorStrBuf = this.edgeColorStr;
+    }
     context.font = this.font;
-    context.strokeStyle = this.edgeColor;
+    context.strokeStyle = this.edgeColorStrBuf;
     context.lineWidth = this.edgeWidth;
     context.textBaseline = this.textBaseline;
     if (this.color.length > 1) {
@@ -119,7 +150,10 @@ export class TextStyle {
 
   public applyShadowTo(context: CanvasRenderingContext2D): void {
     if (this.shadow) {
-      context.shadowColor = this.shadowColorStr;
+      if (this.shadowColorStrBuf === "") {
+        this.shadowColorStrBuf = this.shadowColorStr;
+      }
+      context.shadowColor = this.shadowColorStrBuf;
       context.shadowBlur = this.shadowBlur;
       context.shadowOffsetX = this.shadowDistance;
       context.shadowOffsetY = this.shadowDistance;

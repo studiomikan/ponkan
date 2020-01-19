@@ -66,6 +66,8 @@ export default function(p: Ponkan3): TagAction[] {
         new TagValue("edgewidth", "number", false, null),
         /// @param 縁取りの色(0xRRGGBB)
         new TagValue("edgecolor", "number", false, null),
+        /// @param 縁取りのAlpha(0.0～1.0)
+        new TagValue("edgealpha", "number", false, null),
         /// @param ルビのフォントファイズ(px)
         new TagValue("rubysize", "number", false, null),
         /// @param ルビの文字間(px)
@@ -143,6 +145,9 @@ export default function(p: Ponkan3): TagAction[] {
           }
           if (values.edgecolor != null) {
             layer.textCanvas.style.setEdgeColor(values.edgecolor);
+          }
+          if (values.edgealpha != null) {
+            layer.textCanvas.style.edgeAlpha = values.edgealpha;
           }
           if (values.rubysize != null) {
             layer.textCanvas.rubyFontSize = values.rubysize;
