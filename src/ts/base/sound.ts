@@ -109,10 +109,10 @@ export class SoundBuffer {
 
   protected setHowlerOptions(): void {
     if (this.howl != null) {
-      this.volume = this.volume;
-      this.gvolume = this.gvolume;
-      this.seek = this.seek;
-      this.loop = this.loop;
+      this.volume = this._volume;
+      this.gvolume = this._gvolume;
+      this.seek = this._seek;
+      this.loop = this._loop;
     }
   }
 
