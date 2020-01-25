@@ -26,24 +26,13 @@ module.exports = {
       PIXI: 'pixi.js'
     }),
     new CopyWebpackPlugin(
-      [ { from: '.', to: 'gamedata/', }, ],
-      { context: path.join(__dirname, 'src/gamedata') }
-    ),
-    new CopyWebpackPlugin(
-      [ { from: '.', to: 'fonts/', }, ],
-      { context: path.join(__dirname, 'src/fonts') }
-    ),
-    new CopyWebpackPlugin(
-      [ { from: '.', to: '', ignore: '!*.html' }, ],
-      { context: path.join(__dirname, 'src') }
-    ),
-    new CopyWebpackPlugin(
-      [ { from: '.', to: '', ignore: '!*.js' }, ],
-      { context: path.join(__dirname, 'src') }
-    ),
-    new CopyWebpackPlugin(
-      [ { from: '.', to: '', ignore: '!*.ico' }, ],
-      { context: path.join(__dirname, 'src') }
+      [
+        { from: 'src/gamedata', to: 'gamedata' },
+        { from: 'src/fonts', to: 'fonts' },
+        { from: 'src/index.html', to: 'index.html' },
+        { from: 'src/favicon.ico', to: 'favicon.ico' },
+        { from: 'src/settings.js', to: 'settings.js' },
+      ],
     ),
     new WriteFilePlugin(),
   ],

@@ -1,4 +1,38 @@
 # ゲーム開始スクリプト
 ;call file: "script/init_system.pon"
 
+-tv.count = 1;
+
+*start
+= tv.count++;
+;mesopt color: [0xFFFFFF, 0xFF00FF]
 こんにちは。
+;br
+# ;clear
+;mesopt edgecolor: 0xFF0000, edgealpha: 0.5, edgewidth: 5
+こんばんは。
+;mesopt edgealpha: 1.0
+こんばんは。
+;mesopt edgecolor: 0x00FF00
+こんばんは。
+;br
+
+;mesopt edgewidth: 0
+
+;mesopt shadow: true
+;mesopt shadowcolor: 0xFFFFFF, shadowalpha: 1
+こんにちは。
+;mesopt shadowcolor: 0xFF0000
+こんにちは。
+;mesopt shadowalpha: 0.5
+こんにちは。
+;p
+
+# ;quake time: 1000
+# quake.
+# ;p
+
+;br
+;clear
+
+;jump label: "start"

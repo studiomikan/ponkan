@@ -36,8 +36,8 @@ declare module 'ponkan3' {
       layerAlias: any;
       forePrimaryLayer: PonLayer;
       backPrimaryLayer: PonLayer;
-      readonly foreLayers: PonLayer[];
-      readonly backLayers: PonLayer[];
+      get foreLayers(): PonLayer[];
+      get backLayers(): PonLayer[];
       currentPage: "fore" | "back";
       isQuaking: boolean;
       protected quakeStartTick: number;
@@ -58,9 +58,11 @@ declare module 'ponkan3' {
       hideMessageFlag: boolean;
       hideMessageByRClickFlag: boolean;
       protected _messageLayerNum: number;
-      messageLayerNum: number;
+      get messageLayerNum(): number;
+      set messageLayerNum(num: number);
       protected _lineBreakGlyphLayerNum: number;
-      lineBreakGlyphLayerNum: number;
+      get lineBreakGlyphLayerNum(): number;
+      set lineBreakGlyphLayerNum(num: number);
       lineBreakGlyphPos: "eol" | "relative" | "absolute";
       lineBreakGlyphVerticalAlign: GlyphVerticalAlignType;
       lineBreakGlyphX: number;
@@ -68,7 +70,8 @@ declare module 'ponkan3' {
       lineBreakGlyphMarginX: number;
       lineBreakGlyphMarginY: number;
       protected _pageBreakGlyphLayerNum: number;
-      pageBreakGlyphLayerNum: number;
+      get pageBreakGlyphLayerNum(): number;
+      set pageBreakGlyphLayerNum(num: number);
       pageBreakGlyphPos: "eol" | "relative" | "absolute";
       pageBreakGlyphVerticalAlign: GlyphVerticalAlignType;
       pageBreakGlyphX: number;
@@ -91,9 +94,9 @@ declare module 'ponkan3' {
       protected latestSaveComment: string;
       protected latestSaveData: any;
       protected tempSaveData: any;
-      readonly tmpVar: any;
-      readonly gameVar: any;
-      readonly systemVar: any;
+      get tmpVar(): any;
+      get gameVar(): any;
+      get systemVar(): any;
       protected pluginMap: any;
       protected plugins: PonPlugin[];
       constructor(parentId: string, config?: any);
@@ -117,7 +120,7 @@ declare module 'ponkan3' {
       hideLayerDebugInfo(): void;
       getDebugInfo(): any;
       dumpDebugInfo(): void;
-      protected readonly eventReceivesLayer: BaseLayer;
+      protected get eventReceivesLayer(): BaseLayer;
       onMouseEnter(e: PonMouseEvent): void;
       onMouseLeave(e: PonMouseEvent): void;
       onMouseMove(e: PonMouseEvent): void;
@@ -139,13 +142,13 @@ declare module 'ponkan3' {
       onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break";
       onChangeStable(isStable: boolean): void;
       onReturnSubroutin(forceStart?: boolean): void;
-      readonly isSkipping: boolean;
+      get isSkipping(): boolean;
       startSkipByTag(): void;
       startSkipByCtrl(): void;
       stopWhilePressingCtrlSkip(): void;
       stopUntilClickSkip(): void;
       stopSkip(): void;
-      readonly autoModeLayer: PonLayer;
+      get autoModeLayer(): PonLayer;
       startAutoMode(): void;
       stopAutoMode(): void;
       reserveAutoClick(tick: number): void;
@@ -156,7 +159,8 @@ declare module 'ponkan3' {
       waitSoundStopClickCallback(sb: SoundBuffer): void;
       waitSoundFadeCompleteCallback(sb: SoundBuffer): void;
       waitSoundFadeClickCallback(sb: SoundBuffer): void;
-      layerCount: number;
+      get layerCount(): number;
+      set layerCount(layerCount: number);
       /**
         * レイヤを作成する。
         * rendererへの追加は行わないので、他のレイヤの子レイヤにする必要がある。
@@ -174,25 +178,25 @@ declare module 'ponkan3' {
         * @param values タグの値
         */
       getLayers(values: any): PonLayer[];
-      readonly hasMovingLayer: boolean;
+      get hasMovingLayer(): boolean;
       waitMoveClickCallback(): void;
       waitMoveCompleteCallback(): void;
       waitFrameAnimClickCallback(layers: PonLayer[]): void;
       waitFrameAnimCompleteCallback(layers: PonLayer[]): void;
-      readonly hasPlayingVideoLayer: boolean;
+      get hasPlayingVideoLayer(): boolean;
       waitVideoClickCallback(): void;
       waitVideoCompleteCallback(): void;
       startQuake(tick: number, time: number, maxX: number, maxY: number): void;
       stopQuake(): void;
       protected quake(tick: number): void;
-      readonly textSpeed: number;
+      get textSpeed(): number;
       /**
         * メッセージレイヤ（表）
         */
-      readonly messageLayer: PonLayer;
-      readonly backMessageLayer: PonLayer;
-      readonly lineBreakGlyphLayer: PonLayer;
-      readonly pageBreakGlyphLayer: PonLayer;
+      get messageLayer(): PonLayer;
+      get backMessageLayer(): PonLayer;
+      get lineBreakGlyphLayer(): PonLayer;
+      get pageBreakGlyphLayer(): PonLayer;
       showLineBreakGlyph(tick: number): void;
       showPageBreakGlyph(tick: number): void;
       showBreakGlyph(tick: number, lay: PonLayer, pos: "eol" | "relative" | "absolute", verticalAlign: GlyphVerticalAlignType, x: number, y: number, marginX: number, marginY: number): void;
@@ -232,7 +236,7 @@ declare module 'ponkan3' {
       load(tick: number, num: number): Promise<void>;
       tempLoad(tick: number, num: number, sound?: boolean, toBack?: boolean): Promise<void>;
       copySaveData(srcNum: number, destNum: number): void;
-      readonly emptySaveData: any;
+      get emptySaveData(): any;
       deleteSaveData(num: number): void;
       getSaveDataInfo(num: number): any;
       existSaveData(num: number): boolean;
@@ -262,12 +266,13 @@ declare module 'ponkan3/base/base-layer' {
       protected owner: PonGame;
       /** スプライト表示用コンテナ */
       protected _container: PIXI.Container;
-      readonly container: PIXI.Container;
+      get container(): PIXI.Container;
       /** レイヤサイズでクリッピングするためのマスク */
       protected maskSprite: PIXI.Sprite;
       /** デバッグ情報を出力するためのコンテナ */
       protected debugContainer: PIXI.Container;
-      debugInfoVisible: boolean;
+      set debugInfoVisible(visible: boolean);
+      get debugInfoVisible(): boolean;
       /** デバッグ情報: ボーダー */
       protected debugBorder: PIXI.Graphics;
       /** デバッグ情報: テキスト情報 */
@@ -287,25 +292,31 @@ declare module 'ponkan3/base/base-layer' {
       protected imageSpriteCallbacks: IPonSpriteCallbacks;
       protected canvasSpriteCallbacks: IPonVideoCallbacks;
       protected videoCallbacks: IPonVideoCallbacks;
+      /** quakeを無視する */
+      ignoreQuake: boolean;
       /** 読み込んでいる画像 */
       protected image: HTMLImageElement | null;
       protected imageFilePath: string | null;
       /** 画像用スプライト */
       protected imageSprite: PonSprite | null;
-      readonly imageWidth: number;
-      readonly imageHeight: number;
+      get imageWidth(): number;
+      get imageHeight(): number;
       /** 読み込んでいるCanvas */
       protected canvas: HTMLCanvasElement | null;
       protected canvasSprite: PonSprite | null;
-      readonly canvasWidth: number;
-      readonly canvasHeight: number;
+      get canvasWidth(): number;
+      get canvasHeight(): number;
       /** 動画スプライト */
       protected videoFilePath: string | null;
       video: PonVideo | null;
-      videoWidth: number;
-      videoHeight: number;
-      videoLoop: boolean;
-      videoVolume: number;
+      set videoWidth(width: number);
+      get videoWidth(): number;
+      set videoHeight(height: number);
+      get videoHeight(): number;
+      set videoLoop(loop: boolean);
+      get videoLoop(): boolean;
+      set videoVolume(volume: number);
+      get videoVolume(): number;
       /** イベント遮断フラグ。trueにするとマウスイベントの伝播を遮断する。 */
       blockLeftClickFlag: boolean;
       blockRightClickFlag: boolean;
@@ -313,21 +324,39 @@ declare module 'ponkan3/base/base-layer' {
       blockMouseMove: boolean;
       blockWheelFlag: boolean;
       textCanvas: LayerTextCanvas;
-      readonly children: BaseLayer[];
-      x: number;
-      y: number;
-      width: number;
-      height: number;
-      visible: boolean;
-      alpha: number;
-      backgroundColor: number;
-      backgroundAlpha: number;
-      imageX: number;
-      imageY: number;
-      canvasX: number;
-      canvasY: number;
-      scaleX: number;
-      scaleY: number;
+      get children(): BaseLayer[];
+      get x(): number;
+      set x(x: number);
+      get y(): number;
+      set y(y: number);
+      get quakeOffsetX(): number;
+      set quakeOffsetX(x: number);
+      get quakeOffsetY(): number;
+      set quakeOffsetY(y: number);
+      get width(): number;
+      set width(width: number);
+      get height(): number;
+      set height(height: number);
+      get visible(): boolean;
+      set visible(visible: boolean);
+      get alpha(): number;
+      set alpha(alpha: number);
+      get backgroundColor(): number;
+      set backgroundColor(backgroundColor: number);
+      set backgroundAlpha(backgroundAlpha: number);
+      get backgroundAlpha(): number;
+      get imageX(): number;
+      set imageX(imageX: number);
+      get imageY(): number;
+      set imageY(imageY: number);
+      get canvasX(): number;
+      set canvasX(canvasX: number);
+      get canvasY(): number;
+      set canvasY(canvasY: number);
+      get scaleX(): number;
+      set scaleX(scaleX: number);
+      get scaleY(): number;
+      set scaleY(scaleY: number);
       constructor(name: string, resource: Resource, owner: PonGame);
       /**
         * 破棄
@@ -347,6 +376,8 @@ declare module 'ponkan3/base/base-layer' {
       child(index: number): BaseLayer;
       update(tick: number): void;
       beforeDraw(tick: number): void;
+      applyQuake(quakeX: number, quakeY: number): void;
+      clearQuake(): void;
       /**
         * 座標が、指定のレイヤーの内側かどうかを調査する
         */
@@ -382,12 +413,12 @@ declare module 'ponkan3/base/base-layer' {
         * 背景色をクリアする
         */
       clearBackgroundColor(): void;
-      readonly text: string;
+      get text(): string;
       /**
         * 表示しているテキストの内容を文字列で取得
         * @return テキスト
         */
-      readonly messageText: string;
+      get messageText(): string;
       /**
         * レイヤにテキストを追加する
         */
@@ -467,8 +498,8 @@ declare module 'ponkan3/base/base-layer' {
       pauseVideo(): void;
       stopVideo(): void;
       freeVideo(): void;
-      readonly isPlayingVideo: boolean;
-      readonly isLoopPlayingVideo: boolean;
+      get isPlayingVideo(): boolean;
+      get isLoopPlayingVideo(): boolean;
       protected static baseLayerStoreParams: string[];
       protected static baseLayerIgnoreParams: string[];
       /**
@@ -525,26 +556,28 @@ declare module 'ponkan3/base/pon-game' {
       readonly transManager: TransManager;
       readonly screenShot: ScreenShot;
       updateScreenShotFlag: boolean;
-      readonly width: number;
-      readonly height: number;
+      get width(): number;
+      get height(): number;
       constructor(parentId: string, config?: any);
       destroy(): void;
       start(): void;
       stop(): void;
       lock(stop?: boolean): void;
       unlock(restart?: boolean): void;
-      scaleMode: ScaleMode;
+      get scaleMode(): ScaleMode;
+      set scaleMode(scaleMode: ScaleMode);
       onFullscreenChange(): void;
-      readonly fixedScaleWidth: number;
-      readonly fixedScaleHeight: number;
+      get fixedScaleWidth(): number;
+      get fixedScaleHeight(): number;
       setFixedScaleSize(width: number, height: number): void;
       onWindowResize(): void;
       setCanvasScale(scaleX: number, scaleY: number): void;
       protected update(tick: number): void;
       protected beforeDraw(tick: number): void;
+      protected afterDraw(tick: number): void;
       error(e: Error): void;
-      readonly conductor: Conductor;
-      readonly mainConductor: Conductor;
+      get conductor(): Conductor;
+      get mainConductor(): Conductor;
       /**
         * サブルーチンを呼び出す。
         * @param file 移動先ファイル
@@ -604,10 +637,10 @@ declare module 'ponkan3/base/pon-game' {
 declare module 'ponkan3/base/pon-key-event' {
   export class PonKeyEvent {
     constructor(e: KeyboardEvent);
-    readonly key: string;
-    readonly ctrl: boolean;
-    readonly shift: boolean;
-    readonly alt: boolean;
+    get key(): string;
+    get ctrl(): boolean;
+    get shift(): boolean;
+    get alt(): boolean;
   }
 }
 
@@ -618,13 +651,13 @@ declare module 'ponkan3/base/pon-mouse-event' {
     readonly button: number;
     constructor(x: number, y: number, button: number);
     constructor(e: MouseEvent);
-    readonly isLeft: boolean;
-    readonly isCenter: boolean;
-    readonly isRight: boolean;
+    get isLeft(): boolean;
+    get isCenter(): boolean;
+    get isRight(): boolean;
     stopPropagation(): void;
-    readonly stopPropagationFlag: boolean;
+    get stopPropagationFlag(): boolean;
     forceStop(): void;
-    readonly forceStopFlag: boolean;
+    get forceStopFlag(): boolean;
   }
 }
 
@@ -633,8 +666,8 @@ declare module 'ponkan3/base/pon-wheel-event' {
     readonly deltaX: number;
     readonly deltaY: number;
     constructor(e: WheelEvent);
-    readonly isUp: boolean;
-    readonly isDown: boolean;
+    get isUp(): boolean;
+    get isDown(): boolean;
   }
 }
 
@@ -682,18 +715,22 @@ declare module 'ponkan3/base/sound' {
     onStopLabel: string | null;
     constructor(resource: Resource, bufferNum: number, callback: ISoundBufferCallbacks);
     loadSound(filePath: string): Promise<void>;
-    readonly hasSound: boolean;
+    get hasSound(): boolean;
     freeSound(): void;
     clearOnStop(): void;
     protected setHowlerEvent(): void;
     protected setHowlerOptions(): void;
-    readonly state: SoundState;
-    volume: number;
-    gvolume: number;
-    seek: number;
-    loop: boolean;
-    readonly playing: boolean;
-    readonly fading: boolean;
+    get state(): SoundState;
+    get volume(): number;
+    set volume(volume: number);
+    get gvolume(): number;
+    set gvolume(gvolume: number);
+    get seek(): number;
+    set seek(seek: number);
+    get loop(): boolean;
+    set loop(loop: boolean);
+    get playing(): boolean;
+    get fading(): boolean;
     play(): void;
     stop(stopBy?: string): void;
     pause(): void;
@@ -776,21 +813,21 @@ declare module 'ponkan3/layer/history-layer' {
     onMouseUp(e: PonMouseEvent): void;
     protected setBarY(y: number): void;
     getBarPoint(): number;
-    readonly dragging: boolean;
+    get dragging(): boolean;
   }
   class HistoryTextLayer extends BaseLayer {
     protected lines: string[][];
     protected maxLinesCount: number;
     protected indentPoints: number[];
     protected clearIndentPoints: number[];
-    readonly currentLine: string[];
+    get currentLine(): string[];
     scrollOffLines: number;
     protected point: number;
     protected lazyRedrawFlag: boolean;
     constructor(name: string, resource: Resource, owner: PonGame);
     init(config: any): void;
     clear(): void;
-    readonly historyText: string;
+    get historyText(): string;
     add(ch: string): void;
     textReturn(): void;
     setHistoryIndentPoint(): void;
@@ -804,10 +841,10 @@ declare module 'ponkan3/layer/history-layer' {
     redraw(): void;
     redrawLazy(): void;
     update(tick: number): void;
-    readonly screenLineCount: number;
-    readonly maxPoint: number;
-    readonly currentPoint: number;
-    readonly linesCount: number;
+    get screenLineCount(): number;
+    get maxPoint(): number;
+    get currentPoint(): number;
+    get linesCount(): number;
   }
   /**
     * 履歴レイヤ
@@ -988,27 +1025,41 @@ declare module 'ponkan3/base/pon-sprite' {
     */
   export class PonSprite {
       /** x座標 */
-      x: number;
+      get x(): number;
+      /** x座標 */
+      set x(x: number);
       /** y座標 */
-      y: number;
+      get y(): number;
+      /** y座標 */
+      set y(y: number);
       /** 幅 */
-      width: number;
+      get width(): number;
+      /** 幅 */
+      set width(width: number);
       /** 高さ */
-      height: number;
+      get height(): number;
+      /** 高さ */
+      set height(height: number);
       /** スケーリング x */
-      scaleX: number;
+      get scaleX(): number;
+      /** スケーリング x */
+      set scaleX(scaleX: number);
       /** スケーリング y */
-      scaleY: number;
+      get scaleY(): number;
+      /** スケーリング y */
+      set scaleY(scaleY: number);
       /** 表示状態 */
-      visible: boolean;
+      get visible(): boolean;
+      /** 表示状態 */
+      set visible(visible: boolean);
       /** テキスト */
-      readonly text: string | null;
+      get text(): string | null;
       /** テキストスタイル */
-      readonly textStyle: PIXI.TextStyle | null;
+      get textStyle(): PIXI.TextStyle | null;
       /** テキストの文字間 */
-      readonly textPitch: number;
+      get textPitch(): number;
       /** テキストの横幅 */
-      readonly textWidth: number;
+      get textWidth(): number;
       /**
         * @param callbacks コールバック
         */
@@ -1082,14 +1133,18 @@ declare module 'ponkan3/base/pon-video' {
       protected callbacks: IPonVideoCallbacks;
       protected videoTexture: PIXI.Texture;
       protected videoSprite: PIXI.Sprite;
-      readonly texture: PIXI.Texture;
-      readonly sprite: PIXI.Sprite;
-      readonly source: HTMLVideoElement;
-      width: number;
-      height: number;
-      loop: boolean;
-      volume: number;
-      readonly playing: boolean;
+      get texture(): PIXI.Texture;
+      get sprite(): PIXI.Sprite;
+      get source(): HTMLVideoElement;
+      get width(): number;
+      set width(width: number);
+      get height(): number;
+      set height(height: number);
+      get loop(): boolean;
+      set loop(loop: boolean);
+      get volume(): number;
+      set volume(volume: number);
+      get playing(): boolean;
       /**
         * @param callbacks コールバック
         */
@@ -1188,13 +1243,14 @@ declare module 'ponkan3/base/base-layer-text' {
       color: string[];
       textBaseline: CanvasTextBaseline;
       shadow: boolean;
-      shadowAlpha: number;
+      _shadowAlpha: number;
+      _shadowColor: string;
       shadowAngle: number;
       shadowBlur: number;
-      shadowColor: string;
       shadowDistance: number;
-      edgeColor: string;
       edgeWidth: number;
+      _edgeColor: string;
+      _edgeAlpha: number;
       pitch: number;
       fillGradientStops: number[];
       fillGradientType: "vertical" | "horizontal";
@@ -1203,17 +1259,28 @@ declare module 'ponkan3/base/base-layer-text' {
       inEffectEase: "none" | "in" | "out" | "both";
       inEffectOptions: any;
       setColor(color: number | string | any[]): void;
+      get shadowColor(): string;
+      set shadowColor(shadowColor: string);
       setShadowColor(c: number | string): void;
+      get shadowAlpha(): number;
+      set shadowAlpha(shadowAlpha: number);
+      get edgeColor(): string;
+      set edgeColor(edgeColor: string);
       setEdgeColor(c: number | string): void;
-      readonly fontFamilyStr: string;
-      readonly font: string;
-      readonly shadowColorStr: string;
+      get edgeAlpha(): number;
+      set edgeAlpha(edgeAlpha: number);
+      get fontFamilyStr(): string;
+      get font(): string;
+      get shadowColorStr(): string;
+      get edgeColorStr(): string;
+      measureText(context: CanvasRenderingContext2D, text: string): TextMetrics;
       getChWidth(context: CanvasRenderingContext2D, ch: string): number;
       applyStyleTo(context: CanvasRenderingContext2D, offsetX: number, offsetY: number): void;
       applyShadowTo(context: CanvasRenderingContext2D): void;
       clearShadowFrom(context: CanvasRenderingContext2D): void;
       checkOptions(): void;
       clone(): TextStyle;
+      applyConfig(config: any): void;
       resetGradientBuffer(): void;
       store(tick: number): any;
       restore(data: any, tick: number, clear: boolean): Promise<void>;
@@ -1245,11 +1312,11 @@ declare module 'ponkan3/base/base-layer-text' {
       lineHeight: number;
       readonly chList: LayerChar[];
       readonly rubyList: LayerChar[];
-      readonly text: string;
-      readonly textX: number;
-      readonly tailChar: string;
-      readonly length: number;
-      readonly width: number;
+      get text(): string;
+      get textX(): number;
+      get tailChar(): string;
+      get length(): number;
+      get width(): number;
       forEach(func: (ch: LayerChar, index: number) => void): void;
       destroy(): void;
       clear(): void;
@@ -1291,13 +1358,15 @@ declare module 'ponkan3/base/base-layer-text' {
       rubyFontSize: number;
       rubyOffset: number;
       rubyPitch: number;
-      width: number;
-      height: number;
-      readonly text: string;
+      get width(): number;
+      set width(width: number);
+      get height(): number;
+      set height(height: number);
+      get text(): string;
       constructor();
       beforeDraw(tick: number): void;
       draw(tick: number): void;
-      readonly currentLine: LayerTextLine;
+      get currentLine(): LayerTextLine;
       addText(text: string): void;
       addChar(ch: string): void;
       /**
@@ -1361,6 +1430,13 @@ declare module 'ponkan3/base/base-layer-text' {
       copyTo(dest: LayerTextCanvas): void;
       store(tick: number): any;
       restore(data: any, tick: number, clear: boolean): Promise<void>;
+      measureText(text?: string): TextMetrics;
+      /**
+        * コンフィグを反映する。
+        * このメソッドでは単純に値の設定のみ行うため、
+        * 画像読み込みなどの非同期処理が必要なものには対応していない。
+        */
+      applyConfig(config: any): void;
   }
 }
 
@@ -1389,9 +1465,9 @@ declare module 'ponkan3/base/conductor' {
       protected eventCallbacks: IConductorEvent;
       latestScriptFilePath: string;
       protected _script: Script;
-      readonly script: Script;
+      get script(): Script;
       protected _status: ConductorState;
-      readonly status: ConductorState;
+      get status(): ConductorState;
       protected sleepStartTick: number;
       protected sleepTime: number;
       sleepSender: string;
@@ -1419,7 +1495,7 @@ declare module 'ponkan3/base/conductor' {
       start(): "continue" | "break";
       stop(): "continue" | "break";
       sleep(tick: number, sleepTime: number, sender: string): "continue" | "break";
-      readonly isStable: boolean;
+      get isStable(): boolean;
       addEventHandler(handler: PonEventHandler): void;
       hasEventHandler(eventName: string): boolean;
       /**
@@ -1457,12 +1533,12 @@ declare module 'ponkan3/base/pon-renderer' {
   import * as PIXI from "pixi.js";
   export class PonRenderer {
     readonly renderer: PIXI.Renderer;
-    readonly width: number;
-    readonly height: number;
-    readonly canvasElm: HTMLCanvasElement;
-    readonly texture: PIXI.Texture;
-    readonly sprite: PIXI.Sprite;
-    readonly container: PIXI.Container;
+    get width(): number;
+    get height(): number;
+    get canvasElm(): HTMLCanvasElement;
+    get texture(): PIXI.Texture;
+    get sprite(): PIXI.Sprite;
+    get container(): PIXI.Container;
     constructor(parentElm: HTMLElement, width: number, height: number);
     destroy(): void;
     draw(tick: number): void;
@@ -1489,7 +1565,7 @@ declare module 'ponkan3/base/trans-manager' {
     constructor(game: PonGame, resource: Resource);
     initTrans(time: number, method: "scroll-to-right" | "scroll-to-left" | "scroll-to-top" | "scroll-to-bottom" | "univ" | "crossfade"): Promise<void>;
     initUnivTrans(time: number, ruleFilePath: string, vague?: number): Promise<void>;
-    readonly isRunning: boolean;
+    get isRunning(): boolean;
     /**
       * トランジションを停止する。
       * PonGameのonCompleteTransも呼び出される。
@@ -1562,9 +1638,9 @@ declare module 'ponkan3/layer/filtered-layer' {
   import { MovableLayer } from "ponkan3/layer/movable-layer";
   import { LayerFilter } from "ponkan3/filter/layer-filter";
   export class FilteredLayer extends MovableLayer {
-    readonly pixiFilters: Array<PIXI.Filter>;
+    get pixiFilters(): Array<PIXI.Filter>;
     protected _filters: LayerFilter[];
-    readonly filters: LayerFilter[];
+    get filters(): LayerFilter[];
     protected static filterClassList: any;
     constructor(name: string, resource: Resource, owner: Ponkan3);
     static registerFilter(filterName: string, createFunction: any): void;
@@ -1611,7 +1687,7 @@ declare module 'ponkan3/base/script' {
   export class Script {
       protected resource: Resource;
       protected _filePath: string;
-      readonly filePath: string;
+      get filePath(): string;
       protected parser: ScriptParser;
       protected tagPoint: number;
       protected latestTagBuffer: Tag | null;
@@ -1730,7 +1806,7 @@ declare module 'ponkan3/base/read-unread' {
   import { Script } from "ponkan3/base/script";
   export class ReadUnread {
     protected resource: Resource;
-    protected readonly systemVar: any;
+    protected get systemVar(): any;
     constructor(resource: Resource);
     pass(script: Script, saveMarkName: string): void;
     isPassed(script: Script, label: string): boolean;
@@ -1760,8 +1836,8 @@ declare module 'ponkan3/layer/movable-layer' {
       protected moveTotalTime: number;
       protected moveStartTick: number;
       protected moveDelayStartTick: number;
-      readonly isMoving: boolean;
-      readonly isLoopMoving: boolean;
+      get isMoving(): boolean;
+      get isLoopMoving(): boolean;
       constructor(name: string, resource: Resource, owner: Ponkan3);
       startMove(tick: number, time: number, delay: number, path: IMovePosInfo[], type: "linear" | "bezier2" | "bezier3" | "catmullrom", ease: "none" | "in" | "out" | "both", loop: boolean): void;
       stopMove(triggerEvent?: boolean): void;
@@ -1810,8 +1886,8 @@ declare module 'ponkan3/layer/movable-layer' {
 declare module 'ponkan3/filter/layer-filter' {
   export class LayerFilter {
     static readonly filterName: string;
-    readonly filterName: string;
-    readonly pixiFilter: PIXI.Filter;
+    get filterName(): string;
+    get pixiFilter(): PIXI.Filter;
     protected _filter: PIXI.Filter;
     protected params: any;
     constructor(params: any, permitedList?: string[]);
@@ -1824,7 +1900,7 @@ declare module 'ponkan3/base/script-parser' {
   import { Resource } from "ponkan3/base/resource";
   import { Tag } from "ponkan3/base/tag";
   export class ScriptParser {
-      readonly tags: Tag[];
+      get tags(): Tag[];
       constructor(resource: Resource, scriptText: string);
       debugPrint(): void;
       /**
@@ -2035,7 +2111,7 @@ declare module 'ponkan3/layer/frame-anim-layer' {
   import { BaseLayer } from "ponkan3/base/base-layer";
   export class FrameAnimLayer extends BaseLayer {
     protected _frameAnimLoop: boolean;
-    readonly frameAnimLoop: boolean;
+    get frameAnimLoop(): boolean;
     protected frameAnimTime: number;
     protected frameAnimWidth: number;
     protected frameAnimHeight: number;
@@ -2043,8 +2119,8 @@ declare module 'ponkan3/layer/frame-anim-layer' {
     protected frameAnimStartTick: number;
     protected frameAnimState: "stop" | "run";
     initFrameAnim(loop: boolean, time: number, width: number, height: number, frames: any[]): void;
-    readonly hasFrameAnim: boolean;
-    readonly frameAnimRunning: boolean;
+    get hasFrameAnim(): boolean;
+    get frameAnimRunning(): boolean;
     startFrameAnim(tick: number): void;
     stopFrameAnim(triggerEvent?: boolean): void;
     deleteFrameAnim(): void;

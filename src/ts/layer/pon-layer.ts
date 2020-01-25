@@ -18,7 +18,7 @@ export class PonLayer extends FilteredLayer {
    */
   public addChar(ch: string): void {
     super.addChar(ch);
-    if (ch.length === 1) {
+    if (ch != null && ch.length > 0) {
       (this.owner as Ponkan3).onAddChar(this, ch);
     }
   }

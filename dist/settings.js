@@ -79,51 +79,6 @@ window.PONKAN3_SETTINGS = {
       width: 1280,
       height: 720,
 
-      // 履歴テキストの文字色
-      textColor: 0xFFFFFF,
-
-      // 履歴テキストのフォント種別
-      textFontFamily: ["GenShinGothic"],
-
-      // 履歴テキストのフォントサイズ
-      textFontSize: 28,
-
-      // 履歴テキストの字間（単位：pixel）
-      textPitch: 0,
-
-      // 履歴テキストの行の高さ
-      textLineHeight: 28,
-
-      // 履歴テキストの行間（単位：pixel）
-      textLinePitch: 7,
-
-      // 履歴テキスト表示部分のマージン（上、右、下、左）
-      textMarginTop: 130,
-      textMarginRight: 30,
-      textMarginBottom: 100,
-      textMarginLeft: 30,
-
-      // 履歴テキストに影を付けるかどうか
-      textShadowVisible: true,
-
-      // 履歴テキストの影のalpha
-      textShadowAlpha: 0.7,
-
-      // 履歴テキストの影のぼかし
-      textShadowBlur: 5,
-
-      // 履歴テキストの影の色
-      textShadowColor: 0x000000,
-
-      // 履歴テキストの影と文字の距離
-      textShadowDistance: 2,
-
-      // 履歴テキストの縁取りの太さ（0で非表示）
-      textEdgeWidth: 0,
-
-      // 履歴テキストの縁取りの色
-      textEdgeColor: 0x000000,
-
       // 上下のスクロール時の重複行数
       // ページスクロールボタンでスクロールしたとき、ここで指定した行数分のテキストは
       // スクロール後の画面にも重複して表示されます。
@@ -131,6 +86,58 @@ window.PONKAN3_SETTINGS = {
 
       // 履歴の最大行数
       maxLinesCount: 20000,
+
+      textCanvasConfig: {
+        // 履歴テキストの行の高さ
+        lineHeight: 28,
+
+        // 履歴テキストの行間（単位：pixel）
+        linePitch: 7,
+
+        // 履歴テキスト表示部分のマージン（上、右、下、左）
+        marginTop: 130,
+        marginRight: 30,
+        marginBottom: 100,
+        marginLeft: 30,
+
+        styleConfig: {
+          // 履歴テキストの文字色
+          color: 0xFFFFFF,
+
+          // 履歴テキストのフォント種別
+          fontFamily: ["GenShinGothic"],
+
+          // 履歴テキストのフォントサイズ
+          fontSize: 28,
+
+          // 履歴テキストの字間（単位：pixel）
+          pitch: 0,
+
+          // 履歴テキストに影を付けるかどうか
+          shadow: true,
+
+          // 履歴テキストの影のalpha
+          shadowAlpha: 0.7,
+
+          // 履歴テキストの影のぼかし
+          shadowBlur: 5,
+
+          // 履歴テキストの影の色
+          shadowColor: 0x000000,
+
+          // 履歴テキストの影と文字の距離
+          shadowDistance: 2,
+
+          // 履歴テキストの縁取りの太さ（0で非表示）
+          edgeWidth: 0,
+
+          // 履歴テキストの縁取りの色
+          edgeColor: 0x000000,
+
+          // 履歴テキストの縁取りのalpha
+          edgeAlpha: 0x000000,
+        }
+      }
     },
 
     // 履歴の上スクロールボタンの設定

@@ -66,6 +66,13 @@ export class BaseLayer {
   protected canvasSpriteCallbacks: IPonVideoCallbacks;
   protected videoCallbacks: IPonVideoCallbacks;
 
+  private _x = 0;
+  private _y = 0;
+  private _quakeOffsetX: number = 0;
+  private _quakeOffsetY: number = 0;
+  /** quakeを無視する */
+  public ignoreQuake: boolean = false;
+
   /** 読み込んでいる画像 */
   protected image: HTMLImageElement | null = null;
   protected imageFilePath: string | null = null;
@@ -143,18 +150,32 @@ export class BaseLayer {
     return this._children;
   }
   public get x(): number {
-    return this.container.x;
+    return this._x;
   }
   public set x(x) {
-    this.container.x = x;
-    // this.callEventListener("onChangeX", [x]);
+    this._x = x;
+    this.container.x = this._x + this._quakeOffsetX;
   }
   public get y(): number {
-    return this.container.y;
+    return this._y;
   }
   public set y(y) {
-    this.container.y = y;
-    // this.callEventListener("onChangeY", [y]);
+    this._y = y;
+    this.container.y = this._y + this._quakeOffsetY;
+  }
+  public get quakeOffsetX(): number {
+    return this._quakeOffsetX;
+  }
+  public set quakeOffsetX(x) {
+    this._quakeOffsetX = x;
+    this.container.x = this._x + this._quakeOffsetX;
+  }
+  public get quakeOffsetY(): number {
+    return this._quakeOffsetY;
+  }
+  public set quakeOffsetY(y) {
+    this._quakeOffsetY = y;
+    this.container.y = this._y + this._quakeOffsetY;
   }
   public get width(): number {
     return this.maskSprite.width;
@@ -401,6 +422,7 @@ export class BaseLayer {
   }
 
   public beforeDraw(tick: number): void {
+    // デバッグ情報の描画
     if (this.visible && this.debugContainer.visible) {
       this.debugBorder.width = this.width;
       this.debugBorder.height = this.height;
@@ -410,14 +432,31 @@ export class BaseLayer {
       this.debugBorder.drawRect(0, 0, this.debugBorder.width, this.debugBorder.height);
       this.debugText.text = `${this.name}: x=${this.x} y=${this.y} width=${this.width} height=${this.height}`;
     }
+    // テキスト更新
     this.textCanvas.beforeDraw(tick);
     this.textCanvas.draw(tick);
     if (this.visible && this.canvas !== null && this.canvasSprite !== null) {
       this.canvasSprite.beforeDraw(tick);
     }
+    // 子レイヤーのイベント呼ぶ
     this.children.forEach(child => {
       child.beforeDraw(tick);
     });
+  }
+
+  public applyQuake(quakeX: number, quakeY: number): void {
+    if (this.ignoreQuake) {
+      this.quakeOffsetX = 0;
+      this.quakeOffsetY = 0;
+    } else {
+      this.quakeOffsetX = quakeX;
+      this.quakeOffsetY = quakeY;
+    }
+  }
+
+  public clearQuake(): void {
+    this.quakeOffsetX = 0;
+    this.quakeOffsetY = 0;
   }
 
   /**
@@ -1032,8 +1071,10 @@ export class BaseLayer {
 
   protected static baseLayerStoreParams: string[] = [
     "name",
-    "x",
-    "y",
+    "_x",
+    "_y",
+    "_quakeOffsetX",
+    "_quakeOffsetY",
     "scaleX",
     "scaleY",
     "width",
@@ -1043,6 +1084,9 @@ export class BaseLayer {
     "backgroundColor",
     "backgroundAlpha",
     "hasBackgroundColor",
+    "ignoreQuake",
+    "ignoreQuakeX",
+    "ignoreQuakeY",
     "imageFilePath",
     "imageX",
     "imageY",
@@ -1238,8 +1282,13 @@ export class BaseLayer {
     if (config != null) {
       const me = this as any;
       Object.keys(config).forEach(key => {
-        me[key] = config[key];
+        if (key in me) {
+          me[key] = config[key];
+        }
       });
+      if (config.textCanvasConfig != null) {
+        this.textCanvas.applyConfig(config.textCanvasConfig);
+      }
     }
   }
 }
