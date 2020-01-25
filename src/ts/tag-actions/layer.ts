@@ -252,6 +252,8 @@ export default function(p: Ponkan3): TagAction[] {
         new TagValue("scalex", "number", false, null),
         /// @param y軸方向のスケール。1.0で等倍
         new TagValue("scaley", "number", false, null),
+        /// @param quakeコマンドの対象外フラグ。このフラグをtrueにするとquakeで揺れなくなります。
+        new TagValue("ignorequake", "boolean", false, null),
         /// @param 左クリックイベントを遮断するかどうか
         new TagValue("blocklclick", "boolean", false, null),
         /// @param 右クリックイベントを遮断するかどうか
@@ -274,6 +276,7 @@ export default function(p: Ponkan3): TagAction[] {
           values.height != null && (layer.height = values.height);
           values.alpha != null && (layer.alpha = values.alpha);
           values.autohide != null && (layer.autoHideWithMessage = values.autohide);
+          values.ignorequake != null && (layer.ignoreQuake = values.ignorequake);
           values.blocklclick != null && (layer.blockLeftClickFlag = values.blocklclick);
           values.blockrclick != null && (layer.blockRightClickFlag = values.blockrclick);
           values.blockcclick != null && (layer.blockCenterClickFlag = values.blockcclick);

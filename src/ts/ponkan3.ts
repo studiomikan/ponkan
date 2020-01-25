@@ -328,6 +328,10 @@ export class Ponkan3 extends PonGame {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // protected afterDraw(tick: number): void {
+  // }
+
   public error(e: Error): void {
     this.conductor.stop();
     let message: string = e.message;
@@ -1045,6 +1049,7 @@ export class Ponkan3 extends PonGame {
 
   public stopQuake(): void {
     this.isQuaking = false;
+
     this.quakeStartTick = -1;
     this.quakeTime = 0;
     this.quakeMaxX = 20;
@@ -1052,21 +1057,21 @@ export class Ponkan3 extends PonGame {
     this.isQuakePhase = true;
     this.quakeFrameCount = 0;
 
-    this.forePrimaryLayer.x = 0;
-    this.forePrimaryLayer.y = 0;
-    this.backPrimaryLayer.x = 0;
-    this.backPrimaryLayer.y = 0;
+    this.foreLayers.filter(l => l.ignoreQuake).forEach(l => l.clearQuake());
+    this.backLayers.filter(l => l.ignoreQuake).forEach(l => l.clearQuake());
 
     this.conductor.trigger("quake");
   }
 
   protected quake(tick: number): void {
+    if (!this.isQuaking) {
+      return;
+    }
     if (this.quakeFrameCount++ % this.quakeIntervalFrame !== 0) {
       return;
     }
     const elapsed: number = tick - this.quakeStartTick;
     if (elapsed > this.quakeTime) {
-      this.stopQuake();
       return;
     }
     let x: number;
@@ -1083,11 +1088,9 @@ export class Ponkan3 extends PonGame {
       x = Math.floor((this.isQuakePhase ? Math.random() : -Math.random()) * this.quakeMaxX);
       y = Math.floor(Math.random() * this.quakeMaxY * 2 - this.quakeMaxY);
     }
-    this.forePrimaryLayer.x = x;
-    this.forePrimaryLayer.y = y;
-    this.backPrimaryLayer.x = x;
-    this.backPrimaryLayer.y = y;
-    this.isQuakePhase = !this.isQuakePhase;
+    // すべてのレイヤーに揺れ幅を設定する
+    this.foreLayers.forEach(l => l.applyQuake(x, y));
+    this.backLayers.forEach(l => l.applyQuake(x, y));
   }
 
   // =========================================================

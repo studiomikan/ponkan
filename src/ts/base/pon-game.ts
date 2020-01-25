@@ -301,6 +301,7 @@ export class PonGame implements IConductorEvent {
         // this.backRenderer.draw(tick); // TODO 本来はここのback不要
         this.foreRenderer.draw(tick);
       }
+      this.afterDraw(tick);
 
       if (this.updateScreenShotFlag) {
         this.screenShot.draw(this.foreRenderer.canvasElm);
@@ -321,6 +322,11 @@ export class PonGame implements IConductorEvent {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected beforeDraw(tick: number): void {
+    // should to override
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected afterDraw(tick: number): void {
     // should to override
   }
 

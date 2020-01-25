@@ -292,6 +292,8 @@ declare module 'ponkan3/base/base-layer' {
       protected imageSpriteCallbacks: IPonSpriteCallbacks;
       protected canvasSpriteCallbacks: IPonVideoCallbacks;
       protected videoCallbacks: IPonVideoCallbacks;
+      /** quakeを無視する */
+      ignoreQuake: boolean;
       /** 読み込んでいる画像 */
       protected image: HTMLImageElement | null;
       protected imageFilePath: string | null;
@@ -327,6 +329,10 @@ declare module 'ponkan3/base/base-layer' {
       set x(x: number);
       get y(): number;
       set y(y: number);
+      get quakeOffsetX(): number;
+      set quakeOffsetX(x: number);
+      get quakeOffsetY(): number;
+      set quakeOffsetY(y: number);
       get width(): number;
       set width(width: number);
       get height(): number;
@@ -370,6 +376,8 @@ declare module 'ponkan3/base/base-layer' {
       child(index: number): BaseLayer;
       update(tick: number): void;
       beforeDraw(tick: number): void;
+      applyQuake(quakeX: number, quakeY: number): void;
+      clearQuake(): void;
       /**
         * 座標が、指定のレイヤーの内側かどうかを調査する
         */
@@ -566,6 +574,7 @@ declare module 'ponkan3/base/pon-game' {
       setCanvasScale(scaleX: number, scaleY: number): void;
       protected update(tick: number): void;
       protected beforeDraw(tick: number): void;
+      protected afterDraw(tick: number): void;
       error(e: Error): void;
       get conductor(): Conductor;
       get mainConductor(): Conductor;
