@@ -606,15 +606,15 @@ export class LayerTextCanvas {
   }
 
   public draw(tick: number): void {
-    // if (this.updated) {
-    const context = this.context;
-    context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.lines.forEach(line => {
-      line.draw(context, tick);
-    });
-    this.sprite.texture.update();
-    this.updated = false;
-    // }
+    if (this.updated) {
+      const context = this.context;
+      context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.lines.forEach(line => {
+        line.draw(context, tick);
+      });
+      this.sprite.texture.update();
+      this.updated = false;
+    }
   }
 
   public get currentLine(): LayerTextLine {
