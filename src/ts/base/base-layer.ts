@@ -1071,10 +1071,10 @@ export class BaseLayer {
 
   protected static baseLayerStoreParams: string[] = [
     "name",
-    "_x",
-    "_y",
-    "_quakeOffsetX",
-    "_quakeOffsetY",
+    "x",
+    "y",
+    "quakeOffsetX",
+    "quakeOffsetY",
     "scaleX",
     "scaleY",
     "width",
