@@ -180,7 +180,6 @@ window.PONKAN3_SETTINGS = {
       width: 30,
       height: 500,
 
-      // textColor: 0x888888,
       // スクロールバーの背景色
       backgroundColor: 0xFFFFFF,
 
