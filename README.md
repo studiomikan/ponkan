@@ -6,11 +6,11 @@ Ponkan3 is novel-game-engine for web.
 
 ## Demo (sample game)
 
-[Ponkan3 sample game](http://okayumoka.github.io/ponkan3-samplegame)
+[Ponkan3 sample game](http://studiomikan.github.io/ponkan3-samplegame)
 
 ## Documents
 
-[Ponkan3 Documents](http://okayumoka.github.io/ponkan3-docs)
+[Ponkan3 Documents](http://studiomikan.github.io/ponkan3-docs)
 
 ## Build
 
