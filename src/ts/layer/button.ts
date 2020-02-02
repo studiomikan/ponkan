@@ -43,6 +43,13 @@ export class Button extends BaseLayer {
     this.insideFlag = false;
   }
 
+  public onMouseMove(e: PonMouseEvent): void {
+    super.onMouseMove(e);
+    if (this.buttonStatus !== "disabled") {
+      this.resource.getForeCanvasElm().style.cursor = this.resource.cursor[this.buttonStatus];
+    }
+  }
+
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
 

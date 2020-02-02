@@ -228,7 +228,6 @@ export default function(p: Ponkan3): TagAction[] {
         new TagValue("text", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.hideBreakGlyph();
         p.getLayers(values).forEach(layer => {
           layer.addChar(values.text);
         });
@@ -305,7 +304,6 @@ export default function(p: Ponkan3): TagAction[] {
         p.getLayers(values).forEach(layer => {
           layer.clearText();
         });
-        p.hideBreakGlyph();
         return "continue";
       },
     ),

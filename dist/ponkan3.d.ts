@@ -1592,6 +1592,7 @@ declare module 'ponkan3/layer/button' {
     setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void;
     onMouseEnter(e: PonMouseEvent): void;
     onMouseLeave(e: PonMouseEvent): void;
+    onMouseMove(e: PonMouseEvent): void;
     onMouseDown(e: PonMouseEvent): void;
     onMouseUp(e: PonMouseEvent): void;
     protected static buttonStoreParams: string[];
