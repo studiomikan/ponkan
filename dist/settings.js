@@ -102,7 +102,7 @@ window.PONKAN3_SETTINGS = {
 
         styleConfig: {
           // 履歴テキストの文字色
-          color: 0xFFFFFF,
+          fill: 0xFFFFFF,
 
           // 履歴テキストのフォント種別
           fontFamily: ["GenShinGothic"],
@@ -114,19 +114,19 @@ window.PONKAN3_SETTINGS = {
           pitch: 0,
 
           // 履歴テキストに影を付けるかどうか
-          shadow: true,
+          dropShadow: true,
 
           // 履歴テキストの影のalpha
-          shadowAlpha: 0.7,
+          dropShadowAlpha: 0.7,
 
           // 履歴テキストの影のぼかし
-          shadowBlur: 5,
+          dropShadowBlur: 5,
 
           // 履歴テキストの影の色
-          shadowColor: 0x000000,
+          dropShadowColor: 0x000000,
 
           // 履歴テキストの影と文字の距離
-          shadowDistance: 2,
+          dropShadowDistance: 2,
 
           // 履歴テキストの縁取りの太さ（0で非表示）
           edgeWidth: 0,
