@@ -8,9 +8,10 @@ export class PonRenderer {
   private _texture: PIXI.Texture;
   private _sprite: PIXI.Sprite;
   private _canvasElm: HTMLCanvasElement;
-  private _container: PIXI.Container;
 
-  private otherRenderer: PonRenderer | null = null;
+  private primaryContainer: PIXI.Container;
+  public readonly foreContainer: PIXI.Container;
+  public readonly backContainer: PIXI.Container;
 
   public get width(): number {
     return this._width;
@@ -27,16 +28,12 @@ export class PonRenderer {
   public get sprite(): PIXI.Sprite {
     return this._sprite;
   }
-  public get container(): PIXI.Container {
-    return this._container;
-  }
 
   public constructor(parentElm: HTMLElement, width: number, height: number) {
     this._width = width;
     this._height = height;
     this.parentElm = parentElm;
 
-    // const renderer = PIXI.autoDetectRenderer({
     const renderer = new PIXI.Renderer({
       width: this._width,
       height: this._height,
@@ -46,57 +43,68 @@ export class PonRenderer {
     this.renderer = renderer;
     parentElm.appendChild(this.renderer.view);
 
-    // this._texture = PIXI.Texture.from(this.renderer.view);
     this._sprite = PIXI.Sprite.from(this.renderer.view);
     this._texture = this._sprite.texture;
     this._sprite.width = width;
     this._sprite.height = height;
     this._canvasElm = this.renderer.view;
 
-    this._container = new PIXI.Container();
+    this.primaryContainer = new PIXI.Container();
+    // const maskSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
+    // maskSprite.width = width;
+    // maskSprite.height = height;
+    // this.primaryContainer.addChild(maskSprite);
+    // this.primaryContainer.mask = maskSprite;
 
+    this.foreContainer = new PIXI.Container();
+    this.backContainer = new PIXI.Container();
+    this.backContainer.visible = false;
+
+    this.primaryContainer.addChild(this.backContainer);
+    this.primaryContainer.addChild(this.foreContainer);
+  }
+
+  private createContainer(width: number, height: number): PIXI.Container {
+    const container = new PIXI.Container();
     const maskSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
     maskSprite.width = width;
     maskSprite.height = height;
-    this._container.addChild(maskSprite);
-    this._container.mask = maskSprite;
+    container.addChild(maskSprite);
+    container.mask = maskSprite;
+    return container;
   }
 
   public destroy(): void {
-    this.container.destroy();
+    this.foreContainer.destroy();
+    this.backContainer.destroy();
     this.parentElm.removeChild(this.renderer.view);
     this.renderer.destroy();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public draw(tick: number): void {
-    if (this.renderer == null || this._container == null) {
+  public draw(): void {
+    if (this.renderer == null) {
       return;
     }
-    if (this.otherRenderer !== null) {
-      this.otherRenderer.texture.update();
-    }
-    this.renderer.render(this._container);
+    this.renderer.render(this.primaryContainer);
   }
 
-  public addContainer(child: PIXI.Container): void {
-    this._container.addChild(child);
+  public addToFore(container: PIXI.Container): void {
+    this.foreContainer.addChild(container);
   }
 
-  public removeContainer(child: PIXI.Container): void {
-    this._container.removeChild(child);
+  public addToBack(container: PIXI.Container): void {
+    this.backContainer.addChild(container);
   }
 
-  public setOtherRenderer(renderer: PonRenderer): void {
-    this.delOtherRenderer();
-
-    this.otherRenderer = renderer;
-    this._container.addChild(renderer.sprite);
+  public removeFromFore(container: PIXI.Container): void {
+    this.foreContainer.removeChild(container);
   }
 
-  public delOtherRenderer(): void {
-    if (this.otherRenderer !== null) {
-      this._container.removeChild(this.otherRenderer.sprite);
-    }
+  public removeFromBack(container: PIXI.Container): void {
+    this.backContainer.removeChild(container);
+  }
+
+  public setBackVisible(visible: boolean): void {
+    this.backContainer.visible = visible;
   }
 }

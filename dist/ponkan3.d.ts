@@ -548,8 +548,7 @@ declare module 'ponkan3/base/pon-game' {
       config: any;
       isLocked: boolean;
       readonly resource: Resource;
-      readonly foreRenderer: PonRenderer;
-      readonly backRenderer: PonRenderer;
+      readonly renderer: PonRenderer;
       _fixedScaleWidth: number;
       _fixedScaleHeight: number;
       protected conductorStack: Conductor[];
@@ -598,7 +597,6 @@ declare module 'ponkan3/base/pon-game' {
       onChangeStable(isStable: boolean): void;
       onReturnSubroutin(forceStart?: boolean): void;
       onError(e: Error): void;
-      clearLayer(): void;
       addForePrimaryLayer(layer: BaseLayer): BaseLayer;
       addBackPrimaryLayer(layer: BaseLayer): BaseLayer;
       removeForePrimaryLayer(layer: BaseLayer): void;
@@ -1183,8 +1181,7 @@ declare module 'ponkan3/base/resource' {
       macroParams: object | null;
       commandShortcut: any;
       constructor(ponGame: PonGame, basePath?: string, gameVersion?: string);
-      getForeCanvasElm(): HTMLCanvasElement;
-      getBackCanvasElm(): HTMLCanvasElement;
+      getCanvasElm(): HTMLCanvasElement;
       saveSystemData(saveDataPrefix: string): void;
       loadSystemData(saveDataPrefix: string): void;
       existSystemData(saveDataPrefix: string): boolean;
@@ -1280,6 +1277,7 @@ declare module 'ponkan3/base/base-layer-text' {
       get alpha(): number;
       constructor(ch: string, style: TextStyle, x: number, y: number);
       addTo(container: PIXI.Container): LayerChar;
+      static CloneParams: string[];
       clone(): LayerChar;
       destroy(): void;
       /**
@@ -1292,8 +1290,6 @@ declare module 'ponkan3/base/base-layer-text' {
   export class LayerTextLine {
       readonly container: PIXI.Container;
       lineHeight: number;
-      readonly chList: LayerChar[];
-      readonly rubyList: LayerChar[];
       set x(x: number);
       get x(): number;
       set y(y: number);
@@ -1515,19 +1511,21 @@ declare module 'ponkan3/base/pon-renderer' {
   import * as PIXI from "pixi.js";
   export class PonRenderer {
     readonly renderer: PIXI.Renderer;
+    readonly foreContainer: PIXI.Container;
+    readonly backContainer: PIXI.Container;
     get width(): number;
     get height(): number;
     get canvasElm(): HTMLCanvasElement;
     get texture(): PIXI.Texture;
     get sprite(): PIXI.Sprite;
-    get container(): PIXI.Container;
     constructor(parentElm: HTMLElement, width: number, height: number);
     destroy(): void;
-    draw(tick: number): void;
-    addContainer(child: PIXI.Container): void;
-    removeContainer(child: PIXI.Container): void;
-    setOtherRenderer(renderer: PonRenderer): void;
-    delOtherRenderer(): void;
+    draw(): void;
+    addToFore(container: PIXI.Container): void;
+    addToBack(container: PIXI.Container): void;
+    removeFromFore(container: PIXI.Container): void;
+    removeFromBack(container: PIXI.Container): void;
+    setBackVisible(visible: boolean): void;
   }
 }
 
