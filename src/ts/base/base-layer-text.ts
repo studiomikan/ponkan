@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { Ease } from "./util";
+import { Ease, objSort, objEquals } from "./util";
 
 export type InEffectType = "alpha" | "move" | "alphamove";
 export type TextColor = string | number | string[] | number[] | CanvasGradient | CanvasPattern;
@@ -8,6 +8,47 @@ enum InEffectState {
   Stop = 0,
   Run,
 }
+
+export class TextSpriteCache {
+  public static MAX_SIZE: number = 5000;
+  public static ENABLED: boolean = true;
+  private map = new Map<string, PIXI.Text>();
+
+  private genKey(ch: string, style: TextStyle): string {
+    const tmp: any = { ch, style: objSort(style.toJson()) };
+    return JSON.stringify(tmp);
+  }
+
+  // public has(ch: string, style: TextStyle): boolean {
+  //   return this.map.has(this.genKey(ch, style));
+  // }
+
+  public get(ch: string, style: TextStyle): PIXI.Sprite | null {
+    if (TextSpriteCache.ENABLED) {
+      const cache: PIXI.Text | undefined = this.map.get(this.genKey(ch, style));
+      if (cache == null) {
+        return null;
+      }
+      const sp: PIXI.Sprite = new PIXI.Sprite(cache.texture.clone());
+      return sp;
+    } else {
+      return null;
+    }
+  }
+
+  public set(ch: string, style: TextStyle, text: PIXI.Text): void {
+    if (TextSpriteCache.ENABLED) {
+      const key: string = this.genKey(ch, style);
+      this.map.set(key, text);
+      // キャッシュ数を抑制
+      if (this.map.size > TextSpriteCache.MAX_SIZE) {
+        this.map.delete(this.map.keys().next().value);
+      }
+    }
+  }
+}
+
+const textCache = new TextSpriteCache();
 
 const defaultTextStyle = {
   // for PIXI.TextStyle
@@ -143,6 +184,10 @@ export class TextStyle extends PIXI.TextStyle {
   public async restore(data: any, tick: number, clear: boolean): Promise<void> {
     TextStyle.assign(this as any, data);
   }
+
+  public toJson(): any {
+    return TextStyle.assign({}, this);
+  }
 }
 
 /**
@@ -150,13 +195,12 @@ export class TextStyle extends PIXI.TextStyle {
  * 文字と位置などの情報のみ持ち、canvasなどは持たない。
  */
 export class LayerChar {
-  public readonly pixiText: PIXI.Text;
+  public readonly pixiSprite: PIXI.Sprite;
+  public readonly fromCache: boolean;
   public readonly ch: string;
   public readonly style: TextStyle;
   private _x: number = 0;
   private _y: number = 0;
-  // public width: number = 0;
-  // public alpha: number = 1.0;
 
   private inEffectState: InEffectState = InEffectState.Stop;
   private inEffectStartTick: number = -1;
@@ -175,28 +219,39 @@ export class LayerChar {
     this.refreshPosition();
   }
   public get y(): number {
-    return this.pixiText.y;
+    return this.pixiSprite.y;
   }
   public set width(width: number) {
-    this.pixiText.width = width;
+    this.pixiSprite.width = width;
   }
   public get width(): number {
-    return this.pixiText.width;
+    return this.pixiSprite.width;
   }
   public set alpha(alpha: number) {
-    this.pixiText.alpha = alpha;
+    this.pixiSprite.alpha = alpha;
   }
   public get alpha(): number {
-    return this.pixiText.alpha;
+    return this.pixiSprite.alpha;
   }
 
   public constructor(ch: string, style: TextStyle, x: number, y: number) {
     this.style = style.clone();
     this.ch = ch;
-    this.pixiText = new PIXI.Text(ch, this.style);
+
+    const cacheSprite = textCache.get(this.ch, this.style);
+    if (cacheSprite != null) {
+      this.pixiSprite = cacheSprite;
+      this.fromCache = true;
+    } else {
+      const text: PIXI.Text = new PIXI.Text(ch, this.style);
+      textCache.set(this.ch, this.style, text);
+      this.pixiSprite = text;
+      this.fromCache = false;
+    }
+
     this.x = x;
     this.y = y;
-    this.width = this.pixiText.width + style.pitch;
+    this.width = this.pixiSprite.width + style.pitch;
     this.style.checkOptions();
     if (this.style.inEffectTypes != null && this.style.inEffectTypes.length > 0) {
       this.inEffectState = InEffectState.Run;
@@ -204,7 +259,7 @@ export class LayerChar {
   }
 
   public addTo(container: PIXI.Container): LayerChar {
-    container.addChild(this.pixiText);
+    container.addChild(this.pixiSprite);
     return this;
   }
 
@@ -213,9 +268,11 @@ export class LayerChar {
   }
 
   public destroy(): void {
-    if (this.pixiText.parent) {
-      this.pixiText.parent.removeChild(this.pixiText);
-      this.pixiText.destroy();
+    if (this.pixiSprite.parent) {
+      this.pixiSprite.parent.removeChild(this.pixiSprite);
+      if (this.fromCache) {
+        this.pixiSprite.destroy();
+      }
     }
   }
 
@@ -262,8 +319,8 @@ export class LayerChar {
   }
 
   private refreshPosition(): void {
-    this.pixiText.x = this._x + this._offsetX;
-    this.pixiText.y = this._y + this._offsetY;
+    this.pixiSprite.x = this._x + this._offsetX;
+    this.pixiSprite.y = this._y + this._offsetY;
   }
 
   private InEffectAlpha(elapsedTime: number, phase: number): void {
