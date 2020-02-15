@@ -279,7 +279,7 @@ export class LayerChar {
 
 export class LayerTextLine {
   public readonly container: PIXI.Container = new PIXI.Container();
-  // public lineHeight: number = 0;
+  public lineHeight: number = 0;
   public readonly chList: LayerChar[] = [];
   public readonly rubyList: LayerChar[] = [];
 
@@ -353,7 +353,7 @@ export class LayerTextLine {
     });
     this.rubyList.splice(0, this.rubyList.length);
     this.container.removeChildren();
-    // this.lineHeight = 0;
+    this.lineHeight = 0;
     this.rubyText = "";
     this.rubyFontSize = 10;
     this.rubyOffset = 2;
@@ -361,10 +361,10 @@ export class LayerTextLine {
   }
 
   public addChar(ch: string, style: TextStyle, lineHeight: number): void {
-    // if (this.lineHeight < lineHeight) {
-    //   // 自動で行の高さを拡張
-    //   this.lineHeight = lineHeight;
-    // }
+    if (this.lineHeight < lineHeight) {
+      // 自動で行の高さを拡張
+      this.lineHeight = lineHeight;
+    }
     const x = this._textX;
     const y = lineHeight - +style.fontSize;
     const c = new LayerChar(ch, style, x, y).addTo(this.container);
@@ -388,17 +388,17 @@ export class LayerTextLine {
     for (let i = 0; i < rubyText.length; i++) {
       const ruby = new LayerChar(rubyText.charAt(i), rubyStyle, 0, 0).addTo(this.container); // 位置は一旦0,0で作る
       tmpRubyList.push(ruby);
-      rubyWidthSum += ruby.width;
+      rubyWidthSum += ruby.width + pitch;
     }
     rubyWidthSum -= pitch; // 最後の一文字のpitchは幅に含めない
     // 追加対象の文字に対して中央揃えとなるように配置する
-    // const rubyY = targetChar.y - targetChar.style.fontSize - this.rubyOffset;
-    const rubyY = -this.rubyOffset;
+    // const rubyY = targetChar.y - +targetChar.style.fontSize - this.rubyOffset; // 文字位置を基準に配置
+    const rubyY = -this.rubyOffset; // 行高を基準に配置
     let rubyX = center - rubyWidthSum / 2;
     tmpRubyList.forEach((ruby: LayerChar) => {
       ruby.y = rubyY;
       ruby.x = rubyX;
-      rubyX += ruby.width;
+      rubyX += ruby.width + pitch;
       this.rubyList.push(ruby);
     });
   }
