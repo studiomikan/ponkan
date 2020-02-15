@@ -174,6 +174,7 @@ export class Resource {
         }
       };
       xhr.open("GET", this.getPath(filePath), true);
+      xhr.overrideMimeType("text/plain; charset=UTF-8");
       xhr.send();
     });
   }

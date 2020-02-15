@@ -1221,12 +1221,12 @@ export class Ponkan3 extends PonGame {
           lay.y = mesLay.y + glyphPos.y + (lineHeight - lay.height) / 2;
           break;
         case "text-top":
-          lay.y = mesLay.y + glyphPos.y + lineHeight - mesLay.textCanvas.style.fontSize;
+          lay.y = mesLay.y + glyphPos.y + lineHeight - +mesLay.textCanvas.style.fontSize;
           break;
         case "text-middle":
           {
-            const textTop = glyphPos.y + lineHeight - mesLay.textCanvas.style.fontSize;
-            lay.y = mesLay.y + textTop + (mesLay.textCanvas.style.fontSize - lay.height) / 2;
+            const textTop = glyphPos.y + lineHeight - +mesLay.textCanvas.style.fontSize;
+            lay.y = mesLay.y + textTop + (+mesLay.textCanvas.style.fontSize - lay.height) / 2;
           }
           break;
       }

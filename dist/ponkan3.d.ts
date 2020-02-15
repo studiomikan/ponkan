@@ -1231,87 +1231,73 @@ declare module 'ponkan3/base/resource' {
 declare module 'ponkan3/base/base-layer-text' {
   import * as PIXI from "pixi.js";
   export type InEffectType = "alpha" | "move" | "alphamove";
+  export type TextColor = string | number | string[] | number[] | CanvasGradient | CanvasPattern;
+  export class TextSpriteCache {
+      static MAX_SIZE: number;
+      static ENABLED: boolean;
+      get(ch: string, style: TextStyle): PIXI.Sprite | null;
+      set(ch: string, style: TextStyle, text: PIXI.Text): void;
+  }
   /**
     * テキストスタイル
     */
-  export class TextStyle {
-      static METRICS_STRING: string;
-      fontFamily: string[];
-      fontSize: number;
-      fontWeight: string | number;
-      fontStyle: "normal" | "italic";
-      color: string[];
-      textBaseline: CanvasTextBaseline;
-      shadow: boolean;
-      _shadowAlpha: number;
-      _shadowColor: string;
-      shadowAngle: number;
-      shadowBlur: number;
-      shadowDistance: number;
-      edgeWidth: number;
-      _edgeColor: string;
-      _edgeAlpha: number;
+  export class TextStyle extends PIXI.TextStyle {
       pitch: number;
-      fillGradientStops: number[];
-      fillGradientType: "vertical" | "horizontal";
       inEffectTypes: InEffectType[];
       inEffectTime: number;
       inEffectEase: "none" | "in" | "out" | "both";
       inEffectOptions: any;
-      setColor(color: number | string | any[]): void;
-      get shadowColor(): string;
-      set shadowColor(shadowColor: string);
-      setShadowColor(c: number | string): void;
-      get shadowAlpha(): number;
-      set shadowAlpha(shadowAlpha: number);
-      get edgeColor(): string;
-      set edgeColor(edgeColor: string);
-      setEdgeColor(c: number | string): void;
-      get edgeAlpha(): number;
+      constructor();
+      setGradientType(type: "vertical" | "horizontal"): void;
+      set edgeWidth(edgeWidth: number);
+      get edgeWidth(): number;
       set edgeAlpha(edgeAlpha: number);
-      get fontFamilyStr(): string;
-      get font(): string;
-      get shadowColorStr(): string;
-      get edgeColorStr(): string;
-      measureText(context: CanvasRenderingContext2D, text: string): TextMetrics;
-      getChWidth(context: CanvasRenderingContext2D, ch: string): number;
-      applyStyleTo(context: CanvasRenderingContext2D, offsetX: number, offsetY: number): void;
-      applyShadowTo(context: CanvasRenderingContext2D): void;
-      clearShadowFrom(context: CanvasRenderingContext2D): void;
+      get edgeAlpha(): number;
       checkOptions(): void;
       clone(): TextStyle;
+      static assign(target: any, source: any): TextStyle;
       applyConfig(config: any): void;
-      resetGradientBuffer(): void;
       store(tick: number): any;
       restore(data: any, tick: number, clear: boolean): Promise<void>;
+      toJson(): any;
   }
   /**
     * レイヤーに描画する文字の情報。
     * 文字と位置などの情報のみ持ち、canvasなどは持たない。
     */
   export class LayerChar {
+      readonly pixiSprite: PIXI.Sprite;
+      readonly fromCache: boolean;
       readonly ch: string;
       readonly style: TextStyle;
-      x: number;
-      y: number;
-      width: number;
-      alpha: number;
-      constructor(context: CanvasRenderingContext2D, ch: string, style: TextStyle, x: number, y: number);
-      clone(context: CanvasRenderingContext2D): LayerChar;
+      set x(x: number);
+      get x(): number;
+      set y(y: number);
+      get y(): number;
+      set width(width: number);
+      get width(): number;
+      set alpha(alpha: number);
+      get alpha(): number;
+      constructor(ch: string, style: TextStyle, x: number, y: number);
+      addTo(container: PIXI.Container): LayerChar;
+      clone(): LayerChar;
+      destroy(): void;
       /**
         * 描画前の更新
         * @param tick 時刻
         * @return 更新があった場合はtrue
         */
       beforeDraw(tick: number): boolean;
-      draw(context: CanvasRenderingContext2D, tick: number, offsetX: number, offsetY: number): void;
   }
   export class LayerTextLine {
-      x: number;
-      y: number;
+      readonly container: PIXI.Container;
       lineHeight: number;
       readonly chList: LayerChar[];
       readonly rubyList: LayerChar[];
+      set x(x: number);
+      get x(): number;
+      set y(y: number);
+      get y(): number;
       get text(): string;
       get textX(): number;
       get tailChar(): string;
@@ -1319,8 +1305,9 @@ declare module 'ponkan3/base/base-layer-text' {
       get width(): number;
       forEach(func: (ch: LayerChar, index: number) => void): void;
       destroy(): void;
+      addTo(container: PIXI.Container): LayerTextLine;
       clear(): void;
-      addChar(context: CanvasRenderingContext2D, ch: string, style: TextStyle, lineHeight: number): void;
+      addChar(ch: string, style: TextStyle, lineHeight: number): void;
       reserveRubyText(rubyText: string, rubyFontSize: number, rubyOffset: number, rubyPitch: number): void;
       getCh(index: number): LayerChar;
       getTailCh(): LayerChar;
@@ -1331,13 +1318,9 @@ declare module 'ponkan3/base/base-layer-text' {
         * @return 更新があった場合はtrue
         */
       beforeDraw(tick: number): boolean;
-      draw(context: CanvasRenderingContext2D, tick: number): void;
-      copyTo(context: CanvasRenderingContext2D, dest: LayerTextLine): void;
+      copyTo(dest: LayerTextLine): void;
   }
   export class LayerTextCanvas {
-      readonly canvas: HTMLCanvasElement;
-      readonly context: CanvasRenderingContext2D;
-      readonly sprite: PIXI.Sprite;
       /** 禁則文字（行頭禁則文字） */
       static headProhibitionChar: string;
       /** 禁則文字（行末禁則文字） */
@@ -1364,8 +1347,8 @@ declare module 'ponkan3/base/base-layer-text' {
       set height(height: number);
       get text(): string;
       constructor();
+      addTo(parent: PIXI.Container): LayerTextCanvas;
       beforeDraw(tick: number): void;
-      draw(tick: number): void;
       get currentLine(): LayerTextLine;
       addText(text: string): void;
       addChar(ch: string): void;
@@ -1430,7 +1413,6 @@ declare module 'ponkan3/base/base-layer-text' {
       copyTo(dest: LayerTextCanvas): void;
       store(tick: number): any;
       restore(data: any, tick: number, clear: boolean): Promise<void>;
-      measureText(text?: string): TextMetrics;
       /**
         * コンフィグを反映する。
         * このメソッドでは単純に値の設定のみ行うため、

@@ -90,13 +90,13 @@ export default function(p: Ponkan3): TagAction[] {
             layer.textCanvas.style.fontStyle = values.fontstyle;
           }
           if (values.color != null) {
-            layer.textCanvas.style.setColor(values.color);
+            layer.textCanvas.style.fill = values.color;
           }
           if (values.gradientstops != null) {
             layer.textCanvas.style.fillGradientStops = values.gradientstops;
           }
           if (values.gradienttype != null) {
-            layer.textCanvas.style.fillGradientType = values.gradienttype;
+            layer.textCanvas.style.setGradientType(values.gradienttype);
           }
           if (values.margint != null) {
             layer.textCanvas.marginTop = values.margint;
@@ -123,28 +123,28 @@ export default function(p: Ponkan3): TagAction[] {
             layer.textCanvas.align = values.align;
           }
           if (values.shadow != null) {
-            layer.textCanvas.style.shadow = values.shadow;
+            layer.textCanvas.style.dropShadow = values.shadow;
           }
           if (values.shadowalpha != null) {
-            layer.textCanvas.style.shadowAlpha = values.shadowalpha;
+            layer.textCanvas.style.dropShadowAlpha = values.shadowalpha;
           }
           if (values.shadowangle != null) {
-            layer.textCanvas.style.shadowAngle = values.shadowangle;
+            layer.textCanvas.style.dropShadowAngle = values.shadowangle;
           }
           if (values.shadowblur != null) {
-            layer.textCanvas.style.shadowBlur = values.shadowblur;
+            layer.textCanvas.style.dropShadowBlur = values.shadowblur;
           }
           if (values.shadowcolor != null) {
-            layer.textCanvas.style.setShadowColor(values.shadowcolor);
+            layer.textCanvas.style.dropShadowColor = values.shadowcolor;
           }
           if (values.shadowdistance != null) {
-            layer.textCanvas.style.shadowDistance = values.shadowdistance;
+            layer.textCanvas.style.dropShadowDistance = values.shadowdistance;
           }
           if (values.edgewidth != null) {
-            layer.textCanvas.style.edgeWidth = values.edgewidth;
+            layer.textCanvas.style.strokeThickness = values.edgewidth;
           }
           if (values.edgecolor != null) {
-            layer.textCanvas.style.setEdgeColor(values.edgecolor);
+            layer.textCanvas.style.stroke = values.edgecolor;
           }
           if (values.edgealpha != null) {
             layer.textCanvas.style.edgeAlpha = values.edgealpha;
