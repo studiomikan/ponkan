@@ -89,7 +89,7 @@ class SimpleButton extends BaseLayer {
     this.status = status;
     const c = { normal: 0, over: 1, on: 2 }[status];
     this.setBackgroundColor(this.bgColors[c], this.bgAlphas[c]);
-    this.resource.getForeCanvasElm().style.cursor = this.resource.cursor[status];
+    this.resource.getCanvasElm().style.cursor = this.resource.cursor[status];
   }
 
   public onMouseEnter(e: PonMouseEvent): void {
@@ -134,7 +134,7 @@ class SimpleButton extends BaseLayer {
         return;
       }
       this.mouseUp(this);
-      this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
+      this.resource.getCanvasElm().style.cursor = this.resource.cursor.normal;
     }
   }
 }
@@ -225,14 +225,14 @@ class ScrollBar extends BaseLayer {
   public onMouseEnter(e: PonMouseEvent): void {
     super.onMouseEnter(e);
 
-    this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
+    this.resource.getCanvasElm().style.cursor = this.resource.cursor.over;
     e.stopPropagation();
   }
 
   public onMouseLeave(e: PonMouseEvent): void {
     super.onMouseLeave(e);
 
-    this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
+    this.resource.getCanvasElm().style.cursor = this.resource.cursor.normal;
     e.stopPropagation();
   }
 
@@ -245,7 +245,7 @@ class ScrollBar extends BaseLayer {
     super.onMouseMove(e);
 
     if (this.bar.down || this.isInsideEvent(e)) {
-      this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
+      this.resource.getCanvasElm().style.cursor = this.resource.cursor.over;
     }
     if (this.bar.down) {
       this.setBarY(e.y - this.bar.downY);
@@ -262,7 +262,7 @@ class ScrollBar extends BaseLayer {
 
     if (this.bar.down || this.isInsideEvent(e)) {
       this.setBarY(e.y - this.bar.height / 2);
-      this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
+      this.resource.getCanvasElm().style.cursor = this.resource.cursor.normal;
       this.onChangeCallback(this);
       // FIXME eの中身がおかしいが、現状使ってないのでこのまま
       this.bar.onMouseUp(new PonMouseEvent(0, 0, 0));
@@ -598,7 +598,7 @@ export class HistoryLayer extends BaseLayer {
     this.closeButton.setCallbacks({
       onMouseUp: () => {
         this.hide();
-        this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
+        this.resource.getCanvasElm().style.cursor = this.resource.cursor.normal;
       },
     });
     this.closeButton.visible = true;
@@ -721,7 +721,7 @@ export class HistoryLayer extends BaseLayer {
         // スクロール操作中ははみ出ても操作できるようにする
         const e2 = new PonMouseEvent(e.x - sb.x, e.y - sb.y, e.button);
         this.scrollBar.onMouseUp(e2);
-        this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
+        this.resource.getCanvasElm().style.cursor = this.resource.cursor.normal;
       }
     }
     if (e.isRight) {

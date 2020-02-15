@@ -51,12 +51,8 @@ export class Resource {
     this.bufferCanvasContext = context;
   }
 
-  public getForeCanvasElm(): HTMLCanvasElement {
-    return this.ponGame.foreRenderer.canvasElm;
-  }
-
-  public getBackCanvasElm(): HTMLCanvasElement {
-    return this.ponGame.backRenderer.canvasElm;
+  public getCanvasElm(): HTMLCanvasElement {
+    return this.ponGame.renderer.canvasElm;
   }
 
   public saveSystemData(saveDataPrefix: string): void {

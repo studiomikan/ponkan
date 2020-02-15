@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { Ease, objSort, objEquals } from "./util";
+import { Ease, objSort } from "./util";
 
 export type InEffectType = "alpha" | "move" | "alphamove";
 export type TextColor = string | number | string[] | number[] | CanvasGradient | CanvasPattern;
@@ -263,8 +263,15 @@ export class LayerChar {
     return this;
   }
 
+  public static CloneParams = ["inEffectState", "inEffectStartTick", "_offsetX", "_offsetY", "alpha"];
+
   public clone(): LayerChar {
-    return Object.assign(new LayerChar(this.ch, this.style.clone(), this.x, this.y), this);
+    const me: any = this as any;
+    const c: any = new LayerChar(this.ch, this.style.clone(), this.x, this.y) as any;
+    LayerChar.CloneParams.forEach(param => {
+      c[param] = me[param];
+    });
+    return c;
   }
 
   public destroy(): void {
@@ -337,8 +344,8 @@ export class LayerChar {
 export class LayerTextLine {
   public readonly container: PIXI.Container = new PIXI.Container();
   public lineHeight: number = 0;
-  public readonly chList: LayerChar[] = [];
-  public readonly rubyList: LayerChar[] = [];
+  private chList: LayerChar[] = [];
+  private rubyList: LayerChar[] = [];
 
   private _textX: number = 0;
 
@@ -404,11 +411,11 @@ export class LayerTextLine {
     this.chList.forEach((ch: LayerChar) => {
       ch.destroy();
     });
-    this.chList.splice(0, this.chList.length);
+    this.chList = [];
     this.rubyList.forEach((ruby: LayerChar) => {
       ruby.destroy();
     });
-    this.rubyList.splice(0, this.rubyList.length);
+    this.rubyList = [];
     this.container.removeChildren();
     this.lineHeight = 0;
     this.rubyText = "";
