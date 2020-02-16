@@ -24,7 +24,6 @@ module.exports = {
     extensions:['.ts', '.js', '.json']
   },
   plugins: [
-    // new UglifyJSPlugin(),
     new CopyWebpackPlugin(
       [ { from: '', to: '', }, ],
       { context: 'test/test.html' }
