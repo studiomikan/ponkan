@@ -1244,10 +1244,10 @@ declare module 'ponkan3/base/base-layer-text' {
       inEffectTime: number;
       inEffectEase: "none" | "in" | "out" | "both";
       inEffectOptions: any;
-      constructor();
+      constructor(opts?: any);
       setGradientType(type: "vertical" | "horizontal"): void;
-      set edgeWidth(edgeWidth: number);
-      get edgeWidth(): number;
+      set edgeColor(edgeColor: number | string);
+      get edgeColor(): number | string;
       set edgeAlpha(edgeAlpha: number);
       get edgeAlpha(): number;
       checkOptions(): void;
@@ -1304,16 +1304,15 @@ declare module 'ponkan3/base/base-layer-text' {
       addTo(container: PIXI.Container): LayerTextLine;
       clear(): void;
       addChar(ch: string, style: TextStyle, lineHeight: number): void;
-      reserveRubyText(rubyText: string, rubyFontSize: number, rubyOffset: number, rubyPitch: number): void;
+      reserveRubyText(rubyText: string, rubyOffset: number, rubyStyle: TextStyle): void;
       getCh(index: number): LayerChar;
       getTailCh(): LayerChar;
       backspace(): void;
       /**
         * 描画前更新
         * @param tick 時刻
-        * @return 更新があった場合はtrue
         */
-      beforeDraw(tick: number): boolean;
+      beforeDraw(tick: number): void;
       copyTo(dest: LayerTextLine): void;
   }
   export class LayerTextCanvas {
@@ -1324,6 +1323,7 @@ declare module 'ponkan3/base/base-layer-text' {
       style: TextStyle;
       lineHeight: number;
       linePitch: number;
+      rubyStyle: TextStyle;
       marginTop: number;
       marginRight: number;
       marginBottom: number;
@@ -1334,9 +1334,7 @@ declare module 'ponkan3/base/base-layer-text' {
       reservedIndentPoint: number | null;
       reservedIndentClear: boolean;
       align: "left" | "center" | "right";
-      rubyFontSize: number;
       rubyOffset: number;
-      rubyPitch: number;
       get width(): number;
       set width(width: number);
       get height(): number;

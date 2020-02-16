@@ -40,7 +40,7 @@
   fontweight: "normal",
   fontstyle: "normal",
   color: "0xFFFFFF",
-  pitch: 2,
+  pitch: 0,
   lineheight: 26,
   linepitch: 10,
   align: "left",
