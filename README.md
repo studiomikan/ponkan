@@ -28,7 +28,12 @@ $ npm run build
 
 ## Docker
 
-TODO
+```bash
+$ docker-compose build
+$ docker-compose up
+
+# open http://localhost:8080/
+```
 
 ## Browser Support
 
