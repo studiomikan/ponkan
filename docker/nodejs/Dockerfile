@@ -1,3 +1,2 @@
-FROM node:10
+FROM node:12
 EXPOSE 3000
-
