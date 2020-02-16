@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { Ease, objSort } from "./util";
+import { Ease, objSort, objExtend, objClone } from "./util";
 
 export type InEffectType = "alpha" | "move" | "alphamove";
 export type TextColor = string | number | string[] | number[] | CanvasGradient | CanvasPattern;
@@ -54,13 +54,13 @@ const defaultTextStyle = {
   // for PIXI.TextStyle
   align: "left",
   breakWords: false,
-  dropShadow: false,
-  dropShadowAlpha: 1,
+  dropShadow: true,
+  dropShadowAlpha: 0.7,
   dropShadowAngle: Math.PI / 6,
-  dropShadowBlur: 0,
-  dropShadowColor: "black",
-  dropShadowDistance: 5,
-  fill: "black",
+  dropShadowBlur: 5,
+  dropShadowColor: "#000000",
+  dropShadowDistance: 2,
+  fill: "#FFFFFF",
   fillGradientType: PIXI.TEXT_GRADIENT.LINEAR_VERTICAL,
   fillGradientStops: [],
   fontFamily: "Arial",
@@ -73,7 +73,7 @@ const defaultTextStyle = {
   lineJoin: "miter",
   miterLimit: 10,
   padding: 0,
-  stroke: "black",
+  stroke: "#000000",
   strokeThickness: 0,
   textBaseline: "alphabetic",
   trim: false,
@@ -82,18 +82,29 @@ const defaultTextStyle = {
   wordWrapWidth: 100,
   leading: 0,
   // for Ponkan
+  edgeColor: "#000000",
   edgeAlpha: 1.0,
-  pitch: 1,
+  pitch: 0,
   inEffectTypes: [],
   inEffectTime: 100,
   inEffectEase: "none",
   inEffectOptions: {},
 };
 
+const defaultRubyTextStyle = objExtend(objClone(defaultTextStyle), {
+  dropShadow: false,
+  fill: "#FFFFFF",
+  fontFamily: "Arial",
+  fontSize: 10,
+  strokeThickness: 0,
+  pitch: 0,
+});
+
 /**
  * テキストスタイル
  */
 export class TextStyle extends PIXI.TextStyle {
+  private _edgeColor: number | string = 1;
   private _edgeAlpha: number = 1;
   public pitch: number = 0;
 
@@ -102,8 +113,8 @@ export class TextStyle extends PIXI.TextStyle {
   public inEffectEase: "none" | "in" | "out" | "both" = "none";
   public inEffectOptions: any = {};
 
-  constructor() {
-    super(defaultTextStyle as any);
+  constructor(opts: any = defaultTextStyle) {
+    super(opts);
     this.edgeAlpha = 1;
   }
 
@@ -115,25 +126,29 @@ export class TextStyle extends PIXI.TextStyle {
     }
   }
 
-  public set edgeWidth(edgeWidth: number) {
-    this.strokeThickness = edgeWidth;
+  public set edgeColor(edgeColor: number | string) {
+    this._edgeColor = edgeColor;
+    this.resetStroke();
   }
-  public get edgeWidth(): number {
-    return this.strokeThickness;
+  public get edgeColor(): number | string {
+    return this._edgeColor;
   }
   public set edgeAlpha(edgeAlpha: number) {
-    const edge: number | string = this.stroke;
-    let rgb: number[];
-    if (typeof edge === "number") {
-      rgb = PIXI.utils.hex2rgb(edge);
-    } else {
-      rgb = PIXI.utils.hex2rgb(PIXI.utils.string2hex(edge));
-    }
-    this.stroke = `rgba(${rgb[0] * 255},${rgb[1] * 255},${rgb[2] * 255},${edgeAlpha})`;
     this._edgeAlpha = edgeAlpha;
+    this.resetStroke();
   }
   public get edgeAlpha(): number {
     return this._edgeAlpha;
+  }
+
+  private resetStroke(): void {
+    let rgb: number[];
+    if (typeof this._edgeColor === "number") {
+      rgb = PIXI.utils.hex2rgb(this._edgeColor);
+    } else {
+      rgb = PIXI.utils.hex2rgb(PIXI.utils.string2hex(this._edgeColor));
+    }
+    this.stroke = `rgba(${rgb[0] * 255},${rgb[1] * 255},${rgb[2] * 255},${this._edgeAlpha})`;
   }
 
   public checkOptions(): void {
@@ -350,9 +365,8 @@ export class LayerTextLine {
   private _textX: number = 0;
 
   private rubyText: string = "";
-  private rubyFontSize: number = 10;
-  private rubyOffset: number = 2;
-  private rubyPitch: number = 2;
+  private rubyOffset: number = 0;
+  private rubyStyle: TextStyle = new TextStyle(defaultRubyTextStyle);
 
   public set x(x: number) {
     this.container.x = x;
@@ -419,9 +433,8 @@ export class LayerTextLine {
     this.container.removeChildren();
     this.lineHeight = 0;
     this.rubyText = "";
-    this.rubyFontSize = 10;
-    this.rubyOffset = 2;
-    this.rubyPitch = 2;
+    this.rubyOffset = 0;
+    this.rubyStyle = new TextStyle(defaultRubyTextStyle);
   }
 
   public addChar(ch: string, style: TextStyle, lineHeight: number): void {
@@ -436,16 +449,16 @@ export class LayerTextLine {
     this.chList.push(c);
     // ルビがあったら追加する
     if (this.rubyText !== "") {
-      this.addRubyText(c, style);
+      this.addRubyText(c);
       this.rubyText = "";
     }
   }
 
-  private addRubyText(targetChar: LayerChar, srcTextStyle: TextStyle): void {
-    const rubyStyle = srcTextStyle.clone();
-    rubyStyle.fontSize = this.rubyFontSize;
+  private addRubyText(targetChar: LayerChar): void {
+    console.log(this.rubyStyle);
+    const rubyStyle = this.rubyStyle;
     const rubyText = this.rubyText;
-    const pitch = this.rubyPitch;
+    const pitch = this.rubyStyle.pitch;
     const center = targetChar.x + targetChar.width / 2;
     const tmpRubyList: LayerChar[] = [];
     let rubyWidthSum = 0;
@@ -457,7 +470,7 @@ export class LayerTextLine {
     rubyWidthSum -= pitch; // 最後の一文字のpitchは幅に含めない
     // 追加対象の文字に対して中央揃えとなるように配置する
     // const rubyY = targetChar.y - +targetChar.style.fontSize - this.rubyOffset; // 文字位置を基準に配置
-    const rubyY = -this.rubyOffset; // 行高を基準に配置
+    const rubyY = -(+this.rubyStyle.fontSize + this.rubyOffset); // 行高を基準に配置
     let rubyX = center - rubyWidthSum / 2;
     tmpRubyList.forEach((ruby: LayerChar) => {
       ruby.y = rubyY;
@@ -467,11 +480,10 @@ export class LayerTextLine {
     });
   }
 
-  public reserveRubyText(rubyText: string, rubyFontSize: number, rubyOffset: number, rubyPitch: number): void {
+  public reserveRubyText(rubyText: string, rubyOffset: number, rubyStyle: TextStyle): void {
     this.rubyText = rubyText;
-    this.rubyFontSize = rubyFontSize;
     this.rubyOffset = rubyOffset;
-    this.rubyPitch = rubyPitch;
+    this.rubyStyle = rubyStyle.clone();
   }
 
   public getCh(index: number): LayerChar {
@@ -490,16 +502,11 @@ export class LayerTextLine {
   /**
    * 描画前更新
    * @param tick 時刻
-   * @return 更新があった場合はtrue
    */
-  public beforeDraw(tick: number): boolean {
-    let updated = false;
+  public beforeDraw(tick: number): void {
     this.chList.forEach(ch => {
-      if (ch.beforeDraw(tick)) {
-        updated = true;
-      }
+      ch.beforeDraw(tick);
     });
-    return updated;
   }
 
   private static storeParams: string[] = [
@@ -542,25 +549,25 @@ export class LayerTextCanvas {
   private _height: number = 32;
 
   private lines: LayerTextLine[] = [];
-  private updated: boolean = true; // 描画しなおすかどうかフラグ
 
   public style: TextStyle = new TextStyle();
-  public lineHeight: number = 0;
-  public linePitch: number = 5;
+  public lineHeight: number = 26;
+  public linePitch: number = 10;
+  public rubyStyle: TextStyle = new TextStyle(defaultRubyTextStyle);
 
-  public marginTop: number = 10;
-  public marginRight: number = 10;
-  public marginBottom: number = 10;
-  public marginLeft: number = 10;
+  public marginTop: number = 20;
+  public marginRight: number = 20;
+  public marginBottom: number = 20;
+  public marginLeft: number = 20;
   public autoReturn: boolean = true;
   public locatePoint: number | null = null;
   public indentPoint: number | null = null;
   public reservedIndentPoint: number | null = null;
   public reservedIndentClear: boolean = false;
   public align: "left" | "center" | "right" = "left";
-  public rubyFontSize: number = 10;
-  public rubyOffset: number = 2;
-  public rubyPitch: number = 2;
+  public rubyOffset: number = 5;
+  // public rubyFontSize: number = 10;
+  // public rubyPitch: number = 2;
 
   public get width(): number {
     return this._width;
@@ -599,9 +606,7 @@ export class LayerTextCanvas {
 
   public beforeDraw(tick: number): void {
     this.lines.forEach(line => {
-      if (line.beforeDraw(tick)) {
-        this.updated = true;
-      }
+      line.beforeDraw(tick);
     });
   }
 
@@ -626,7 +631,6 @@ export class LayerTextCanvas {
       return this.addText(ch);
     }
 
-    this.updated = true; // 更新予約
     const currentLine = this.currentLine;
 
     // いったん、現在の行に文字を追加する
@@ -843,7 +847,7 @@ export class LayerTextCanvas {
    * @param rubyText ルビ文字
    */
   public reserveRubyText(rubyText: string): void {
-    this.currentLine.reserveRubyText(rubyText, this.rubyFontSize, this.rubyOffset, this.rubyPitch);
+    this.currentLine.reserveRubyText(rubyText, this.rubyOffset, this.rubyStyle);
   }
 
   /**
@@ -865,7 +869,6 @@ export class LayerTextCanvas {
 
     this.currentLine.x = this.getTextLineBasePoint();
     this.currentLine.y = this.marginTop;
-    this.updated = true;
   }
 
   private static storeParams: string[] = [
@@ -891,6 +894,7 @@ export class LayerTextCanvas {
     dest.width = this.width;
     dest.height = this.height;
     dest.style = this.style.clone();
+    dest.rubyStyle = this.rubyStyle.clone();
 
     const me = this as any;
     const you = dest as any;
@@ -915,6 +919,7 @@ export class LayerTextCanvas {
     data.width = this.width;
     data.height = this.height;
     data.style = this.style.store(tick);
+    data.rubyStyle = this.rubyStyle.store(tick);
 
     return data;
   }
@@ -938,6 +943,7 @@ export class LayerTextCanvas {
       this.height = data.height;
     }
     this.style.restore(data.style, tick, clear);
+    this.rubyStyle.restore(data.rubyStyle, tick, clear);
   }
 
   /**
@@ -955,6 +961,9 @@ export class LayerTextCanvas {
       });
       if (config.styleConfig != null) {
         this.style.applyConfig(config.styleConfig);
+      }
+      if (config.rubyStyleConfig != null) {
+        this.rubyStyle.applyConfig(config.rubyStyleConfig);
       }
     }
   }
