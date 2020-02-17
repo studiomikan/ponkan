@@ -26,7 +26,7 @@ export class Resource {
   };
 
   public readonly macroInfo: any = {};
-  public macroParams: object | null = null;
+  public macroParams: any | null = null;
 
   private bufferCanvas: HTMLCanvasElement;
   private bufferCanvasContext: CanvasRenderingContext2D;
@@ -115,6 +115,10 @@ export class Resource {
 
   public clearMacroParams(): void {
     this.macroParams = null;
+  }
+
+  public clearMacroInfo(): void {
+    Object.keys(this.macroInfo).forEach(key => delete this.macroInfo[key]);
   }
 
   /**
