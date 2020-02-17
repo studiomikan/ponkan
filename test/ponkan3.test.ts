@@ -1,10 +1,10 @@
 import { assert } from "chai";
 import { PonLayer } from "../src/ts/layer/pon-layer";
 import { Ponkan3 } from "../src/ts/ponkan3";
-import { ScriptParserTest } from "./base/script-parser.test";
 import { Ponkan3Settings } from "./settings";
 
-ScriptParserTest();
+require("./base/script-parser.test");
+require("./base/script.test");
 
 describe("Ponkan3のテスト", () => {
   let ponkan: Ponkan3;

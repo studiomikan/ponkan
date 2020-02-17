@@ -1178,7 +1178,7 @@ declare module 'ponkan3/base/resource' {
       enabledScriptCache: boolean;
       cursor: any;
       readonly macroInfo: any;
-      macroParams: object | null;
+      macroParams: any | null;
       commandShortcut: any;
       constructor(ponGame: PonGame, basePath?: string, gameVersion?: string);
       getCanvasElm(): HTMLCanvasElement;
@@ -1189,6 +1189,7 @@ declare module 'ponkan3/base/resource' {
       evalJs(js: string): any;
       setMacroParams(params: any): void;
       clearMacroParams(): void;
+      clearMacroInfo(): void;
       /**
         * リソースのパスを取得する。
         * @param filePath ファイルパス（basePathからの相対パス）
@@ -1712,7 +1713,8 @@ declare module 'ponkan3/base/script' {
         */
       getLatestTag(): Tag | null;
       /**
-        * マクロ定義を開始する
+        * マクロを定義する
+        * @param name マクロ名
         */
       defineMacro(name: string): Macro;
       /**

@@ -189,14 +189,20 @@ export class Script {
   }
 
   /**
-   * マクロ定義を開始する
+   * マクロを定義する
+   * @param name マクロ名
    */
   public defineMacro(name: string): Macro {
+    if (this.resource.hasMacro(name)) {
+      throw new Error(`${name}マクロはすでに登録されています`);
+    }
     const tags: Tag[] = [];
     while (true) {
       const tag: Tag | null = this.getNextTagWithoutMacro();
       if (tag === null) {
         throw new Error("マクロ定義エラー。macroとendmacroの対応が取れていません");
+      } else if (tag.name === "macro") {
+        throw new Error("マクロ定義エラー。マクロの中でmacroは使用できません");
       } else if (tag.name === "__label__") {
         throw new Error("マクロ定義エラー。マクロの中でラベルは使用できません");
       } else if (tag.name === "__save_mark__") {
@@ -210,7 +216,9 @@ export class Script {
     if (tags.length === 0) {
       throw new Error(`マクロ定義の中身が空です`);
     }
-    return new Macro(name, tags);
+    const macro = new Macro(name, tags);
+    this.resource.macroInfo[name] = macro;
+    return macro;
   }
 
   /**

@@ -12,7 +12,7 @@ module.exports = merge(common, {
   module: {
     rules: [
       { enforce: "pre", test: /\.ts$/, loader: "eslint-loader", exclude: /node_modules/ },
-      { test: /\.ts$/, loader:'ts-loader', exclude: /node_modules/, options: { configFile: "tsconfig.json" } }
+      { test: /\.ts$/, loader:'ts-loader', exclude: /node_modules/, options: { configFile: "tsconfig.prod.json" } }
     ]
   },
   optimization: {

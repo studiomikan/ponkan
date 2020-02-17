@@ -27,7 +27,7 @@ module.exports = {
     host: devServerHost,
     port: devServerPort,
     disableHostCheck: true,
-    contentBase: path.join(__dirname, 'dist_test')
+    contentBase: __dirname
   },
   plugins: [
     new webpack.ProvidePlugin({
@@ -35,11 +35,11 @@ module.exports = {
     }),
     new CopyWebpackPlugin(
       [
-        { from: 'src/gamedata', to: 'gamedata' },
         { from: 'src/fonts', to: 'fonts' },
         { from: 'src/index.html', to: 'index.html' },
         { from: 'src/favicon.ico', to: 'favicon.ico' },
         { from: 'src/settings.js', to: 'settings.js' },
+        { from: 'test/testdata', to: 'testdata' },
         { from: 'test/test.html', to: 'test.html' },
       ],
     ),
