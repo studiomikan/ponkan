@@ -3,7 +3,7 @@ name: Node.js CI
 on: [push, pull_request]
 
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -11,4 +11,7 @@ jobs:
       with:
         node-version: '12.x'
     - run: npm install
-    - run: npm run lint
+    - name: "RUN Lint"
+      run: npm run lint
+    - name: "RUN Test"
+      run: npm run test
