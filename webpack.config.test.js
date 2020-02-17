@@ -1,6 +1,10 @@
+const webpack = require('webpack');
 const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const WriteFilePlugin = require('write-file-webpack-plugin');
+
+const devServerHost = process.env.WEBPACK_DEV_SERVER_HOST || '0.0.0.0';
+const devServerPort = process.env.WEBPACK_DEV_SERVER_PORT || 8080;
 
 module.exports = {
   mode: "development",
@@ -9,34 +13,37 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, 'dist_test'),
-    publicPath: '/assets',
     filename: '[name].js'
-  },
-  devServer: {
-    contentBase: path.join(__dirname, 'dist_test')
   },
   module: {
     rules: [
-      { test: /\.ts$/, loader:'ts-loader', exclude: /node_modules/ }
+      { test: /\.ts$/, loader:'ts-loader', exclude: /node_modules/, options: { configFile: "tsconfig.dev.json" } }
     ]
   },
   resolve: {
     extensions:['.ts', '.js', '.json']
   },
+  devServer: {
+    host: devServerHost,
+    port: devServerPort,
+    disableHostCheck: true,
+    contentBase: path.join(__dirname, 'dist_test')
+  },
   plugins: [
+    new webpack.ProvidePlugin({
+      PIXI: 'pixi.js'
+    }),
     new CopyWebpackPlugin(
-      [ { from: '', to: '', }, ],
-      { context: 'test/test.html' }
-    ),
-    new CopyWebpackPlugin(
-      [ { from: '', to: 'gamedata/', }, ],
-      { context: path.join(__dirname, 'src/gamedata') }
-    ),
-    new CopyWebpackPlugin(
-      [ { from: '', to: 'fonts/', }, ],
-      { context: path.join(__dirname, 'src/fonts') }
+      [
+        { from: 'src/gamedata', to: 'gamedata' },
+        { from: 'src/fonts', to: 'fonts' },
+        { from: 'src/index.html', to: 'index.html' },
+        { from: 'src/favicon.ico', to: 'favicon.ico' },
+        { from: 'src/settings.js', to: 'settings.js' },
+        { from: 'test/test.html', to: 'test.html' },
+      ],
     ),
     new WriteFilePlugin(),
-  ]
+  ],
 }
 

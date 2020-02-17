@@ -9,6 +9,12 @@ module.exports = merge(common, {
   output: {
     path: path.join(__dirname, 'dist')
   },
+  module: {
+    rules: [
+      { enforce: "pre", test: /\.ts$/, loader: "eslint-loader", exclude: /node_modules/ },
+      { test: /\.ts$/, loader:'ts-loader', exclude: /node_modules/, options: { configFile: "tsconfig.json" } }
+    ]
+  },
   optimization: {
     minimize: true,
     minimizer: [new TerserPlugin({
@@ -21,12 +27,13 @@ module.exports = merge(common, {
   plugins: [
     new DtsBundleWebpack({
       name: 'ponkan3',
-      main: 'dist/ponkan3.d.ts',
-      baseDir: 'dist',
-      out: 'ponkan3.d.ts',
+      main: 'src/ts/ponkan3.d.ts',
+      baseDir: 'src/ts/',
+      out: '../../dist/ponkan3.d.ts',
       indent: '  ',
       removeSource: true,
       newline: '\n',
+      exclude: /node_modules/
     })
   ],
 });
