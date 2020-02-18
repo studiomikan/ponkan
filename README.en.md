@@ -4,29 +4,29 @@
   <img src="images/ponkan3-logo.png" alt="Ponkan3 logo" width="150">
 </p>
 
-Ponkan3 はブラウザで動作するノベルゲームエンジンです。
+Ponkan3 is novel-game-engine for web.
 
-Languages: [English](./README.en.md)
+Languages: [Japanease](./README.md)
 
-## デモ (サンプルゲーム)
+## Demo (sample game)
 
-[Ponkan3 サンプルゲーム](http://okayumoka.github.io/ponkan3-samplegame)
+[Ponkan3 sample game (jp)](http://okayumoka.github.io/ponkan3-samplegame)
 
-## ドキュメント
+## Documents
 
-[Ponkan3 ドキュメント](http://okayumoka.github.io/ponkan3-docs)
+[Ponkan3 Documents](http://okayumoka.github.io/ponkan3-docs)
 
 ## Build
 
 ```bash
-# パッケージのインストール
+# install packages
 $ npm install
 
-# 開発のとき（開発用サーバー起動）
-# 起動後に http://localhost:8080/ を開く
+# case of develop
+# open http://localhost:8080/
 $ npm start
 
-# リリースビルドのとき（distディレクトリへ出力）
+# case of release build (to dist directory)
 $ npm run build
 ```
 
@@ -36,18 +36,18 @@ $ npm run build
 $ docker-compose build
 $ docker-compose up
 
-# 起動後に http://localhost:8080/ を開く
+# open http://localhost:8080/
 ```
 
-## ブラウザサポート
+## Browser Support
 
-- サポート中の対象ブラウザ
-  - Google Chrome (最新)
-- 今後サポート予定のブラウザ
-  - Firefox (最新)
-  - Edge (最新)
+- Current Active Support
+  - Google Chrome (latest)
+- TODO:
+  - Firefox (latest)
+  - Edge (latest)
 
-## Ponkan3 は以下のライブラリを使用しています
+## External Libraries used by Ponkan3
 
 ### Libraries
 
@@ -61,8 +61,6 @@ $ docker-compose up
 - [GenShinGothic](http://jikasei.me/font/genshin/) is licensed under [SIL Open Font License 1.1](http://scripts.sil.org/OFL)
   - © 2015 自家製フォント工房, © 2014, 2015 Adobe Systems Incorporated, © 2015 M+ FONTS PROJECT
 
-## ライセンス
-
-Ponkan3 は [MIT License](https://opensource.org/licenses/MIT) で公開されています。
+## License
 
 Ponkan3 is licensed under the [MIT License](https://opensource.org/licenses/MIT).
