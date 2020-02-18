@@ -8,6 +8,7 @@
     "type": "git",
     "url": "https://github.com/studiomikan/ponkan3"
   },
+  "private": true,
   "author": "okayu <studiomikan@gmail.com> (https://studiomikan.net/)",
   "license": "MIT",
   "homepage": "https://github.com/studiomikan/ponkan3",
