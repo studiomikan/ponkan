@@ -221,7 +221,7 @@ export class Slider extends BaseLayer {
     super.onMouseMove(e);
     if (!this.locked && this.down) {
       this.setValueX(e.x);
-      this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.over;
+      this.resource.getCanvasElm().style.cursor = this.resource.cursor.over;
     }
   }
 
@@ -229,7 +229,7 @@ export class Slider extends BaseLayer {
     super.onMouseUp(e);
     if (this.down) {
       this.down = false;
-      this.resource.getForeCanvasElm().style.cursor = this.resource.cursor.normal;
+      this.resource.getCanvasElm().style.cursor = this.resource.cursor.normal;
       if (this.exp != null && this.exp !== "") {
         console.log("typeof", typeof this.exp);
         if (typeof this.exp === "function") {

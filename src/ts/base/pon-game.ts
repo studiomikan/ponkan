@@ -29,8 +29,7 @@ export class PonGame implements IConductorEvent {
   private fpsPreTick: number = 0;
   private fpsCount: number = 0;
   private fps: number = 0;
-  public readonly foreRenderer: PonRenderer;
-  public readonly backRenderer: PonRenderer;
+  public readonly renderer: PonRenderer;
 
   private _scaleModeBuffer: ScaleMode = ScaleMode.FIT;
   private _scaleMode: ScaleMode = ScaleMode.FIT;
@@ -49,10 +48,10 @@ export class PonGame implements IConductorEvent {
   public updateScreenShotFlag: boolean = true;
 
   public get width(): number {
-    return this.foreRenderer.width;
+    return this.renderer.width;
   }
   public get height(): number {
-    return this.foreRenderer.height;
+    return this.renderer.height;
   }
 
   public constructor(parentId: string, config: any = {}) {
@@ -66,16 +65,13 @@ export class PonGame implements IConductorEvent {
       config.width = 800;
       config.height = 450;
     }
-    this.foreRenderer = new PonRenderer(elm, config.width, config.height);
-    this.backRenderer = new PonRenderer(elm, config.width, config.height);
+    this.renderer = new PonRenderer(elm, config.width, config.height);
 
     elm.style.position = "relative";
     elm.style.display = "block";
     elm.style.padding = "0";
-    this.foreRenderer.canvasElm.style.display = "block";
-    this.backRenderer.canvasElm.style.display = "none";
-    this.foreRenderer.canvasElm.className = "ponkan-scale-target";
-    this.backRenderer.canvasElm.className = "ponkan-scale-target";
+    this.renderer.canvasElm.style.display = "block";
+    this.renderer.canvasElm.className = "ponkan-scale-target";
 
     this.resource = new Resource(this, config.gameDataDir, config.gameVersion);
     this.resource.enableResourceCache = !config.developMode;
@@ -85,8 +81,7 @@ export class PonGame implements IConductorEvent {
 
     this.initWindowScale();
     this.initWindowEvent();
-    this.initMouseEventOnCanvas(this.foreRenderer.canvasElm);
-    // this.initMouseEventOnCanvas(this.backRenderer.canvasElm);
+    this.initMouseEventOnCanvas(this.renderer.canvasElm);
     this.initKeyboardEvent();
 
     this.conductorStack.push(new Conductor(this.resource, "Main Conductor", this));
@@ -94,8 +89,7 @@ export class PonGame implements IConductorEvent {
 
   public destroy(): void {
     this.stop();
-    this.foreRenderer.destroy();
-    this.backRenderer.destroy();
+    this.renderer.destroy();
   }
 
   public start(): void {
@@ -298,13 +292,12 @@ export class PonGame implements IConductorEvent {
       if (this.transManager.isRunning) {
         this.transManager.draw(tick);
       } else {
-        // this.backRenderer.draw(tick); // TODO 本来はここのback不要
-        this.foreRenderer.draw(tick);
+        this.renderer.draw();
       }
       this.afterDraw(tick);
 
       if (this.updateScreenShotFlag) {
-        this.screenShot.draw(this.foreRenderer.canvasElm);
+        this.screenShot.draw(this.renderer.canvasElm);
       }
 
       this.fpsCount++;
@@ -439,39 +432,26 @@ export class PonGame implements IConductorEvent {
   // レイヤー関係
   // ============================================================
 
-  public clearLayer(): void {
-    this.forePrimaryLayers.forEach(layer => {
-      layer.destroy();
-      this.foreRenderer.removeContainer(layer.container);
-    });
-    this.forePrimaryLayers = [];
-    this.backPrimaryLayers.forEach(layer => {
-      layer.destroy();
-      this.backRenderer.removeContainer(layer.container);
-    });
-    this.backPrimaryLayers = [];
-  }
-
   public addForePrimaryLayer(layer: BaseLayer): BaseLayer {
     this.forePrimaryLayers.push(layer);
-    this.foreRenderer.addContainer(layer.container);
+    this.renderer.addToFore(layer.container);
     return layer;
   }
 
   public addBackPrimaryLayer(layer: BaseLayer): BaseLayer {
     this.backPrimaryLayers.push(layer);
-    this.backRenderer.addContainer(layer.container);
+    this.renderer.addToBack(layer.container);
     return layer;
   }
 
   public removeForePrimaryLayer(layer: BaseLayer): void {
     this.forePrimaryLayers = this.forePrimaryLayers.filter(a => a !== layer);
-    this.foreRenderer.removeContainer(layer.container);
+    this.renderer.removeFromFore(layer.container);
   }
 
   public removeBackPrimaryLayer(layer: BaseLayer): void {
     this.backPrimaryLayers = this.backPrimaryLayers.filter(a => a !== layer);
-    this.backRenderer.removeContainer(layer.container);
+    this.renderer.removeFromBack(layer.container);
   }
 
   public flip(): void {
@@ -497,19 +477,17 @@ export class PonGame implements IConductorEvent {
   public resetPrimaryLayersRenderer(): void {
     // レンダラーとの紐付けを解除
     this.forePrimaryLayers.forEach(fore => {
-      this.foreRenderer.removeContainer(fore.container);
-      this.backRenderer.removeContainer(fore.container);
+      fore.container.parent.removeChild(fore.container);
     });
     this.backPrimaryLayers.forEach(back => {
-      this.backRenderer.removeContainer(back.container);
-      this.foreRenderer.removeContainer(back.container);
+      back.container.parent.removeChild(back.container);
     });
     // 新しくレンダラーに紐付ける
     this.forePrimaryLayers.forEach(fore => {
-      this.foreRenderer.addContainer(fore.container);
+      this.renderer.addToFore(fore.container);
     });
     this.backPrimaryLayers.forEach(back => {
-      this.backRenderer.addContainer(back.container);
+      this.renderer.addToBack(back.container);
     });
   }
 

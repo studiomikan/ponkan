@@ -26,7 +26,7 @@ export class Resource {
   };
 
   public readonly macroInfo: any = {};
-  public macroParams: object | null = null;
+  public macroParams: any | null = null;
 
   private bufferCanvas: HTMLCanvasElement;
   private bufferCanvasContext: CanvasRenderingContext2D;
@@ -51,12 +51,8 @@ export class Resource {
     this.bufferCanvasContext = context;
   }
 
-  public getForeCanvasElm(): HTMLCanvasElement {
-    return this.ponGame.foreRenderer.canvasElm;
-  }
-
-  public getBackCanvasElm(): HTMLCanvasElement {
-    return this.ponGame.backRenderer.canvasElm;
+  public getCanvasElm(): HTMLCanvasElement {
+    return this.ponGame.renderer.canvasElm;
   }
 
   public saveSystemData(saveDataPrefix: string): void {
@@ -121,6 +117,10 @@ export class Resource {
     this.macroParams = null;
   }
 
+  public clearMacroInfo(): void {
+    Object.keys(this.macroInfo).forEach(key => delete this.macroInfo[key]);
+  }
+
   /**
    * パスの末尾からスラッシュを取り除いて返す
    */
@@ -174,6 +174,7 @@ export class Resource {
         }
       };
       xhr.open("GET", this.getPath(filePath), true);
+      xhr.overrideMimeType("text/plain; charset=UTF-8");
       xhr.send();
     });
   }

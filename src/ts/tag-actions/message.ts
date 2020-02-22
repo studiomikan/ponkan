@@ -68,12 +68,6 @@ export default function(p: Ponkan3): TagAction[] {
         new TagValue("edgecolor", "number", false, null),
         /// @param 縁取りのAlpha(0.0～1.0)
         new TagValue("edgealpha", "number", false, null),
-        /// @param ルビのフォントファイズ(px)
-        new TagValue("rubysize", "number", false, null),
-        /// @param ルビの文字間(px)
-        new TagValue("rubypitch", "number", false, null),
-        /// @param ルビのオフセット(px)
-        new TagValue("rubyoffset", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach((layer: PonLayer) => {
@@ -82,6 +76,9 @@ export default function(p: Ponkan3): TagAction[] {
           }
           if (values.fontsize != null) {
             layer.textCanvas.style.fontSize = values.fontsize;
+            if (layer.textCanvas.lineHeight < values.fontsize) {
+              layer.textCanvas.lineHeight = values.fontsize;
+            }
           }
           if (values.fontweight != null) {
             layer.textCanvas.style.fontWeight = values.fontweight;
@@ -90,13 +87,13 @@ export default function(p: Ponkan3): TagAction[] {
             layer.textCanvas.style.fontStyle = values.fontstyle;
           }
           if (values.color != null) {
-            layer.textCanvas.style.setColor(values.color);
+            layer.textCanvas.style.fill = values.color;
           }
           if (values.gradientstops != null) {
             layer.textCanvas.style.fillGradientStops = values.gradientstops;
           }
           if (values.gradienttype != null) {
-            layer.textCanvas.style.fillGradientType = values.gradienttype;
+            layer.textCanvas.style.setGradientType(values.gradienttype);
           }
           if (values.margint != null) {
             layer.textCanvas.marginTop = values.margint;
@@ -123,40 +120,31 @@ export default function(p: Ponkan3): TagAction[] {
             layer.textCanvas.align = values.align;
           }
           if (values.shadow != null) {
-            layer.textCanvas.style.shadow = values.shadow;
+            layer.textCanvas.style.dropShadow = values.shadow;
           }
           if (values.shadowalpha != null) {
-            layer.textCanvas.style.shadowAlpha = values.shadowalpha;
+            layer.textCanvas.style.dropShadowAlpha = values.shadowalpha;
           }
           if (values.shadowangle != null) {
-            layer.textCanvas.style.shadowAngle = values.shadowangle;
+            layer.textCanvas.style.dropShadowAngle = values.shadowangle;
           }
           if (values.shadowblur != null) {
-            layer.textCanvas.style.shadowBlur = values.shadowblur;
+            layer.textCanvas.style.dropShadowBlur = values.shadowblur;
           }
           if (values.shadowcolor != null) {
-            layer.textCanvas.style.setShadowColor(values.shadowcolor);
+            layer.textCanvas.style.dropShadowColor = values.shadowcolor;
           }
           if (values.shadowdistance != null) {
-            layer.textCanvas.style.shadowDistance = values.shadowdistance;
+            layer.textCanvas.style.dropShadowDistance = values.shadowdistance;
           }
           if (values.edgewidth != null) {
-            layer.textCanvas.style.edgeWidth = values.edgewidth;
+            layer.textCanvas.style.strokeThickness = values.edgewidth;
           }
           if (values.edgecolor != null) {
-            layer.textCanvas.style.setEdgeColor(values.edgecolor);
+            layer.textCanvas.style.edgeColor = values.edgecolor;
           }
           if (values.edgealpha != null) {
             layer.textCanvas.style.edgeAlpha = values.edgealpha;
-          }
-          if (values.rubysize != null) {
-            layer.textCanvas.rubyFontSize = values.rubysize;
-          }
-          if (values.rubypitch != null) {
-            layer.textCanvas.rubyPitch = values.rubypitch;
-          }
-          if (values.rubyoffset != null) {
-            layer.textCanvas.rubyOffset = values.rubyoffset;
           }
         });
         return "continue";
@@ -228,7 +216,6 @@ export default function(p: Ponkan3): TagAction[] {
         new TagValue("text", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.hideBreakGlyph();
         p.getLayers(values).forEach(layer => {
           layer.addChar(values.text);
         });
@@ -246,7 +233,7 @@ export default function(p: Ponkan3): TagAction[] {
       },
     ),
     /// @category メッセージ操作
-    /// @description 改行する
+    /// @description ルビを出力する
     /// @details
     ///   次に出力する文字にルビ（ふりがな）を設定します。
     new TagAction(
@@ -265,6 +252,116 @@ export default function(p: Ponkan3): TagAction[] {
             layer.reserveRubyText(values.text);
           });
         }
+        return "continue";
+      },
+    ),
+    /// @category メッセージ操作
+    /// @description ルビの設定
+    /// @details
+    ///   ルビ（ふりがな）に関する設定を行います。
+    new TagAction(
+      ["rubyopt"],
+      [
+        /// @param 対象レイヤー
+        new TagValue("lay", "string", false, "message"),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+        /// @param ルビとメッセージ間の距離(px)。
+        new TagValue("offset", "number", false, null),
+        /// @param フォント名の配列
+        new TagValue("fontfamily", "array", false, null),
+        /// @param フォントサイズ(px)
+        new TagValue("fontsize", "number", false, null),
+        /// @param フォントウェイト
+        new TagValue("fontweight", "string", false, null),
+        /// @param フォントスタイル。"normal" | "italic"
+        new TagValue("fontstyle", "string", false, null),
+        /// @param 文字色。0xRRGGBBで指定すると単色、[0xRRGGBB, 0xRRGGBB, ...]のように配列で指定するとグラデーションになります。
+        new TagValue("color", "number|array", false, null),
+        /// @param 文字色グラデーションの色の位置。0.0～1.0の数値の配列。([0.0, 0.5, ...])
+        new TagValue("gradientstops", "array", false, null),
+        /// @param 文字色グラデーションのタイプ（方向）。"vertical" | "horizontal"。初期値は"vertical"
+        new TagValue("gradienttype", "string", false, null),
+        /// @param テキストの文字間(px)
+        new TagValue("pitch", "number", false, null),
+        /// @param 影の表示非表示
+        new TagValue("shadow", "boolean", false, null),
+        /// @param 影のAlpha(0.0〜1.0)
+        new TagValue("shadowalpha", "number", false, null),
+        /// @param 影の角度(ラジアン)
+        new TagValue("shadowangle", "number", false, null),
+        /// @param 影のBlur
+        new TagValue("shadowblur", "number", false, null),
+        /// @param 影の色(0xRRGGBB)
+        new TagValue("shadowcolor ", "number", false, null),
+        /// @param 影の距離(px)
+        new TagValue("shadowdistance", "number", false, null),
+        /// @param 縁取りの太さ(px)。0で非表示になる
+        new TagValue("edgewidth", "number", false, null),
+        /// @param 縁取りの色(0xRRGGBB)
+        new TagValue("edgecolor", "number", false, null),
+        /// @param 縁取りのAlpha(0.0～1.0)
+        new TagValue("edgealpha", "number", false, null),
+      ],
+      (values: any, tick: number): TagActionResult => {
+        p.getLayers(values).forEach(layer => {
+          if (values.offset != null) {
+            layer.textCanvas.rubyOffset = values.offset;
+          }
+          if (values.fontfamily != null) {
+            layer.textCanvas.rubyStyle.fontFamily = values.fontfamily;
+          }
+          if (values.fontsize != null) {
+            layer.textCanvas.rubyStyle.fontSize = values.fontsize;
+          }
+          if (values.fontweight != null) {
+            layer.textCanvas.rubyStyle.fontWeight = values.fontweight;
+          }
+          if (values.fontstyle != null) {
+            layer.textCanvas.rubyStyle.fontStyle = values.fontstyle;
+          }
+          if (values.color != null) {
+            layer.textCanvas.rubyStyle.fill = values.color;
+          }
+          if (values.gradientstops != null) {
+            layer.textCanvas.rubyStyle.fillGradientStops = values.gradientstops;
+          }
+          if (values.gradienttype != null) {
+            layer.textCanvas.rubyStyle.setGradientType(values.gradienttype);
+          }
+          if (values.pitch != null) {
+            layer.textCanvas.rubyStyle.pitch = values.pitch;
+          }
+          if (values.shadow != null) {
+            layer.textCanvas.rubyStyle.dropShadow = values.shadow;
+          }
+          if (values.shadowalpha != null) {
+            layer.textCanvas.rubyStyle.dropShadowAlpha = values.shadowalpha;
+          }
+          if (values.shadowangle != null) {
+            layer.textCanvas.rubyStyle.dropShadowAngle = values.shadowangle;
+          }
+          if (values.shadowblur != null) {
+            layer.textCanvas.rubyStyle.dropShadowBlur = values.shadowblur;
+          }
+          if (values.shadowcolor != null) {
+            layer.textCanvas.rubyStyle.dropShadowColor = values.shadowcolor;
+          }
+          if (values.shadowdistance != null) {
+            layer.textCanvas.rubyStyle.dropShadowDistance = values.shadowdistance;
+          }
+          if (values.edgewidth != null) {
+            layer.textCanvas.rubyStyle.strokeThickness = values.edgewidth;
+          }
+          if (values.edgecolor != null) {
+            layer.textCanvas.rubyStyle.edgeColor = values.edgecolor;
+            console.log(layer.textCanvas.rubyStyle.stroke);
+          }
+          if (values.edgealpha != null) {
+            layer.textCanvas.rubyStyle.edgeAlpha = values.edgealpha;
+            console.log(layer.textCanvas.rubyStyle.stroke);
+          }
+        });
         return "continue";
       },
     ),
@@ -305,7 +402,6 @@ export default function(p: Ponkan3): TagAction[] {
         p.getLayers(values).forEach(layer => {
           layer.clearText();
         });
-        p.hideBreakGlyph();
         return "continue";
       },
     ),

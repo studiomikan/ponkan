@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Ponkan3 Tests</title>
-  <link href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css" rel="stylesheet" />
+  <link href="../node_modules/mocha/mocha.css" rel="stylesheet" />
   <style>
     @font-face {
       font-family: 'GenShinGothic';
@@ -38,21 +38,20 @@
   </style>
 </head>
 <body>
-  <h1>Ponkan3 Tests</h1>
   <div id="mocha"></div>
-  <div style="display:none">
+  <div style="display:none; visibility:hidden; width:0; height:0;">
     <div id="ponkan3game"></div>
   </div>
 
-  <script src="https://cdn.rawgit.com/jquery/jquery/2.1.4/dist/jquery.min.js"></script>
-  <script src="https://cdn.rawgit.com/Automattic/expect.js/0.3.1/index.js"></script>
-  <script src="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.js"></script>
+  <script src="../node_modules/mocha/mocha.js"></script>
+  <script src="../node_modules/chai/chai.js"></script>
 
-  <script>mocha.setup('bdd')</script>
+  <script>
+    mocha.setup('bdd')
+  </script>
   <script src="test.js"></script>
   <script>
     mocha.checkLeaks();
-    mocha.globals(['jQuery']);
     mocha.run();
   </script>
 </body>

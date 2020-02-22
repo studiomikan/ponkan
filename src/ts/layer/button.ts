@@ -22,7 +22,7 @@ export class Button extends BaseLayer {
     if (this.buttonStatus === "disabled") {
       this.down = false;
     }
-    this.resource.getForeCanvasElm().style.cursor = this.resource.cursor[status];
+    this.resource.getCanvasElm().style.cursor = this.resource.cursor[status];
   }
 
   public onMouseEnter(e: PonMouseEvent): void {
@@ -41,6 +41,13 @@ export class Button extends BaseLayer {
       this.setButtonStatus("normal");
     }
     this.insideFlag = false;
+  }
+
+  public onMouseMove(e: PonMouseEvent): void {
+    super.onMouseMove(e);
+    if (this.buttonStatus !== "disabled") {
+      this.resource.getCanvasElm().style.cursor = this.resource.cursor[this.buttonStatus];
+    }
   }
 
   public onMouseDown(e: PonMouseEvent): void {

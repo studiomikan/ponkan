@@ -1,190 +1,154 @@
 import * as PIXI from "pixi.js";
-import { Ease } from "./util";
+import { Ease, objSort, objExtend, objClone } from "./util";
 
 export type InEffectType = "alpha" | "move" | "alphamove";
+export type TextColor = string | number | string[] | number[] | CanvasGradient | CanvasPattern;
 
 enum InEffectState {
   Stop = 0,
   Run,
 }
 
+export class TextSpriteCache {
+  public static MAX_SIZE: number = 5000;
+  public static ENABLED: boolean = true;
+  private map = new Map<string, PIXI.Text>();
+
+  private genKey(ch: string, style: TextStyle): string {
+    const tmp: any = { ch, style: objSort(style.toJson()) };
+    return JSON.stringify(tmp);
+  }
+
+  // public has(ch: string, style: TextStyle): boolean {
+  //   return this.map.has(this.genKey(ch, style));
+  // }
+
+  public get(ch: string, style: TextStyle): PIXI.Sprite | null {
+    if (TextSpriteCache.ENABLED) {
+      const cache: PIXI.Text | undefined = this.map.get(this.genKey(ch, style));
+      if (cache == null) {
+        return null;
+      }
+      const sp: PIXI.Sprite = new PIXI.Sprite(cache.texture.clone());
+      return sp;
+    } else {
+      return null;
+    }
+  }
+
+  public set(ch: string, style: TextStyle, text: PIXI.Text): void {
+    if (TextSpriteCache.ENABLED) {
+      const key: string = this.genKey(ch, style);
+      this.map.set(key, text);
+      // キャッシュ数を抑制
+      if (this.map.size > TextSpriteCache.MAX_SIZE) {
+        this.map.delete(this.map.keys().next().value);
+      }
+    }
+  }
+}
+
+const textCache = new TextSpriteCache();
+
+const defaultTextStyle = {
+  // for PIXI.TextStyle
+  align: "left",
+  breakWords: false,
+  dropShadow: true,
+  dropShadowAlpha: 0.7,
+  dropShadowAngle: Math.PI / 6,
+  dropShadowBlur: 5,
+  dropShadowColor: "#000000",
+  dropShadowDistance: 2,
+  fill: "#FFFFFF",
+  fillGradientType: PIXI.TEXT_GRADIENT.LINEAR_VERTICAL,
+  fillGradientStops: [],
+  fontFamily: "Arial",
+  fontSize: 26,
+  fontStyle: "normal",
+  fontVariant: "normal",
+  fontWeight: "normal",
+  letterSpacing: 0,
+  lineHeight: 0,
+  lineJoin: "miter",
+  miterLimit: 10,
+  padding: 0,
+  stroke: "#000000",
+  strokeThickness: 0,
+  textBaseline: "alphabetic",
+  trim: false,
+  whiteSpace: "pre",
+  wordWrap: false,
+  wordWrapWidth: 100,
+  leading: 0,
+  // for Ponkan
+  edgeColor: "#000000",
+  edgeAlpha: 1.0,
+  pitch: 0,
+  inEffectTypes: [],
+  inEffectTime: 100,
+  inEffectEase: "none",
+  inEffectOptions: {},
+};
+
+const defaultRubyTextStyle = objExtend(objClone(defaultTextStyle), {
+  dropShadow: false,
+  fill: "#FFFFFF",
+  fontFamily: "Arial",
+  fontSize: 10,
+  strokeThickness: 0,
+  pitch: 0,
+});
+
 /**
  * テキストスタイル
  */
-export class TextStyle {
-  public static METRICS_STRING = "ぽン甘｜|gq";
-
-  public fontFamily: string[] = ["GenShinGothic", "monospace"];
-  public fontSize: number = 24;
-  public fontWeight: string | number = "normal";
-  public fontStyle: "normal" | "italic" = "normal";
-  public color: string[] = ["#ffffff"];
-  public textBaseline: CanvasTextBaseline = "alphabetic";
-  public shadow: boolean = false;
-  public _shadowAlpha: number = 1.0;
-  public _shadowColor: string = "#000000";
-  public shadowAngle: number = Math.PI / 6;
-  public shadowBlur: number = 5;
-  public shadowDistance: number = 2;
-  public edgeWidth: number = 0;
-  public _edgeColor: string = "#000000";
-  public _edgeAlpha: number = 1.0;
+export class TextStyle extends PIXI.TextStyle {
+  private _edgeColor: number | string = 1;
+  private _edgeAlpha: number = 1;
   public pitch: number = 0;
-  public fillGradientStops: number[] = [];
-  public fillGradientType: "vertical" | "horizontal" = "vertical";
+
   public inEffectTypes: InEffectType[] = [];
   public inEffectTime: number = 100;
   public inEffectEase: "none" | "in" | "out" | "both" = "none";
   public inEffectOptions: any = {};
 
-  private gradient: CanvasGradient | null = null;
-  private shadowColorStrBuf: string = "";
-  private edgeColorStrBuf: string = "";
+  constructor(opts: any = defaultTextStyle) {
+    super(opts);
+    this.edgeAlpha = 1;
+  }
 
-  public setColor(color: number | string | any[]): void {
-    if (color == null) {
-      this.color = ["#ffffff"];
-    } else if (typeof color === "number") {
-      this.color = [PIXI.utils.hex2string(color)];
-    } else if (typeof color === "string") {
-      this.color = [color];
+  public setGradientType(type: "vertical" | "horizontal"): void {
+    if (type === "vertical") {
+      this.fillGradientType = PIXI.TEXT_GRADIENT.LINEAR_VERTICAL;
     } else {
-      this.color = color.map(c => (typeof c === "number" ? PIXI.utils.hex2string(c) : "" + c));
+      this.fillGradientType = PIXI.TEXT_GRADIENT.LINEAR_HORIZONTAL;
     }
   }
 
-  public get shadowColor(): string {
-    return this._shadowColor;
-  }
-  public set shadowColor(shadowColor: string) {
-    this._shadowColor = shadowColor;
-  }
-  public setShadowColor(c: number | string): void {
-    this._shadowColor = typeof c == "number" ? PIXI.utils.hex2string(c) : c;
-    this.shadowColorStrBuf = this.shadowColorStr;
-  }
-
-  public get shadowAlpha(): number {
-    return this._shadowAlpha;
-  }
-  public set shadowAlpha(shadowAlpha: number) {
-    this._shadowAlpha = shadowAlpha;
-    this.shadowColorStrBuf = this.shadowColorStr;
-  }
-
-  public get edgeColor(): string {
-    return this._edgeColor;
-  }
-  public set edgeColor(edgeColor: string) {
+  public set edgeColor(edgeColor: number | string) {
     this._edgeColor = edgeColor;
+    this.resetStroke();
   }
-  public setEdgeColor(c: number | string): void {
-    this._edgeColor = typeof c == "number" ? PIXI.utils.hex2string(c) : c;
-    this.edgeColorStrBuf = this.edgeColorStr;
-  }
-
-  public get edgeAlpha(): number {
-    return this._edgeAlpha;
+  public get edgeColor(): number | string {
+    return this._edgeColor;
   }
   public set edgeAlpha(edgeAlpha: number) {
     this._edgeAlpha = edgeAlpha;
-    this.edgeColorStrBuf = this.edgeColorStr;
+    this.resetStroke();
+  }
+  public get edgeAlpha(): number {
+    return this._edgeAlpha;
   }
 
-  public get fontFamilyStr(): string {
-    return this.fontFamily.map(ff => `"${ff}"`).join(",");
-  }
-
-  public get font(): string {
-    return `${this.fontStyle} ${this.fontWeight} ${this.fontSize}px ${this.fontFamilyStr}`;
-  }
-
-  public get shadowColorStr(): string {
-    const rgb: number[] = PIXI.utils.hex2rgb(PIXI.utils.string2hex(this._shadowColor));
-    return `rgba(${rgb[0] * 255},${rgb[1] * 255},${rgb[2] * 255},${this._shadowAlpha})`;
-  }
-
-  public get edgeColorStr(): string {
-    const rgb: number[] = PIXI.utils.hex2rgb(PIXI.utils.string2hex(this._edgeColor));
-    return `rgba(${rgb[0] * 255},${rgb[1] * 255},${rgb[2] * 255},${this._edgeAlpha})`;
-  }
-
-  private genGradient(context: CanvasRenderingContext2D, offsetX: number, offsetY: number): CanvasGradient {
-    const textMetrix: TextMetrics = context.measureText(TextStyle.METRICS_STRING);
-    let ascent = textMetrix.actualBoundingBoxAscent;
-    let descent = textMetrix.actualBoundingBoxDescent;
-    if (ascent == null) {
-      ascent = this.fontSize;
-    }
-    if (descent == null) {
-      descent = Math.floor(this.fontSize * 0.1);
-    }
-    const x1 = offsetX;
-    const y1 = offsetY - ascent;
-    const x2 = offsetX;
-    const y2 = offsetY + descent;
-    const g = context.createLinearGradient(x1, y1, x2, y2);
-    const length = this.color.length;
-    for (let i = 0; i < length; i++) {
-      let stop = this.fillGradientStops[i];
-      if (stop == null) {
-        stop = i / (length - 1);
-      }
-      g.addColorStop(stop, this.color[i]);
-    }
-    return g;
-  }
-
-  public measureText(context: CanvasRenderingContext2D, text: string): TextMetrics {
-    context.font = this.font;
-    context.strokeStyle = this.edgeColor;
-    context.lineWidth = this.edgeWidth;
-    context.fillStyle = "#FFFFFF";
-    context.textBaseline = this.textBaseline;
-    return context.measureText(text);
-  }
-
-  public getChWidth(context: CanvasRenderingContext2D, ch: string): number {
-    return this.measureText(context, ch).width;
-  }
-
-  public applyStyleTo(context: CanvasRenderingContext2D, offsetX: number, offsetY: number): void {
-    if (this.edgeColorStrBuf === "") {
-      this.edgeColorStrBuf = this.edgeColorStr;
-    }
-    context.font = this.font;
-    context.strokeStyle = this.edgeColorStrBuf;
-    context.lineWidth = this.edgeWidth;
-    context.textBaseline = this.textBaseline;
-    if (this.color.length > 1) {
-      if (this.gradient == null) {
-        this.gradient = this.genGradient(context, offsetX, offsetY);
-      }
-      context.fillStyle = this.gradient;
+  private resetStroke(): void {
+    let rgb: number[];
+    if (typeof this._edgeColor === "number") {
+      rgb = PIXI.utils.hex2rgb(this._edgeColor);
     } else {
-      context.fillStyle = this.color[0];
+      rgb = PIXI.utils.hex2rgb(PIXI.utils.string2hex(this._edgeColor));
     }
-  }
-
-  public applyShadowTo(context: CanvasRenderingContext2D): void {
-    if (this.shadow) {
-      if (this.shadowColorStrBuf === "") {
-        this.shadowColorStrBuf = this.shadowColorStr;
-      }
-      context.shadowColor = this.shadowColorStrBuf;
-      context.shadowBlur = this.shadowBlur;
-      context.shadowOffsetX = this.shadowDistance;
-      context.shadowOffsetY = this.shadowDistance;
-    } else {
-      this.clearShadowFrom(context);
-    }
-  }
-
-  public clearShadowFrom(context: CanvasRenderingContext2D): void {
-    context.shadowColor = "rgba(0,0,0,0)";
-    context.shadowBlur = 0;
-    context.shadowOffsetX = 0;
-    context.shadowOffsetY = 0;
+    this.stroke = `rgba(${rgb[0] * 255},${rgb[1] * 255},${rgb[2] * 255},${this._edgeAlpha})`;
   }
 
   public checkOptions(): void {
@@ -202,7 +166,22 @@ export class TextStyle {
   }
 
   public clone(): TextStyle {
-    return Object.assign(new TextStyle(), this);
+    const target: any = new TextStyle();
+    TextStyle.assign(target, this as any);
+    return target;
+  }
+
+  public static assign(target: any, source: any): TextStyle {
+    for (const prop in defaultTextStyle) {
+      if (Array.isArray(source[prop])) {
+        target[prop] = source[prop].slice();
+      } else if (typeof source[prop] === "object") {
+        target[prop] = Object.assign({}, source[prop]);
+      } else {
+        target[prop] = source[prop];
+      }
+    }
+    return target;
   }
 
   public applyConfig(config: any): void {
@@ -211,20 +190,18 @@ export class TextStyle {
     }
   }
 
-  public resetGradientBuffer(): void {
-    this.gradient = null;
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public store(tick: number): any {
-    const data: any = {};
-    Object.assign(data, this.clone());
-    return data;
+    return TextStyle.assign({}, this as any);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async restore(data: any, tick: number, clear: boolean): Promise<void> {
-    Object.assign(this, data);
+    TextStyle.assign(this as any, data);
+  }
+
+  public toJson(): any {
+    return TextStyle.assign({}, this);
   }
 }
 
@@ -233,41 +210,92 @@ export class TextStyle {
  * 文字と位置などの情報のみ持ち、canvasなどは持たない。
  */
 export class LayerChar {
+  public readonly pixiSprite: PIXI.Sprite;
+  public readonly fromCache: boolean;
   public readonly ch: string;
   public readonly style: TextStyle;
-  public x: number = 0;
-  public y: number = 0;
-  public width: number = 0;
-  public alpha: number = 1.0;
+  private _x: number = 0;
+  private _y: number = 0;
 
   private inEffectState: InEffectState = InEffectState.Stop;
   private inEffectStartTick: number = -1;
   private _offsetX: number = 0;
   private _offsetY: number = 0;
 
-  public constructor(context: CanvasRenderingContext2D, ch: string, style: TextStyle, x: number, y: number) {
-    this.ch = ch;
+  public set x(x: number) {
+    this._x = x;
+    this.refreshPosition();
+  }
+  public get x(): number {
+    return this._x;
+  }
+  public set y(y: number) {
+    this._y = y;
+    this.refreshPosition();
+  }
+  public get y(): number {
+    return this.pixiSprite.y;
+  }
+  public set width(width: number) {
+    this.pixiSprite.width = width;
+  }
+  public get width(): number {
+    return this.pixiSprite.width;
+  }
+  public set alpha(alpha: number) {
+    this.pixiSprite.alpha = alpha;
+  }
+  public get alpha(): number {
+    return this.pixiSprite.alpha;
+  }
+
+  public constructor(ch: string, style: TextStyle, x: number, y: number) {
     this.style = style.clone();
+    this.ch = ch;
+
+    const cacheSprite = textCache.get(this.ch, this.style);
+    if (cacheSprite != null) {
+      this.pixiSprite = cacheSprite;
+      this.fromCache = true;
+    } else {
+      const text: PIXI.Text = new PIXI.Text(ch, this.style);
+      textCache.set(this.ch, this.style, text);
+      this.pixiSprite = text;
+      this.fromCache = false;
+    }
+
     this.x = x;
     this.y = y;
-    this.width = style.getChWidth(context, ch) + style.pitch;
+    this.width = this.pixiSprite.width + style.pitch;
     this.style.checkOptions();
-    this.style.resetGradientBuffer();
     if (this.style.inEffectTypes != null && this.style.inEffectTypes.length > 0) {
       this.inEffectState = InEffectState.Run;
     }
   }
 
-  public clone(context: CanvasRenderingContext2D): LayerChar {
-    // const c = new LayerChar(context, this.ch, this.style, this.x, this.y);
-    // c.width = this.width;
-    // c.alpha = this.alpha;
-    // c.inEffectState = this.inEffectState;
-    // c.inEffectStartTick = this.inEffectStartTick;
-    // c._offsetX = this._offsetX;
-    // c._offsetY = this._offsetY;
-    // return c;
-    return Object.assign(new LayerChar(context, this.ch, this.style, this.x, this.y), this);
+  public addTo(container: PIXI.Container): LayerChar {
+    container.addChild(this.pixiSprite);
+    return this;
+  }
+
+  public static CloneParams = ["inEffectState", "inEffectStartTick", "_offsetX", "_offsetY", "alpha"];
+
+  public clone(): LayerChar {
+    const me: any = this as any;
+    const c: any = new LayerChar(this.ch, this.style.clone(), this.x, this.y) as any;
+    LayerChar.CloneParams.forEach(param => {
+      c[param] = me[param];
+    });
+    return c;
+  }
+
+  public destroy(): void {
+    if (this.pixiSprite.parent) {
+      this.pixiSprite.parent.removeChild(this.pixiSprite);
+      if (this.fromCache) {
+        this.pixiSprite.destroy();
+      }
+    }
   }
 
   /**
@@ -312,6 +340,11 @@ export class LayerChar {
     }
   }
 
+  private refreshPosition(): void {
+    this.pixiSprite.x = this._x + this._offsetX;
+    this.pixiSprite.y = this._y + this._offsetY;
+  }
+
   private InEffectAlpha(elapsedTime: number, phase: number): void {
     this.alpha = phase;
   }
@@ -319,44 +352,34 @@ export class LayerChar {
   private InEffectMove(elapsedTime: number, phase: number): void {
     this._offsetX = Math.floor(this.style.inEffectOptions.offsetx * (1 - phase));
     this._offsetY = Math.floor(this.style.inEffectOptions.offsety * (1 - phase));
-  }
-
-  public draw(context: CanvasRenderingContext2D, tick: number, offsetX: number, offsetY: number): void {
-    const x = Math.floor(this.x + this._offsetX + offsetX) + 0.5;
-    const y = Math.floor(this.y + this._offsetY + offsetY) + 0.5;
-    context.globalAlpha = this.alpha;
-    if (this.style.edgeWidth > 0) {
-      // 縁取りする場合：縁取りと影を描画->本体描画
-      this.style.applyStyleTo(context, x, y);
-      this.style.applyShadowTo(context);
-      context.strokeText(this.ch, x, y);
-      this.style.clearShadowFrom(context);
-      // this.style.applyStyleTo(context, x, y);
-      context.fillText(this.ch, x, y); // 影なし
-    } else {
-      // 縁取りしない場合：本体と影を描画
-      this.style.applyStyleTo(context, x, y);
-      this.style.applyShadowTo(context);
-      context.fillText(this.ch, x, y); // 影あり
-    }
-    // console.log("draw layerChar", this.x, this.y, this.ch, this.style.font);
+    this.refreshPosition();
   }
 }
 
 export class LayerTextLine {
-  public x: number = 0;
-  public y: number = 0;
+  public readonly container: PIXI.Container = new PIXI.Container();
   public lineHeight: number = 0;
-  public readonly chList: LayerChar[] = [];
-  public readonly rubyList: LayerChar[] = [];
+  private chList: LayerChar[] = [];
+  private rubyList: LayerChar[] = [];
 
   private _textX: number = 0;
 
   private rubyText: string = "";
-  private rubyFontSize: number = 10;
-  private rubyOffset: number = 2;
-  private rubyPitch: number = 2;
+  private rubyOffset: number = 0;
+  private rubyStyle: TextStyle = new TextStyle(defaultRubyTextStyle);
 
+  public set x(x: number) {
+    this.container.x = x;
+  }
+  public get x(): number {
+    return this.container.x;
+  }
+  public set y(y: number) {
+    this.container.y = y;
+  }
+  public get y(): number {
+    return this.container.y;
+  }
   public get text(): string {
     return this.chList.map(layerChar => layerChar.ch).join("");
   }
@@ -387,66 +410,80 @@ export class LayerTextLine {
 
   public destroy(): void {
     this.clear();
+    if (this.container.parent) {
+      this.container.parent.removeChild(this.container);
+      this.container.destroy();
+    }
+  }
+
+  public addTo(container: PIXI.Container): LayerTextLine {
+    container.addChild(this.container);
+    return this;
   }
 
   public clear(): void {
-    this.chList.splice(0, this.chList.length);
-    this.rubyList.splice(0, this.rubyList.length);
+    this.chList.forEach((ch: LayerChar) => {
+      ch.destroy();
+    });
+    this.chList = [];
+    this.rubyList.forEach((ruby: LayerChar) => {
+      ruby.destroy();
+    });
+    this.rubyList = [];
+    this.container.removeChildren();
     this.lineHeight = 0;
     this.rubyText = "";
-    this.rubyFontSize = 10;
-    this.rubyOffset = 2;
-    this.rubyPitch = 2;
+    this.rubyOffset = 0;
+    this.rubyStyle = new TextStyle(defaultRubyTextStyle);
   }
 
-  public addChar(context: CanvasRenderingContext2D, ch: string, style: TextStyle, lineHeight: number): void {
-    // if (this.lineHeight < lineHeight) {
-    //   // 自動で行の高さを拡張
-    //   this.lineHeight = lineHeight;
-    // }
+  public addChar(ch: string, style: TextStyle, lineHeight: number): void {
+    if (this.lineHeight < lineHeight) {
+      // 自動で行の高さを拡張
+      this.lineHeight = lineHeight;
+    }
     const x = this._textX;
-    const y = lineHeight;
-    const c = new LayerChar(context, ch, style, x, y);
+    const y = lineHeight - +style.fontSize;
+    const c = new LayerChar(ch, style, x, y).addTo(this.container);
     this._textX += c.width;
     this.chList.push(c);
     // ルビがあったら追加する
     if (this.rubyText !== "") {
-      this.addRubyText(context, c, style);
+      this.addRubyText(c);
       this.rubyText = "";
     }
   }
 
-  private addRubyText(context: CanvasRenderingContext2D, targetChar: LayerChar, srcTextStyle: TextStyle): void {
-    const rubyStyle = srcTextStyle.clone();
-    rubyStyle.fontSize = this.rubyFontSize;
+  private addRubyText(targetChar: LayerChar): void {
+    console.log(this.rubyStyle);
+    const rubyStyle = this.rubyStyle;
     const rubyText = this.rubyText;
-    const pitch = this.rubyPitch;
+    const pitch = this.rubyStyle.pitch;
     const center = targetChar.x + targetChar.width / 2;
     const tmpRubyList: LayerChar[] = [];
     let rubyWidthSum = 0;
     for (let i = 0; i < rubyText.length; i++) {
-      const ruby = new LayerChar(context, rubyText.charAt(i), rubyStyle, 0, 0); // 位置は一旦0,0で作る
+      const ruby = new LayerChar(rubyText.charAt(i), rubyStyle, 0, 0).addTo(this.container); // 位置は一旦0,0で作る
       tmpRubyList.push(ruby);
-      rubyWidthSum += ruby.width;
+      rubyWidthSum += ruby.width + pitch;
     }
     rubyWidthSum -= pitch; // 最後の一文字のpitchは幅に含めない
     // 追加対象の文字に対して中央揃えとなるように配置する
-    // const rubyY = targetChar.y - targetChar.style.fontSize - this.rubyOffset;
-    const rubyY = -this.rubyOffset;
+    // const rubyY = targetChar.y - +targetChar.style.fontSize - this.rubyOffset; // 文字位置を基準に配置
+    const rubyY = -(+this.rubyStyle.fontSize + this.rubyOffset); // 行高を基準に配置
     let rubyX = center - rubyWidthSum / 2;
     tmpRubyList.forEach((ruby: LayerChar) => {
       ruby.y = rubyY;
       ruby.x = rubyX;
-      rubyX += ruby.width;
+      rubyX += ruby.width + pitch;
       this.rubyList.push(ruby);
     });
   }
 
-  public reserveRubyText(rubyText: string, rubyFontSize: number, rubyOffset: number, rubyPitch: number): void {
+  public reserveRubyText(rubyText: string, rubyOffset: number, rubyStyle: TextStyle): void {
     this.rubyText = rubyText;
-    this.rubyFontSize = rubyFontSize;
     this.rubyOffset = rubyOffset;
-    this.rubyPitch = rubyPitch;
+    this.rubyStyle = rubyStyle.clone();
   }
 
   public getCh(index: number): LayerChar {
@@ -458,31 +495,17 @@ export class LayerTextLine {
   }
 
   public backspace(): void {
-    // this.chList[this.chList.length - 1].destroy();
+    this.chList[this.chList.length - 1].destroy();
     this.chList.splice(this.chList.length - 1, 1);
   }
 
   /**
    * 描画前更新
    * @param tick 時刻
-   * @return 更新があった場合はtrue
    */
-  public beforeDraw(tick: number): boolean {
-    let updated = false;
+  public beforeDraw(tick: number): void {
     this.chList.forEach(ch => {
-      if (ch.beforeDraw(tick)) {
-        updated = true;
-      }
-    });
-    return updated;
-  }
-
-  public draw(context: CanvasRenderingContext2D, tick: number): void {
-    this.chList.forEach((layerChar: LayerChar) => {
-      layerChar.draw(context, tick, this.x, this.y);
-    });
-    this.rubyList.forEach((layerChar: LayerChar) => {
-      layerChar.draw(context, tick, this.x, this.y);
+      ch.beforeDraw(tick);
     });
   }
 
@@ -497,7 +520,7 @@ export class LayerTextLine {
     "rubyPitch",
   ];
 
-  public copyTo(context: CanvasRenderingContext2D, dest: LayerTextLine): void {
+  public copyTo(dest: LayerTextLine): void {
     dest.clear();
 
     const me: any = this as any;
@@ -505,35 +528,15 @@ export class LayerTextLine {
     LayerTextLine.storeParams.forEach(p => (you[p] = me[p]));
 
     this.chList.forEach((layerChar: LayerChar) => {
-      dest.chList.push(layerChar.clone(context));
+      dest.chList.push(layerChar.clone().addTo(dest.container));
     });
     this.rubyList.forEach((layerRuby: LayerChar) => {
-      dest.rubyList.push(layerRuby.clone(context));
+      dest.rubyList.push(layerRuby.clone().addTo(dest.container));
     });
   }
-
-  // // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // public store(tick: number): any {
-  //   const data: any = {};
-  //   const me: any = this as any;
-  //   LayerTextLine.storeParams.forEach(p => (data[p] = me[p]));
-  //   return data;
-  // }
-
-  // public async restore(data: any, tick: number, clear: boolean): Promise<void> {
-  //   if (clear) {
-  //     this.clear();
-  //   }
-  //   const me: any = this as any;
-  //   LayerTextLine.storeParams.forEach(p => (me[p] = data[p]));
-  // }
 }
 
 export class LayerTextCanvas {
-  public readonly canvas: HTMLCanvasElement;
-  public readonly context: CanvasRenderingContext2D;
-  public readonly sprite: PIXI.Sprite;
-
   /** 禁則文字（行頭禁則文字） */
   public static headProhibitionChar: string =
     '%),:;]}｡｣ﾞﾟ。，、．：；゛゜ヽヾゝ"ゞ々’”）〕］｝〉》」』】°′″℃￠％‰' +
@@ -541,40 +544,44 @@ export class LayerTextCanvas {
   /** 禁則文字（行末禁則文字） */
   public static tailProhibitionChar: string = "\\$([{｢‘“（〔［｛〈《「『【￥＄￡";
 
+  private container: PIXI.Container;
+  private _width: number = 32;
+  private _height: number = 32;
+
   private lines: LayerTextLine[] = [];
-  private updated: boolean = true; // 描画しなおすかどうかフラグ
 
   public style: TextStyle = new TextStyle();
-  public lineHeight: number = 0;
-  public linePitch: number = 5;
+  public lineHeight: number = 26;
+  public linePitch: number = 10;
+  public rubyStyle: TextStyle = new TextStyle(defaultRubyTextStyle);
 
-  public marginTop: number = 10;
-  public marginRight: number = 10;
-  public marginBottom: number = 10;
-  public marginLeft: number = 10;
+  public marginTop: number = 20;
+  public marginRight: number = 20;
+  public marginBottom: number = 20;
+  public marginLeft: number = 20;
   public autoReturn: boolean = true;
   public locatePoint: number | null = null;
   public indentPoint: number | null = null;
   public reservedIndentPoint: number | null = null;
   public reservedIndentClear: boolean = false;
   public align: "left" | "center" | "right" = "left";
-  public rubyFontSize: number = 10;
-  public rubyOffset: number = 2;
-  public rubyPitch: number = 2;
+  public rubyOffset: number = 5;
+  // public rubyFontSize: number = 10;
+  // public rubyPitch: number = 2;
 
   public get width(): number {
-    return this.canvas.width;
+    return this._width;
   }
   public set width(width: number) {
-    this.canvas.width = width;
+    this._width = width;
     this.clear();
   }
 
   public get height(): number {
-    return this.canvas.height;
+    return this._height;
   }
   public set height(height: number) {
-    this.canvas.height = height;
+    this._height = height;
     this.clear();
   }
 
@@ -583,38 +590,24 @@ export class LayerTextCanvas {
   }
 
   public constructor() {
-    this.canvas = document.createElement("canvas");
-    this.context = this.canvas.getContext("2d")!; // eslint-disable-line @typescript-eslint/no-non-null-assertion
-    this.lineHeight = this.style.fontSize;
-
-    this.canvas.width = 800;
-    this.canvas.height = 32;
+    this.lineHeight = +this.style.fontSize;
+    this.container = new PIXI.Container();
+    // this.container.width = 800;
+    // this.container.height = 32;
+    this.container.x = 0;
+    this.container.y = 0;
     this.clear();
+  }
 
-    this.sprite = new PIXI.Sprite(PIXI.Texture.from(this.canvas));
-    this.sprite.anchor.set(0);
-    this.sprite.x = 0;
-    this.sprite.y = 0;
+  public addTo(parent: PIXI.Container): LayerTextCanvas {
+    parent.addChild(this.container);
+    return this;
   }
 
   public beforeDraw(tick: number): void {
     this.lines.forEach(line => {
-      if (line.beforeDraw(tick)) {
-        this.updated = true;
-      }
+      line.beforeDraw(tick);
     });
-  }
-
-  public draw(tick: number): void {
-    if (this.updated) {
-      const context = this.context;
-      context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.lines.forEach(line => {
-        line.draw(context, tick);
-      });
-      this.sprite.texture.update();
-      this.updated = false;
-    }
   }
 
   public get currentLine(): LayerTextLine {
@@ -638,12 +631,11 @@ export class LayerTextCanvas {
       return this.addText(ch);
     }
 
-    this.updated = true; // 更新予約
     const currentLine = this.currentLine;
 
     // いったん、現在の行に文字を追加する
     const tail = currentLine.getTailCh();
-    currentLine.addChar(this.context, ch, this.style, this.lineHeight);
+    currentLine.addChar(ch, this.style, this.lineHeight);
 
     this.alignCurrentTextLine();
 
@@ -663,7 +655,7 @@ export class LayerTextCanvas {
       this.alignCurrentTextLine();
       // 改行して、改めて文字を追加する。
       this.addTextReturn();
-      this.currentLine.addChar(this.context, ch, this.style, this.lineHeight);
+      this.currentLine.addChar(ch, this.style, this.lineHeight);
       this.alignCurrentTextLine();
     }
   }
@@ -740,7 +732,7 @@ export class LayerTextCanvas {
    */
   public addTextReturn(): void {
     const preLineY = this.currentLine.y;
-    this.lines.push(new LayerTextLine());
+    this.lines.push(new LayerTextLine().addTo(this.container));
     if (this.reservedIndentPoint != null) {
       this.indentPoint = this.reservedIndentPoint;
     } else if (this.reservedIndentClear) {
@@ -855,7 +847,7 @@ export class LayerTextCanvas {
    * @param rubyText ルビ文字
    */
   public reserveRubyText(rubyText: string): void {
-    this.currentLine.reserveRubyText(rubyText, this.rubyFontSize, this.rubyOffset, this.rubyPitch);
+    this.currentLine.reserveRubyText(rubyText, this.rubyOffset, this.rubyStyle);
   }
 
   /**
@@ -865,9 +857,11 @@ export class LayerTextCanvas {
    * インデント位置は初期化される。
    */
   public clear(): void {
-    this.lines.forEach(line => line.clear());
-    this.lines.splice(0, this.lines.length);
-    this.lines.push(new LayerTextLine());
+    this.lines.forEach(line => {
+      line.destroy();
+    });
+    this.lines = [];
+    this.lines.push(new LayerTextLine().addTo(this.container));
     this.locatePoint = null;
     this.indentPoint = null;
     this.reservedIndentPoint = null;
@@ -875,7 +869,6 @@ export class LayerTextCanvas {
 
     this.currentLine.x = this.getTextLineBasePoint();
     this.currentLine.y = this.marginTop;
-    this.updated = true;
   }
 
   private static storeParams: string[] = [
@@ -901,6 +894,7 @@ export class LayerTextCanvas {
     dest.width = this.width;
     dest.height = this.height;
     dest.style = this.style.clone();
+    dest.rubyStyle = this.rubyStyle.clone();
 
     const me = this as any;
     const you = dest as any;
@@ -908,8 +902,8 @@ export class LayerTextCanvas {
 
     dest.lines = [];
     this.lines.forEach(line => {
-      const destLine = new LayerTextLine();
-      line.copyTo(this.context, destLine);
+      const destLine = new LayerTextLine().addTo(dest.container);
+      line.copyTo(destLine);
       dest.lines.push(destLine);
     });
   }
@@ -925,6 +919,7 @@ export class LayerTextCanvas {
     data.width = this.width;
     data.height = this.height;
     data.style = this.style.store(tick);
+    data.rubyStyle = this.rubyStyle.store(tick);
 
     return data;
   }
@@ -947,10 +942,8 @@ export class LayerTextCanvas {
       this.clear();
       this.height = data.height;
     }
-  }
-
-  public measureText(text: string = TextStyle.METRICS_STRING): TextMetrics {
-    return this.style.measureText(this.context, text);
+    this.style.restore(data.style, tick, clear);
+    this.rubyStyle.restore(data.rubyStyle, tick, clear);
   }
 
   /**
@@ -969,6 +962,12 @@ export class LayerTextCanvas {
       if (config.styleConfig != null) {
         this.style.applyConfig(config.styleConfig);
       }
+      if (config.rubyStyleConfig != null) {
+        this.rubyStyle.applyConfig(config.rubyStyleConfig);
+      }
     }
   }
 }
+
+// 日本語フォントの上部が見切れてしまう問題の対処
+PIXI.TextMetrics.BASELINE_SYMBOL += "ぽン甘｜|gq";

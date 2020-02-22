@@ -1,10 +1,9 @@
 import { assert } from "chai";
 import { ScriptParser } from "../../src/ts/base/script-parser";
 import { Ponkan3 } from "../../src/ts/ponkan3";
-import { Ponkan3Settings } from "../settings";
+import * as Helper from "../helper";
 
-const testScript01 =
-`#コメント行
+const testScript01 = `#コメント行
 ;layopt { "width":100, "height":200, "visible":true }
 ;     layopt    {      "width"   :   100     , "height"   :   200 ,    "visible"   :   true    }
 ;meslay{"width":100,"height":200,"visible":true,"file":"hogehoge.png"}
@@ -36,8 +35,7 @@ const testScript01 =
 。
 `;
 
-const testScript02 =
-`# コメントはタグではない。あと改行は__line_break__のタグ。
+const testScript02 = `# コメントはタグではない。あと改行は__line_break__のタグ。
 ;layopt width: 100, height: 200
 ;   layopt   {    width   :    100   , "height":200 }
 ;layopt{width:100,height:200}
@@ -53,30 +51,23 @@ console.log("hoge")
 
 `;
 
-
-const testScriptJsPart =
-`---
+const testScriptJsPart = `---
   var hoge = 100;
   console.log(hoge);
 ---`;
 
-export function ScriptParserTest() {
+describe("ScriptParser", () => {
   let ponkan: Ponkan3;
 
   before(() => {
-    ponkan = new Ponkan3("ponkan3game", Ponkan3Settings);
+    ponkan = Helper.createPonkan();
   });
 
   after(() => {
-    try {
-      ponkan.destroy();
-    } catch (e) {
-      console.error(e);
-    }
+    Helper.destroyPonkan(ponkan);
   });
 
-  describe("ScriptParserのテスト", () => {
-
+  describe("パース結果", () => {
     it("一通りパースできるかどうか", () => {
       const sp = new ScriptParser(ponkan.resource, testScript01);
       assert.isNotNull(sp);
@@ -86,7 +77,7 @@ export function ScriptParserTest() {
       const sp = new ScriptParser(ponkan.resource, testScript02);
       assert.isNotNull(sp.tags);
       assert.isNotEmpty(sp.tags);
-      assert.equal(sp.tags.length, 17);  // 最後にsコマンドが自動追加されるのに注意
+      assert.equal(sp.tags.length, 17); // 最後にsコマンドが自動追加されるのに注意
     });
     it("タグの内容（簡易）", () => {
       const sp = new ScriptParser(ponkan.resource, testScript02);
@@ -211,4 +202,4 @@ export function ScriptParserTest() {
       assert.deepEqual(sp.tags[0].values, { __body__: "  var hoge = 100;\n  console.log(hoge);\n", print: false });
     });
   });
-}
+});

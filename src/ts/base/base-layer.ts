@@ -324,8 +324,7 @@ export class BaseLayer {
     this.container.addChild(this.textContainer);
     this.textCanvas.width = this.width;
     this.textCanvas.height = this.height;
-    this.textContainer.addChild(this.textCanvas.sprite);
-    // document.body.appendChild(this.textCanvas.canvas);
+    this.textCanvas.addTo(this.textContainer);
     this.clearText();
 
     this.childContainer = new PIXI.Container();
@@ -434,7 +433,8 @@ export class BaseLayer {
     }
     // テキスト更新
     this.textCanvas.beforeDraw(tick);
-    this.textCanvas.draw(tick);
+    // this.textCanvas.draw(tick);
+    // キャンバスの更新
     if (this.visible && this.canvas !== null && this.canvasSprite !== null) {
       this.canvasSprite.beforeDraw(tick);
     }

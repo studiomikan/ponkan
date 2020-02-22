@@ -19,11 +19,7 @@ export default function(p: Ponkan3): TagAction[] {
         new TagValue("name", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        if (p.resource.hasMacro(values.name)) {
-          throw new Error(`${values.name}マクロはすでに登録されています`);
-        }
-        const m = p.conductor.script.defineMacro(values.name);
-        p.resource.macroInfo[values.name] = m;
+        p.conductor.script.defineMacro(values.name);
         return "continue";
       },
     ),
