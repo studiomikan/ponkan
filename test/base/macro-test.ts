@@ -1,5 +1,4 @@
-import { expect, assert } from "chai";
-import { Ponkan3 } from "../../src/ts/ponkan3";
+import { expect } from "chai";
 import { Macro } from "../../src/ts/base/macro";
 import { Tag } from "../../src/ts/base/tag";
 
@@ -48,19 +47,19 @@ describe("Macro", () => {
       if (tag == null) {
         return expect.fail();
       }
-      expect(tag!.name).to.be.equals("ch");
-      expect(tag!.values.text).to.be.equals("こ");
+      expect(tag.name).to.be.equals("ch");
+      expect(tag.values.text).to.be.equals("こ");
       macro.getNextTag(); // 読み進める
     });
 
     it("タグ読み進めず、何度呼んでも同じタグが返ってくる", () => {
-      for (var i = 0; i < 3; i++) {
+      for (let i = 0; i < 3; i++) {
         const tag: Tag | null = macro.getCurrentTag();
         if (tag == null) {
           return expect.fail();
         }
-        expect(tag!.name).to.be.equals("ch");
-        expect(tag!.values.text).to.be.equals("こ");
+        expect(tag.name).to.be.equals("ch");
+        expect(tag.values.text).to.be.equals("こ");
       }
     });
 
@@ -79,8 +78,8 @@ describe("Macro", () => {
       if (tag == null) {
         return expect.fail();
       }
-      expect(tag!.name).to.be.equals("ch");
-      expect(tag!.values.text).to.be.equals("こ");
+      expect(tag.name).to.be.equals("ch");
+      expect(tag.values.text).to.be.equals("こ");
     });
 
     it("タグ読み進めて、次のタグが返ってくる", () => {

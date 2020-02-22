@@ -2,4 +2,9 @@
 cd `dirname $0`
 cd ../
 npm install
-npm start
+
+if [ "${MANUAL}" = "1" ] ; then
+  tail -f /dev/null
+else
+  npm start
+fi

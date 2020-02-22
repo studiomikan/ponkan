@@ -2,6 +2,7 @@ version: "3"
 
 volumes:
   nodejs_node_modules:
+    driver: local
 
 services:
   nodejs:
@@ -17,5 +18,6 @@ services:
     command: bash /home/node/app/docker/nodejs/start_dev_server.sh
     working_dir: /home/node/app
     environment:
+      - MANUAL
       - WEBPACK_DEV_SERVER_HOST=0.0.0.0
       - WEBPACK_DEV_SERVER_PORT=8080
