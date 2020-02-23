@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { ScriptParser } from "../../src/ts/base/script-parser";
-import { Ponkan3 } from "../../src/ts/ponkan3";
+import { Ponkan } from "../../src/ts/ponkan";
 import * as Helper from "../helper";
 
 const testScript01 = `#コメント行
@@ -57,7 +57,7 @@ const testScriptJsPart = `---
 ---`;
 
 describe("ScriptParser", () => {
-  let ponkan: Ponkan3;
+  let ponkan: Ponkan;
 
   before(() => {
     ponkan = Helper.createPonkan();

@@ -1,9 +1,9 @@
 import { expect } from "chai";
-import { Ponkan3 } from "../../src/ts/ponkan3";
+import { Ponkan } from "../../src/ts/ponkan";
 import { Script } from "../../src/ts/base/script";
 import * as Helper from "../helper";
 
-let ponkan: Ponkan3;
+let ponkan: Ponkan;
 
 describe("Script", () => {
   before(() => {

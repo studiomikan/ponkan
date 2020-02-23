@@ -5,7 +5,7 @@ const WriteFilePlugin = require('write-file-webpack-plugin');
 
 module.exports = {
   entry: {
-    ponkan3: path.join(__dirname, 'src/ts/ponkan3.ts')
+    ponkan: path.join(__dirname, 'src/ts/ponkan.ts')
   },
   output: {
     path: path.join(__dirname, 'dist'),

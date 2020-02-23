@@ -1,5 +1,5 @@
 import { Resource } from "../base/resource";
-import { Ponkan3 } from "../ponkan3";
+import { Ponkan } from "../ponkan";
 import { SliderLayer } from "./slider-layer";
 import { Ease } from "../base/util";
 
@@ -30,7 +30,7 @@ export class MovableLayer extends SliderLayer {
     return this.moveLoop;
   }
 
-  public constructor(name: string, resource: Resource, owner: Ponkan3) {
+  public constructor(name: string, resource: Resource, owner: Ponkan) {
     super(name, resource, owner);
   }
 

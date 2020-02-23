@@ -1,8 +1,8 @@
-import { Ponkan3 } from "../ponkan3";
+import { Ponkan } from "../ponkan";
 import { TagAction, TagActionResult, TagValue } from "../tag-action";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export default function(p: Ponkan3): TagAction[] {
+export default function(p: Ponkan): TagAction[] {
   return [
     // ======================================================================
     // セーブ＆ロード関係

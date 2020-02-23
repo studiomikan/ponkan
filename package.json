@@ -1,19 +1,19 @@
 {
-  "name": "ponkan3",
+  "name": "ponkan",
   "version": "1.0.0",
-  "description": "Ponkan3 is novel-game-engine for web.",
-  "main": "dist/ponkan3.js",
-  "types": "dist/ponkan3.d.ts",
+  "description": "Ponkan is novel-game-engine for web.",
+  "main": "dist/ponkan.js",
+  "types": "dist/ponkan.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/studiomikan/ponkan3"
+    "url": "https://github.com/studiomikan/ponkan"
   },
   "private": true,
   "author": "okayu <studiomikan@gmail.com> (https://studiomikan.net/)",
   "license": "MIT",
-  "homepage": "https://github.com/studiomikan/ponkan3",
+  "homepage": "https://github.com/studiomikan/ponkan",
   "bugs": {
-    "url": "https://github.com/studiomikan/ponkan3/issues",
+    "url": "https://github.com/studiomikan/ponkan/issues",
     "email": "studiomikan@gmail.com"
   },
   "scripts": {

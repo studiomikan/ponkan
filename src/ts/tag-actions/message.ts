@@ -1,10 +1,10 @@
-import { Ponkan3 } from "../ponkan3";
+import { Ponkan } from "../ponkan";
 import { TagAction, TagActionResult, TagValue } from "../tag-action";
 import { PonEventHandler } from "../base/pon-event-handler";
 import { PonLayer } from "../layer/pon-layer";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export default function(p: Ponkan3): TagAction[] {
+export default function(p: Ponkan): TagAction[] {
   return [
     // ======================================================================
     // メッセージ関係

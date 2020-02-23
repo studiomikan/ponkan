@@ -27,7 +27,7 @@ describe("PonSprite", () => {
   let parent: SpriteParent;
   let ps: PonSprite;
   let destroyed: boolean;
-  const ImagePath = "testdata/ponkan3-icon.png";
+  const ImagePath = "testdata/ponkan-icon.png";
 
   const getContext = (target: PIXI.DisplayObject): CanvasRenderingContext2D => {
     const extract = renderer.plugins.extract;
