@@ -1,5 +1,5 @@
 import { Resource } from "../base/resource";
-import { Ponkan3 } from "../ponkan3";
+import { Ponkan } from "../ponkan";
 import { MovableLayer } from "./movable-layer";
 
 import { ColorFilter, createColorFilter } from "../filter/adjustment-filter";
@@ -19,7 +19,7 @@ export class FilteredLayer extends MovableLayer {
 
   protected static filterClassList: any = null;
 
-  public constructor(name: string, resource: Resource, owner: Ponkan3) {
+  public constructor(name: string, resource: Resource, owner: Ponkan) {
     super(name, resource, owner);
     this._filters = [];
 

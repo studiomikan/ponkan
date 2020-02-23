@@ -1,20 +1,20 @@
-# Ponkan3
+# Ponkan
 
 <p align="center">
-  <img src="images/ponkan3-logo.png" alt="Ponkan3 logo" width="150">
+  <img src="images/ponkan-logo.png" alt="Ponkan logo" width="150">
 </p>
 
-Ponkan3 is novel-game-engine for web.
+Ponkan is novel-game-engine for web.
 
 Languages: [Japanease](./README.md)
 
 ## Demo (sample game)
 
-[Ponkan3 sample game (jp)](http://studiomikan.github.io/ponkan3-samplegame)
+[Ponkan sample game (jp)](http://studiomikan.github.io/ponkan-samplegame)
 
 ## Documents
 
-[Ponkan3 Documents](http://studiomikan.github.io/ponkan3-docs)
+[Ponkan Documents](http://studiomikan.github.io/ponkan-docs)
 
 ## Build
 
@@ -59,7 +59,7 @@ $ MANUAL=1 docker-compose up
   - Firefox (latest)
   - Edge (latest)
 
-## External Libraries used by Ponkan3
+## External Libraries used by Ponkan
 
 ### Libraries
 
@@ -75,4 +75,4 @@ $ MANUAL=1 docker-compose up
 
 ## License
 
-Ponkan3 is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+Ponkan is licensed under the [MIT License](https://opensource.org/licenses/MIT).

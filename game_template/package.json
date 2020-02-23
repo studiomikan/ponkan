@@ -1,7 +1,7 @@
 {
-  "name": "ponkan3-game-template",
+  "name": "ponkan-game-template",
   "version": "1.0.0",
-  "description": "ponkan3 game template",
+  "description": "ponkan game template",
   "main": "main.js",
   "author": "okayu",
   "scripts": {
@@ -13,8 +13,8 @@
     "start": "http-server -p 8080 -o http://localhost:8080/index.html"
   },
   "build": {
-    "appId": "net.studiomikan.ponkan3.template",
-    "productName": "Ponkan3Template",
+    "appId": "net.studiomikan.ponkan.template",
+    "productName": "PonkanTemplate",
     "win": {
       "target": [
         {

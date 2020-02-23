@@ -1,6 +1,6 @@
 import { Resource } from "./base/resource";
 import { Tag } from "./base/tag";
-import { Ponkan3 } from "./ponkan3";
+import { Ponkan } from "./ponkan";
 
 export type TagValueType =
   | "number"
@@ -141,7 +141,7 @@ import system from "./tag-actions/system";
 import trans from "./tag-actions/trans";
 import video from "./tag-actions/video";
 
-export function generateTagActions(p: Ponkan3): TagAction[] {
+export function generateTagActions(p: Ponkan): TagAction[] {
   return new Array<TagAction>()
     .concat(system(p))
     .concat(script(p))

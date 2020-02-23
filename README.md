@@ -1,20 +1,20 @@
-# Ponkan3
+# Ponkan
 
 <p align="center">
-  <img src="images/ponkan3-logo.png" alt="Ponkan3 logo" width="150">
+  <img src="images/ponkan-logo.png" alt="Ponkan logo" width="150">
 </p>
 
-Ponkan3 はブラウザで動作するノベルゲームエンジンです。
+Ponkan はブラウザで動作するノベルゲームエンジンです。
 
 Languages: [English](./README.en.md)
 
 ## デモ (サンプルゲーム)
 
-[Ponkan3 サンプルゲーム](http://studiomikan.github.io/ponkan3-samplegame)
+[Ponkan サンプルゲーム](http://studiomikan.github.io/ponkan-samplegame)
 
 ## ドキュメント
 
-[Ponkan3 ドキュメント](http://studiomikan.github.io/ponkan3-docs)
+[Ponkan ドキュメント](http://studiomikan.github.io/ponkan-docs)
 
 ## Build, Test
 
@@ -63,7 +63,7 @@ $ MANUAL=1 docker-compose up
   - Firefox (最新)
   - Edge (最新)
 
-## Ponkan3 は以下のライブラリを使用しています
+## Ponkan は以下のライブラリを使用しています
 
 ### Libraries
 
@@ -79,6 +79,6 @@ $ MANUAL=1 docker-compose up
 
 ## ライセンス
 
-Ponkan3 は [MIT License](https://opensource.org/licenses/MIT) で公開されています。
+Ponkan は [MIT License](https://opensource.org/licenses/MIT) で公開されています。
 
-Ponkan3 is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+Ponkan is licensed under the [MIT License](https://opensource.org/licenses/MIT).

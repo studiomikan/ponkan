@@ -1,4 +1,4 @@
-export const Ponkan3Settings = {
+export const PonkanSettings = {
   gameVersion: "0.0.0",
   gameDataDir: "./gamedata",
   developMode: true,
