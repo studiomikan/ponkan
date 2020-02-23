@@ -9,7 +9,7 @@ export class PonRenderer {
   private _sprite: PIXI.Sprite;
   private _canvasElm: HTMLCanvasElement;
 
-  private primaryContainer: PIXI.Container;
+  public readonly primaryContainer: PIXI.Container;
   public readonly foreContainer: PIXI.Container;
   public readonly backContainer: PIXI.Container;
 

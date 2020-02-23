@@ -17,6 +17,7 @@ export enum ScaleMode {
 }
 
 export class PonGame implements IConductorEvent {
+  private eventHandlers: any = {};
   public static ScaleMode = ScaleMode;
 
   public static readonly Logger = Logger;
@@ -90,6 +91,7 @@ export class PonGame implements IConductorEvent {
   public destroy(): void {
     this.stop();
     this.renderer.destroy();
+    this.removeEvents();
   }
 
   public start(): void {
@@ -513,150 +515,202 @@ export class PonGame implements IConductorEvent {
   // ============================================================
 
   private initWindowEvent(): void {
-    window.addEventListener("unload", () => {
-      this.onWindowClose();
-    });
-    window.addEventListener("beforeunload", () => {
-      this.onWindowClose();
-    });
+    const handlers: any = (this.eventHandlers.window = {});
+    window.addEventListener(
+      "unload",
+      (handlers.unload = (): void => {
+        this.onWindowClose();
+      }),
+    );
+    window.addEventListener(
+      "beforeunload",
+      (handlers.beforeunload = (): void => {
+        this.onWindowClose();
+      }),
+    );
   }
 
   public onWindowClose(): boolean {
     return true;
   }
 
-  private initMouseEventOnCanvas(canvas: HTMLCanvasElement): void {
-    // let move = "ontouchmove" in canvas ? "touchmove" : "mousemove";
-    // let down = "ontouchstart" in canvas ? "touchstart" : "mousedown";
-    // let up = "ontouchend" in canvas ? "touchend" : "mouseup";
+  private removeEvents(): void {
+    const removeFromHandlers = (handlers: any): void => {
+      Object.keys(handlers).forEach(key => {
+        window.removeEventListener(key, handlers[key]);
+      });
+    };
 
-    canvas.addEventListener("mouseenter", (e: MouseEvent) => {
-      try {
-        e.preventDefault();
-        if (this.isLocked) {
-          return true;
+    if (this.eventHandlers != null) {
+      Object.keys(this.eventHandlers).forEach(key => {
+        removeFromHandlers(this.eventHandlers[key]);
+      });
+    }
+  }
+
+  private initMouseEventOnCanvas(canvas: HTMLCanvasElement): void {
+    const handlers: any = (this.eventHandlers.mouse = {});
+    canvas.addEventListener(
+      "mouseenter",
+      (handlers.mouseenter = (e: MouseEvent): boolean => {
+        try {
+          e.preventDefault();
+          if (this.isLocked) {
+            return true;
+          }
+          this.onMouseEnter(new PonMouseEvent(e));
+        } catch (ex) {
+          this.error(ex);
         }
-        this.onMouseEnter(new PonMouseEvent(e));
-      } catch (ex) {
-        this.error(ex);
-      }
-      return true;
-    });
-    canvas.addEventListener("mouseleave", (e: MouseEvent) => {
-      try {
-        e.preventDefault();
-        if (this.isLocked) {
-          return true;
-        }
-        this.onMouseLeave(new PonMouseEvent(e));
         return true;
-      } catch (ex) {
-        this.error(ex);
-        return true;
-      }
-    });
-    canvas.addEventListener("wheel", (e: Event) => {
-      try {
-        e.preventDefault();
-        if (this.isLocked) {
+      }),
+    );
+    canvas.addEventListener(
+      "mouseleave",
+      (handlers.mouseleave = (e: MouseEvent): boolean => {
+        try {
+          e.preventDefault();
+          if (this.isLocked) {
+            return true;
+          }
+          this.onMouseLeave(new PonMouseEvent(e));
+          return true;
+        } catch (ex) {
+          this.error(ex);
           return true;
         }
-        this.onMouseWheel(new PonWheelEvent(e as WheelEvent));
-      } catch (ex) {
-        this.error(ex);
-      }
-      return true;
-    });
-    canvas.addEventListener("click", (e: MouseEvent) => {
-      e.preventDefault();
-      return true;
-    });
-    canvas.addEventListener("contextmenu", (e: MouseEvent) => {
-      e.preventDefault();
-      return true;
-    });
+      }),
+    );
+    canvas.addEventListener(
+      "wheel",
+      (handlers.wheel = (e: Event): boolean => {
+        try {
+          e.preventDefault();
+          if (this.isLocked) {
+            return true;
+          }
+          this.onMouseWheel(new PonWheelEvent(e as WheelEvent));
+        } catch (ex) {
+          this.error(ex);
+        }
+        return true;
+      }),
+    );
+    canvas.addEventListener(
+      "click",
+      (handlers.click = (e: MouseEvent): boolean => {
+        e.preventDefault();
+        return true;
+      }),
+    );
+    canvas.addEventListener(
+      "contextmenu",
+      (handlers.contextmenu = (e: MouseEvent): boolean => {
+        e.preventDefault();
+        return true;
+      }),
+    );
     // touchmove or mousemove
     if ("ontouchmove" in canvas) {
-      (canvas as HTMLCanvasElement).addEventListener("touchmove", (e: TouchEvent) => {
-        try {
-          e.preventDefault();
-          if (this.isLocked) {
-            return true;
+      (canvas as HTMLCanvasElement).addEventListener(
+        "touchmove",
+        (handlers.touchmove = (e: TouchEvent): boolean => {
+          try {
+            e.preventDefault();
+            if (this.isLocked) {
+              return true;
+            }
+            this.onMouseMove(this.convertTouchEventToMouseEvent(e));
+          } catch (ex) {
+            this.error(ex);
           }
-          this.onMouseMove(this.convertTouchEventToMouseEvent(e));
-        } catch (ex) {
-          this.error(ex);
-        }
-        return true;
-      });
+          return true;
+        }),
+      );
     } else {
-      (canvas as HTMLCanvasElement).addEventListener("mousemove", (e: MouseEvent) => {
-        try {
-          e.preventDefault();
-          if (this.isLocked) {
-            return true;
+      (canvas as HTMLCanvasElement).addEventListener(
+        "mousemove",
+        (handlers.mousemove = (e: MouseEvent): boolean => {
+          try {
+            e.preventDefault();
+            if (this.isLocked) {
+              return true;
+            }
+            this.onMouseMove(new PonMouseEvent(e));
+          } catch (ex) {
+            this.error(ex);
           }
-          this.onMouseMove(new PonMouseEvent(e));
-        } catch (ex) {
-          this.error(ex);
-        }
-        return true;
-      });
+          return true;
+        }),
+      );
     }
     // touchstart or mousedown
     if ("ontouchstart" in canvas) {
-      (canvas as HTMLCanvasElement).addEventListener("touchstart", (e: TouchEvent) => {
-        try {
-          e.preventDefault();
-          if (this.isLocked) {
-            return true;
+      (canvas as HTMLCanvasElement).addEventListener(
+        "touchstart",
+        (handlers.touchstart = (e: TouchEvent): boolean => {
+          try {
+            e.preventDefault();
+            if (this.isLocked) {
+              return true;
+            }
+            this.onMouseDown(this.convertTouchEventToMouseEvent(e));
+          } catch (ex) {
+            this.error(ex);
           }
-          return this.onMouseDown(this.convertTouchEventToMouseEvent(e));
-        } catch (ex) {
-          this.error(ex);
-        }
-      });
+          return true;
+        }),
+      );
     } else {
-      (canvas as HTMLCanvasElement).addEventListener("mousedown", (e: MouseEvent) => {
-        try {
-          e.preventDefault();
-          if (this.isLocked) {
-            return true;
+      (canvas as HTMLCanvasElement).addEventListener(
+        "mousedown",
+        (handlers.mousedown = (e: MouseEvent): boolean => {
+          try {
+            e.preventDefault();
+            if (this.isLocked) {
+              return true;
+            }
+            this.onMouseDown(new PonMouseEvent(e));
+          } catch (ex) {
+            this.error(ex);
           }
-          return this.onMouseDown(new PonMouseEvent(e));
-        } catch (ex) {
-          this.error(ex);
-        }
-      });
+          return true;
+        }),
+      );
     }
     // touchend or mouseup
     if ("ontouchend" in canvas) {
-      (canvas as HTMLCanvasElement).addEventListener("touchend", (e: TouchEvent) => {
-        e.preventDefault();
-        try {
-          if (this.isLocked) {
-            return true;
+      (canvas as HTMLCanvasElement).addEventListener(
+        "touchend",
+        (handlers.touchend = (e: TouchEvent): boolean => {
+          e.preventDefault();
+          try {
+            if (this.isLocked) {
+              return true;
+            }
+            this.onMouseUp(this.convertTouchEventToMouseEvent(e));
+          } catch (ex) {
+            this.error(ex);
           }
-          this.onMouseUp(this.convertTouchEventToMouseEvent(e));
-          // console.log("@@@@@ontouchend", x, y, button);
-        } catch (ex) {
-          this.error(ex);
-        }
-        return true;
-      });
+          return true;
+        }),
+      );
     } else {
-      (canvas as HTMLCanvasElement).addEventListener("mouseup", (e: MouseEvent) => {
-        e.preventDefault();
-        try {
-          if (this.isLocked) {
-            return true;
+      (canvas as HTMLCanvasElement).addEventListener(
+        "mouseup",
+        (handlers.mouseup = (e: MouseEvent): boolean => {
+          e.preventDefault();
+          try {
+            if (this.isLocked) {
+              return true;
+            }
+            this.onMouseUp(new PonMouseEvent(e));
+          } catch (ex) {
+            this.error(ex);
           }
-          this.onMouseUp(new PonMouseEvent(e));
-        } catch (ex) {
-          this.error(ex);
-        }
-        return true;
-      });
+          return true;
+        }),
+      );
     }
   }
 
@@ -699,26 +753,33 @@ export class PonGame implements IConductorEvent {
   /* eslint-enable @typescript-eslint/no-unused-vars */
 
   private initKeyboardEvent(): void {
-    window.addEventListener("keydown", (e: KeyboardEvent) => {
-      try {
-        if (this.isLocked) {
-          return;
+    const handlers: any = (this.eventHandlers.keyboard = {});
+    window.addEventListener(
+      "keydown",
+      (handlers.keydown = (e: KeyboardEvent): void => {
+        try {
+          if (this.isLocked) {
+            return;
+          }
+          this.onKeyDown(new PonKeyEvent(e));
+        } catch (ex) {
+          this.error(ex);
         }
-        this.onKeyDown(new PonKeyEvent(e));
-      } catch (ex) {
-        this.error(ex);
-      }
-    });
-    window.addEventListener("keyup", (e: KeyboardEvent) => {
-      try {
-        if (this.isLocked) {
-          return;
+      }),
+    );
+    window.addEventListener(
+      "keyup",
+      (handlers.keyup = (e: KeyboardEvent): void => {
+        try {
+          if (this.isLocked) {
+            return;
+          }
+          this.onKeyUp(new PonKeyEvent(e));
+        } catch (ex) {
+          this.error(ex);
         }
-        this.onKeyUp(new PonKeyEvent(e));
-      } catch (ex) {
-        this.error(ex);
-      }
-    });
+      }),
+    );
   }
 
   /* eslint-disable @typescript-eslint/no-unused-vars */
