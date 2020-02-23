@@ -19,14 +19,22 @@ Languages: [Japanease](./README.md)
 ## Build
 
 ```bash
-# install packages
+# Install packages
 $ npm install
 
-# case of develop
+# Run develop server.
 # open http://localhost:8080/
 $ npm start
 
-# case of release build (to dist directory)
+# Run test server.
+# Open http://localhost:8080/dist_test/test.html
+$ npm run start-test
+
+# Run test with headless chrome.
+# (Requires Google Chrome.)
+$ npm test
+
+# Release build (to dist directory)
 $ npm run build
 ```
 
@@ -34,14 +42,18 @@ $ npm run build
 
 ```bash
 $ docker-compose build
+
+# Run develop server.
+# Open http://localhost:8080/
 $ docker-compose up
 
-# open http://localhost:8080/
+# Launch container only. (do not start server.)
+$ MANUAL=1 docker-compose up
 ```
 
 ## Browser Support
 
-- Current Active Support
+- Current active support
   - Google Chrome (latest)
 - TODO:
   - Firefox (latest)
