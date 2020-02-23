@@ -10,11 +10,11 @@ Languages: [English](./README.en.md)
 
 ## デモ (サンプルゲーム)
 
-[Ponkan3 サンプルゲーム](http://okayumoka.github.io/ponkan3-samplegame)
+[Ponkan3 サンプルゲーム](http://studiomikan.github.io/ponkan3-samplegame)
 
 ## ドキュメント
 
-[Ponkan3 ドキュメント](http://okayumoka.github.io/ponkan3-docs)
+[Ponkan3 ドキュメント](http://studiomikan.github.io/ponkan3-docs)
 
 ## Build
 
