@@ -69,7 +69,7 @@ describe("PonVideo", () => {
           pv.stop();
           expect(pv.playing).to.be.false;
           resolve();
-        }, 50);
+        }, 200);
       });
     });
 
@@ -84,8 +84,8 @@ describe("PonVideo", () => {
             pv.play();
             expect(pv.playing).to.be.true;
             resolve();
-          }, 50);
-        }, 50);
+          }, 200);
+        }, 200);
       });
     });
 
