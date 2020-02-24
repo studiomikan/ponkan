@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>Ponkan3</title>
+  <title>Ponkan</title>
   <link rel="shortcut icon" href="favicon.ico">
   <style>
     @font-face {
@@ -38,13 +38,13 @@
   </style>
 </head>
 <body>
-  <div id="ponkan3game" class="ponkan-game-wrapper"></div>
+  <div id="ponkangame" class="ponkan-game-wrapper"></div>
   <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
-  <script src="./ponkan3.js"></script>
+  <script src="./ponkan.js"></script>
   <script src="./settings.js"></script>
   <script>
-    Ponkan3.Logger.level = Ponkan3.Logger.LEVEL_INFO;
-    var ponkan = window.ponkan = new Ponkan3("ponkan3game", PONKAN3_SETTINGS);
+    Ponkan.Logger.level = Ponkan.Logger.LEVEL_INFO;
+    var ponkan = window.ponkan = new Ponkan("ponkangame", PONKAN_SETTINGS);
     WebFont.load({
       classes: false,
       custom: { families: ["GenShinGothic"] },

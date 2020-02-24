@@ -1,6 +1,6 @@
 import { BaseLayer } from "../base/base-layer";
 import { Resource } from "../base/resource";
-import { Ponkan3 } from "../ponkan3";
+import { Ponkan } from "../ponkan";
 import { FilteredLayer } from "./filtered-layer";
 
 export class PonLayer extends FilteredLayer {
@@ -8,7 +8,7 @@ export class PonLayer extends FilteredLayer {
   public visibleBuffer: boolean;
   public childImages: BaseLayer[] = [];
 
-  public constructor(name: string, resource: Resource, owner: Ponkan3) {
+  public constructor(name: string, resource: Resource, owner: Ponkan) {
     super(name, resource, owner);
     this.visibleBuffer = this.visible;
   }
@@ -19,7 +19,7 @@ export class PonLayer extends FilteredLayer {
   public addChar(ch: string): void {
     super.addChar(ch);
     if (ch != null && ch.length > 0) {
-      (this.owner as Ponkan3).onAddChar(this, ch);
+      (this.owner as Ponkan).onAddChar(this, ch);
     }
   }
 
@@ -28,7 +28,7 @@ export class PonLayer extends FilteredLayer {
    */
   public addTextReturn(): void {
     super.addTextReturn();
-    (this.owner as Ponkan3).onTextReturn(this);
+    (this.owner as Ponkan).onTextReturn(this);
   }
 
   /**

@@ -1,16 +1,13 @@
 import { assert } from "chai";
 import { PonLayer } from "../src/ts/layer/pon-layer";
-import { Ponkan3 } from "../src/ts/ponkan3";
-import { Ponkan3Settings } from "./settings";
+import { Ponkan } from "../src/ts/ponkan";
+import { PonkanSettings } from "./settings";
 
-require("./base/script-parser.test");
-require("./base/script.test");
-
-describe("Ponkan3のテスト", () => {
-  let ponkan: Ponkan3;
+describe("Ponkanのテスト", () => {
+  let ponkan: Ponkan;
 
   before(() => {
-    ponkan = new Ponkan3("ponkan3game", Ponkan3Settings);
+    ponkan = new Ponkan("ponkangame", PonkanSettings);
   });
 
   after(() => {

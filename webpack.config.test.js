@@ -9,7 +9,7 @@ const devServerPort = process.env.WEBPACK_DEV_SERVER_PORT || 8080;
 module.exports = {
   mode: "development",
   entry: {
-    test: './test/ponkan3.test.ts'
+    test: './test/test.ts'
   },
   output: {
     path: path.join(__dirname, 'dist_test'),

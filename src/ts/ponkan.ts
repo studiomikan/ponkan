@@ -29,7 +29,7 @@ const DEFAULT_PAGE_BREAK_LAYER_NUM = 22;
 const DEFAULT_AUTO_MODE_LAYER_NUM = 23;
 const DEFAULT_SOUND_BUFFER_COUNT = 5;
 
-export class Ponkan3 extends PonGame {
+export class Ponkan extends PonGame {
   // ゲーム設定
   public raiseError: any = {
     unknowncommand: true,
@@ -214,7 +214,7 @@ export class Ponkan3 extends PonGame {
   }
 
   /**
-   * Ponkan3を一時停止する。
+   * Ponkanを一時停止する。
    * HTMLファイルによるシステム画面などを表示する際は、このメソッドで停止する。
    * 再開にはresumeメソッドを使う。
    */
@@ -1426,7 +1426,7 @@ export class Ponkan3 extends PonGame {
 
     // システム
     data.system = {};
-    Ponkan3.ponkanSystemStoreParams.forEach((param: string) => {
+    Ponkan.ponkanSystemStoreParams.forEach((param: string) => {
       data.system[param] = me[param];
     });
 
@@ -1448,8 +1448,8 @@ export class Ponkan3 extends PonGame {
 
     // システム
     if (data.system != null) {
-      const restoreParams = Ponkan3.ponkanSystemStoreParams.filter(
-        param => Ponkan3.ponkanSystemStoreIgnoreParams.indexOf(param) === -1,
+      const restoreParams = Ponkan.ponkanSystemStoreParams.filter(
+        param => Ponkan.ponkanSystemStoreIgnoreParams.indexOf(param) === -1,
       );
       restoreParams.forEach((param: string) => {
         if (data.system[param] != null) {
@@ -1458,16 +1458,16 @@ export class Ponkan3 extends PonGame {
       });
       if (data.system.scaleMode != null) {
         switch (data.system.scaleMode) {
-          case Ponkan3.ScaleMode.FULLSCREEN:
-          case Ponkan3.ScaleMode.FIT:
-            this.scaleMode = Ponkan3.ScaleMode.FIT;
+          case Ponkan.ScaleMode.FULLSCREEN:
+          case Ponkan.ScaleMode.FIT:
+            this.scaleMode = Ponkan.ScaleMode.FIT;
             break;
-          case Ponkan3.ScaleMode.FIXED:
+          case Ponkan.ScaleMode.FIXED:
             if (data.system._fixedScaleWidth != null && data.system._fixedScaleHeight != null) {
-              this.scaleMode = Ponkan3.ScaleMode.FIXED;
+              this.scaleMode = Ponkan.ScaleMode.FIXED;
               this.setFixedScaleSize(data.system._fixedScaleWidth, data.system._fixedScaleHeight);
             } else {
-              this.scaleMode = Ponkan3.ScaleMode.FIT;
+              this.scaleMode = Ponkan.ScaleMode.FIT;
             }
             break;
         }
@@ -1582,7 +1582,7 @@ export class Ponkan3 extends PonGame {
     data.comment = comment;
     data.text = this.messageLayer.text;
 
-    Ponkan3.ponkanStoreParams.forEach((param: string) => {
+    Ponkan.ponkanStoreParams.forEach((param: string) => {
       data[param] = me[param];
     });
 
@@ -1633,7 +1633,7 @@ export class Ponkan3 extends PonGame {
     this.goToMainConductor();
     this.mainConductor.stop();
 
-    Ponkan3.ponkanStoreParams.forEach((param: string) => {
+    Ponkan.ponkanStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
     this.waitUntilStartTick = -1;
@@ -1688,7 +1688,7 @@ export class Ponkan3 extends PonGame {
 
     Logger.debug(data);
 
-    Ponkan3.ponkanStoreParams.forEach((param: string) => {
+    Ponkan.ponkanStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
 
@@ -1810,4 +1810,4 @@ export class Ponkan3 extends PonGame {
 }
 
 PIXI.utils.skipHello();
-(window as any).Ponkan3 = Ponkan3;
+(window as any).Ponkan = Ponkan;

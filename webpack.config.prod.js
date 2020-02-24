@@ -26,10 +26,10 @@ module.exports = merge(common, {
   },
   plugins: [
     new DtsBundleWebpack({
-      name: 'ponkan3',
-      main: 'src/ts/ponkan3.d.ts',
+      name: 'ponkan',
+      main: 'src/ts/ponkan.d.ts',
       baseDir: 'src/ts/',
-      out: '../../dist/ponkan3.d.ts',
+      out: '../../dist/ponkan.d.ts',
       indent: '  ',
       removeSource: true,
       newline: '\n',

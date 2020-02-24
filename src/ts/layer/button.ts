@@ -1,6 +1,6 @@
 import { BaseLayer } from "../base/base-layer";
 import { PonMouseEvent } from "../base/pon-mouse-event";
-import { Ponkan3 } from "../ponkan3";
+import { Ponkan } from "../ponkan";
 
 export class Button extends BaseLayer {
   protected insideFlag: boolean = false;
@@ -199,7 +199,7 @@ export class CommandButton extends Button {
         this.resource.evalJs(this.onEnterExp);
       }
       if (this.onEnterSoundBuf != null && this.onEnterSoundBuf !== "") {
-        const p: Ponkan3 = this.owner as Ponkan3;
+        const p: Ponkan = this.owner as Ponkan;
         p.getSoundBuffer(this.onEnterSoundBuf).play();
       }
     }
@@ -213,7 +213,7 @@ export class CommandButton extends Button {
         this.resource.evalJs(this.onLeaveExp);
       }
       if (this.onLeaveSoundBuf != null && this.onLeaveSoundBuf !== "") {
-        const p: Ponkan3 = this.owner as Ponkan3;
+        const p: Ponkan = this.owner as Ponkan;
         p.getSoundBuffer(this.onLeaveSoundBuf).play();
       }
     }
@@ -230,7 +230,7 @@ export class CommandButton extends Button {
     if (down && this.isInsideEvent(e) && this.buttonStatus !== "disabled") {
       e.stopPropagation();
       e.forceStop();
-      const p: Ponkan3 = this.owner as Ponkan3;
+      const p: Ponkan = this.owner as Ponkan;
       if (this.onClickExp !== null && this.onClickExp !== "") {
         this.resource.evalJs(this.onClickExp);
       }

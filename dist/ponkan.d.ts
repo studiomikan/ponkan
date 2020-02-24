@@ -2,17 +2,17 @@
 // Dependencies for this module:
 //   ../../pixi.js
 
-declare module 'ponkan3' {
-  import { BaseLayer } from "ponkan3/base/base-layer";
-  import { PonGame } from "ponkan3/base/pon-game";
-  import { PonKeyEvent } from "ponkan3/base/pon-key-event";
-  import { PonMouseEvent } from "ponkan3/base/pon-mouse-event";
-  import { PonWheelEvent } from "ponkan3/base/pon-wheel-event";
-  import { IOnSoundStopParams, SoundBuffer } from "ponkan3/base/sound";
-  import { Tag } from "ponkan3/base/tag";
-  import { HistoryLayer } from "ponkan3/layer/history-layer";
-  import { PonLayer } from "ponkan3/layer/pon-layer";
-  import { PonPlugin } from "ponkan3/plugin/pon-plugin";
+declare module 'ponkan' {
+  import { BaseLayer } from "ponkan/base/base-layer";
+  import { PonGame } from "ponkan/base/pon-game";
+  import { PonKeyEvent } from "ponkan/base/pon-key-event";
+  import { PonMouseEvent } from "ponkan/base/pon-mouse-event";
+  import { PonWheelEvent } from "ponkan/base/pon-wheel-event";
+  import { IOnSoundStopParams, SoundBuffer } from "ponkan/base/sound";
+  import { Tag } from "ponkan/base/tag";
+  import { HistoryLayer } from "ponkan/layer/history-layer";
+  import { PonLayer } from "ponkan/layer/pon-layer";
+  import { PonPlugin } from "ponkan/plugin/pon-plugin";
   export enum SkipType {
       INVALID = 0,
       UNTIL_CLICK_WAIT = 1,
@@ -20,7 +20,7 @@ declare module 'ponkan3' {
       WHILE_PRESSING_CTRL = 3
   }
   export type GlyphVerticalAlignType = "bottom" | "middle" | "top" | "text-top" | "text-middle";
-  export class Ponkan3 extends PonGame {
+  export class Ponkan extends PonGame {
       raiseError: any;
       skipMode: SkipType;
       canSkipUnreadPart: boolean;
@@ -104,7 +104,7 @@ declare module 'ponkan3' {
       start(): Promise<void>;
       stop(): void;
       /**
-        * Ponkan3を一時停止する。
+        * Ponkanを一時停止する。
         * HTMLファイルによるシステム画面などを表示する際は、このメソッドで停止する。
         * 再開にはresumeメソッドを使う。
         */
@@ -245,15 +245,15 @@ declare module 'ponkan3' {
   }
 }
 
-declare module 'ponkan3/base/base-layer' {
+declare module 'ponkan/base/base-layer' {
   import * as PIXI from "pixi.js";
-  import { PonGame } from "ponkan3/base/pon-game";
-  import { PonMouseEvent } from "ponkan3/base/pon-mouse-event";
-  import { IPonSpriteCallbacks, PonSprite } from "ponkan3/base/pon-sprite";
-  import { IPonVideoCallbacks, PonVideo } from "ponkan3/base/pon-video";
-  import { PonWheelEvent } from "ponkan3/base/pon-wheel-event";
-  import { Resource } from "ponkan3/base/resource";
-  import { LayerTextCanvas } from "ponkan3/base/base-layer-text";
+  import { PonGame } from "ponkan/base/pon-game";
+  import { PonMouseEvent } from "ponkan/base/pon-mouse-event";
+  import { IPonSpriteCallbacks, PonSprite } from "ponkan/base/pon-sprite";
+  import { IPonVideoCallbacks, PonVideo } from "ponkan/base/pon-video";
+  import { PonWheelEvent } from "ponkan/base/pon-wheel-event";
+  import { Resource } from "ponkan/base/resource";
+  import { LayerTextCanvas } from "ponkan/base/base-layer-text";
   /**
     * すべてのレイヤーの基本となるレイヤー
     */
@@ -524,18 +524,18 @@ declare module 'ponkan3/base/base-layer' {
   }
 }
 
-declare module 'ponkan3/base/pon-game' {
-  import { BaseLayer } from "ponkan3/base/base-layer";
-  import { Conductor, IConductorEvent } from "ponkan3/base/conductor";
-  import { Logger } from "ponkan3/base/logger";
-  import { PonKeyEvent } from "ponkan3/base/pon-key-event";
-  import { PonMouseEvent } from "ponkan3/base/pon-mouse-event";
-  import { PonRenderer } from "ponkan3/base/pon-renderer";
-  import { PonWheelEvent } from "ponkan3/base/pon-wheel-event";
-  import { Resource } from "ponkan3/base/resource";
-  import { ScreenShot } from "ponkan3/base/screen-shot";
-  import { Tag } from "ponkan3/base/tag";
-  import { TransManager } from "ponkan3/base/trans-manager";
+declare module 'ponkan/base/pon-game' {
+  import { BaseLayer } from "ponkan/base/base-layer";
+  import { Conductor, IConductorEvent } from "ponkan/base/conductor";
+  import { Logger } from "ponkan/base/logger";
+  import { PonKeyEvent } from "ponkan/base/pon-key-event";
+  import { PonMouseEvent } from "ponkan/base/pon-mouse-event";
+  import { PonRenderer } from "ponkan/base/pon-renderer";
+  import { PonWheelEvent } from "ponkan/base/pon-wheel-event";
+  import { Resource } from "ponkan/base/resource";
+  import { ScreenShot } from "ponkan/base/screen-shot";
+  import { Tag } from "ponkan/base/tag";
+  import { TransManager } from "ponkan/base/trans-manager";
   export enum ScaleMode {
       FIXED = 0,
       FIT = 1,
@@ -632,7 +632,7 @@ declare module 'ponkan3/base/pon-game' {
   }
 }
 
-declare module 'ponkan3/base/pon-key-event' {
+declare module 'ponkan/base/pon-key-event' {
   export class PonKeyEvent {
     constructor(e: KeyboardEvent);
     get key(): string;
@@ -642,7 +642,7 @@ declare module 'ponkan3/base/pon-key-event' {
   }
 }
 
-declare module 'ponkan3/base/pon-mouse-event' {
+declare module 'ponkan/base/pon-mouse-event' {
   export class PonMouseEvent {
     readonly x: number;
     readonly y: number;
@@ -659,7 +659,7 @@ declare module 'ponkan3/base/pon-mouse-event' {
   }
 }
 
-declare module 'ponkan3/base/pon-wheel-event' {
+declare module 'ponkan/base/pon-wheel-event' {
   export class PonWheelEvent {
     readonly deltaX: number;
     readonly deltaY: number;
@@ -669,8 +669,8 @@ declare module 'ponkan3/base/pon-wheel-event' {
   }
 }
 
-declare module 'ponkan3/base/sound' {
-  import { Resource } from "ponkan3/base/resource";
+declare module 'ponkan/base/sound' {
+  import { Resource } from "ponkan/base/resource";
   export interface IOnSoundStopParams {
     bufferNum: number;
     stopBy: string;
@@ -746,7 +746,7 @@ declare module 'ponkan3/base/sound' {
   }
 }
 
-declare module 'ponkan3/base/tag' {
+declare module 'ponkan/base/tag' {
   export class Tag {
     readonly name: string;
     readonly values: any;
@@ -754,16 +754,17 @@ declare module 'ponkan3/base/tag' {
     constructor(name: string, values: any, line: number);
     debugPrint(): void;
     clone(): Tag;
+    equals(tag: Tag): boolean;
   }
 }
 
-declare module 'ponkan3/layer/history-layer' {
-  import { BaseLayer } from "ponkan3/base/base-layer";
-  import { PonGame } from "ponkan3/base/pon-game";
-  import { PonMouseEvent } from "ponkan3/base/pon-mouse-event";
-  import { PonWheelEvent } from "ponkan3/base/pon-wheel-event";
-  import { Resource } from "ponkan3/base/resource";
-  import { Button } from "ponkan3/layer/button";
+declare module 'ponkan/layer/history-layer' {
+  import { BaseLayer } from "ponkan/base/base-layer";
+  import { PonGame } from "ponkan/base/pon-game";
+  import { PonMouseEvent } from "ponkan/base/pon-mouse-event";
+  import { PonWheelEvent } from "ponkan/base/pon-wheel-event";
+  import { Resource } from "ponkan/base/resource";
+  import { Button } from "ponkan/layer/button";
   export class HistoryButton extends Button {
     initHistoryButton(imagePath: string): Promise<void>;
     clearHistoryButton(): void;
@@ -886,16 +887,16 @@ declare module 'ponkan3/layer/history-layer' {
   export {};
 }
 
-declare module 'ponkan3/layer/pon-layer' {
-  import { BaseLayer } from "ponkan3/base/base-layer";
-  import { Resource } from "ponkan3/base/resource";
-  import { Ponkan3 } from "ponkan3/ponkan3";
-  import { FilteredLayer } from "ponkan3/layer/filtered-layer";
+declare module 'ponkan/layer/pon-layer' {
+  import { BaseLayer } from "ponkan/base/base-layer";
+  import { Resource } from "ponkan/base/resource";
+  import { Ponkan } from "ponkan/ponkan";
+  import { FilteredLayer } from "ponkan/layer/filtered-layer";
   export class PonLayer extends FilteredLayer {
       autoHideWithMessage: boolean;
       visibleBuffer: boolean;
       childImages: BaseLayer[];
-      constructor(name: string, resource: Resource, owner: Ponkan3);
+      constructor(name: string, resource: Resource, owner: Ponkan);
       /**
         * [override]
         */
@@ -923,9 +924,9 @@ declare module 'ponkan3/layer/pon-layer' {
   }
 }
 
-declare module 'ponkan3/plugin/pon-plugin' {
+declare module 'ponkan/plugin/pon-plugin' {
   /**
-    * Ponkan3プラグイン
+    * Ponkanプラグイン
     */
   export class PonPlugin {
       /**
@@ -993,7 +994,7 @@ declare module 'ponkan3/plugin/pon-plugin' {
   }
 }
 
-declare module 'ponkan3/base/pon-sprite' {
+declare module 'ponkan/base/pon-sprite' {
   import * as PIXI from "pixi.js";
   /**
     * PonSpriteのコールバック
@@ -1014,14 +1015,15 @@ declare module 'ponkan3/base/pon-sprite' {
       Unknown = 0,
       Image = 1,
       Color = 2,
-      Text = 3,
-      Canvas = 4
+      Canvas = 3
   }
-  export type InEffectType = "alpha" | "move" | "alphamove";
   /**
     * スプライト
     */
   export class PonSprite {
+      type: SpriteType;
+      get pixiDisplayObject(): PIXI.DisplayObject | null;
+      get spriteType(): SpriteType;
       /** x座標 */
       get x(): number;
       /** x座標 */
@@ -1050,14 +1052,6 @@ declare module 'ponkan3/base/pon-sprite' {
       get visible(): boolean;
       /** 表示状態 */
       set visible(visible: boolean);
-      /** テキスト */
-      get text(): string | null;
-      /** テキストスタイル */
-      get textStyle(): PIXI.TextStyle | null;
-      /** テキストの文字間 */
-      get textPitch(): number;
-      /** テキストの横幅 */
-      get textWidth(): number;
       /**
         * @param callbacks コールバック
         */
@@ -1073,13 +1067,6 @@ declare module 'ponkan3/base/pon-sprite' {
         * そのままの状態を保つ。
         */
       clear(): void;
-      /**
-        * スプライトにテキストを描画する。
-        * テキストに合わせて幅と高さは自動で設定される
-        * @param text 文字
-        * @param style 描画スタイル
-        */
-      createText(text: string, style: PIXI.TextStyle, pitch: number): void;
       /**
         * スプライトを単色で塗りつぶす。
         * これを使用する前に事前にスプライトの幅と高さを設定しておく必要がある。
@@ -1101,13 +1088,11 @@ declare module 'ponkan3/base/pon-sprite' {
         * @param canvas キャンバス
         */
       setCanvas(canvas: HTMLCanvasElement): void;
-      copyTextFrom(src: PonSprite): void;
-      initInEffect(types: InEffectType[], time: number, ease: "none" | "in" | "out" | "both", options: any): void;
       beforeDraw(tick: number): void;
   }
 }
 
-declare module 'ponkan3/base/pon-video' {
+declare module 'ponkan/base/pon-video' {
   import * as PIXI from "pixi.js";
   /**
     * PonVideoのコールバック
@@ -1164,10 +1149,10 @@ declare module 'ponkan3/base/pon-video' {
   }
 }
 
-declare module 'ponkan3/base/resource' {
-  import { Macro } from "ponkan3/base/macro";
-  import { PonGame } from "ponkan3/base/pon-game";
-  import { Script } from "ponkan3/base/script";
+declare module 'ponkan/base/resource' {
+  import { Macro } from "ponkan/base/macro";
+  import { PonGame } from "ponkan/base/pon-game";
+  import { Script } from "ponkan/base/script";
   import * as PIXI from "pixi.js";
   export class Resource {
       gameVersion: string;
@@ -1226,7 +1211,7 @@ declare module 'ponkan3/base/resource' {
   }
 }
 
-declare module 'ponkan3/base/base-layer-text' {
+declare module 'ponkan/base/base-layer-text' {
   import * as PIXI from "pixi.js";
   export type InEffectType = "alpha" | "move" | "alphamove";
   export type TextColor = string | number | string[] | number[] | CanvasGradient | CanvasPattern;
@@ -1417,12 +1402,12 @@ declare module 'ponkan3/base/base-layer-text' {
   }
 }
 
-declare module 'ponkan3/base/conductor' {
-  import { PonEventHandler } from "ponkan3/base/pon-event-handler";
-  import { ReadUnread } from "ponkan3/base/read-unread";
-  import { Resource } from "ponkan3/base/resource";
-  import { Script } from "ponkan3/base/script";
-  import { Tag } from "ponkan3/base/tag";
+declare module 'ponkan/base/conductor' {
+  import { PonEventHandler } from "ponkan/base/pon-event-handler";
+  import { ReadUnread } from "ponkan/base/read-unread";
+  import { Resource } from "ponkan/base/resource";
+  import { Script } from "ponkan/base/script";
+  import { Tag } from "ponkan/base/tag";
   export interface IConductorEvent {
       onLabel(labelName: string, line: number, tick: number): "continue" | "break";
       onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): "continue" | "break";
@@ -1490,7 +1475,7 @@ declare module 'ponkan3/base/conductor' {
   }
 }
 
-declare module 'ponkan3/base/logger' {
+declare module 'ponkan/base/logger' {
   export class Logger {
     static LEVEL_ERROR: number;
     static LEVEL_WARN: number;
@@ -1506,10 +1491,11 @@ declare module 'ponkan3/base/logger' {
   }
 }
 
-declare module 'ponkan3/base/pon-renderer' {
+declare module 'ponkan/base/pon-renderer' {
   import * as PIXI from "pixi.js";
   export class PonRenderer {
     readonly renderer: PIXI.Renderer;
+    readonly primaryContainer: PIXI.Container;
     readonly foreContainer: PIXI.Container;
     readonly backContainer: PIXI.Container;
     get width(): number;
@@ -1528,7 +1514,7 @@ declare module 'ponkan3/base/pon-renderer' {
   }
 }
 
-declare module 'ponkan3/base/screen-shot' {
+declare module 'ponkan/base/screen-shot' {
   export class ScreenShot {
     readonly nodata: string;
     constructor(config: any);
@@ -1537,9 +1523,9 @@ declare module 'ponkan3/base/screen-shot' {
   }
 }
 
-declare module 'ponkan3/base/trans-manager' {
-  import { PonGame } from "ponkan3/base/pon-game";
-  import { Resource } from "ponkan3/base/resource";
+declare module 'ponkan/base/trans-manager' {
+  import { PonGame } from "ponkan/base/pon-game";
+  import { Resource } from "ponkan/base/resource";
   export class TransManager {
     constructor(game: PonGame, resource: Resource);
     initTrans(time: number, method: "scroll-to-right" | "scroll-to-left" | "scroll-to-top" | "scroll-to-bottom" | "univ" | "crossfade"): Promise<void>;
@@ -1559,9 +1545,9 @@ declare module 'ponkan3/base/trans-manager' {
   }
 }
 
-declare module 'ponkan3/layer/button' {
-  import { BaseLayer } from "ponkan3/base/base-layer";
-  import { PonMouseEvent } from "ponkan3/base/pon-mouse-event";
+declare module 'ponkan/layer/button' {
+  import { BaseLayer } from "ponkan/base/base-layer";
+  import { PonMouseEvent } from "ponkan/base/pon-mouse-event";
   export class Button extends BaseLayer {
     protected insideFlag: boolean;
     protected buttonStatus: "normal" | "over" | "on" | "disabled";
@@ -1612,17 +1598,17 @@ declare module 'ponkan3/layer/button' {
   }
 }
 
-declare module 'ponkan3/layer/filtered-layer' {
-  import { Resource } from "ponkan3/base/resource";
-  import { Ponkan3 } from "ponkan3/ponkan3";
-  import { MovableLayer } from "ponkan3/layer/movable-layer";
-  import { LayerFilter } from "ponkan3/filter/layer-filter";
+declare module 'ponkan/layer/filtered-layer' {
+  import { Resource } from "ponkan/base/resource";
+  import { Ponkan } from "ponkan/ponkan";
+  import { MovableLayer } from "ponkan/layer/movable-layer";
+  import { LayerFilter } from "ponkan/filter/layer-filter";
   export class FilteredLayer extends MovableLayer {
     get pixiFilters(): Array<PIXI.Filter>;
     protected _filters: LayerFilter[];
     get filters(): LayerFilter[];
     protected static filterClassList: any;
-    constructor(name: string, resource: Resource, owner: Ponkan3);
+    constructor(name: string, resource: Resource, owner: Ponkan);
     static registerFilter(filterName: string, createFunction: any): void;
     addFilter(filterName: string, params: any): void;
     protected addLayerFilter(filter: LayerFilter): void;
@@ -1633,8 +1619,8 @@ declare module 'ponkan3/layer/filtered-layer' {
   }
 }
 
-declare module 'ponkan3/base/macro' {
-  import { Tag } from "ponkan3/base/tag";
+declare module 'ponkan/base/macro' {
+  import { Tag } from "ponkan/base/tag";
   export class Macro {
     readonly name: string;
     readonly tags: Tag[];
@@ -1653,11 +1639,11 @@ declare module 'ponkan3/base/macro' {
   }
 }
 
-declare module 'ponkan3/base/script' {
-  import { Macro } from "ponkan3/base/macro";
-  import { Resource } from "ponkan3/base/resource";
-  import { ScriptParser } from "ponkan3/base/script-parser";
-  import { Tag } from "ponkan3/base/tag";
+declare module 'ponkan/base/script' {
+  import { Macro } from "ponkan/base/macro";
+  import { Resource } from "ponkan/base/resource";
+  import { ScriptParser } from "ponkan/base/script-parser";
+  import { Tag } from "ponkan/base/tag";
   export interface IForLoopInfo {
       startTagPoint: number;
       indexVarName: string;
@@ -1772,7 +1758,7 @@ declare module 'ponkan3/base/script' {
   }
 }
 
-declare module 'ponkan3/base/pon-event-handler' {
+declare module 'ponkan/base/pon-event-handler' {
   export class PonEventHandler {
     readonly eventName: string;
     readonly callback: () => void;
@@ -1782,9 +1768,9 @@ declare module 'ponkan3/base/pon-event-handler' {
   }
 }
 
-declare module 'ponkan3/base/read-unread' {
-  import { Resource } from "ponkan3/base/resource";
-  import { Script } from "ponkan3/base/script";
+declare module 'ponkan/base/read-unread' {
+  import { Resource } from "ponkan/base/resource";
+  import { Script } from "ponkan/base/script";
   export class ReadUnread {
     protected resource: Resource;
     protected get systemVar(): any;
@@ -1794,10 +1780,10 @@ declare module 'ponkan3/base/read-unread' {
   }
 }
 
-declare module 'ponkan3/layer/movable-layer' {
-  import { Resource } from "ponkan3/base/resource";
-  import { Ponkan3 } from "ponkan3/ponkan3";
-  import { SliderLayer } from "ponkan3/layer/slider-layer";
+declare module 'ponkan/layer/movable-layer' {
+  import { Resource } from "ponkan/base/resource";
+  import { Ponkan } from "ponkan/ponkan";
+  import { SliderLayer } from "ponkan/layer/slider-layer";
   export interface IMovePosInfo {
       x: number;
       y: number;
@@ -1819,7 +1805,7 @@ declare module 'ponkan3/layer/movable-layer' {
       protected moveDelayStartTick: number;
       get isMoving(): boolean;
       get isLoopMoving(): boolean;
-      constructor(name: string, resource: Resource, owner: Ponkan3);
+      constructor(name: string, resource: Resource, owner: Ponkan);
       startMove(tick: number, time: number, delay: number, path: IMovePosInfo[], type: "linear" | "bezier2" | "bezier3" | "catmullrom", ease: "none" | "in" | "out" | "both", loop: boolean): void;
       stopMove(triggerEvent?: boolean): void;
       update(tick: number): void;
@@ -1864,7 +1850,7 @@ declare module 'ponkan3/layer/movable-layer' {
   }
 }
 
-declare module 'ponkan3/filter/layer-filter' {
+declare module 'ponkan/filter/layer-filter' {
   export class LayerFilter {
     static readonly filterName: string;
     get filterName(): string;
@@ -1877,9 +1863,9 @@ declare module 'ponkan3/filter/layer-filter' {
   }
 }
 
-declare module 'ponkan3/base/script-parser' {
-  import { Resource } from "ponkan3/base/resource";
-  import { Tag } from "ponkan3/base/tag";
+declare module 'ponkan/base/script-parser' {
+  import { Resource } from "ponkan/base/resource";
+  import { Tag } from "ponkan/base/tag";
   export class ScriptParser {
       get tags(): Tag[];
       constructor(resource: Resource, scriptText: string);
@@ -1899,13 +1885,13 @@ declare module 'ponkan3/base/script-parser' {
   }
 }
 
-declare module 'ponkan3/layer/slider-layer' {
-  import { BaseLayer } from "ponkan3/base/base-layer";
-  import { PonGame } from "ponkan3/base/pon-game";
-  import { PonMouseEvent } from "ponkan3/base/pon-mouse-event";
-  import { Resource } from "ponkan3/base/resource";
-  import { Button } from "ponkan3/layer/button";
-  import { ToggleButtonLayer } from "ponkan3/layer/toggle-button-layer";
+declare module 'ponkan/layer/slider-layer' {
+  import { BaseLayer } from "ponkan/base/base-layer";
+  import { PonGame } from "ponkan/base/pon-game";
+  import { PonMouseEvent } from "ponkan/base/pon-mouse-event";
+  import { Resource } from "ponkan/base/resource";
+  import { Button } from "ponkan/layer/button";
+  import { ToggleButtonLayer } from "ponkan/layer/toggle-button-layer";
   export class SliderButton extends Button {
     initSliderButton(imagePath: string): Promise<void>;
     clearSliderButton(): void;
@@ -1956,9 +1942,9 @@ declare module 'ponkan3/layer/slider-layer' {
   }
 }
 
-declare module 'ponkan3/layer/toggle-button-layer' {
-  import { ImageButtonLayer } from "ponkan3/layer/image-button-layer";
-  import { ToggleButton } from "ponkan3/layer/toggle-button";
+declare module 'ponkan/layer/toggle-button-layer' {
+  import { ImageButtonLayer } from "ponkan/layer/image-button-layer";
+  import { ToggleButton } from "ponkan/layer/toggle-button";
   export class ImageToggleButton extends ToggleButton {
     protected direction: "horizontal" | "vertical";
     initImageToggleButton(filePath: string, varName: string, isSystemButton: boolean | undefined, exp: string | null, direction: "horizontal" | "vertical"): Promise<void>;
@@ -1984,9 +1970,9 @@ declare module 'ponkan3/layer/toggle-button-layer' {
   }
 }
 
-declare module 'ponkan3/layer/image-button-layer' {
-  import { CommandButton } from "ponkan3/layer/button";
-  import { TextButtonLayer } from "ponkan3/layer/text-button-layer";
+declare module 'ponkan/layer/image-button-layer' {
+  import { CommandButton } from "ponkan/layer/button";
+  import { TextButtonLayer } from "ponkan/layer/text-button-layer";
   export class CommandImageButton extends CommandButton {
     protected direction: "horizontal" | "vertical";
     initImageButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, isSystemButton: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, file: string, direction: "horizontal" | "vertical", onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string): Promise<void>;
@@ -2012,9 +1998,9 @@ declare module 'ponkan3/layer/image-button-layer' {
   }
 }
 
-declare module 'ponkan3/layer/toggle-button' {
-  import { BaseLayer } from "ponkan3/base/base-layer";
-  import { PonMouseEvent } from "ponkan3/base/pon-mouse-event";
+declare module 'ponkan/layer/toggle-button' {
+  import { BaseLayer } from "ponkan/base/base-layer";
+  import { PonMouseEvent } from "ponkan/base/pon-mouse-event";
   /**
     * トグルボタン機能
     */
@@ -2045,9 +2031,9 @@ declare module 'ponkan3/layer/toggle-button' {
   }
 }
 
-declare module 'ponkan3/layer/text-button-layer' {
-  import { CommandButton } from "ponkan3/layer/button";
-  import { FrameAnimLayer } from "ponkan3/layer/frame-anim-layer";
+declare module 'ponkan/layer/text-button-layer' {
+  import { CommandButton } from "ponkan/layer/button";
+  import { FrameAnimLayer } from "ponkan/layer/frame-anim-layer";
   /**
     * テキストと背景色を指定できるボタン
     */
@@ -2088,8 +2074,8 @@ declare module 'ponkan3/layer/text-button-layer' {
   }
 }
 
-declare module 'ponkan3/layer/frame-anim-layer' {
-  import { BaseLayer } from "ponkan3/base/base-layer";
+declare module 'ponkan/layer/frame-anim-layer' {
+  import { BaseLayer } from "ponkan/base/base-layer";
   export class FrameAnimLayer extends BaseLayer {
     protected _frameAnimLoop: boolean;
     get frameAnimLoop(): boolean;

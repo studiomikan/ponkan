@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /**
- * Ponkan3プラグイン
+ * Ponkanプラグイン
  */
 export class PonPlugin {
   /**

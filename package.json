@@ -1,19 +1,19 @@
 {
-  "name": "ponkan3",
+  "name": "ponkan",
   "version": "1.0.0",
-  "description": "Ponkan3 is novel-game-engine for web.",
-  "main": "dist/ponkan3.js",
-  "types": "dist/ponkan3.d.ts",
+  "description": "Ponkan is novel-game-engine for web.",
+  "main": "dist/ponkan.js",
+  "types": "dist/ponkan.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/studiomikan/ponkan3"
+    "url": "https://github.com/studiomikan/ponkan"
   },
   "private": true,
   "author": "okayu <studiomikan@gmail.com> (https://studiomikan.net/)",
   "license": "MIT",
-  "homepage": "https://github.com/studiomikan/ponkan3",
+  "homepage": "https://github.com/studiomikan/ponkan",
   "bugs": {
-    "url": "https://github.com/studiomikan/ponkan3/issues",
+    "url": "https://github.com/studiomikan/ponkan/issues",
     "email": "studiomikan@gmail.com"
   },
   "scripts": {
@@ -24,9 +24,9 @@
     "start": "rimraf dist_dev & webpack-dev-server --config webpack.config.dev.js",
     "dev": "npm run start",
     "doc": "rimraf doc & typedoc --out ./doc ./src/ts",
-    "lint": "eslint ./src/**/*.ts",
-    "lint-fix": "eslint --fix ./src/**/*.ts",
-    "prettier": "prettier --write ./src/**/*.ts",
+    "lint": "eslint -c .eslintrc.json \"**/*.ts\"",
+    "lint-fix": "eslint -c .eslintrc.json --fix \"**/*.ts\"",
+    "prettier": "prettier --write **/*.ts",
     "build-test": "rimraf dist_test & webpack --config webpack.config.test.js",
     "start-test": "rimraf dist_test & webpack-dev-server --config webpack.config.test.js",
     "do-test": "mocha-headless-chrome -f dist_test/test.html",

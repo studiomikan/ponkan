@@ -1,4 +1,5 @@
 import { Logger } from "./logger";
+import { objEquals } from "./util";
 
 export class Tag {
   public readonly name: string;
@@ -23,5 +24,9 @@ export class Tag {
       }
     }
     return new Tag(this.name, values2, this.line);
+  }
+
+  public equals(tag: Tag): boolean {
+    return tag.name === this.name && objEquals(tag.values, this.values);
   }
 }

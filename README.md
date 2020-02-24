@@ -1,32 +1,40 @@
-# Ponkan3
+# Ponkan
 
 <p align="center">
-  <img src="images/ponkan3-logo.png" alt="Ponkan3 logo" width="150">
+  <img src="images/ponkan-logo.png" alt="Ponkan logo" width="150">
 </p>
 
-Ponkan3 はブラウザで動作するノベルゲームエンジンです。
+Ponkan はブラウザで動作するノベルゲームエンジンです。
 
 Languages: [English](./README.en.md)
 
 ## デモ (サンプルゲーム)
 
-[Ponkan3 サンプルゲーム](http://studiomikan.github.io/ponkan3-samplegame)
+[Ponkan サンプルゲーム](http://studiomikan.github.io/ponkan-samplegame)
 
 ## ドキュメント
 
-[Ponkan3 ドキュメント](http://studiomikan.github.io/ponkan3-docs)
+[Ponkan ドキュメント](http://studiomikan.github.io/ponkan-docs)
 
-## Build
+## Build, Test
 
 ```bash
-# パッケージのインストール
+# 依存パッケージのインストール
 $ npm install
 
-# 開発のとき（開発用サーバー起動）
+# 開発向けに起動（開発用サーバー起動）
 # 起動後に http://localhost:8080/ を開く
 $ npm start
 
-# リリースビルドのとき（distディレクトリへ出力）
+# テストをサーバーで起動
+# 起動後に http://localhost:8080/dist_test/test.html を開く
+$ npm run start-test
+
+# テストをヘッドレスChromeで実行
+# ※要Google Chrome
+$ npm test
+
+# リリースビルド（distディレクトリへ出力）
 $ npm run build
 ```
 
@@ -34,9 +42,17 @@ $ npm run build
 
 ```bash
 $ docker-compose build
+
+# 開発向けに起動
+# 起動後に http://localhost:8080/ を開く
 $ docker-compose up
 
-# 起動後に http://localhost:8080/ を開く
+# MANUAL=1のとき、サーバーを自動起動せずコンテナ起動
+# Mac, Linux
+$ MANUAL=1 docker-compose up
+# Windows
+> set MANUAL=1
+> docker-compose up
 ```
 
 ## ブラウザサポート
@@ -47,7 +63,7 @@ $ docker-compose up
   - Firefox (最新)
   - Edge (最新)
 
-## Ponkan3 は以下のライブラリを使用しています
+## Ponkan は以下のライブラリを使用しています
 
 ### Libraries
 
@@ -63,6 +79,6 @@ $ docker-compose up
 
 ## ライセンス
 
-Ponkan3 は [MIT License](https://opensource.org/licenses/MIT) で公開されています。
+Ponkan は [MIT License](https://opensource.org/licenses/MIT) で公開されています。
 
-Ponkan3 is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+Ponkan is licensed under the [MIT License](https://opensource.org/licenses/MIT).

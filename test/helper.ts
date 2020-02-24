@@ -1,11 +1,11 @@
-import { Ponkan3 } from "../src/ts/ponkan3";
-import { Ponkan3Settings } from "./settings";
+import { Ponkan } from "../src/ts/ponkan";
+import { PonkanSettings } from "./settings";
 
-export function createPonkan(): Ponkan3 {
-  return new Ponkan3("ponkan3game", Ponkan3Settings);
+export function createPonkan(): Ponkan {
+  return new Ponkan("ponkangame", PonkanSettings);
 }
 
-export function destroyPonkan(ponkan: Ponkan3): void {
+export function destroyPonkan(ponkan: Ponkan): void {
   try {
     ponkan.destroy();
   } catch (e) {
