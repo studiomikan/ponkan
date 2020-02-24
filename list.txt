@@ -1,9 +1,0 @@
-mv ./images/ponkan3-icon.ico ./images/ponkan-icon.ico
-mv ./images/ponkan3-icon.png ./images/ponkan-icon.png
-mv ./images/ponkan3-icon.svg ./images/ponkan-icon.svg
-mv ./images/ponkan3-logo-landscape1.png ./images/ponkan-logo-landscape1.png
-mv ./images/ponkan3-logo-landscape2.png ./images/ponkan-logo-landscape2.png
-mv ./images/ponkan3-logo.png ./images/ponkan-logo.png
-mv ./ponkan3.code-workspace ./ponkan.code-workspace
-mv ./src/ts/ponkan3.ts ./src/ts/ponkan.ts
-mv ./test/ponkan3.test.ts ./test/ponkan.test.ts
