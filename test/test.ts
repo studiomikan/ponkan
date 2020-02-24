@@ -1,3 +1,4 @@
+require("./base/pon-video-test");
 require("./base/pon-sprite-test");
 require("./base/pon-renderer-test");
 require("./base/macro-test");

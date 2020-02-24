@@ -58,11 +58,13 @@ export class PonVideo {
     return this.source.volume;
   }
   public set volume(volume: number) {
+    if (volume < 0) { volume = 0; }
+    if (volume > 1) { volume = 1; }
     this.source.volume = volume;
   }
 
   public get playing(): boolean {
-    return !this.source.ended;
+    return !this.source.paused;
   }
 
   /**
@@ -73,8 +75,8 @@ export class PonVideo {
     this.videoTexture = videoTexture;
     this.source.preload = "auto"; // for PIXI.js bug: https://github.com/pixijs/pixi.js/issues/5996
     this.videoSprite = new PIXI.Sprite(this.videoTexture);
-    this.videoSprite.width = 700;
-    this.videoSprite.height = 700;
+    this.videoSprite.width = 32;
+    this.videoSprite.height = 32;
     this.callbacks.pixiContainerAddChild(this.videoSprite);
   }
 
@@ -94,8 +96,11 @@ export class PonVideo {
   public clear(): void {
     this.stop();
     this.callbacks.pixiContainerRemoveChild(this.videoSprite);
-    this.videoSprite.destroy();
-    this.videoTexture.destroy();
+    this.videoSprite.destroy({
+      children: true,
+      texture: true,
+      baseTexture: true
+    });
   }
 
   public play(): void {
