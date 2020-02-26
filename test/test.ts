@@ -1,3 +1,4 @@
+require("./base/sound-test");
 require("./base/read-unread-test");
 require("./base/pon-video-test");
 require("./base/pon-sprite-test");

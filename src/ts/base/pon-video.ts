@@ -58,8 +58,12 @@ export class PonVideo {
     return this.source.volume;
   }
   public set volume(volume: number) {
-    if (volume < 0) { volume = 0; }
-    if (volume > 1) { volume = 1; }
+    if (volume < 0) {
+      volume = 0;
+    }
+    if (volume > 1) {
+      volume = 1;
+    }
     this.source.volume = volume;
   }
 
@@ -99,7 +103,7 @@ export class PonVideo {
     this.videoSprite.destroy({
       children: true,
       texture: true,
-      baseTexture: true
+      baseTexture: true,
     });
   }
 
