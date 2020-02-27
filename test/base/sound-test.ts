@@ -254,23 +254,85 @@ describe("SoundBuffer", () => {
     });
 
     context("フェードイン", () => {
-      it("停止 -> フェードイン", () => {});
-      it("再生 -> フェードイン", () => {});
-      it("一時停止 -> フェードイン", () => {});
-      it("フェード -> フェードイン", () => {});
-      it("フェードイン -> フェードイン", () => {});
-      it("フェードアウト -> フェードイン", () => {});
+      it("停止 -> フェードイン", () => {
+        sb.stop();
+        expect(sb.state).to.be.equals(SoundState.Stop);
+        sb.fadein(1, 1000);
+        expect(sb.state).to.be.equals(SoundState.Fadein);
+      });
+      it("再生 -> フェードイン", () => {
+        sb.play();
+        expect(sb.state).to.be.equals(SoundState.Play);
+        sb.fadein(1, 1000);
+        expect(sb.state).to.be.equals(SoundState.Fadein);
+      });
+      it("一時停止 -> フェードイン", () => {
+        sb.play();
+        expect(sb.state).to.be.equals(SoundState.Play);
+        sb.fadein(1, 1000);
+        expect(sb.state).to.be.equals(SoundState.Fadein);
+      });
+      it("フェード -> フェードイン", () => {
+        sb.fade(0, 1000, false);
+        expect(sb.state).to.be.equals(SoundState.Fade);
+        sb.fadein(1, 1000);
+        expect(sb.state).to.be.equals(SoundState.Fadein);
+      });
+      it("フェードイン -> フェードイン", () => {
+        sb.fadein(0, 1000);
+        expect(sb.state).to.be.equals(SoundState.Fadein);
+        sb.fadein(1, 1000);
+        expect(sb.state).to.be.equals(SoundState.Fadein);
+      });
+      it("フェードアウト -> フェードイン", () => {
+        sb.fadeout(1000, true);
+        expect(sb.state).to.be.equals(SoundState.Fadeout);
+        sb.fadein(1, 1000);
+        expect(sb.state).to.be.equals(SoundState.Fadein);
+      });
     });
 
     context("フェードアウト", () => {
-      it("停止 -> フェードアウト", () => {});
-      it("再生 -> フェードアウト", () => {});
-      it("一時停止 -> フェードアウト", () => {});
-      it("フェード -> フェードアウト", () => {});
-      it("フェードイン -> フェードアウト", () => {});
-      it("フェードアウト -> フェードアウト", () => {});
+      it("停止 -> フェードアウト", () => {
+        sb.stop();
+        expect(sb.state).to.be.equals(SoundState.Stop);
+        sb.fadeout(1000, true);
+        expect(sb.state).to.be.equals(SoundState.Fadeout);
+      });
+      it("再生 -> フェードアウト", () => {
+        sb.play();
+        expect(sb.state).to.be.equals(SoundState.Play);
+        sb.fadeout(1000, true);
+        expect(sb.state).to.be.equals(SoundState.Fadeout);
+      });
+      it("一時停止 -> フェードアウト", () => {
+        sb.pause();
+        expect(sb.state).to.be.equals(SoundState.Pause);
+        sb.fadeout(1000, true);
+        expect(sb.state).to.be.equals(SoundState.Fadeout);
+      });
+      it("フェード -> フェードアウト", () => {
+        sb.fade(1, 1000, true);
+        expect(sb.state).to.be.equals(SoundState.Fade);
+        sb.fadeout(1000, true);
+        expect(sb.state).to.be.equals(SoundState.Fadeout);
+      });
+      it("フェードイン -> フェードアウト", () => {
+        sb.fadein(1, 100);
+        expect(sb.state).to.be.equals(SoundState.Fadein);
+        sb.fadeout(1000, true);
+        expect(sb.state).to.be.equals(SoundState.Fadeout);
+      });
+      it("フェードアウト -> フェードアウト", () => {
+        sb.fadeout(1000, true);
+        expect(sb.state).to.be.equals(SoundState.Fadeout);
+        sb.fadeout(1000, true);
+        expect(sb.state).to.be.equals(SoundState.Fadeout);
+      });
     });
 
-    context("store/restore", () => {});
+    context("store/restore", () => {
+      // TODO:
+    });
   });
 });
