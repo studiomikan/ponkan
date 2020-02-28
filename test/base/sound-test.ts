@@ -333,6 +333,23 @@ describe("SoundBuffer", () => {
 
     context("store/restore", () => {
       // TODO:
+      // const srcDate = {};
+
+      it("storeできる", () => {
+        const data = sb.store(0);
+        expect(data).not.to.be.null;
+      });
+
+      it("restoreできる", () => {
+        sb.restore(sb.store(0), 0);
+      });
+
+      it("store -> restore -> store で結果が一致する", () => {
+        const data1 = sb.store(0);
+        sb.restore(data1, 0);
+        const data2 = sb.store(0);
+        expect(data1).to.deep.equals(data2);
+      });
     });
   });
 });
