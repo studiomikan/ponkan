@@ -332,9 +332,6 @@ describe("SoundBuffer", () => {
     });
 
     context("store/restore", () => {
-      // TODO:
-      // const srcDate = {};
-
       it("storeできる", () => {
         const data = sb.store(0);
         expect(data).not.to.be.null;
