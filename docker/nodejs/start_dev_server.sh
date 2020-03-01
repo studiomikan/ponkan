@@ -1,6 +1,9 @@
 #!/bin/bash
 cd `dirname $0`
 cd ../
+
+echo CURRENT_UID:$CURRENT_UID
+
 npm install
 
 echo MANUAL:$MANUAL

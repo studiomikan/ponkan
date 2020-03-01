@@ -17,7 +17,9 @@ services:
       - "8080:8080"
     command: bash /home/node/app/docker/nodejs/start_dev_server.sh
     working_dir: /home/node/app
+    user: ${CURRENT_UID}
     environment:
+      - CURRENT_UID
       - MANUAL
       - WEBTEST
       - WEBPACK_DEV_SERVER_HOST=0.0.0.0

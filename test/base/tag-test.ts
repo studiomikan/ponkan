@@ -1,7 +1,5 @@
 import { expect } from "chai";
 import { Tag } from "../../src/ts/base/tag";
-import { objClone } from "../../src/ts/base/util";
-import * as Helper from "../helper";
 
 describe("Tag", () => {
   context("constructor", () => {

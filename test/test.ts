@@ -1,3 +1,4 @@
+require("./base/base-layer-text-test");
 require("./base/tag-test");
 require("./base/sound-test");
 require("./base/read-unread-test");
