@@ -8,5 +8,7 @@ describe("LayerTextCanvas", () => {
     textCanvas = new LayerTextCanvas();
   });
 
-  context("constructor", () => {});
+  context("constructor", () => {
+    // TODO:
+  });
 });
