@@ -28,13 +28,28 @@ export class ReadUnread {
     // Logger.debug("onSaveMark pass:", script.filePath, saveMarkName, s.trail[script.filePath][saveMarkName]);
   }
 
-  public isPassed(script: Script, label: string): boolean {
+  public isPassed(script: Script, saveMarkName: string): boolean {
     const s = this.systemVar;
     return (
       s.trail != null &&
       s.trail[script.filePath] != null &&
-      s.trail[script.filePath][label] != null &&
-      s.trail[script.filePath][label] > 0
+      s.trail[script.filePath][saveMarkName] != null &&
+      s.trail[script.filePath][saveMarkName] > 0
     );
+  }
+
+  public clear(script: Script): void {
+    const s = this.systemVar;
+
+    if (s.trail == null) {
+      s.trail = {};
+      return;
+    }
+    s.trail[script.filePath] = {};
+    return;
+  }
+
+  public clearAll(): void {
+    this.systemVar.trail = {};
   }
 }

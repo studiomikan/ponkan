@@ -160,7 +160,11 @@ export class PonSprite {
     try {
       if (this.pixiSprite != null) {
         this.callbacks.pixiContainerRemoveChild(this.pixiSprite);
-        this.pixiSprite.destroy();
+        this.pixiSprite.destroy({
+          children: true,
+          texture: true,
+          baseTexture: true
+        });
       }
       this.pixiSprite = null;
       this.type = SpriteType.Unknown;

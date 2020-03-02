@@ -2,23 +2,23 @@ import { expect } from "chai";
 import { PonSprite, IPonSpriteCallbacks, SpriteType } from "../../src/ts/base/pon-sprite";
 import * as PIXI from "pixi.js";
 
-class SpriteParent implements IPonSpriteCallbacks {
-  public children: PIXI.DisplayObject[] = [];
+describe("PonSprite", () => {
+  class SpriteParent implements IPonSpriteCallbacks {
+    public children: PIXI.DisplayObject[] = [];
 
-  public pixiContainerAddChild(child: PIXI.DisplayObject): void {
-    this.children.push(child);
-  }
+    public pixiContainerAddChild(child: PIXI.DisplayObject): void {
+      this.children.push(child);
+    }
 
-  public pixiContainerRemoveChild(child: PIXI.DisplayObject): void {
-    if (this.children.length == 0) {
-      throw new Error("pixiContainerRemoveChild: addとremoveが対応していない。");
-    } else {
-      this.children = this.children.filter(c => c != child);
+    public pixiContainerRemoveChild(child: PIXI.DisplayObject): void {
+      if (this.children.length == 0) {
+        throw new Error("pixiContainerRemoveChild: addとremoveが対応していない。");
+      } else {
+        this.children = this.children.filter(c => c != child);
+      }
     }
   }
-}
 
-describe("PonSprite", () => {
   const renderer: PIXI.Renderer = new PIXI.Renderer({
     width: 800,
     height: 600,

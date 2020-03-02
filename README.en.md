@@ -41,11 +41,21 @@ $ npm run build
 ## Docker
 
 ```bash
+# Dockerfile needs an environment variable $CURRENT_UID like user_id:group_id .
+# Does not work without $CURRENT_UID
+# exsample: 1000:1000
+$ export CURRENT_UID=$(id -u):$(id -g)
+
+# build
 $ docker-compose build
 
 # Run develop server.
-# Open http://localhost:8080/
+# Open http://localhost:8080/index.html
 $ docker-compose up
+
+# Run test server.
+# Open http://localhost:8080/dist_test/test.html
+$ WEBTEST=1 docker-compose up
 
 # Launch container only. (do not start server.)
 $ MANUAL=1 docker-compose up
