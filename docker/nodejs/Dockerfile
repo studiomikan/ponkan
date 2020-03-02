@@ -38,7 +38,7 @@ RUN mkdir -p /app/node_modules \
 RUN curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 RUN apt-get install -y nodejs
 
-# Add host user
+# Add host user (to run as non-root)
 RUN groupadd -g `echo $CURRENT_UID | awk -F'[:]' '{print $1}'` host_group \
   && useradd -g host_group -G chrome,audio,video host_user \
 	&& mkdir -p /home/host_user \
@@ -47,11 +47,4 @@ RUN groupadd -g `echo $CURRENT_UID | awk -F'[:]' '{print $1}'` host_group \
 # USER chrome
 # WORKDIR /app
 # COPY . /app/
-
-# # Expose port 9222
-# EXPOSE 9222
-#
-# # Autorun chrome headless with no GPU
-# ENTRYPOINT [ "google-chrome" ]
-# CMD [ "--headless", "--disable-gpu", "--remote-debugging-address=0.0.0.0", "--remote-debugging-port=9222" ]
 

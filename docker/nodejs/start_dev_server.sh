@@ -2,12 +2,12 @@
 cd `dirname $0`
 cd ../
 
-echo CURRENT_UID:$CURRENT_UID
+echo CURRENT_UID=$CURRENT_UID
+echo MANUAL=$MANUAL
+echo WEBTEST=$WEBTEST
 
 npm install
 
-echo MANUAL:$MANUAL
-echo WEBTEST:$WEBTEST
 if [ "${MANUAL}" = "1" ] ; then
   tail -f /dev/null
 else
