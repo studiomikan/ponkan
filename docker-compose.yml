@@ -20,6 +20,8 @@ services:
     command: bash /app/docker/nodejs/start_dev_server.sh
     working_dir: /app
     user: $CURRENT_UID
+    security_opt:
+      - seccomp:unconfined
     environment:
       - CURRENT_UID
       - MANUAL
