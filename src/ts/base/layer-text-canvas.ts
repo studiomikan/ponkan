@@ -544,7 +544,7 @@ export class LayerTextCanvas {
   /** 禁則文字（行末禁則文字） */
   public static tailProhibitionChar: string = "\\$([{｢‘“（〔［｛〈《「『【￥＄￡";
 
-  private container: PIXI.Container;
+  public readonly container: PIXI.Container;
   private _width: number = 32;
   private _height: number = 32;
 
@@ -566,8 +566,6 @@ export class LayerTextCanvas {
   public reservedIndentClear: boolean = false;
   public align: "left" | "center" | "right" = "left";
   public rubyOffset: number = 5;
-  // public rubyFontSize: number = 10;
-  // public rubyPitch: number = 2;
 
   public get width(): number {
     return this._width;
@@ -592,8 +590,6 @@ export class LayerTextCanvas {
   public constructor() {
     this.lineHeight = +this.style.fontSize;
     this.container = new PIXI.Container();
-    // this.container.width = 800;
-    // this.container.height = 32;
     this.container.x = 0;
     this.container.y = 0;
     this.clear();

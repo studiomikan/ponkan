@@ -31,7 +31,7 @@
     "start-test": "rimraf dist_test & webpack-dev-server --config webpack.config.test.js",
     "do-test": "mocha-headless-chrome -f dist_test/test.html",
     "do-test-host": "mocha-headless-chrome -f http://localhost:8080/dist_test/test.html",
-    "watch-test": "watch  'npm run do-test-host' ./dist_test",
+    "watch-test": "watch 'npm run do-test-host' ./dist_test",
     "test": "run-s build-test do-test"
   },
   "dependencies": {
