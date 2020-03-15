@@ -657,7 +657,8 @@ export class LayerTextCanvas {
   }
 
   /**
-   * 次の文字の表示位置を取得する
+   * 次の文字の表示位置を取得する。
+   * ただし文字揃え前の位置である点に注意が必要。
    * @param chWidth 追加しようとしている文字の横幅
    * @return 表示位置
    */
@@ -743,7 +744,7 @@ export class LayerTextCanvas {
   /**
    * 現在描画中のテキスト行をの位置をtextAlignにそろえる
    */
-  public alignCurrentTextLine(): void {
+  protected alignCurrentTextLine(): void {
     const currentLine = this.currentLine;
     switch (this.align) {
       case "left":
@@ -773,8 +774,8 @@ export class LayerTextCanvas {
         return this.indentPoint == null ? this.marginLeft : this.indentPoint;
       case "center":
         return this.indentPoint == null
-          ? (this.width - this.marginLeft - this.marginRight) / 2
-          : (this.width - this.indentPoint - this.marginRight) / 2;
+          ? this.marginLeft + (this.width - this.marginLeft - this.marginRight) / 2
+          : this.indentPoint + (this.width - this.indentPoint - this.marginRight) / 2;
       case "right":
         return this.indentPoint == null ? this.width - this.marginRight : this.indentPoint;
     }
