@@ -383,6 +383,9 @@ export class LayerTextLine {
   public get text(): string {
     return this.chList.map(layerChar => layerChar.ch).join("");
   }
+  public get ruby(): string {
+    return this.rubyList.map(layerChar => layerChar.ch).join("");
+  }
   public get textX(): number {
     return this._textX;
   }

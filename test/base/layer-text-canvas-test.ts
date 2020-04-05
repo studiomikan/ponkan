@@ -76,6 +76,7 @@ describe("LayerTextCanvas", () => {
       ltc.style.lineHeight = 30;
       ltc.clear();
     });
+
     context("初期状態", () => {
       it("左揃えの時", () => {
         const pos = ltc.getNextTextPos(10);
@@ -83,6 +84,7 @@ describe("LayerTextCanvas", () => {
         expect(pos.x).to.be.equals(ltc.marginLeft);
         expect(pos.y).to.be.equals(ltc.currentLine.y);
       });
+
       it("右揃えの時", () => {
         ltc.align = "right";
         ltc.clear();
@@ -91,6 +93,7 @@ describe("LayerTextCanvas", () => {
         expect(pos.x).to.be.equals(ltc.width - ltc.marginRight);
         expect(pos.y).to.be.equals(ltc.currentLine.y);
       });
+
       it("中央揃えの時", () => {
         ltc.align = "center";
         ltc.clear();
@@ -110,31 +113,156 @@ describe("LayerTextCanvas", () => {
         expect(pos.x).to.be.equals(right);
         expect(pos.y).to.be.equals(ltc.currentLine.y);
       });
+
       it("右揃えの時", () => {
         ltc.align = "right";
         ltc.clear();
-        // TODO
+        ltc.addChar("あ");
+        const pos = ltc.getNextTextPos(10);
+        const right = ltc.currentLine.x + ltc.currentLine.width;
+        expect(pos.newLineFlag).to.be.equals(false);
+        expect(pos.x).to.be.equals(right);
+        expect(pos.y).to.be.equals(ltc.currentLine.y);
       });
+
       it("中央揃えの時", () => {
         ltc.align = "center";
         ltc.clear();
+        ltc.addChar("あ");
+        const aWidth = ltc.currentLine.width;
+        const pos = ltc.getNextTextPos(10);
+        const right = ltc.currentLine.x + ltc.currentLine.width;
+        expect(pos.newLineFlag).to.be.equals(false);
+        expect(pos.x).to.be.equals(ltc.width / 2 + aWidth / 2 + 5);
+        expect(pos.y).to.be.equals(ltc.currentLine.y);
       });
     });
   });
 
-  context("addTextReturn", () => {});
+  context("addTextReturn", () => {
+    beforeEach(() => {
+      ltc.style.fontSize = 20;
+      ltc.style.lineHeight = 30;
+      ltc.clear();
+    });
 
-  context("setCharLocate", () => {});
+    it("新しい行になること", () => {
+      ltc.addText("あいうえお");
+      expect(ltc.currentLine.text).to.be.equals("あいうえお");
+      ltc.addTextReturn();
+      expect(ltc.currentLine.text).to.be.equals("");
+    });
 
-  context("setIndentPoint", () => {});
+    it("新しい行に文字が追加されること", () => {
+      ltc.addText("あいうえお");
+      expect(ltc.currentLine.text).to.be.equals("あいうえお");
+      ltc.addTextReturn();
+      ltc.addText("かきくけこ");
+      expect(ltc.currentLine.text).to.be.equals("かきくけこ");
+    });
 
-  context("clearIndentPoint", () => {});
+    it("改行が挿入されていること", () => {
+      ltc.addText("あいうえお");
+      ltc.addTextReturn();
+      ltc.addText("かきくけこ");
+      expect(ltc.text).to.be.equals("あいうえお\nかきくけこ");
+    });
 
-  context("reserveRubyText", () => {});
+    // TODO: 文字揃え位置ごとの確認
+    // TODO: 可能なら改行後の位置など
+  });
 
-  context("clear", () => {});
+  context("setCharLocate", () => {
+    it("指定した位置から文字が追加されること", () => {
+      ltc.setCharLocate(100, 200);
+      ltc.addText("あいうえお");
+      expect(ltc.currentLine.x).to.be.equals(100);
+      expect(ltc.currentLine.y).to.be.equals(200);
+    });
 
-  context("clear", () => {});
+    // TODO: 文字揃え位置ごとの確認
+  });
 
-  context("store/restore", () => {});
+  context("setIndentPoint", () => {
+    it("改行後に指定位置から始まること", () => {
+      ltc.addText("あいうえお");
+      ltc.setIndentPoint();
+      const indentX = ltc.currentLine.x + ltc.currentLine.width;
+      ltc.addText("かきくけこ");
+      ltc.addTextReturn();
+      expect(ltc.currentLine.x).to.be.equals(indentX);
+    });
+
+    // TODO: 文字揃え位置ごとの確認
+  });
+
+  context("clearIndentPoint", () => {
+    it("インデント位置がクリアされること", () => {
+      ltc.addText("あいうえお");
+      ltc.setIndentPoint();
+      ltc.addText("かきくけこ");
+      ltc.clearIndentPoint();
+      ltc.addTextReturn();
+      expect(ltc.currentLine.x).to.be.equals(ltc.marginLeft);
+    });
+
+    // TODO: 文字揃え位置ごとの確認
+  });
+
+  context("reserveRubyText", () => {
+    it("次の文字にルビが設定されること", () => {
+      ltc.addText("あいうえお");
+      ltc.reserveRubyText("おとこ");
+      ltc.addText("漢");
+      expect(ltc.currentLine.ruby).to.be.equals("おとこ");
+    });
+  });
+
+  context("clear", () => {
+    let indentX: number = 0;
+    beforeEach(() => {
+      ltc.addText("あいうえお");
+      ltc.setIndentPoint();
+      indentX = ltc.currentLine.x + ltc.currentLine.width;
+      ltc.addText("かきくけこ");
+      ltc.addTextReturn();
+      ltc.addText("さしすせそ");
+      ltc.reserveRubyText("おとこ");
+      ltc.addText("漢");
+    });
+
+    it("テキストがクリアされること", () => {
+      ltc.clear();
+      expect(ltc.text).to.be.equals("");
+    });
+
+    it("ルビがクリアされること", () => {
+      ltc.clear();
+      expect(ltc.currentLine.ruby).to.be.equals("");
+    });
+
+    it("テキスト開始位置がリセットされること", () => {
+      // TODO: 文字揃え位置ごとの確認
+      ltc.clear();
+      expect(ltc.currentLine.x).to.be.equals(ltc.marginLeft);
+      expect(ltc.currentLine.y).to.be.equals(ltc.marginTop);
+    });
+
+    it("localeがリセットされること", () => {
+      ltc.setCharLocate(100, 200);
+      ltc.clear();
+      ltc.addText("あいうえお");
+      expect(ltc.currentLine.x).to.be.equals(ltc.marginLeft);
+      expect(ltc.currentLine.y).to.be.equals(ltc.marginTop);
+    });
+
+    it("インデント位置がクリアされること", () => {
+      ltc.clear();
+      expect(ltc.currentLine.x).to.be.equals(ltc.marginLeft);
+    });
+  });
+
+  context("store/restore", () => {
+    // TODO: store/restoreのテスト
+  });
 });
