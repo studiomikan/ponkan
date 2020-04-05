@@ -12,25 +12,25 @@ describe("LayerTextCanvas", () => {
   });
 
   context("constructor", () => {
-    let ltc_default: LayerTextCanvas;
+    let ltcDefault: LayerTextCanvas;
     beforeEach(() => {
-      ltc_default = new LayerTextCanvas();
+      ltcDefault = new LayerTextCanvas();
     });
 
     it("初期状態ではテキストは空", () => {
-      expect(ltc_default.text).to.be.equals("");
+      expect(ltcDefault.text).to.be.equals("");
     });
 
     it("幅は32", () => {
-      expect(ltc_default.width).to.be.equals(32);
+      expect(ltcDefault.width).to.be.equals(32);
     });
 
     it("高さは32", () => {
-      expect(ltc_default.height).to.be.equals(32);
+      expect(ltcDefault.height).to.be.equals(32);
     });
 
     it("テキストは空", () => {
-      expect(ltc_default.text).to.be.equals("");
+      expect(ltcDefault.text).to.be.equals("");
     });
   });
 
