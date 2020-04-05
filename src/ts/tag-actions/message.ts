@@ -355,11 +355,9 @@ export default function(p: Ponkan): TagAction[] {
           }
           if (values.edgecolor != null) {
             layer.textCanvas.rubyStyle.edgeColor = values.edgecolor;
-            console.log(layer.textCanvas.rubyStyle.stroke);
           }
           if (values.edgealpha != null) {
             layer.textCanvas.rubyStyle.edgeAlpha = values.edgealpha;
-            console.log(layer.textCanvas.rubyStyle.stroke);
           }
         });
         return "continue";

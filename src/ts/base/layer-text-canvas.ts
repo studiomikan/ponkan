@@ -458,7 +458,7 @@ export class LayerTextLine {
   }
 
   private addRubyText(targetChar: LayerChar): void {
-    console.log(this.rubyStyle);
+    // console.log(this.rubyStyle);
     const rubyStyle = this.rubyStyle;
     const rubyText = this.rubyText;
     const pitch = this.rubyStyle.pitch;
