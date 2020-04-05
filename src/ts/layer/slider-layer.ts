@@ -231,7 +231,7 @@ export class Slider extends BaseLayer {
       this.down = false;
       this.resource.getCanvasElm().style.cursor = this.resource.cursor.normal;
       if (this.exp != null && this.exp !== "") {
-        console.log("typeof", typeof this.exp);
+        // console.log("typeof", typeof this.exp);
         if (typeof this.exp === "function") {
           this.exp(this.value);
         } else {
@@ -349,7 +349,7 @@ export class SliderLayer extends ToggleButtonLayer {
     await super.restore(data, tick, clear);
 
     if (data.sliders != null && data.sliders.length > 0) {
-      console.log("sliders", data.sliders);
+      // console.log("sliders", data.sliders);
       if (data.sliders.length === this.sliders.length) {
         // 数が同じ場合
         await Promise.all(

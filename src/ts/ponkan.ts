@@ -240,7 +240,7 @@ export class Ponkan extends PonGame {
     }
     this.pluginMap[name] = plugin;
     this.plugins.push(plugin);
-    console.log(name, plugin, this.pluginMap, this.plugins);
+    // console.log(name, plugin, this.pluginMap, this.plugins);
   }
 
   public removePlugin(name: string): void {

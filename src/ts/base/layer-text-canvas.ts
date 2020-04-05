@@ -383,6 +383,9 @@ export class LayerTextLine {
   public get text(): string {
     return this.chList.map(layerChar => layerChar.ch).join("");
   }
+  public get ruby(): string {
+    return this.rubyList.map(layerChar => layerChar.ch).join("");
+  }
   public get textX(): number {
     return this._textX;
   }
@@ -455,7 +458,7 @@ export class LayerTextLine {
   }
 
   private addRubyText(targetChar: LayerChar): void {
-    console.log(this.rubyStyle);
+    // console.log(this.rubyStyle);
     const rubyStyle = this.rubyStyle;
     const rubyText = this.rubyText;
     const pitch = this.rubyStyle.pitch;
@@ -544,7 +547,7 @@ export class LayerTextCanvas {
   /** 禁則文字（行末禁則文字） */
   public static tailProhibitionChar: string = "\\$([{｢‘“（〔［｛〈《「『【￥＄￡";
 
-  private container: PIXI.Container;
+  public readonly container: PIXI.Container;
   private _width: number = 32;
   private _height: number = 32;
 
@@ -566,8 +569,6 @@ export class LayerTextCanvas {
   public reservedIndentClear: boolean = false;
   public align: "left" | "center" | "right" = "left";
   public rubyOffset: number = 5;
-  // public rubyFontSize: number = 10;
-  // public rubyPitch: number = 2;
 
   public get width(): number {
     return this._width;
@@ -592,8 +593,6 @@ export class LayerTextCanvas {
   public constructor() {
     this.lineHeight = +this.style.fontSize;
     this.container = new PIXI.Container();
-    // this.container.width = 800;
-    // this.container.height = 32;
     this.container.x = 0;
     this.container.y = 0;
     this.clear();
@@ -661,7 +660,8 @@ export class LayerTextCanvas {
   }
 
   /**
-   * 次の文字の表示位置を取得する
+   * 次の文字の表示位置を取得する。
+   * ただし文字揃え前の位置である点に注意が必要。
    * @param chWidth 追加しようとしている文字の横幅
    * @return 表示位置
    */
@@ -747,7 +747,7 @@ export class LayerTextCanvas {
   /**
    * 現在描画中のテキスト行をの位置をtextAlignにそろえる
    */
-  public alignCurrentTextLine(): void {
+  protected alignCurrentTextLine(): void {
     const currentLine = this.currentLine;
     switch (this.align) {
       case "left":
@@ -777,8 +777,8 @@ export class LayerTextCanvas {
         return this.indentPoint == null ? this.marginLeft : this.indentPoint;
       case "center":
         return this.indentPoint == null
-          ? (this.width - this.marginLeft - this.marginRight) / 2
-          : (this.width - this.indentPoint - this.marginRight) / 2;
+          ? this.marginLeft + (this.width - this.marginLeft - this.marginRight) / 2
+          : this.indentPoint + (this.width - this.indentPoint - this.marginRight) / 2;
       case "right":
         return this.indentPoint == null ? this.width - this.marginRight : this.indentPoint;
     }

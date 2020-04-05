@@ -7,7 +7,7 @@ import { IPonVideoCallbacks, PonVideo } from "./pon-video";
 import { PonWheelEvent } from "./pon-wheel-event";
 import { Resource } from "./resource";
 import { Logger } from "./logger";
-import { LayerTextCanvas } from "./base-layer-text";
+import { LayerTextCanvas } from "./layer-text-canvas";
 
 /**
  * すべてのレイヤーの基本となるレイヤー
