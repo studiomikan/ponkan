@@ -45,7 +45,7 @@ export class Button extends BaseLayer {
 
   public onMouseMove(e: PonMouseEvent): void {
     super.onMouseMove(e);
-    if (this.buttonStatus !== "disabled") {
+    if (this.buttonStatus !== "disabled" && this.isInsideEvent(e)) {
       this.resource.getCanvasElm().style.cursor = this.resource.cursor[this.buttonStatus];
     }
   }
