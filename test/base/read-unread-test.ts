@@ -58,7 +58,6 @@ describe("ReadUnread", () => {
     expect(readUnread.isPassed(script2, "mark2")).to.be.true;
   });
 
-
   it("スクリプトごとに通過済みをクリアできる", () => {
     readUnread.pass(script1, "mark1");
     readUnread.pass(script2, "mark1");
@@ -78,5 +77,4 @@ describe("ReadUnread", () => {
     expect(readUnread.isPassed(script2, "mark1")).to.be.false;
     expect(readUnread.isPassed(script2, "mark2")).to.be.false;
   });
-
 });

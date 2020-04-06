@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { PonVideo, IPonVideoCallbacks } from '../../src/ts/base/pon-video';
+import { PonVideo, IPonVideoCallbacks } from "../../src/ts/base/pon-video";
 import * as PIXI from "pixi.js";
 
 describe("PonVideo", () => {
@@ -31,7 +31,7 @@ describe("PonVideo", () => {
     });
     (texture.baseTexture.resource as PIXI.resources.VideoResource).autoPlay = false;
     return texture;
-  }
+  };
 
   beforeEach(() => {
     parent = new VideoParent();

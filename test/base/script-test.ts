@@ -3,7 +3,6 @@ import { Ponkan } from "../../src/ts/ponkan";
 import { Script } from "../../src/ts/base/script";
 import * as Helper from "../helper";
 
-
 describe("Script", () => {
   let ponkan: Ponkan;
 
