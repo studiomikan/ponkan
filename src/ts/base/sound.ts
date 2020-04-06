@@ -67,6 +67,7 @@ export class SoundBuffer {
       this.setHowlerOptions();
     } catch (e) {
       Logger.debug("SoundBuffer.loadSound fail: ", filePath);
+      throw e;
     }
   }
 
