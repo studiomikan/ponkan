@@ -253,7 +253,7 @@ declare module 'ponkan/base/base-layer' {
   import { IPonVideoCallbacks, PonVideo } from "ponkan/base/pon-video";
   import { PonWheelEvent } from "ponkan/base/pon-wheel-event";
   import { Resource } from "ponkan/base/resource";
-  import { LayerTextCanvas } from "ponkan/base/base-layer-text";
+  import { LayerTextCanvas } from "ponkan/base/layer-text-canvas";
   /**
     * すべてのレイヤーの基本となるレイヤー
     */
@@ -1211,7 +1211,7 @@ declare module 'ponkan/base/resource' {
   }
 }
 
-declare module 'ponkan/base/base-layer-text' {
+declare module 'ponkan/base/layer-text-canvas' {
   import * as PIXI from "pixi.js";
   export type InEffectType = "alpha" | "move" | "alphamove";
   export type TextColor = string | number | string[] | number[] | CanvasGradient | CanvasPattern;
@@ -1281,6 +1281,7 @@ declare module 'ponkan/base/base-layer-text' {
       set y(y: number);
       get y(): number;
       get text(): string;
+      get ruby(): string;
       get textX(): number;
       get tailChar(): string;
       get length(): number;
@@ -1306,6 +1307,7 @@ declare module 'ponkan/base/base-layer-text' {
       static headProhibitionChar: string;
       /** 禁則文字（行末禁則文字） */
       static tailProhibitionChar: string;
+      readonly container: PIXI.Container;
       style: TextStyle;
       lineHeight: number;
       linePitch: number;
@@ -1333,7 +1335,8 @@ declare module 'ponkan/base/base-layer-text' {
       addText(text: string): void;
       addChar(ch: string): void;
       /**
-        * 次の文字の表示位置を取得する
+        * 次の文字の表示位置を取得する。
+        * ただし文字揃え前の位置である点に注意が必要。
         * @param chWidth 追加しようとしている文字の横幅
         * @return 表示位置
         */
@@ -1355,7 +1358,7 @@ declare module 'ponkan/base/base-layer-text' {
       /**
         * 現在描画中のテキスト行をの位置をtextAlignにそろえる
         */
-      alignCurrentTextLine(): void;
+      protected alignCurrentTextLine(): void;
       /**
         * テキスト行の描画時、ベースとなる点(x)を取得する。
         * 左揃えの時: 左端の位置
@@ -1776,7 +1779,9 @@ declare module 'ponkan/base/read-unread' {
     protected get systemVar(): any;
     constructor(resource: Resource);
     pass(script: Script, saveMarkName: string): void;
-    isPassed(script: Script, label: string): boolean;
+    isPassed(script: Script, saveMarkName: string): boolean;
+    clear(script: Script): void;
+    clearAll(): void;
   }
 }
 

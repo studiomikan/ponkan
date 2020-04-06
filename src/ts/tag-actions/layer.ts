@@ -325,6 +325,7 @@ export default function(p: Ponkan): TagAction[] {
         Promise.all(task)
           .then(() => {
             p.conductor.start();
+            console.log("loadimage after start", values.file);
           })
           .catch(() => {
             if (p.config && p.config.developMode) {
@@ -333,6 +334,7 @@ export default function(p: Ponkan): TagAction[] {
               p.error(new Error(`画像読み込みに失敗しました。`));
             }
           });
+        console.log("loadimage stop ", values.file);
         return p.conductor.stop();
       },
     ),

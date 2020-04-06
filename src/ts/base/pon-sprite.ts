@@ -162,8 +162,11 @@ export class PonSprite {
         this.callbacks.pixiContainerRemoveChild(this.pixiSprite);
         this.pixiSprite.destroy({
           children: true,
-          texture: true,
-          baseTexture: true
+          // MEMO: textureを破棄すると、画像を連続して読み込んだ時にPIXI.jsが
+          //         Cannot read property 'uvsFloat32' of null
+          //       というエラーを吐くので、破棄しない。
+          // texture: true,
+          // baseTexture: true
         });
       }
       this.pixiSprite = null;
