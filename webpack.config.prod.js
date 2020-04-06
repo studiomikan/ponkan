@@ -3,6 +3,16 @@ const merge = require("webpack-merge");
 const TerserPlugin = require("terser-webpack-plugin");
 const common = require("./webpack.config.common.js");
 const DtsBundleWebpack = require("dts-bundle-webpack");
+const webpack = require('webpack');
+const pjson = require('./package.json');
+
+const banner = `
+/*!
+ * ${pjson.name} v${pjson.version}
+ * (C) ${pjson.author.name}
+ * license: ${pjson.license}
+ */
+`;
 
 module.exports = merge(common, {
   mode: "production",
@@ -25,6 +35,23 @@ module.exports = merge(common, {
         extractComments: false,
       }),
     ],
+    // runtimeChunk: true,
+    // noEmitOnErrors: true,
+    namedModules: false,
+    namedChunks: false,
+    moduleIds: 'size',
+    chunkIds: 'size',
+    // nodeEnv: '',
+    mangleWasmImports: true,
+    removeAvailableModules: true,
+    removeEmptyChunks: true,
+    mergeDuplicateChunks: true,
+    flagIncludedChunks: true,
+    occurrenceOrder: true,
+    providedExports: true,
+    usedExports: true,
+    concatenateModules: true,
+    // portableRecords: false,
   },
   plugins: [
     new DtsBundleWebpack({
@@ -37,5 +64,9 @@ module.exports = merge(common, {
       newline: "\n",
       exclude: /node_modules|test/,
     }),
+    new webpack.BannerPlugin({
+      banner: banner,
+      raw: true
+    })
   ],
 });

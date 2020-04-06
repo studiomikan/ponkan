@@ -9,7 +9,11 @@
     "url": "https://github.com/studiomikan/ponkan"
   },
   "private": true,
-  "author": "okayu <studiomikan@gmail.com> (https://studiomikan.net/)",
+  "author": {
+    "name": "Studio Mikan",
+    "email": "studiomikan@gmail.com",
+    "url": "https://studiomikan.net/"
+  },
   "license": "MIT",
   "homepage": "https://github.com/studiomikan/ponkan",
   "bugs": {
