@@ -237,10 +237,10 @@ export class LayerChar {
     return this.pixiSprite.y;
   }
   public set width(width: number) {
-    this.pixiSprite.width = width;
+    this.pixiSprite.width = width - this.style.pitch;
   }
   public get width(): number {
-    return this.pixiSprite.width;
+    return this.pixiSprite.width + this.style.pitch;
   }
   public set alpha(alpha: number) {
     this.pixiSprite.alpha = alpha;
@@ -266,7 +266,6 @@ export class LayerChar {
 
     this.x = x;
     this.y = y;
-    this.width = this.pixiSprite.width + style.pitch;
     this.style.checkOptions();
     if (this.style.inEffectTypes != null && this.style.inEffectTypes.length > 0) {
       this.inEffectState = InEffectState.Run;
