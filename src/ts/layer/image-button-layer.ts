@@ -1,4 +1,4 @@
-import { CommandButton } from "./button";
+import { CommandButton, ButtonStatus, Button } from "./button";
 import { TextButtonLayer } from "./text-button-layer";
 
 export class CommandImageButton extends CommandButton {
@@ -19,6 +19,7 @@ export class CommandImageButton extends CommandButton {
     onEnterSoundBuf: string,
     onLeaveSoundBuf: string,
     onClickSoundBuf: string,
+    keyIndex: number | null = null,
   ): Promise<void> {
     this.clearCommandButton();
     this.freeImage();
@@ -35,6 +36,7 @@ export class CommandImageButton extends CommandButton {
       onEnterSoundBuf,
       onLeaveSoundBuf,
       onClickSoundBuf,
+      keyIndex,
     );
     this.direction = direction;
     await this.loadImage(file);
@@ -51,7 +53,7 @@ export class CommandImageButton extends CommandButton {
     this.direction = "horizontal";
   }
 
-  public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
+  public setButtonStatus(status: ButtonStatus): void {
     super.setButtonStatus(status);
 
     if (this.direction === "vertical") {
@@ -137,6 +139,7 @@ export class ImageButtonLayer extends TextButtonLayer {
     onEnterSoundBuf: string,
     onLeaveSoundBuf: string,
     onClickSoundBuf: string,
+    keyIndex: number | null = null,
   ): Promise<void> {
     const name = `ImageButton ${this.imageButtons.length}`;
     const btn = new CommandImageButton(name, this.resource, this.owner);
@@ -160,6 +163,7 @@ export class ImageButtonLayer extends TextButtonLayer {
       onEnterSoundBuf,
       onLeaveSoundBuf,
       onClickSoundBuf,
+      keyIndex,
     );
   }
 
@@ -170,6 +174,18 @@ export class ImageButtonLayer extends TextButtonLayer {
       this.deleteChildLayer(imageButton);
     });
     this.imageButtons = [];
+  }
+
+  public hasImageButton(): boolean {
+    return this.imageButtons.length > 0;
+  }
+
+  public getButtons(): Button[] {
+    const buttons: Button[] = super.getButtons();
+    this.imageButtons.forEach(imageButton => {
+      buttons.push(imageButton as Button);
+    });
+    return buttons;
   }
 
   public lockButtons(): void {

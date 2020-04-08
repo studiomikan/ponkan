@@ -2,22 +2,35 @@ import { BaseLayer } from "../base/base-layer";
 import { PonMouseEvent } from "../base/pon-mouse-event";
 import { Ponkan } from "../ponkan";
 
-export class Button extends BaseLayer {
-  protected insideFlag: boolean = false;
-  protected buttonStatus: "normal" | "over" | "on" | "disabled" = "disabled";
-  protected down: boolean = false;
+export type ButtonStatus = "normal" | "over" | "on" | "disabled";
 
-  public initButton(): void {
+export class Button extends BaseLayer {
+  private _isButton: boolean = false;
+  protected insideFlag: boolean = false;
+  protected buttonStatus: ButtonStatus = "disabled";
+  protected down: boolean = false;
+  /** キーボード操作時の選択インデックス */
+  public keyIndex: number = 0;
+
+  public get isButton(): boolean {
+    return this._isButton;
+  }
+
+  public initButton(keyIndex: number): void {
     this.clearButton();
+    this._isButton = true;
+    this.keyIndex = keyIndex;
   }
 
   public clearButton(): void {
     this.setButtonStatus("disabled");
+    this._isButton = false;
     this.insideFlag = false;
     this.down = false;
+    this.keyIndex = 0;
   }
 
-  public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
+  public setButtonStatus(status: ButtonStatus): void {
     this.buttonStatus = status;
     if (this.buttonStatus === "disabled") {
       this.down = false;
@@ -25,22 +38,36 @@ export class Button extends BaseLayer {
     this.resource.getCanvasElm().style.cursor = this.resource.cursor[status];
   }
 
-  public onMouseEnter(e: PonMouseEvent): void {
-    super.onMouseEnter(e);
+  public getButtonStatus(): ButtonStatus {
+    return this.isButton ? this.buttonStatus : "disabled";
+  }
 
+  public get isFocused(): boolean {
+    return this.getButtonStatus() === "over";
+  }
+
+  public focus(): void {
     if (this.buttonStatus !== "disabled") {
       this.setButtonStatus("over");
     }
     this.insideFlag = true;
   }
 
-  public onMouseLeave(e: PonMouseEvent): void {
-    super.onMouseLeave(e);
-
+  public blur(): void {
     if (this.buttonStatus !== "disabled") {
       this.setButtonStatus("normal");
     }
     this.insideFlag = false;
+  }
+
+  public onMouseEnter(e: PonMouseEvent): void {
+    super.onMouseEnter(e);
+    this.focus();
+  }
+
+  public onMouseLeave(e: PonMouseEvent): void {
+    super.onMouseLeave(e);
+    this.blur();
   }
 
   public onMouseMove(e: PonMouseEvent): void {
@@ -64,7 +91,11 @@ export class Button extends BaseLayer {
     this.down = false;
   }
 
-  protected static buttonStoreParams: string[] = ["insideFlag", "buttonStatus"];
+  public async submit(): Promise<void> {
+    // should be override
+  }
+
+  protected static buttonStoreParams: string[] = ["insideFlag", "buttonStatus", "keyIndex"];
 
   public store(tick: number): any {
     const data: any = super.store(tick);
@@ -129,8 +160,9 @@ export class CommandButton extends Button {
     onEnterSoundBuf: string | null = null,
     onLeaveSoundBuf: string | null = null,
     onClickSoundBuf: string | null = null,
+    keyIndex: number | null = null,
   ): void {
-    this.initButton();
+    this.initButton(keyIndex != null ? keyIndex : 0);
     this.jump = jump;
     this.call = call;
     this.filePath = filePath;
@@ -230,37 +262,41 @@ export class CommandButton extends Button {
     if (down && this.isInsideEvent(e) && this.buttonStatus !== "disabled") {
       e.stopPropagation();
       e.forceStop();
-      const p: Ponkan = this.owner as Ponkan;
-      if (this.onClickExp !== null && this.onClickExp !== "") {
-        this.resource.evalJs(this.onClickExp);
-      }
-      if (this.onClickSoundBuf != null && this.onClickSoundBuf !== "") {
-        p.getSoundBuffer(this.onClickSoundBuf).play();
-      }
-      if (this.filePath != null || this.label != null) {
-        if (this.call) {
-          p.conductor.stop();
-          try {
-            await p.callSubroutine(this.filePath, this.label, this.countPage);
-          } catch (e) {
-            p.error(e);
-          }
-          p.conductor.start();
-        } else if (this.jump) {
-          p.conductor.stop();
-          try {
-            await p.conductor.jump(this.filePath, this.label, this.countPage);
-          } catch (e) {
-            p.error(e);
-          }
-          p.conductor.start();
+      return this.submit();
+    }
+  }
+
+  public async submit(): Promise<void> {
+    const p: Ponkan = this.owner as Ponkan;
+    if (this.onClickExp !== null && this.onClickExp !== "") {
+      this.resource.evalJs(this.onClickExp);
+    }
+    if (this.onClickSoundBuf != null && this.onClickSoundBuf !== "") {
+      p.getSoundBuffer(this.onClickSoundBuf).play();
+    }
+    if (this.filePath != null || this.label != null) {
+      if (this.call) {
+        p.conductor.stop();
+        try {
+          await p.callSubroutine(this.filePath, this.label, this.countPage);
+        } catch (e) {
+          p.error(e);
         }
+        p.conductor.start();
+      } else if (this.jump) {
+        p.conductor.stop();
+        try {
+          await p.conductor.jump(this.filePath, this.label, this.countPage);
+        } catch (e) {
+          p.error(e);
+        }
+        p.conductor.start();
       }
-      if (this.isSystemButton) {
-        this.setButtonStatus("normal");
-      } else {
-        this.setButtonStatus("disabled");
-      }
+    }
+    if (this.isSystemButton) {
+      this.setButtonStatus("normal");
+    } else {
+      this.setButtonStatus("disabled");
     }
   }
 

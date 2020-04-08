@@ -70,9 +70,16 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("leavebuf", "string", false, ""),
         /// @param ボタン押下時に再生する音声の音声バッファ
         new TagValue("clickbuf", "string", false, ""),
+        /// @param キーボードでボタンを選択するときの選択順。小さい順に選択される。省略時は追加した順となる。
+        new TagValue("keyindex", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
+          let keyIndex: number | null = values.keyindex;
+          if (keyIndex == null || keyIndex == undefined) {
+            // TODO 次の
+            keyIndex = p.getButtonKeyIndex(values);
+          }
           layer.addTextButton(
             values.btnname,
             values.jump,
@@ -99,6 +106,7 @@ export default function(p: Ponkan): TagAction[] {
             values.enterbuf,
             values.leavebuf,
             values.clickbuf,
+            keyIndex,
           );
         });
         return "continue";
@@ -279,7 +287,7 @@ export default function(p: Ponkan): TagAction[] {
     ///   `unlockbuttons` コマンドでロック状態を解除することで、押下できるようになります。
     ///
     ///   トグルボタンは通常のボタンと異なり、オン・オフの二種類の状態を持ちます。
-    ///   機能のオン・オフの切り替えなどに利用することがｄけいます。
+    ///   機能のオン・オフの切り替えなどに利用することができます。
     new TagAction(
       ["togglebutton", "tglbtn"],
       [
@@ -366,7 +374,7 @@ export default function(p: Ponkan): TagAction[] {
     /// @description ボタンをアンロックする
     /// @details
     ///   指定されたレイヤーのボタンのロックを解除し、押下できる状態にします。\n
-    ///   このコマンドでボタンを押下可能にした後は、直後に`s` コマンドでスクリプトの実行を停止してください。
+    ///   このコマンドでボタンを押下可能にした後は、直後に `s` コマンドでスクリプトの実行を停止してください。
     new TagAction(
       ["unlockbuttons", "unlockbutton", "unlock"],
       [

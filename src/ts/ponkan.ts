@@ -12,6 +12,7 @@ import { HistoryLayer } from "./layer/history-layer";
 import { PonLayer } from "./layer/pon-layer";
 import { PonPlugin } from "./plugin/pon-plugin";
 import { applyJsEntity, castTagValues, generateTagActions, TagAction, TagValue } from "./tag-action";
+import { Button } from "./layer/button";
 
 export enum SkipType {
   INVALID = 0,
@@ -526,14 +527,54 @@ export class Ponkan extends PonGame {
   public onKeyDown(e: PonKeyEvent): boolean {
     // Logger.debug("onKeyDown: ", e.key);
     if (this.historyLayer.visible) {
-      // do nothing.
+      // 履歴レイヤー表示時の操作
+      switch (e.key.toLowerCase()) {
+        case "esc":
+        case "escape":
+          this.hideHistoryLayer();
+          break;
+        case "arrowup":
+        case "pageup":
+          if (this.conductor.isStable) {
+            this.historyLayer.scrollUpPage();
+          }
+          break;
+        case "arrowdown":
+        case "pagedown":
+          if (this.conductor.isStable) {
+            this.historyLayer.scrollDownPage();
+          }
+          break;
+      }
     } else {
-      switch (e.key) {
-        case "Ctrl":
+      switch (e.key.toLowerCase()) {
+        case "esc":
+        case "escape":
+          this.onPrimaryRightClick();
+          break;
         case "ctrl":
-        case "Control":
+        case "control":
           this.onPrimaryClick();
           this.startSkipByCtrl();
+          break;
+        case "arrowup":
+        case "arrowleft":
+          this.focusPrevButton();
+          break;
+        case "arrowdown":
+        case "arrowright":
+          this.focusNextButton();
+          break;
+        case "pageup":
+          if (this.conductor.isStable && this.enabledHistory) {
+            this.showHistoryLayer();
+          }
+          break;
+        case "pagedown":
+          this.onPrimaryClick();
+          break;
+        case "enter":
+          this.onKeyDownEnter();
           break;
       }
     }
@@ -543,43 +584,112 @@ export class Ponkan extends PonGame {
   public onKeyUp(e: PonKeyEvent): boolean {
     // Logger.debug("onKeyUp: ", e.key, this.historyLayer.visible);
     if (this.historyLayer.visible) {
-      switch (e.key.toLowerCase()) {
-        case "esc":
-        case "escape":
-          this.hideHistoryLayer();
-          break;
-        case "arrowup":
-          if (this.conductor.isStable) {
-            this.historyLayer.scrollUpPage();
-          }
-          break;
-        case "arrowdown":
-          if (this.conductor.isStable) {
-            this.historyLayer.scrollDownPage();
-          }
-          break;
-      }
+      // 履歴レイヤー表示時の操作
     } else {
       switch (e.key.toLowerCase()) {
         case "ctrl":
         case "control":
           this.stopWhilePressingCtrlSkip();
           break;
-        case "esc":
-        case "escape":
-          this.onPrimaryRightClick();
-          break;
-        case "enter":
-          this.onPrimaryClick();
-          break;
-        case "arrowup":
-          if (this.conductor.isStable && this.enabledHistory) {
-            this.showHistoryLayer();
-          }
-          break;
       }
     }
     return true;
+  }
+
+  public onKeyDownEnter(): void {
+    // ボタンにフォーカスが当たって入ればそれをクリック
+    // フォーカスされてなければ通常クリック
+    const focusedButtons: Button[] = this.getPageButtons(this.foreLayers).filter(b => b.getButtonStatus() === "over");
+    if (focusedButtons.length > 0) {
+      // TODO: submitの処理を await しないといけないのでは？
+      focusedButtons[0].submit();
+      return;
+    }
+
+    this.onPrimaryClick();
+  }
+
+  // =========================================================
+  // ボタン関連の処理
+  // =========================================================
+
+  /**
+   * ボタンのkeyindex省略時に設定する数値を取得する
+   */
+  public getButtonKeyIndex(values: any): number {
+    const pageLayers = this.getPageLayers(values);
+    let maxIndex = 0;
+    this.getPageButtons(pageLayers).forEach(button => {
+      maxIndex = Math.max(maxIndex, button.keyIndex);
+    });
+    return maxIndex + 1;
+  }
+
+  /**
+   * 指定ページの全ボタンを取得
+   */
+  public getPageButtons(pageLayers: PonLayer[] = this.foreLayers): Button[] {
+    const buttons: Button[] = [];
+    pageLayers.forEach((layer: PonLayer) => {
+      layer.getButtons().forEach(button => {
+        buttons.push(button);
+      });
+    });
+    return buttons;
+  }
+
+  public focusNextButton(): void {
+    const buttons: Button[] = this.getPageButtons(this.foreLayers).filter(b => b.getButtonStatus() != "disabled");
+    if (buttons.length == 0) {
+      return;
+    }
+    const sortedButtons: Button[] = buttons.sort((a, b) => a.keyIndex - b.keyIndex);
+    const focusedButtons: Button[] = buttons.filter(b => b.isFocused);
+
+    if (focusedButtons.length == 0) {
+      sortedButtons[0].focus();
+    } else {
+      const current: Button = focusedButtons[0];
+      current.blur();
+      for (let i = 0; i < sortedButtons.length; i++) {
+        const button: Button = sortedButtons[i];
+        if (current == button) {
+          continue;
+        }
+        if (button.keyIndex >= current.keyIndex) {
+          button.focus();
+          return;
+        }
+      }
+      sortedButtons[0].focus();
+    }
+  }
+
+  public focusPrevButton(): void {
+    const buttons: Button[] = this.getPageButtons(this.foreLayers).filter(b => b.getButtonStatus() != "disabled");
+    if (buttons.length == 0) {
+      return;
+    }
+    const sortedButtons: Button[] = buttons.sort((a, b) => a.keyIndex - b.keyIndex).reverse();
+    const focusedButtons: Button[] = buttons.filter(b => b.isFocused);
+
+    if (focusedButtons.length == 0) {
+      sortedButtons[0].focus();
+    } else {
+      const current: Button = focusedButtons[0];
+      current.blur();
+      for (let i = 0; i < sortedButtons.length; i++) {
+        const button: Button = sortedButtons[i];
+        if (current == button) {
+          continue;
+        }
+        if (current != button && button.keyIndex <= current.keyIndex) {
+          button.focus();
+          return;
+        }
+      }
+      sortedButtons[0].focus();
+    }
   }
 
   // =========================================================
@@ -962,21 +1072,28 @@ export class Ponkan extends PonGame {
   }
 
   /**
+   * 操作対象ページのレイヤーのリストを取得する
+   * @param values レイヤーのリスト
+   */
+  public getPageLayers(values: any): PonLayer[] {
+    let page: string = ("" + values.page) as string;
+    if (values.page == null || values.page === "current") {
+      page = this.currentPage;
+    }
+    if (page === "back") {
+      return this.backLayers;
+    } else {
+      return this.foreLayers;
+    }
+  }
+
+  /**
    * 操作対象のレイヤーを取得する
    * @param values タグの値
    */
   public getLayers(values: any): PonLayer[] {
     const lay: string = ("" + values.lay) as string;
-    let page: string = ("" + values.page) as string;
-    let pageLayers: PonLayer[];
-    if (values.page == null || values.page === "current") {
-      page = this.currentPage;
-    }
-    if (page === "back") {
-      pageLayers = this.backLayers;
-    } else {
-      pageLayers = this.foreLayers;
-    }
+    const pageLayers: PonLayer[] = this.getPageLayers(values);
     return this.getTargetLayers(pageLayers, lay);
   }
 

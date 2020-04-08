@@ -9,9 +9,9 @@ import { Button } from "./button";
 export class HistoryButton extends Button {
   private callbacks: any;
 
-  public async initHistoryButton(imagePath: string): Promise<void> {
+  public async initHistoryButton(imagePath: string, keyIndex: number): Promise<void> {
     await this.loadImage(imagePath);
-    this.initButton();
+    this.initButton(keyIndex);
     this.width = Math.floor(this.imageWidth / 3);
     this.setButtonStatus("normal");
   }
@@ -527,7 +527,7 @@ export class HistoryLayer extends BaseLayer {
   }
 
   protected initScrollButtons(config: any): void {
-    const init = (button: HistoryButton, conf: any): void => {
+    const init = (button: HistoryButton, conf: any, keyIndex: number): void => {
       if (conf.bgColors == null) {
         conf.bgColors = [0x4286f4, 0x4286f4, 0x4286f4];
       }
@@ -536,11 +536,11 @@ export class HistoryLayer extends BaseLayer {
       }
       button.applyConfig(conf);
       button.visible = true;
-      button.initHistoryButton(conf.imageFile);
+      button.initHistoryButton(conf.imageFile, keyIndex);
       this.addChild(button);
     };
-    init(this.upButton, config.history.upButton); // ;
-    init(this.downButton, config.history.downButton);
+    init(this.upButton, config.history.upButton, 1);
+    init(this.downButton, config.history.downButton, 2);
     this.upButton.setCallbacks({
       onMouseUp: () => {
         this.scrollUpPage();
@@ -594,7 +594,7 @@ export class HistoryLayer extends BaseLayer {
       c,
     );
     this.closeButton.applyConfig(c);
-    this.closeButton.initHistoryButton(c.imageFile);
+    this.closeButton.initHistoryButton(c.imageFile, 3);
     this.closeButton.setCallbacks({
       onMouseUp: () => {
         this.hide();

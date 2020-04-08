@@ -1,4 +1,4 @@
-import { CommandButton } from "./button";
+import { CommandButton, Button, ButtonStatus } from "./button";
 import { FrameAnimLayer } from "./frame-anim-layer";
 
 /**
@@ -33,6 +33,7 @@ export class TextButton extends CommandButton {
     onEnterSoundBuf = "",
     onLeaveSoundBuf = "",
     onClickSoundBuf = "",
+    keyIndex: number | null = null,
   ): void {
     this.clearCommandButton();
     this.freeImage();
@@ -51,6 +52,7 @@ export class TextButton extends CommandButton {
       onEnterSoundBuf,
       onLeaveSoundBuf,
       onClickSoundBuf,
+      keyIndex,
     );
 
     this.txtBtnText = text;
@@ -78,7 +80,7 @@ export class TextButton extends CommandButton {
     this.txtBtnOnBackgroundAlpha = 1.0;
   }
 
-  public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
+  public setButtonStatus(status: ButtonStatus): void {
     super.setButtonStatus(status);
     this.resetTextButtonColors();
   }
@@ -159,7 +161,7 @@ export class TextButton extends CommandButton {
  * テキストボタンを配置できるレイヤー
  */
 export class TextButtonLayer extends FrameAnimLayer {
-  protected textButtons: TextButton[] = [];
+  private textButtons: TextButton[] = [];
 
   public addTextButton(
     btnName = "",
@@ -187,6 +189,7 @@ export class TextButtonLayer extends FrameAnimLayer {
     onEnterSoundBuf: string,
     onLeaveSoundBuf: string,
     onClickSoundBuf: string,
+    keyIndex: number | null = null,
   ): void {
     if (btnName == null || btnName === "") {
       btnName = `${this.textButtons.length}`;
@@ -234,6 +237,7 @@ export class TextButtonLayer extends FrameAnimLayer {
       onEnterSoundBuf,
       onLeaveSoundBuf,
       onClickSoundBuf,
+      keyIndex,
     );
   }
 
@@ -273,6 +277,18 @@ export class TextButtonLayer extends FrameAnimLayer {
   protected findTextButtonByName(btnName: string): TextButton[] {
     const name = `TextButton ${btnName}`;
     return this.textButtons.filter(l => l.name === name);
+  }
+
+  public hasTextButton(): boolean {
+    return this.textButtons.length > 0;
+  }
+
+  public getButtons(): Button[] {
+    const buttons: Button[] = [];
+    this.textButtons.forEach(textButton => {
+      buttons.push(textButton as Button);
+    });
+    return buttons;
   }
 
   public lockButtons(): void {

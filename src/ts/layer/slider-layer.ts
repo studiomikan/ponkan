@@ -2,15 +2,15 @@ import { BaseLayer } from "../base/base-layer";
 import { PonGame } from "../base/pon-game";
 import { PonMouseEvent } from "../base/pon-mouse-event";
 import { Resource } from "../base/resource";
-import { Button } from "./button";
+import { Button, ButtonStatus } from "./button";
 import { ToggleButtonLayer } from "./toggle-button-layer";
 
 export class SliderButton extends Button {
   private callbacks: any;
 
-  public async initSliderButton(imagePath: string): Promise<void> {
+  public async initSliderButton(imagePath: string, keyIndex: number): Promise<void> {
     await this.loadImage(imagePath);
-    this.initButton();
+    this.initButton(keyIndex);
     this.width = Math.floor(this.imageWidth / 3);
   }
 
@@ -19,7 +19,7 @@ export class SliderButton extends Button {
     this.freeImage();
   }
 
-  public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
+  public setButtonStatus(status: ButtonStatus): void {
     super.setButtonStatus(status);
 
     switch (status) {
@@ -114,7 +114,7 @@ export class Slider extends BaseLayer {
     );
     // ボタン読み込み
     task.push(
-      this.button.initSliderButton(buttonImagePath).then(() => {
+      this.button.initSliderButton(buttonImagePath, 1).then(() => {
         this.button.x = 0;
         this.button.y = 0;
         this.button.visible = true;
@@ -329,6 +329,10 @@ export class SliderLayer extends ToggleButtonLayer {
       this.deleteChildLayer(slider);
     });
     this.sliders = [];
+  }
+
+  public hasSlider(): boolean {
+    return this.sliders.length > 0;
   }
 
   public lockSliders(): void {

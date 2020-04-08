@@ -3,6 +3,26 @@ import { Resource } from "../base/resource";
 import { Ponkan } from "../ponkan";
 import { FilteredLayer } from "./filtered-layer";
 
+// BaseLayer
+//     |
+//     +----------------------+-------------------+
+//     |                      |                   |
+// FrameAnimLayer          Button              HistoryLayer
+//     |                      |
+// TextButtonLayer         CommandButton
+//     |
+// ImageButtonLayer
+//     |
+// ToggleButtonLayer
+//     |
+// SliderLayer
+//     |
+// MovableLayer
+//     |
+// FilteredLayer
+//     |
+// PonLayer
+
 export class PonLayer extends FilteredLayer {
   public autoHideWithMessage: boolean = false;
   public visibleBuffer: boolean;

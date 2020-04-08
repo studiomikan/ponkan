@@ -116,6 +116,18 @@ export class ToggleButtonLayer extends ImageButtonLayer {
     this.imageToggleButtons = [];
   }
 
+  public hasToggleButton(): boolean {
+    return this.imageToggleButtons.length > 0;
+  }
+
+  // public getButtons(): Button[] {
+  //   const buttons: Button[] = super.getButtons();
+  //   this.imageToggleButtons.forEach(imageToggleButton => {
+  //     buttons.push(imageToggleButton as Button);
+  //   });
+  //   return buttons;
+  // }
+
   public lockButtons(): void {
     super.lockButtons();
     this.imageToggleButtons.forEach(toggleButton => {
