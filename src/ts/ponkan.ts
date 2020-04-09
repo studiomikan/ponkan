@@ -596,17 +596,16 @@ export class Ponkan extends PonGame {
     return true;
   }
 
-  public onKeyDownEnter(): void {
+  public async onKeyDownEnter(): Promise<void> {
     // ボタンにフォーカスが当たって入ればそれをクリック
     // フォーカスされてなければ通常クリック
     const focusedButtons: Button[] = this.getPageButtons(this.foreLayers).filter(b => b.getButtonStatus() === "over");
     if (focusedButtons.length > 0) {
-      // TODO: submitの処理を await しないといけないのでは？
-      focusedButtons[0].submit();
+      await focusedButtons[0].submit();
       return;
+    } else {
+      this.onPrimaryClick();
     }
-
-    this.onPrimaryClick();
   }
 
   // =========================================================

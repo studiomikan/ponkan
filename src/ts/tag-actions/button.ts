@@ -77,7 +77,6 @@ export default function(p: Ponkan): TagAction[] {
         p.getLayers(values).forEach(layer => {
           let keyIndex: number | null = values.keyindex;
           if (keyIndex == null || keyIndex == undefined) {
-            // TODO 次の
             keyIndex = p.getButtonKeyIndex(values);
           }
           layer.addTextButton(
@@ -228,9 +227,15 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("leavebuf", "string", false, ""),
         /// @param ボタン押下時に再生する音声の音声バッファ
         new TagValue("clickbuf", "string", false, ""),
+        /// @param キーボードでボタンを選択するときの選択順。小さい順に選択される。省略時は追加した順となる。
+        new TagValue("keyindex", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
+          let keyIndex: number | null = values.keyindex;
+          if (keyIndex == null || keyIndex == undefined) {
+            keyIndex = p.getButtonKeyIndex(values);
+          }
           layer
             .addImageButton(
               values.jump,
@@ -249,6 +254,7 @@ export default function(p: Ponkan): TagAction[] {
               values.enterbuf,
               values.leavebuf,
               values.clickbuf,
+              keyIndex,
             )
             .then(() => {
               p.conductor.start();
@@ -288,6 +294,9 @@ export default function(p: Ponkan): TagAction[] {
     ///
     ///   トグルボタンは通常のボタンと異なり、オン・オフの二種類の状態を持ちます。
     ///   機能のオン・オフの切り替えなどに利用することができます。
+    ///
+    ///   オン状態のとき、statevarで設定した一時変数にtrueが設定されます。
+    ///   オフ状態のときはfalseが設定されます。
     new TagAction(
       ["togglebutton", "tglbtn"],
       [
@@ -295,32 +304,69 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 選択状態を格納する一時変数の名前。
+        new TagValue("statevar", "string", true, null),
+        /// @param ボタン押下時にjumpする場合はtrue
+        new TagValue("jump", "boolean", false, true),
+        /// @param ボタン押下時にcallする場合はtrue
+        new TagValue("call", "boolean", false, null),
+        /// @param ボタン押下時にjumpまたはcallするスクリプトファイル名
+        new TagValue("file", "string", false, null),
+        /// @param ボタン押下時にjumpまたはcallするラベル名
+        new TagValue("label", "string", false, null),
+        /// @param マウスポインタが重なったタイミングで実行するJavaScript
+        new TagValue("onclick", "string", false, null),
+        /// @param マウスポインタが出ていったタイミングで実行するJavaScript
+        new TagValue("onleave", "string", false, null),
         /// @param ボタン押下時に実行するJavaScript
-        new TagValue("exp", "string", false, null),
-        /// @param ボタンにする画像ファイル
+        new TagValue("onclick", "string", false, null),
+        /// @param トグルボタンにする画像ファイル
         new TagValue("imagefile", "string", true, null),
         /// @param x座標(px)
         new TagValue("x", "number", false, 0),
         /// @param y座標(px)
         new TagValue("y", "number", false, 0),
-        /// @param 選択状態を格納する一時変数の名前
-        new TagValue("statevar", "string", true, null),
         /// @param ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"
         new TagValue("direction", "string", false, "horizontal"),
         /// @param システム用ボタンとする場合はtrue
         new TagValue("system", "boolean", false, false),
+        /// @param 現在の位置を既読にするかどうか
+        new TagValue("countpage", "boolean", false, true),
+        /// @param マウスポインタが重なったタイミングで再生する音声の音声バッファ
+        new TagValue("enterbuf", "string", false, ""),
+        /// @param マウスポインタが出て行ったタイミングで再生する音声の音声バッファ
+        new TagValue("leavebuf", "string", false, ""),
+        /// @param ボタン押下時に再生する音声の音声バッファ
+        new TagValue("clickbuf", "string", false, ""),
+        /// @param キーボードでボタンを選択するときの選択順。小さい順に選択される。省略時は追加した順となる。
+        new TagValue("keyindex", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
+          let keyIndex: number | null = values.keyindex;
+          if (keyIndex == null || keyIndex == undefined) {
+            keyIndex = p.getButtonKeyIndex(values);
+          }
           layer
             .addToggleButton(
+              values.jump,
+              values.call,
+              values.file,
+              values.label,
+              values.countpage,
+              values.onenter,
+              values.onleave,
+              values.onclick,
               values.imagefile,
               values.x,
               values.y,
-              values.statevar,
-              values.system,
-              values.exp,
               values.direction,
+              values.system,
+              values.enterbuf,
+              values.leavebuf,
+              values.clickbuf,
+              keyIndex,
+              values.statevar,
             )
             .then(() => {
               p.conductor.start();

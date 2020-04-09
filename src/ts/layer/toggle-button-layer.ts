@@ -1,62 +1,112 @@
 import { ImageButtonLayer } from "./image-button-layer";
-import { ToggleButton } from "./toggle-button";
+import { Button, CommandButton, ButtonStatus } from "./button";
 
-export class ImageToggleButton extends ToggleButton {
+export class ImageToggleButton extends CommandButton {
   protected direction: "horizontal" | "vertical" = "horizontal";
+  protected varName: string = "toggle-button-value";
+  protected toggleState: boolean = false;
+  protected offImageFile: string = "";
 
   public async initImageToggleButton(
-    filePath: string,
-    varName: string,
+    jump = true,
+    call = false,
+    filePath: string | null = null,
+    label: string | null = null,
+    countPage = true,
     isSystemButton = false,
-    exp: string | null,
+    onEnterExp: string | null = null,
+    onLeaveExp: string | null = null,
+    onClickExp: string | null = null,
+    imageFile: string,
     direction: "horizontal" | "vertical",
+    onEnterSoundBuf: string,
+    onLeaveSoundBuf: string,
+    onClickSoundBuf: string,
+    keyIndex: number | null = null,
+    varName: string,
   ): Promise<void> {
-    this.clearToggleButton();
+    this.clearCommandButton();
     this.freeImage();
+    this.initCommandButton(
+      jump,
+      call,
+      filePath,
+      label,
+      countPage,
+      isSystemButton,
+      onEnterExp,
+      onLeaveExp,
+      onClickExp,
+      onEnterSoundBuf,
+      onLeaveSoundBuf,
+      onClickSoundBuf,
+      keyIndex,
+    );
+    this.direction = direction;
+    this.varName = varName;
+    this.resource.tmpVar[this.varName] = this.toggleState;
 
-    try {
-      await this.loadImage(filePath);
-      this.direction = direction;
-      if (this.direction === "vertical") {
-        this.height = Math.floor(this.imageHeight / 2);
-      } else {
-        this.width = Math.floor(this.imageWidth / 2);
-      }
-      this.initToggleButton(varName, isSystemButton, exp);
-    } catch (e) {
-      throw new Error("画像の読み込みに失敗しました。");
+    await this.loadImage(imageFile);
+    if (this.direction === "vertical") {
+      this.height = Math.floor(this.imageHeight / 6);
+    } else {
+      this.width = Math.floor(this.imageHeight / 6);
     }
+    this.setButtonStatus("disabled");
   }
 
-  public clearToggleButton(): void {
-    super.clearToggleButton();
-    this.direction = "horizontal";
+  public clearCommandButton(): void {
+    super.clearCommandButton();
+    this.varName = "toggle-button-value";
+    this.toggleState = false;
   }
 
-  public setValue(value: boolean): void {
-    super.setValue(value);
+  public setButtonStatus(status: ButtonStatus): void {
+    super.setButtonStatus(status);
 
     if (this.direction === "vertical") {
-      if (value) {
-        this.imageY = -Math.floor(this.imageHeight / 2);
-      } else {
-        this.imageY = 0;
+      const base = this.toggleState ? -Math.floor(this.imageHeight / 2) : 0;
+      switch (status) {
+        case "normal":
+        case "disabled":
+          this.imageY = base;
+          break;
+        case "over":
+          this.imageY = base - Math.floor(this.imageHeight / 6);
+          break;
+        case "on":
+          this.imageY = base - Math.floor((this.imageHeight / 6) * 2);
+          break;
       }
     } else {
-      if (value) {
-        this.imageX = -Math.floor(this.imageWidth / 2);
-      } else {
-        this.imageX = 0;
+      const base = this.toggleState ? -Math.floor(this.imageWidth / 2) : 0;
+      switch (status) {
+        case "normal":
+        case "disabled":
+          this.imageX = base;
+          break;
+        case "over":
+          this.imageX = base - Math.floor(this.imageWidth / 6);
+          break;
+        case "on":
+          this.imageX = base - Math.floor((this.imageWidth / 6) * 2);
+          break;
       }
     }
   }
 
-  protected static imageToggleButtonStoreParams: string[] = ["direction"];
+  public async submit(): Promise<void> {
+    this.toggleState = !this.toggleState;
+    this.resource.tmpVar[this.varName] = this.toggleState;
+    await super.submit();
+  }
+
+  protected static toggleButtonStoreParams: string[] = ["varName", "toggleState", "onImageFile", "offImageFile"];
 
   public store(tick: number): any {
     const data: any = super.store(tick);
     const me: any = this as any;
-    ImageToggleButton.imageToggleButtonStoreParams.forEach((param: string) => {
+    ImageToggleButton.toggleButtonStoreParams.forEach((param: string) => {
       data[param] = me[param];
     });
     return data;
@@ -68,9 +118,10 @@ export class ImageToggleButton extends ToggleButton {
 
   public restoreAfterLoadImage(data: any, tick: number): void {
     const me: any = this as any;
-    ImageToggleButton.imageToggleButtonStoreParams.forEach((param: string) => {
+    ImageToggleButton.toggleButtonStoreParams.forEach((param: string) => {
       me[param] = data[param];
     });
+    this.resource.tmpVar[this.varName] = this.toggleState;
     super.restoreAfterLoadImage(data, tick);
   }
 
@@ -79,7 +130,7 @@ export class ImageToggleButton extends ToggleButton {
 
     const me: any = this as any;
     const you: any = dest as any;
-    ImageToggleButton.imageToggleButtonStoreParams.forEach((param: string) => {
+    ImageToggleButton.toggleButtonStoreParams.forEach((param: string) => {
       you[param] = me[param];
     });
   }
@@ -89,13 +140,24 @@ export class ToggleButtonLayer extends ImageButtonLayer {
   private imageToggleButtons: ImageToggleButton[] = [];
 
   public async addToggleButton(
-    filePath: string,
+    jump = true,
+    call = false,
+    filePath: string | null = null,
+    label: string | null = null,
+    countPage = true,
+    onEnterExp: string | null = null,
+    onLeaveExp: string | null = null,
+    onClickExp: string | null = null,
+    imageFile: string,
     x: number,
     y: number,
-    varName: string,
-    isSystemButton = false,
-    exp: string | null,
     direction: "horizontal" | "vertical",
+    isSystemButton: boolean,
+    onEnterSoundBuf: string,
+    onLeaveSoundBuf: string,
+    onClickSoundBuf: string,
+    keyIndex: number | null = null,
+    varName: string,
   ): Promise<void> {
     const name = `ImageToggleButton ${this.imageToggleButtons.length}`;
     const btn = new ImageToggleButton(name, this.resource, this.owner);
@@ -104,12 +166,29 @@ export class ToggleButtonLayer extends ImageButtonLayer {
 
     btn.x = x;
     btn.y = y;
-    return btn.initImageToggleButton(filePath, varName, isSystemButton, exp, direction);
+    await btn.initImageToggleButton(
+      jump,
+      call,
+      filePath,
+      label,
+      countPage,
+      isSystemButton,
+      onEnterExp,
+      onLeaveExp,
+      onClickExp,
+      imageFile,
+      direction,
+      onEnterSoundBuf,
+      onLeaveSoundBuf,
+      onClickSoundBuf,
+      keyIndex,
+      varName,
+    );
   }
 
   public clearToggleButtons(): void {
     this.imageToggleButtons.forEach(toggleButton => {
-      toggleButton.clearToggleButton();
+      toggleButton.clearCommandButton();
       toggleButton.destroy();
       this.deleteChildLayer(toggleButton);
     });
@@ -120,13 +199,13 @@ export class ToggleButtonLayer extends ImageButtonLayer {
     return this.imageToggleButtons.length > 0;
   }
 
-  // public getButtons(): Button[] {
-  //   const buttons: Button[] = super.getButtons();
-  //   this.imageToggleButtons.forEach(imageToggleButton => {
-  //     buttons.push(imageToggleButton as Button);
-  //   });
-  //   return buttons;
-  // }
+  public getButtons(): Button[] {
+    const buttons: Button[] = super.getButtons();
+    this.imageToggleButtons.forEach(imageToggleButton => {
+      buttons.push(imageToggleButton as Button);
+    });
+    return buttons;
+  }
 
   public lockButtons(): void {
     super.lockButtons();
@@ -138,7 +217,7 @@ export class ToggleButtonLayer extends ImageButtonLayer {
   public unlockButtons(): void {
     super.unlockButtons();
     this.imageToggleButtons.forEach(toggleButton => {
-      toggleButton.setButtonStatus("enabled");
+      toggleButton.setButtonStatus("normal");
     });
   }
 
@@ -175,6 +254,7 @@ export class ToggleButtonLayer extends ImageButtonLayer {
           }),
         );
       } else {
+        // 数が合わない場合は一度破棄して作り直す
         this.clearToggleButtons();
         await Promise.all(
           data.imageToggleButtons.forEach((toggleButtonData: any) => {
