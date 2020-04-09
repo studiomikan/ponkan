@@ -13,6 +13,7 @@ import { PonLayer } from "./layer/pon-layer";
 import { PonPlugin } from "./plugin/pon-plugin";
 import { applyJsEntity, castTagValues, generateTagActions, TagAction, TagValue } from "./tag-action";
 import { Button } from "./layer/button";
+import { SliderButton } from "./layer/slider-layer";
 
 export enum SkipType {
   INVALID = 0,
@@ -558,12 +559,16 @@ export class Ponkan extends PonGame {
           this.startSkipByCtrl();
           break;
         case "arrowup":
-        case "arrowleft":
           this.focusPrevButton();
           break;
         case "arrowdown":
-        case "arrowright":
           this.focusNextButton();
+          break;
+        case "arrowleft":
+          this.slideToLeft();
+          break;
+        case "arrowright":
+          this.slideToRight();
           break;
         case "pageup":
           if (this.conductor.isStable && this.enabledHistory) {
@@ -597,12 +602,12 @@ export class Ponkan extends PonGame {
   }
 
   public async onKeyDownEnter(): Promise<void> {
-    // ボタンにフォーカスが当たって入ればそれをクリック
+    // ボタンにフォーカスが当たって入ればそれを処理。
     // フォーカスされてなければ通常クリック
     const focusedButtons: Button[] = this.getPageButtons(this.foreLayers).filter(b => b.getButtonStatus() === "over");
     if (focusedButtons.length > 0) {
-      await focusedButtons[0].submit();
-      return;
+      const button = focusedButtons[0];
+      await button.submit();
     } else {
       this.onPrimaryClick();
     }
@@ -688,6 +693,24 @@ export class Ponkan extends PonGame {
         }
       }
       sortedButtons[0].focus();
+    }
+  }
+
+  public slideToLeft(): void {
+    const focusedSliders: Button[] = this.getPageButtons(this.foreLayers).filter(
+      b => b instanceof SliderButton && b.isFocused,
+    );
+    if (focusedSliders.length > 0) {
+      (focusedSliders[0] as SliderButton).slideToLeft();
+    }
+  }
+
+  public slideToRight(): void {
+    const focusedSliders: Button[] = this.getPageButtons(this.foreLayers).filter(
+      b => b instanceof SliderButton && b.isFocused,
+    );
+    if (focusedSliders.length > 0) {
+      (focusedSliders[0] as SliderButton).slideToRight();
     }
   }
 

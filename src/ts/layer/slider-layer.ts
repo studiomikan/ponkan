@@ -53,6 +53,25 @@ export class SliderButton extends Button {
       this.callbacks.onMouseUp(e);
     }
   }
+
+  public async submit(): Promise<void> {
+    super.submit();
+    if (this.callbacks.submit) {
+      this.callbacks.submit();
+    }
+  }
+
+  public slideToLeft(): void {
+    if (this.callbacks.slideToLeft) {
+      this.callbacks.slideToLeft();
+    }
+  }
+
+  public slideToRight(): void {
+    if (this.callbacks.slideToRight) {
+      this.callbacks.slideToRight();
+    }
+  }
 }
 
 /**
@@ -60,10 +79,10 @@ export class SliderButton extends Button {
  */
 export class Slider extends BaseLayer {
   protected foreImage: BaseLayer;
-  protected button: SliderButton;
+  public readonly button: SliderButton;
   protected locked: boolean = false;
   protected value: number = 0;
-  protected exp: string | ((v: number) => void) = "";
+  protected onChange: string | ((v: number) => void) = "";
   protected down: boolean = false;
 
   constructor(name: string, resource: Resource, owner: PonGame) {
@@ -79,15 +98,27 @@ export class Slider extends BaseLayer {
       onMouseUp: (e: PonMouseEvent) => {
         this.onButtonUp(e);
       },
+      submit: () => {
+        this.submit();
+      },
+      slideToLeft: () => {
+        this.setValue(this.value - 0.04);
+        this.submit();
+      },
+      slideToRight: () => {
+        this.setValue(this.value + 0.04);
+        this.submit();
+      },
     });
   }
 
   public async initSlider(
     value: number,
-    exp: string | ((v: number) => void),
+    onChange: string | ((v: number) => void),
     backImagePath: string,
     foreImagePath: string,
     buttonImagePath: string,
+    keyIndex: number,
   ): Promise<void> {
     this.clearSlider();
 
@@ -98,7 +129,7 @@ export class Slider extends BaseLayer {
       value = 1.0;
     }
     this.value = value;
-    this.exp = exp;
+    this.onChange = onChange;
 
     const task: Promise<void>[] = [];
 
@@ -114,7 +145,7 @@ export class Slider extends BaseLayer {
     );
     // ボタン読み込み
     task.push(
-      this.button.initSliderButton(buttonImagePath, 1).then(() => {
+      this.button.initSliderButton(buttonImagePath, keyIndex).then(() => {
         this.button.x = 0;
         this.button.y = 0;
         this.button.visible = true;
@@ -132,7 +163,7 @@ export class Slider extends BaseLayer {
   public clearSlider(): void {
     this.freeImage();
     this.value = 0;
-    this.exp = "";
+    this.onChange = "";
     this.down = false;
 
     this.foreImage.freeImage();
@@ -230,16 +261,19 @@ export class Slider extends BaseLayer {
     if (this.down) {
       this.down = false;
       this.resource.getCanvasElm().style.cursor = this.resource.cursor.normal;
-      if (this.exp != null && this.exp !== "") {
-        // console.log("typeof", typeof this.exp);
-        if (typeof this.exp === "function") {
-          this.exp(this.value);
-        } else {
-          this.resource.evalJs(this.exp as string);
-        }
-      }
       e.stopPropagation();
       e.forceStop();
+      this.submit();
+    }
+  }
+
+  public submit(): void {
+    if (this.onChange != null && this.onChange !== "") {
+      if (typeof this.onChange === "function") {
+        this.onChange(this.value);
+      } else {
+        this.resource.evalJs(this.onChange as string);
+      }
     }
   }
 
@@ -306,10 +340,11 @@ export class SliderLayer extends ToggleButtonLayer {
     x: number,
     y: number,
     value: number,
-    exp: string | ((v: number) => void),
+    onChange: string | ((v: number) => void),
     backImagePath: string,
     foreImagePath: string,
     buttonImagePath: string,
+    keyIndex: number,
   ): Promise<void> {
     const name = `Slider ${this.sliders.length}`;
     const slider = new Slider(name, this.resource, this.owner);
@@ -319,7 +354,7 @@ export class SliderLayer extends ToggleButtonLayer {
     slider.x = x;
     slider.y = y;
 
-    return slider.initSlider(value, exp, backImagePath, foreImagePath, buttonImagePath);
+    return slider.initSlider(value, onChange, backImagePath, foreImagePath, buttonImagePath, keyIndex);
   }
 
   public clearSliders(): void {
@@ -341,6 +376,14 @@ export class SliderLayer extends ToggleButtonLayer {
 
   public unlockSliders(): void {
     this.sliders.forEach(slider => slider.unlock());
+  }
+
+  public getButtons(): Button[] {
+    const buttons: Button[] = super.getButtons();
+    this.sliders.forEach(slider => {
+      buttons.push(slider.button as Button);
+    });
+    return buttons;
   }
 
   public store(tick: number): any {

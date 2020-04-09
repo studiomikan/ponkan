@@ -487,16 +487,14 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
-        /// @param 値変更時に実行する関数
-        new TagValue("onchange", "string", false, null),
         /// @param x座標(px)
         new TagValue("x", "number", false, 0),
         /// @param y座標(px)
         new TagValue("y", "number", false, 0),
-        /// @param スライダーの値が変わったときに実行するJavaScript
-        new TagValue("exp", "string|function", false, ""),
         /// @param 初期値(0.0～1.0)
         new TagValue("value", "number", false, 0),
+        /// @param 値変更時に実行する関数
+        new TagValue("onchange", "string|function", false, ""),
         /// @param スライダーの背景用画像のファイルパス
         new TagValue("back", "string", true, null),
         /// @param スライダーの表面画像のファイルパス
@@ -512,8 +510,21 @@ export default function(p: Ponkan): TagAction[] {
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
+          let keyIndex: number | null = values.keyindex;
+          if (keyIndex == null || keyIndex == undefined) {
+            keyIndex = p.getButtonKeyIndex(values);
+          }
           layer
-            .addSlider(values.x, values.y, values.value, values.exp, values.back, values.fore, values.button)
+            .addSlider(
+              values.x,
+              values.y,
+              values.value,
+              values.onchange,
+              values.back,
+              values.fore,
+              values.button,
+              keyIndex,
+            )
             .then(() => {
               p.conductor.start();
             })
