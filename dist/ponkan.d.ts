@@ -13,6 +13,7 @@ declare module 'ponkan' {
   import { HistoryLayer } from "ponkan/layer/history-layer";
   import { PonLayer } from "ponkan/layer/pon-layer";
   import { PonPlugin } from "ponkan/plugin/pon-plugin";
+  import { Button } from "ponkan/layer/button";
   export enum SkipType {
       INVALID = 0,
       UNTIL_CLICK_WAIT = 1,
@@ -133,6 +134,19 @@ declare module 'ponkan' {
       onPrimaryRightClick(): Promise<boolean>;
       onKeyDown(e: PonKeyEvent): boolean;
       onKeyUp(e: PonKeyEvent): boolean;
+      onKeyDownEnter(): Promise<void>;
+      /**
+        * ボタンのkeyindex省略時に設定する数値を取得する
+        */
+      getButtonKeyIndex(values: any): number;
+      /**
+        * 指定ページの全ボタンを取得
+        */
+      getPageButtons(pageLayers?: PonLayer[]): Button[];
+      focusNextButton(): void;
+      focusPrevButton(): void;
+      slideToLeft(): void;
+      slideToRight(): void;
       addCommandShortcut(ch: string, command: string): void;
       delCommandShortcut(ch: string): void;
       execCommand(commandName: string, values?: any): void;
@@ -173,6 +187,11 @@ declare module 'ponkan' {
         * @return 操作対象レイヤー
         */
       protected getTargetLayers(pageLayers: PonLayer[], lay: string): PonLayer[];
+      /**
+        * 操作対象ページのレイヤーのリストを取得する
+        * @param values レイヤーのリスト
+        */
+      getPageLayers(values: any): PonLayer[];
       /**
         * 操作対象のレイヤーを取得する
         * @param values タグの値
@@ -766,7 +785,7 @@ declare module 'ponkan/layer/history-layer' {
   import { Resource } from "ponkan/base/resource";
   import { Button } from "ponkan/layer/button";
   export class HistoryButton extends Button {
-    initHistoryButton(imagePath: string): Promise<void>;
+    initHistoryButton(imagePath: string, keyIndex: number): Promise<void>;
     clearHistoryButton(): void;
     setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void;
     setCallbacks(callbacks: any): void;
@@ -991,6 +1010,69 @@ declare module 'ponkan/plugin/pon-plugin' {
         * システム変数（sv）を保存する直前に呼ばれる
         */
       onSaveSystemVariables(): void;
+  }
+}
+
+declare module 'ponkan/layer/button' {
+  import { BaseLayer } from "ponkan/base/base-layer";
+  import { PonMouseEvent } from "ponkan/base/pon-mouse-event";
+  export type ButtonStatus = "normal" | "over" | "on" | "disabled";
+  export class Button extends BaseLayer {
+      protected insideFlag: boolean;
+      protected buttonStatus: ButtonStatus;
+      protected down: boolean;
+      /** キーボード操作時の選択インデックス */
+      keyIndex: number;
+      get isButton(): boolean;
+      initButton(keyIndex: number): void;
+      clearButton(): void;
+      setButtonStatus(status: ButtonStatus): void;
+      getButtonStatus(): ButtonStatus;
+      get isFocused(): boolean;
+      focus(): void;
+      blur(): void;
+      onMouseEnter(e: PonMouseEvent): void;
+      onMouseLeave(e: PonMouseEvent): void;
+      onMouseMove(e: PonMouseEvent): void;
+      onMouseDown(e: PonMouseEvent): void;
+      onMouseUp(e: PonMouseEvent): void;
+      submit(): Promise<void>;
+      protected static buttonStoreParams: string[];
+      store(tick: number): any;
+      restore(data: any, tick: number, clear: boolean): Promise<void>;
+      copyTo(dest: Button): void;
+  }
+  /**
+    * textbuttonコマンドやimagebuttonコマンドで生成するボタンの機能
+    */
+  export class CommandButton extends Button {
+      protected jump: boolean;
+      protected call: boolean;
+      protected filePath: string | null;
+      protected label: string | null;
+      protected countPage: boolean;
+      protected isSystemButton: boolean;
+      protected onEnterExp: string | null;
+      protected onLeaveExp: string | null;
+      protected onClickExp: string | null;
+      protected onEnterSoundBuf: string | null;
+      protected onLeaveSoundBuf: string | null;
+      protected onClickSoundBuf: string | null;
+      protected systemButtonLocked: boolean;
+      initCommandButton(jump?: boolean, call?: boolean, filePath?: string | null, label?: string | null, countPage?: boolean, isSystemButton?: boolean, onEnterExp?: string | null, onLeaveExp?: string | null, onClickExp?: string | null, onEnterSoundBuf?: string | null, onLeaveSoundBuf?: string | null, onClickSoundBuf?: string | null, keyIndex?: number | null): void;
+      clearCommandButton(): void;
+      lockSystemButton(): void;
+      unlockSystemButton(): void;
+      onChangeStable(isStable: boolean): void;
+      onMouseEnter(e: PonMouseEvent): void;
+      onMouseLeave(e: PonMouseEvent): void;
+      onMouseUp(e: PonMouseEvent): Promise<void>;
+      submit(): Promise<void>;
+      protected static commandButtonStoreParams: string[];
+      store(tick: number): any;
+      restore(data: any, tick: number, clear: boolean): Promise<void>;
+      restoreAfterLoadImage(data: any, tick: number): void;
+      copyTo(dest: CommandButton): void;
   }
 }
 
@@ -1548,59 +1630,6 @@ declare module 'ponkan/base/trans-manager' {
   }
 }
 
-declare module 'ponkan/layer/button' {
-  import { BaseLayer } from "ponkan/base/base-layer";
-  import { PonMouseEvent } from "ponkan/base/pon-mouse-event";
-  export class Button extends BaseLayer {
-    protected insideFlag: boolean;
-    protected buttonStatus: "normal" | "over" | "on" | "disabled";
-    protected down: boolean;
-    initButton(): void;
-    clearButton(): void;
-    setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void;
-    onMouseEnter(e: PonMouseEvent): void;
-    onMouseLeave(e: PonMouseEvent): void;
-    onMouseMove(e: PonMouseEvent): void;
-    onMouseDown(e: PonMouseEvent): void;
-    onMouseUp(e: PonMouseEvent): void;
-    protected static buttonStoreParams: string[];
-    store(tick: number): any;
-    restore(data: any, tick: number, clear: boolean): Promise<void>;
-    copyTo(dest: Button): void;
-  }
-  /**
-    * textbuttonコマンドやimagebuttonコマンドで生成するボタンの機能
-    */
-  export class CommandButton extends Button {
-    protected jump: boolean;
-    protected call: boolean;
-    protected filePath: string | null;
-    protected label: string | null;
-    protected countPage: boolean;
-    protected isSystemButton: boolean;
-    protected onEnterExp: string | null;
-    protected onLeaveExp: string | null;
-    protected onClickExp: string | null;
-    protected onEnterSoundBuf: string | null;
-    protected onLeaveSoundBuf: string | null;
-    protected onClickSoundBuf: string | null;
-    protected systemButtonLocked: boolean;
-    initCommandButton(jump?: boolean, call?: boolean, filePath?: string | null, label?: string | null, countPage?: boolean, isSystemButton?: boolean, onEnterExp?: string | null, onLeaveExp?: string | null, onClickExp?: string | null, onEnterSoundBuf?: string | null, onLeaveSoundBuf?: string | null, onClickSoundBuf?: string | null): void;
-    clearCommandButton(): void;
-    lockSystemButton(): void;
-    unlockSystemButton(): void;
-    onChangeStable(isStable: boolean): void;
-    onMouseEnter(e: PonMouseEvent): void;
-    onMouseLeave(e: PonMouseEvent): void;
-    onMouseUp(e: PonMouseEvent): Promise<void>;
-    protected static commandButtonStoreParams: string[];
-    store(tick: number): any;
-    restore(data: any, tick: number, clear: boolean): Promise<void>;
-    restoreAfterLoadImage(data: any, tick: number): void;
-    copyTo(dest: CommandButton): void;
-  }
-}
-
 declare module 'ponkan/layer/filtered-layer' {
   import { Resource } from "ponkan/base/resource";
   import { Ponkan } from "ponkan/ponkan";
@@ -1895,28 +1924,31 @@ declare module 'ponkan/layer/slider-layer' {
   import { PonGame } from "ponkan/base/pon-game";
   import { PonMouseEvent } from "ponkan/base/pon-mouse-event";
   import { Resource } from "ponkan/base/resource";
-  import { Button } from "ponkan/layer/button";
+  import { Button, ButtonStatus } from "ponkan/layer/button";
   import { ToggleButtonLayer } from "ponkan/layer/toggle-button-layer";
   export class SliderButton extends Button {
-    initSliderButton(imagePath: string): Promise<void>;
+    initSliderButton(imagePath: string, keyIndex: number): Promise<void>;
     clearSliderButton(): void;
-    setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void;
+    setButtonStatus(status: ButtonStatus): void;
     setCallbacks(callbacks: any): void;
     onMouseDown(e: PonMouseEvent): void;
     onMouseUp(e: PonMouseEvent): void;
+    submit(): Promise<void>;
+    slideToLeft(): void;
+    slideToRight(): void;
   }
   /**
     * スライダー
     */
   export class Slider extends BaseLayer {
     protected foreImage: BaseLayer;
-    protected button: SliderButton;
+    readonly button: SliderButton;
     protected locked: boolean;
     protected value: number;
-    protected exp: string | ((v: number) => void);
+    protected onChange: string | ((v: number) => void);
     protected down: boolean;
     constructor(name: string, resource: Resource, owner: PonGame);
-    initSlider(value: number, exp: string | ((v: number) => void), backImagePath: string, foreImagePath: string, buttonImagePath: string): Promise<void>;
+    initSlider(value: number, onChange: string | ((v: number) => void), backImagePath: string, foreImagePath: string, buttonImagePath: string, keyIndex: number): Promise<void>;
     clearSlider(): void;
     lock(): void;
     unlock(): void;
@@ -1929,6 +1961,7 @@ declare module 'ponkan/layer/slider-layer' {
     onMouseDown(e: PonMouseEvent): void;
     onMouseMove(e: PonMouseEvent): void;
     onMouseUp(e: PonMouseEvent): void;
+    submit(): void;
     protected static sliderStoreParams: string[];
     store(tick: number): any;
     restore(data: any, tick: number, clear: boolean): Promise<void>;
@@ -1936,10 +1969,12 @@ declare module 'ponkan/layer/slider-layer' {
     copyTo(dest: Slider): void;
   }
   export class SliderLayer extends ToggleButtonLayer {
-    addSlider(x: number, y: number, value: number, exp: string | ((v: number) => void), backImagePath: string, foreImagePath: string, buttonImagePath: string): Promise<void>;
+    addSlider(x: number, y: number, value: number, onChange: string | ((v: number) => void), backImagePath: string, foreImagePath: string, buttonImagePath: string, keyIndex: number): Promise<void>;
     clearSliders(): void;
+    hasSlider(): boolean;
     lockSliders(): void;
     unlockSliders(): void;
+    getButtons(): Button[];
     store(tick: number): any;
     restore(data: any, tick: number, clear: boolean): Promise<void>;
     protected restoreAfterLoadImage(data: any, tick: number): void;
@@ -1949,21 +1984,27 @@ declare module 'ponkan/layer/slider-layer' {
 
 declare module 'ponkan/layer/toggle-button-layer' {
   import { ImageButtonLayer } from "ponkan/layer/image-button-layer";
-  import { ToggleButton } from "ponkan/layer/toggle-button";
-  export class ImageToggleButton extends ToggleButton {
+  import { Button, CommandButton, ButtonStatus } from "ponkan/layer/button";
+  export class ImageToggleButton extends CommandButton {
     protected direction: "horizontal" | "vertical";
-    initImageToggleButton(filePath: string, varName: string, isSystemButton: boolean | undefined, exp: string | null, direction: "horizontal" | "vertical"): Promise<void>;
-    clearToggleButton(): void;
-    setValue(value: boolean): void;
-    protected static imageToggleButtonStoreParams: string[];
+    protected varName: string;
+    protected toggleState: boolean;
+    protected offImageFile: string;
+    initImageToggleButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, isSystemButton: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, imageFile: string, direction: "horizontal" | "vertical", onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string, keyIndex: number | null | undefined, varName: string): Promise<void>;
+    clearCommandButton(): void;
+    setButtonStatus(status: ButtonStatus): void;
+    submit(): Promise<void>;
+    protected static toggleButtonStoreParams: string[];
     store(tick: number): any;
     restore(data: any, tick: number, clear: boolean): Promise<void>;
     restoreAfterLoadImage(data: any, tick: number): void;
     copyTo(dest: ImageToggleButton): void;
   }
   export class ToggleButtonLayer extends ImageButtonLayer {
-    addToggleButton(filePath: string, x: number, y: number, varName: string, isSystemButton: boolean | undefined, exp: string | null, direction: "horizontal" | "vertical"): Promise<void>;
+    addToggleButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, imageFile: string, x: number, y: number, direction: "horizontal" | "vertical", isSystemButton: boolean, onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string, keyIndex: number | null | undefined, varName: string): Promise<void>;
     clearToggleButtons(): void;
+    hasToggleButton(): boolean;
+    getButtons(): Button[];
     lockButtons(): void;
     unlockButtons(): void;
     lockSystemButtons(): void;
@@ -1976,13 +2017,13 @@ declare module 'ponkan/layer/toggle-button-layer' {
 }
 
 declare module 'ponkan/layer/image-button-layer' {
-  import { CommandButton } from "ponkan/layer/button";
+  import { CommandButton, ButtonStatus, Button } from "ponkan/layer/button";
   import { TextButtonLayer } from "ponkan/layer/text-button-layer";
   export class CommandImageButton extends CommandButton {
     protected direction: "horizontal" | "vertical";
-    initImageButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, isSystemButton: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, file: string, direction: "horizontal" | "vertical", onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string): Promise<void>;
+    initImageButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, isSystemButton: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, file: string, direction: "horizontal" | "vertical", onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string, keyIndex?: number | null): Promise<void>;
     clearCommandButton(): void;
-    setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void;
+    setButtonStatus(status: ButtonStatus): void;
     protected static imageButtonStoreParams: string[];
     store(tick: number): any;
     restore(data: any, tick: number, clear: boolean): Promise<void>;
@@ -1990,8 +2031,10 @@ declare module 'ponkan/layer/image-button-layer' {
     copyTo(dest: CommandImageButton): void;
   }
   export class ImageButtonLayer extends TextButtonLayer {
-    addImageButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, file: string, x: number, y: number, direction: "horizontal" | "vertical", isSystemButton: boolean, onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string): Promise<void>;
+    addImageButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, file: string, x: number, y: number, direction: "horizontal" | "vertical", isSystemButton: boolean, onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string, keyIndex?: number | null): Promise<void>;
     clearImageButtons(): void;
+    hasImageButton(): boolean;
+    getButtons(): Button[];
     lockButtons(): void;
     unlockButtons(): void;
     lockSystemButtons(): void;
@@ -2003,41 +2046,8 @@ declare module 'ponkan/layer/image-button-layer' {
   }
 }
 
-declare module 'ponkan/layer/toggle-button' {
-  import { BaseLayer } from "ponkan/base/base-layer";
-  import { PonMouseEvent } from "ponkan/base/pon-mouse-event";
-  /**
-    * トグルボタン機能
-    */
-  export class ToggleButton extends BaseLayer {
-    protected insideFlag: boolean;
-    protected buttonStatus: "enabled" | "disabled";
-    protected varName: string;
-    protected exp: string | null;
-    protected isSystemButton: boolean;
-    protected systemButtonLocked: boolean;
-    initToggleButton(varName: string, isSystemButton: boolean, exp: string | null): void;
-    clearToggleButton(): void;
-    setButtonStatus(status: "enabled" | "disabled"): void;
-    lockSystemButton(): void;
-    unlockSystemButton(): void;
-    setValue(value: boolean): void;
-    getValue(): boolean;
-    onChangeStable(isStable: boolean): void;
-    onMouseEnter(e: PonMouseEvent): void;
-    onMouseLeave(e: PonMouseEvent): void;
-    onMouseDown(e: PonMouseEvent): void;
-    onMouseUp(e: PonMouseEvent): void;
-    protected static toggleButtonStoreParams: string[];
-    store(tick: number): any;
-    restore(data: any, tick: number, clear: boolean): Promise<void>;
-    restoreAfterLoadImage(data: any, tick: number): void;
-    copyTo(dest: ToggleButton): void;
-  }
-}
-
 declare module 'ponkan/layer/text-button-layer' {
-  import { CommandButton } from "ponkan/layer/button";
+  import { CommandButton, Button, ButtonStatus } from "ponkan/layer/button";
   import { FrameAnimLayer } from "ponkan/layer/frame-anim-layer";
   /**
     * テキストと背景色を指定できるボタン
@@ -2049,9 +2059,9 @@ declare module 'ponkan/layer/text-button-layer' {
       txtBtnNormalBackgroundAlpha: number;
       txtBtnOverBackgroundAlpha: number;
       txtBtnOnBackgroundAlpha: number;
-      initTextButton(jump?: boolean, call?: boolean, filePath?: string | null, label?: string | null, countPage?: boolean, isSystemButton?: boolean, onEnterExp?: string | null, onLeaveExp?: string | null, onClickExp?: string | null, text?: string, normalBackgroundColor?: number, overBackgroundColor?: number, onBackgroundColor?: number, normalBackgroundAlpha?: number, overBackgroundAlpha?: number, onBackgroundAlpha?: number, onEnterSoundBuf?: string, onLeaveSoundBuf?: string, onClickSoundBuf?: string): void;
+      initTextButton(jump?: boolean, call?: boolean, filePath?: string | null, label?: string | null, countPage?: boolean, isSystemButton?: boolean, onEnterExp?: string | null, onLeaveExp?: string | null, onClickExp?: string | null, text?: string, normalBackgroundColor?: number, overBackgroundColor?: number, onBackgroundColor?: number, normalBackgroundAlpha?: number, overBackgroundAlpha?: number, onBackgroundAlpha?: number, onEnterSoundBuf?: string, onLeaveSoundBuf?: string, onClickSoundBuf?: string, keyIndex?: number | null): void;
       clearCommandButton(): void;
-      setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void;
+      setButtonStatus(status: ButtonStatus): void;
       resetTextButtonColors(): void;
       protected static textButtonStoreParams: string[];
       store(tick: number): any;
@@ -2062,12 +2072,13 @@ declare module 'ponkan/layer/text-button-layer' {
     * テキストボタンを配置できるレイヤー
     */
   export class TextButtonLayer extends FrameAnimLayer {
-      protected textButtons: TextButton[];
-      addTextButton(btnName: string | undefined, jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, text: string, x: number, y: number, width: number, height: number, backgroundColors: number[], backgroundAlphas: number[], isSystemButton: boolean, textMarginTop: number | undefined, textMarginRight: number | undefined, textMarginBottom: number | undefined, textMarginLeft: number | undefined, textAlign: "left" | "center" | "right" | undefined, onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string): void;
+      addTextButton(btnName: string | undefined, jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, text: string, x: number, y: number, width: number, height: number, backgroundColors: number[], backgroundAlphas: number[], isSystemButton: boolean, textMarginTop: number | undefined, textMarginRight: number | undefined, textMarginBottom: number | undefined, textMarginLeft: number | undefined, textAlign: "left" | "center" | "right" | undefined, onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string, keyIndex?: number | null): void;
       clearTextButtons(): void;
       changeTextButtonColors(btnName: string, backgroundColors: number[]): void;
       changeTextButtonAlphas(btnName: string, backgroundAlphas: number[]): void;
       protected findTextButtonByName(btnName: string): TextButton[];
+      hasTextButton(): boolean;
+      getButtons(): Button[];
       lockButtons(): void;
       unlockButtons(): void;
       lockSystemButtons(): void;
