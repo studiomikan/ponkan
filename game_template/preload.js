@@ -8,5 +8,3 @@ contextBridge.exposeInMainWorld("electron", {
     return ipcRenderer.sendSync("getContentSize");
   },
 });
-
-

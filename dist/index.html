@@ -39,16 +39,15 @@
 </head>
 <body>
   <div id="ponkangame" class="ponkan-game-wrapper"></div>
-  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
   <script src="./ponkan.js"></script>
   <script src="./settings.js"></script>
   <script>
     Ponkan.Logger.level = Ponkan.Logger.LEVEL_INFO;
-    var ponkan = window.ponkan = new Ponkan("ponkangame", PONKAN_SETTINGS);
-    WebFont.load({
+    Ponkan.WebFont.load({
       classes: false,
       custom: { families: ["GenShinGothic"] },
       active: function () {
+        var ponkan = window.ponkan = new Ponkan("ponkangame", PONKAN_SETTINGS);
         ponkan.start();
       },
       inactive: function () {
