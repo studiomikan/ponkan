@@ -34,6 +34,7 @@
       "allowToChangeInstallationDirectory": true,
       "installerIcon": "build/icon.ico",
       "uninstallerIcon": "build/icon.ico",
+      "installerSidebar": "build/installerSidebar.bmp",
       "packElevateHelper": false,
       "runAfterFinish": false,
       "createDesktopShortcut": true,
@@ -41,12 +42,12 @@
       "menuCategory": false
     },
     "mac": {
-      "category": "your.app.category.type"
+      "category": "public.app-category.games"
     }
   },
   "devDependencies": {
-    "electron": "^6.0.10",
-    "electron-builder": "^21.2.0",
+    "electron": "^8.2.1",
+    "electron-builder": "^22.4.1",
     "http-server": "^0.12.1"
   }
 }
