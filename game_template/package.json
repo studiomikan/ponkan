@@ -10,7 +10,7 @@
     "build-win": "electron-builder --win",
     "build-mac": "electron-builder --mac",
     "start-win": "electron .",
-    "start": "http-server -p 8080 -o http://localhost:8080/index.html"
+    "start": "http-server -p 8080 -o index.html"
   },
   "build": {
     "appId": "net.studiomikan.ponkan.template",
