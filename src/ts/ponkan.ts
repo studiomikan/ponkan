@@ -1196,8 +1196,8 @@ export class Ponkan extends PonGame {
     this.isQuakePhase = true;
     this.quakeFrameCount = 0;
 
-    this.foreLayers.filter(l => l.ignoreQuake).forEach(l => l.clearQuake());
-    this.backLayers.filter(l => l.ignoreQuake).forEach(l => l.clearQuake());
+    this.foreLayers.forEach(l => l.clearQuake());
+    this.backLayers.forEach(l => l.clearQuake());
 
     this.conductor.trigger("quake");
   }
@@ -1211,6 +1211,7 @@ export class Ponkan extends PonGame {
     }
     const elapsed: number = tick - this.quakeStartTick;
     if (elapsed > this.quakeTime) {
+      this.stopQuake();
       return;
     }
     let x: number;
