@@ -1116,7 +1116,14 @@ export class Ponkan extends PonGame {
   public getLayers(values: any): PonLayer[] {
     const lay: string = ("" + values.lay) as string;
     const pageLayers: PonLayer[] = this.getPageLayers(values);
-    return this.getTargetLayers(pageLayers, lay);
+    const targetLayers: PonLayer[] = this.getTargetLayers(pageLayers, lay);
+    if (values.exclude == null) {
+      return targetLayers;
+    } else {
+      const exclude: string = ("" + values.exclude) as string;
+      const excludeLayers: PonLayer[] = this.getTargetLayers(pageLayers, exclude);
+      return targetLayers.filter(l => !excludeLayers.includes(l));
+    }
   }
 
   public get hasMovingLayer(): boolean {
