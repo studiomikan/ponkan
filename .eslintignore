@@ -1,0 +1,4 @@
+node_modules/*
+games/*
+game_template/dist
+game_template/node_modules

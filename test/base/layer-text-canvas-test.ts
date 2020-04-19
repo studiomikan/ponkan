@@ -131,7 +131,6 @@ describe("LayerTextCanvas", () => {
         ltc.addChar("あ");
         const aWidth = ltc.currentLine.width;
         const pos = ltc.getNextTextPos(10);
-        const right = ltc.currentLine.x + ltc.currentLine.width;
         expect(pos.newLineFlag).to.be.equals(false);
         expect(pos.x).to.be.equals(ltc.width / 2 + aWidth / 2 + 5);
         expect(pos.y).to.be.equals(ltc.currentLine.y);
@@ -219,11 +218,9 @@ describe("LayerTextCanvas", () => {
   });
 
   context("clear", () => {
-    let indentX: number = 0;
     beforeEach(() => {
       ltc.addText("あいうえお");
       ltc.setIndentPoint();
-      indentX = ltc.currentLine.x + ltc.currentLine.width;
       ltc.addText("かきくけこ");
       ltc.addTextReturn();
       ltc.addText("さしすせそ");
