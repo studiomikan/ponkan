@@ -501,6 +501,8 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("fore", "string", true, null),
         /// @param スライダーの表面画像のファイルパス
         new TagValue("button", "string", true, null),
+        /// @param キーボードでボタンを選択するときの選択順。小さい順に選択される。省略時は追加した順となる。
+        new TagValue("keyindex", "number", false, null),
         // /// @param マウスポインタがスライダーに重なったタイミングで再生する音声の音声バッファ
         // new TagValue("enterbuf", "string", false, ""),
         // /// @param マウスポインタがスライダーから出て行ったタイミングで再生する音声の音声バッファ
