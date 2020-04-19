@@ -26,6 +26,8 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param 動画ファイル
         new TagValue("file", "string", true, null),
         /// @param 動画の幅(px)
@@ -98,6 +100,8 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
@@ -117,6 +121,8 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param 音量(0.0〜1.0)
         new TagValue("volume", "number", false, null),
         /// @param ループ再生するかどうか
@@ -145,6 +151,8 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
@@ -165,6 +173,8 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach(layer => {
@@ -182,6 +192,8 @@ export default function(p: Ponkan): TagAction[] {
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],

@@ -1116,7 +1116,14 @@ export class Ponkan extends PonGame {
   public getLayers(values: any): PonLayer[] {
     const lay: string = ("" + values.lay) as string;
     const pageLayers: PonLayer[] = this.getPageLayers(values);
-    return this.getTargetLayers(pageLayers, lay);
+    const targetLayers: PonLayer[] = this.getTargetLayers(pageLayers, lay);
+    if (values.exclude == null || values.exclude === "") {
+      return targetLayers;
+    } else {
+      const exclude: string = ("" + values.exclude) as string;
+      const excludeLayers: PonLayer[] = this.getTargetLayers(pageLayers, exclude);
+      return targetLayers.filter(l => !excludeLayers.includes(l));
+    }
   }
 
   public get hasMovingLayer(): boolean {
@@ -1469,9 +1476,9 @@ export class Ponkan extends PonGame {
   // トランジション
   // =========================================================
 
-  public backlay(lay: string): void {
-    const fore: PonLayer[] = this.getLayers({ lay, page: "fore" });
-    const back: PonLayer[] = this.getLayers({ lay, page: "back" });
+  public backlay(lay: string, exclude: string | null): void {
+    const fore: PonLayer[] = this.getLayers({ lay, page: "fore", exclude });
+    const back: PonLayer[] = this.getLayers({ lay, page: "back", exclude });
     for (let i = 0; i < fore.length; i++) {
       fore[i].copyTo(back[i]);
     }

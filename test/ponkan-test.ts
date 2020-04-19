@@ -95,5 +95,10 @@ describe("Ponkanのテスト", () => {
       assert.equal(layers[4].name, "fore layer 5");
       assert.equal(layers[5].name, "fore layer " + ponkan.messageLayerNum);
     });
+    it("excludeで指定したものが無視されること", () => {
+      const layers: PonLayer[] = ponkan.getLayers({ lay: "0-9", exclude: "0-4" });
+      assert.isNotEmpty(layers);
+      assert.equal(layers.length, 5);
+    });
   });
 });

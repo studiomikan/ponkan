@@ -230,7 +230,7 @@ declare module 'ponkan' {
       hideHistoryLayer(): void;
       historyTextReturn(): void;
       addTextToHistory(text: string): void;
-      backlay(lay: string): void;
+      backlay(lay: string, exclude: string | null): void;
       copylay(srclay: string, destlay: string, srcpage: string, destpage: string): void;
       flipPrimaryLayers(): void;
       /**
