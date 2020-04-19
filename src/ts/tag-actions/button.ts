@@ -225,7 +225,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("x", "number", false, 0),
         /// @param y座標(px)
         new TagValue("y", "number", false, 0),
-        /// @param ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"
+        /// @param ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び
         new TagValue("direction", "string", false, "horizontal"),
         /// @param システム用ボタンとする場合はtrue
         new TagValue("system", "boolean", false, false),
@@ -340,7 +340,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("x", "number", false, 0),
         /// @param y座標(px)
         new TagValue("y", "number", false, 0),
-        /// @param ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"
+        /// @param ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び
         new TagValue("direction", "string", false, "horizontal"),
         /// @param システム用ボタンとする場合はtrue
         new TagValue("system", "boolean", false, false),
