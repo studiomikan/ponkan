@@ -399,12 +399,12 @@ export default function(p: Ponkan): TagAction[] {
     /// @description テキストをクリアする
     /// @details
     ///   指定したレイヤーのテキストをクリアします。
-    ///   デフォルトでは全レイヤーが対象です。
+    ///   デフォルトではメッセージレイヤーが対象です。
     new TagAction(
       ["clear", "c"],
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", false, "all"),
+        new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
         /// @param 対象外レイヤー
