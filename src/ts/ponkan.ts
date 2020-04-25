@@ -630,14 +630,16 @@ export class Ponkan extends PonGame {
   }
 
   /**
-   * 指定ページの全ボタンを取得
+   * 指定ページの表示中のボタンを取得
    */
   public getPageButtons(pageLayers: PonLayer[] = this.foreLayers): Button[] {
     const buttons: Button[] = [];
     pageLayers.forEach((layer: PonLayer) => {
-      layer.getButtons().forEach(button => {
-        buttons.push(button);
-      });
+      if (layer.visible) {
+        layer.getButtons().forEach(button => {
+          buttons.push(button);
+        });
+      }
     });
     return buttons;
   }
