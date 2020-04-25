@@ -140,7 +140,7 @@ declare module 'ponkan' {
         */
       getButtonKeyIndex(values: any): number;
       /**
-        * 指定ページの全ボタンを取得
+        * 指定ページの表示中のボタンを取得
         */
       getPageButtons(pageLayers?: PonLayer[]): Button[];
       focusNextButton(): void;
