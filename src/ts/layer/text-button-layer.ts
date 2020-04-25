@@ -89,8 +89,10 @@ export class TextButton extends CommandButton {
     let color: number | null = null;
     let alpha: number | null = null;
     switch (this.buttonStatus) {
-      case "normal":
       case "disabled":
+        // disabledの時は直前の表示を引き継ぐ
+        break;
+      case "normal":
         color = this.txtBtnNormalBackgroundColor;
         alpha = this.txtBtnNormalBackgroundAlpha;
         break;
@@ -103,13 +105,9 @@ export class TextButton extends CommandButton {
         alpha = this.txtBtnOnBackgroundAlpha;
         break;
     }
-    if (color == null) {
-      color = this.txtBtnNormalBackgroundColor;
+    if (color != null && alpha != null) {
+      this.setBackgroundColor(color, alpha);
     }
-    if (alpha == null) {
-      alpha = this.txtBtnNormalBackgroundAlpha;
-    }
-    this.setBackgroundColor(color, alpha);
   }
 
   protected static textButtonStoreParams: string[] = [

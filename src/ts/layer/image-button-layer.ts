@@ -46,6 +46,7 @@ export class CommandImageButton extends CommandButton {
       this.width = Math.floor(this.imageWidth / 3);
     }
     this.setButtonStatus("disabled");
+    this.resetImageButtonPosition("normal");
   }
 
   public clearCommandButton(): void {
@@ -55,11 +56,16 @@ export class CommandImageButton extends CommandButton {
 
   public setButtonStatus(status: ButtonStatus): void {
     super.setButtonStatus(status);
+    this.resetImageButtonPosition(status);
+  }
 
+  public resetImageButtonPosition(status: ButtonStatus): void {
     if (this.direction === "vertical") {
       switch (status) {
-        case "normal":
         case "disabled":
+          // disabledの時は直前の表示を引き継ぐ
+          break;
+        case "normal":
           this.imageY = 0;
           break;
         case "over":
@@ -71,8 +77,10 @@ export class CommandImageButton extends CommandButton {
       }
     } else {
       switch (status) {
-        case "normal":
         case "disabled":
+          // disabledの時は直前の表示を引き継ぐ
+          break;
+        case "normal":
           this.imageX = 0;
           break;
         case "over":

@@ -2024,6 +2024,7 @@ declare module 'ponkan/layer/image-button-layer' {
     initImageButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, isSystemButton: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, file: string, direction: "horizontal" | "vertical", onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string, keyIndex?: number | null): Promise<void>;
     clearCommandButton(): void;
     setButtonStatus(status: ButtonStatus): void;
+    resetImageButtonPosition(status: ButtonStatus): void;
     protected static imageButtonStoreParams: string[];
     store(tick: number): any;
     restore(data: any, tick: number, clear: boolean): Promise<void>;
