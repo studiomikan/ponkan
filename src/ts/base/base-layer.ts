@@ -601,6 +601,9 @@ export class BaseLayer {
     // 孫レイヤーについて処理
     for (let i = this.children.length - 1; i >= 0; i--) {
       const child: BaseLayer = this.children[i];
+      if (!child.visible) {
+        continue;
+      }
       const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
       child._callOnMouseEnter(e2);
       if (e2.stopPropagationFlag) {
@@ -617,6 +620,9 @@ export class BaseLayer {
     // このレイヤの子レイヤーについて、予約されているイベントを呼ぶ
     for (let i = this.callMouseEnterTargetChild.length - 1; i >= 0; i--) {
       const child = this.callMouseEnterTargetChild[i];
+      if (!child.visible) {
+        continue;
+      }
       const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
       child._onMouseEnter(e2);
       if (e2.stopPropagationFlag) {
@@ -633,6 +639,9 @@ export class BaseLayer {
     // 孫レイヤーについて処理
     for (let i = this.children.length - 1; i >= 0; i--) {
       const child: BaseLayer = this.children[i];
+      if (!child.visible) {
+        continue;
+      }
       const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
       child._callOnMouseLeave(e2);
       if (e2.stopPropagationFlag) {
@@ -660,52 +669,6 @@ export class BaseLayer {
       }
     }
   }
-
-  // // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる
-  // private callChildrenMouseEnterLeave(e: PonMouseEvent): void {
-  //   // イベント発生フラグを立てる
-  //   const enterTargets = [];
-  //   const leaveTargets = [];
-  //   for (let i = this.children.length - 1; i >= 0; i--) {
-  //     const child: BaseLayer = this.children[i];
-  //     if (!child.visible) {
-  //       continue;
-  //     }
-  //     const isInside = BaseLayer.isInsideOfLayer(child, e.x, e.y);
-  //     if (isInside !== child.isInsideBuffer) {
-  //       const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
-  //       if (isInside) {
-  //         enterTargets.push({ child, e2 });
-  //       } else {
-  //         leaveTargets.push({ child, e2 });
-  //       }
-  //     }
-  //     child.isInsideBuffer = isInside;
-  //   }
-  //   // leave -> enter の順に発生させる
-  //   for (let i = 0; i < leaveTargets.length; i++) {
-  //     const info = leaveTargets[i];
-  //     info.child._onMouseLeave(info.e2);
-  //     if (info.e2.stopPropagationFlag) {
-  //       e.stopPropagation();
-  //     }
-  //     if (info.e2.forceStopFlag) {
-  //       e.forceStop();
-  //       return;
-  //     }
-  //   }
-  //   for (let i = 0; i < enterTargets.length; i++) {
-  //     const info = enterTargets[i];
-  //     info.child._onMouseEnter(info.e2);
-  //     if (info.e2.stopPropagationFlag) {
-  //       e.stopPropagation();
-  //     }
-  //     if (info.e2.forceStopFlag) {
-  //       e.forceStop();
-  //       return;
-  //     }
-  //   }
-  // }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onMouseDown(e: PonMouseEvent): void {
