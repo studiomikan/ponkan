@@ -605,6 +605,27 @@ export default function(p: Ponkan): TagAction[] {
         return "continue";
       },
     ),
+    /// @category ボタン
+    /// @description スライダーをクリアする
+    /// @details
+    ///   指定されたレイヤーのスライダーを解放します。
+    new TagAction(
+      ["clearsliders", "clearslider"],
+      [
+        /// @param 対象レイヤー
+        new TagValue("lay", "string", true, null),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
+      ],
+      (values: any, tick: number): TagActionResult => {
+        p.getLayers(values).forEach(layer => {
+          layer.clearSliders();
+        });
+        return "continue";
+      },
+    ),
   ];
 }
 /* eslint-enalble @typescript-eslint/no-unused-vars */
