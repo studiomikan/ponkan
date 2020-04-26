@@ -33,7 +33,7 @@ export default function(p: Ponkan): TagAction[] {
         /// @param ボタン押下時にjumpまたはcallするラベル名
         new TagValue("label", "string", false, null),
         /// @param マウスポインタが重なったタイミングで実行するJavaScript
-        new TagValue("onclick", "string", false, null),
+        new TagValue("onenter", "string", false, null),
         /// @param マウスポインタが出ていったタイミングで実行するJavaScript
         new TagValue("onleave", "string", false, null),
         /// @param ボタン押下時に実行するJavaScript
@@ -214,7 +214,7 @@ export default function(p: Ponkan): TagAction[] {
         /// @param ボタン押下時にjumpまたはcallするラベル名
         new TagValue("label", "string", false, null),
         /// @param マウスポインタが重なったタイミングで実行するJavaScript
-        new TagValue("onclick", "string", false, null),
+        new TagValue("onenter", "string", false, null),
         /// @param マウスポインタが出ていったタイミングで実行するJavaScript
         new TagValue("onleave", "string", false, null),
         /// @param ボタン押下時に実行するJavaScript
@@ -329,7 +329,7 @@ export default function(p: Ponkan): TagAction[] {
         /// @param ボタン押下時にjumpまたはcallするラベル名
         new TagValue("label", "string", false, null),
         /// @param マウスポインタが重なったタイミングで実行するJavaScript
-        new TagValue("onclick", "string", false, null),
+        new TagValue("onenter", "string", false, null),
         /// @param マウスポインタが出ていったタイミングで実行するJavaScript
         new TagValue("onleave", "string", false, null),
         /// @param ボタン押下時に実行するJavaScript
