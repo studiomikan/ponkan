@@ -519,7 +519,13 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("y", "number", false, 0),
         /// @param 初期値(0.0～1.0)
         new TagValue("value", "number", false, 0),
-        /// @param 値変更時に実行する関数
+        /// @param スライダー操作の開始時に実行するJavaScript
+        new TagValue("onstart", "string|function", false, ""),
+        /// @param スライダー操作のスライド中に実行するJavaScript
+        new TagValue("onslide", "string|function", false, ""),
+        /// @param スライダー操作の終了時に実行するJavaScript
+        new TagValue("onend", "string|function", false, ""),
+        /// @param 値変更時に実行するJavaScript。onendより後に実行される。
         new TagValue("onchange", "string|function", false, ""),
         /// @param スライダーの背景用画像のファイルパス
         new TagValue("back", "string", true, null),
@@ -547,6 +553,9 @@ export default function(p: Ponkan): TagAction[] {
               values.x,
               values.y,
               values.value,
+              values.onstart,
+              values.onslide,
+              values.onend,
               values.onchange,
               values.back,
               values.fore,

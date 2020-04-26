@@ -1945,10 +1945,13 @@ declare module 'ponkan/layer/slider-layer' {
     readonly button: SliderButton;
     protected locked: boolean;
     protected value: number;
+    protected onStart: string | ((v: number) => void);
+    protected onSlide: string | ((v: number) => void);
+    protected onEnd: string | ((v: number) => void);
     protected onChange: string | ((v: number) => void);
     protected down: boolean;
     constructor(name: string, resource: Resource, owner: PonGame);
-    initSlider(value: number, onChange: string | ((v: number) => void), backImagePath: string, foreImagePath: string, buttonImagePath: string, keyIndex: number): Promise<void>;
+    initSlider(value: number, onStart: string | ((v: number) => void), onSlide: string | ((v: number) => void), onEnd: string | ((v: number) => void), onChange: string | ((v: number) => void), backImagePath: string, foreImagePath: string, buttonImagePath: string, keyIndex: number): Promise<void>;
     clearSlider(): void;
     lock(): void;
     unlock(): void;
@@ -1969,7 +1972,7 @@ declare module 'ponkan/layer/slider-layer' {
     copyTo(dest: Slider): void;
   }
   export class SliderLayer extends ToggleButtonLayer {
-    addSlider(x: number, y: number, value: number, onChange: string | ((v: number) => void), backImagePath: string, foreImagePath: string, buttonImagePath: string, keyIndex: number): Promise<void>;
+    addSlider(x: number, y: number, value: number, onStart: string | ((v: number) => void), onSlide: string | ((v: number) => void), onEnd: string | ((v: number) => void), onChange: string | ((v: number) => void), backImagePath: string, foreImagePath: string, buttonImagePath: string, keyIndex: number): Promise<void>;
     clearSliders(): void;
     hasSlider(): boolean;
     lockSliders(): void;

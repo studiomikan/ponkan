@@ -82,7 +82,10 @@ export class Slider extends BaseLayer {
   public readonly button: SliderButton;
   protected locked: boolean = false;
   protected value: number = 0;
-  protected onChange: string | ((v: number) => void) = "";
+  protected onStart: string | ((v: number) => void) = ""; // スライド開始
+  protected onSlide: string | ((v: number) => void) = ""; // スライド中
+  protected onEnd: string | ((v: number) => void) = ""; // スライド終わり
+  protected onChange: string | ((v: number) => void) = ""; // 値変更後。onEndより後
   protected down: boolean = false;
 
   constructor(name: string, resource: Resource, owner: PonGame) {
@@ -114,6 +117,9 @@ export class Slider extends BaseLayer {
 
   public async initSlider(
     value: number,
+    onStart: string | ((v: number) => void),
+    onSlide: string | ((v: number) => void),
+    onEnd: string | ((v: number) => void),
     onChange: string | ((v: number) => void),
     backImagePath: string,
     foreImagePath: string,
@@ -129,6 +135,9 @@ export class Slider extends BaseLayer {
       value = 1.0;
     }
     this.value = value;
+    this.onStart = onStart;
+    this.onSlide = onSlide;
+    this.onEnd = onEnd;
     this.onChange = onChange;
 
     const task: Promise<void>[] = [];
@@ -163,6 +172,9 @@ export class Slider extends BaseLayer {
   public clearSlider(): void {
     this.freeImage();
     this.value = 0;
+    this.onStart = "";
+    this.onSlide = "";
+    this.onEnd = "";
     this.onChange = "";
     this.down = false;
 
@@ -241,8 +253,9 @@ export class Slider extends BaseLayer {
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
     if (!this.locked && this.isInsideEvent(e)) {
-      this.setValueX(e.x);
       this.down = true;
+      this.setValueX(e.x);
+      this.executeSliderCallback(this.onStart);
       e.stopPropagation();
       e.forceStop();
     }
@@ -252,6 +265,7 @@ export class Slider extends BaseLayer {
     super.onMouseMove(e);
     if (!this.locked && this.down) {
       this.setValueX(e.x);
+      this.executeSliderCallback(this.onSlide);
       this.resource.getCanvasElm().style.cursor = this.resource.cursor.over;
     }
   }
@@ -263,16 +277,21 @@ export class Slider extends BaseLayer {
       this.resource.getCanvasElm().style.cursor = this.resource.cursor.normal;
       e.stopPropagation();
       e.forceStop();
+      this.executeSliderCallback(this.onEnd);
       this.submit();
     }
   }
 
   public submit(): void {
-    if (this.onChange != null && this.onChange !== "") {
-      if (typeof this.onChange === "function") {
-        this.onChange(this.value);
+    this.executeSliderCallback(this.onChange);
+  }
+
+  private executeSliderCallback(callback: string | ((v: number) => void)): void {
+    if (callback != null && callback !== "") {
+      if (typeof callback === "function") {
+        callback(this.value);
       } else {
-        this.resource.evalJs(this.onChange as string);
+        this.resource.evalJs(callback as string);
       }
     }
   }
@@ -340,6 +359,9 @@ export class SliderLayer extends ToggleButtonLayer {
     x: number,
     y: number,
     value: number,
+    onStart: string | ((v: number) => void),
+    onSlide: string | ((v: number) => void),
+    onEnd: string | ((v: number) => void),
     onChange: string | ((v: number) => void),
     backImagePath: string,
     foreImagePath: string,
@@ -354,7 +376,17 @@ export class SliderLayer extends ToggleButtonLayer {
     slider.x = x;
     slider.y = y;
 
-    return slider.initSlider(value, onChange, backImagePath, foreImagePath, buttonImagePath, keyIndex);
+    return slider.initSlider(
+      value,
+      onStart,
+      onSlide,
+      onEnd,
+      onChange,
+      backImagePath,
+      foreImagePath,
+      buttonImagePath,
+      keyIndex,
+    );
   }
 
   public clearSliders(): void {
