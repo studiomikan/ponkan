@@ -42,7 +42,7 @@ export class SliderButton extends Button {
 
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
-    if (this.isInsideEvent(e) && this.callbacks.onMouseDown) {
+    if (this.isInsideEvent(e) && e.isLeft && this.callbacks.onMouseDown) {
       this.callbacks.onMouseDown(e);
     }
   }
@@ -252,7 +252,7 @@ export class Slider extends BaseLayer {
 
   public onMouseDown(e: PonMouseEvent): void {
     super.onMouseDown(e);
-    if (!this.locked && this.isInsideEvent(e)) {
+    if (!this.locked && e.isLeft && this.isInsideEvent(e)) {
       this.down = true;
       this.setValueX(e.x);
       this.executeSliderCallback(this.onStart);
