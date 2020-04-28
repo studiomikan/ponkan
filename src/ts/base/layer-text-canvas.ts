@@ -38,6 +38,9 @@ export class TextSpriteCache {
 
   public set(ch: string, style: TextStyle, text: PIXI.Text): void {
     if (TextSpriteCache.ENABLED) {
+      // PIXI.js の TextStyle#toFontString() の処理が、fontFamilyの各フォント名を勝手に "" で囲む。
+      // キー名が変わってしまうので、先に囲んでおくことが必要。
+      style.surroundFontFamily();
       const key: string = this.genKey(ch, style);
       this.map.set(key, text);
       // キャッシュ数を抑制
@@ -47,8 +50,6 @@ export class TextSpriteCache {
     }
   }
 }
-
-const textCache = new TextSpriteCache();
 
 const defaultTextStyle = {
   // for PIXI.TextStyle
@@ -100,6 +101,8 @@ const defaultRubyTextStyle = objExtend(objClone(defaultTextStyle), {
   pitch: 0,
 });
 
+const genericFontFamilies = ["serif", "sans-serif", "monospace", "cursive", "fantasy", "system-ui"];
+
 /**
  * テキストスタイル
  */
@@ -116,6 +119,22 @@ export class TextStyle extends PIXI.TextStyle {
   constructor(opts: any = defaultTextStyle) {
     super(opts);
     this.edgeAlpha = 1;
+  }
+
+  public surroundFontFamily(): void {
+    // PIXI.js の TextStyle#toFontString() の処理が、fontFamilyの各フォント名を勝手に "" で囲む。
+    // そうなると、キャッシュの時などにちょっと困るので、先回りして先に囲んでおくことが必要。
+    if (Array.isArray(this.fontFamily)) {
+      const families: string[] = [];
+      this.fontFamily.forEach(family => {
+        family = family.trim();
+        if (!/(["'])[^'"]+\1/.test(family) && genericFontFamilies.indexOf(family) < 0) {
+          family = `"${family}"`;
+        }
+        families.push(family);
+      });
+      this.fontFamily = families;
+    }
   }
 
   public setGradientType(type: "vertical" | "horizontal"): void {
@@ -210,6 +229,7 @@ export class TextStyle extends PIXI.TextStyle {
  * 文字と位置などの情報のみ持ち、canvasなどは持たない。
  */
 export class LayerChar {
+  public static textCache: TextSpriteCache = new TextSpriteCache();
   public readonly pixiSprite: PIXI.Sprite;
   public readonly fromCache: boolean;
   public readonly ch: string;
@@ -253,13 +273,13 @@ export class LayerChar {
     this.style = style.clone();
     this.ch = ch;
 
-    const cacheSprite = textCache.get(this.ch, this.style);
+    const cacheSprite = LayerChar.textCache.get(this.ch, this.style);
     if (cacheSprite != null) {
       this.pixiSprite = cacheSprite;
       this.fromCache = true;
     } else {
       const text: PIXI.Text = new PIXI.Text(ch, this.style);
-      textCache.set(this.ch, this.style, text);
+      LayerChar.textCache.set(this.ch, this.style, text);
       this.pixiSprite = text;
       this.fromCache = false;
     }
@@ -292,7 +312,11 @@ export class LayerChar {
     if (this.pixiSprite.parent) {
       this.pixiSprite.parent.removeChild(this.pixiSprite);
       if (this.fromCache) {
-        this.pixiSprite.destroy();
+        this.pixiSprite.destroy({
+          children: false,
+          texture: false,
+          baseTexture: false,
+        });
       }
     }
   }
@@ -457,7 +481,6 @@ export class LayerTextLine {
   }
 
   private addRubyText(targetChar: LayerChar): void {
-    // console.log(this.rubyStyle);
     const rubyStyle = this.rubyStyle;
     const rubyText = this.rubyText;
     const pitch = this.rubyStyle.pitch;
@@ -624,6 +647,9 @@ export class LayerTextCanvas {
   public addChar(ch: string): void {
     if (ch == null || ch == "") {
       return;
+    }
+    if (typeof ch !== "string") {
+      ch = "" + ch;
     }
     if (ch.length > 1) {
       return this.addText(ch);

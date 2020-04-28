@@ -272,7 +272,7 @@ export class TextButtonLayer extends FrameAnimLayer {
     });
   }
 
-  protected findTextButtonByName(btnName: string): TextButton[] {
+  public findTextButtonByName(btnName: string): TextButton[] {
     const name = `TextButton ${btnName}`;
     return this.textButtons.filter(l => l.name === name);
   }

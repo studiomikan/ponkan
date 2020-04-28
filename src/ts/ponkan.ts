@@ -1959,5 +1959,6 @@ export class Ponkan extends PonGame {
 }
 
 PIXI.utils.skipHello();
+(Ponkan as any).PIXI = PIXI;
 (Ponkan as any).WebFont = require("webfontloader");
 (window as any).Ponkan = Ponkan;

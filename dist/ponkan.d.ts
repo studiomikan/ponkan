@@ -1313,6 +1313,7 @@ declare module 'ponkan/base/layer-text-canvas' {
       inEffectEase: "none" | "in" | "out" | "both";
       inEffectOptions: any;
       constructor(opts?: any);
+      surroundFontFamily(): void;
       setGradientType(type: "vertical" | "horizontal"): void;
       set edgeColor(edgeColor: number | string);
       get edgeColor(): number | string;
@@ -1331,6 +1332,7 @@ declare module 'ponkan/base/layer-text-canvas' {
     * 文字と位置などの情報のみ持ち、canvasなどは持たない。
     */
   export class LayerChar {
+      static textCache: TextSpriteCache;
       readonly pixiSprite: PIXI.Sprite;
       readonly fromCache: boolean;
       readonly ch: string;
@@ -2080,7 +2082,7 @@ declare module 'ponkan/layer/text-button-layer' {
       clearTextButtons(): void;
       changeTextButtonColors(btnName: string, backgroundColors: number[]): void;
       changeTextButtonAlphas(btnName: string, backgroundAlphas: number[]): void;
-      protected findTextButtonByName(btnName: string): TextButton[];
+      findTextButtonByName(btnName: string): TextButton[];
       hasTextButton(): boolean;
       getButtons(): Button[];
       lockButtons(): void;
