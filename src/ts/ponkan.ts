@@ -1639,7 +1639,7 @@ export class Ponkan extends PonGame {
   }
 
   public save(tick: number, num: number): void {
-    Logger.debug("==SAVE=============================================");
+    Logger.debug("SAVE START");
     Logger.debug(num, this.latestSaveData);
 
     // セーブデータの保存
@@ -1651,8 +1651,6 @@ export class Ponkan extends PonGame {
       throw new Error("セーブデータの保存に失敗しました。JSON文字列に変換できません");
     }
     this.resource.storeToLocalStorage(this.getSaveDataName(num), saveStr);
-    // console.log("SAVE! ", this.latestSaveData);
-    Logger.debug("SAVE! ", this.latestSaveData);
 
     // システムデータの保存
     if (this.systemVar.saveDataInfo == null) {
@@ -1669,7 +1667,7 @@ export class Ponkan extends PonGame {
     Logger.debug(this.systemVar.saveDataInfo[num]);
 
     this.saveSystemData();
-    Logger.debug("===================================================");
+    Logger.debug("SAVE END.");
   }
 
   public getNowDateStr(): string {
@@ -1720,6 +1718,7 @@ export class Ponkan extends PonGame {
     "rightClickLabel",
     "rightClickEnabled",
     "enabledHistory",
+    "latestSaveComment",
   ];
 
   protected generateSaveData(saveMarkName: string, comment: string, tick: number): any {
@@ -1781,7 +1780,7 @@ export class Ponkan extends PonGame {
     const dataStr: string = this.resource.restoreFromLocalStorage(this.getSaveDataName(num));
     const data: any = JSON.parse(dataStr);
 
-    Logger.debug("LOAD", data);
+    Logger.debug("LOAD START", data);
 
     this.stopDrawLoop();
     this.goToMainConductor();
@@ -1835,6 +1834,7 @@ export class Ponkan extends PonGame {
 
     this.startDrawLoop();
     this.conductor.stop();
+    Logger.debug("LOAD END");
   }
 
   public async tempLoad(tick: number, num: number, sound = false, toBack = false): Promise<void> {
