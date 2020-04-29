@@ -187,7 +187,7 @@ export class ToggleButtonLayer extends ImageButtonLayer {
   }
 
   public clearToggleButtons(): void {
-    this.imageToggleButtons.forEach(toggleButton => {
+    this.imageToggleButtons.forEach((toggleButton) => {
       toggleButton.clearCommandButton();
       toggleButton.destroy();
       this.deleteChildLayer(toggleButton);
@@ -201,7 +201,7 @@ export class ToggleButtonLayer extends ImageButtonLayer {
 
   public getButtons(): Button[] {
     const buttons: Button[] = super.getButtons();
-    this.imageToggleButtons.forEach(imageToggleButton => {
+    this.imageToggleButtons.forEach((imageToggleButton) => {
       buttons.push(imageToggleButton as Button);
     });
     return buttons;
@@ -209,28 +209,28 @@ export class ToggleButtonLayer extends ImageButtonLayer {
 
   public lockButtons(): void {
     super.lockButtons();
-    this.imageToggleButtons.forEach(toggleButton => {
+    this.imageToggleButtons.forEach((toggleButton) => {
       toggleButton.setButtonStatus("disabled");
     });
   }
 
   public unlockButtons(): void {
     super.unlockButtons();
-    this.imageToggleButtons.forEach(toggleButton => {
+    this.imageToggleButtons.forEach((toggleButton) => {
       toggleButton.setButtonStatus("normal");
     });
   }
 
   public lockSystemButtons(): void {
     super.lockSystemButtons();
-    this.imageToggleButtons.forEach(toggleButton => {
+    this.imageToggleButtons.forEach((toggleButton) => {
       toggleButton.lockSystemButton();
     });
   }
 
   public unlockSystemButtons(): void {
     super.unlockSystemButtons();
-    this.imageToggleButtons.forEach(toggleButton => {
+    this.imageToggleButtons.forEach((toggleButton) => {
       toggleButton.unlockSystemButton();
     });
   }
@@ -239,7 +239,7 @@ export class ToggleButtonLayer extends ImageButtonLayer {
     const data: any = super.store(tick);
     // const me: any = this as any;
 
-    data.imageToggleButtons = this.imageToggleButtons.map(toggleButton => toggleButton.store(tick));
+    data.imageToggleButtons = this.imageToggleButtons.map((toggleButton) => toggleButton.store(tick));
 
     return data;
   }
@@ -284,7 +284,7 @@ export class ToggleButtonLayer extends ImageButtonLayer {
     super.copyTo(dest);
 
     dest.clearToggleButtons();
-    this.imageToggleButtons.forEach(srcBtn => {
+    this.imageToggleButtons.forEach((srcBtn) => {
       const destBtn = new ImageToggleButton(name, dest.resource, dest.owner);
       dest.addChild(destBtn);
       dest.imageToggleButtons.push(destBtn);

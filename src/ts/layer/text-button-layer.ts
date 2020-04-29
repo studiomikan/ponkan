@@ -240,7 +240,7 @@ export class TextButtonLayer extends FrameAnimLayer {
   }
 
   public clearTextButtons(): void {
-    this.textButtons.forEach(textButton => {
+    this.textButtons.forEach((textButton) => {
       textButton.clearCommandButton();
       textButton.destroy();
       this.deleteChildLayer(textButton);
@@ -252,7 +252,7 @@ export class TextButtonLayer extends FrameAnimLayer {
     const normal: number = +backgroundColors[0];
     const over: number = backgroundColors[1] != null ? +backgroundColors[1] : normal;
     const on: number = backgroundColors[2] != null ? +backgroundColors[2] : normal;
-    this.findTextButtonByName(btnName).forEach(btn => {
+    this.findTextButtonByName(btnName).forEach((btn) => {
       btn.txtBtnNormalBackgroundColor = normal;
       btn.txtBtnOverBackgroundColor = over;
       btn.txtBtnOnBackgroundColor = on;
@@ -264,7 +264,7 @@ export class TextButtonLayer extends FrameAnimLayer {
     const normalAlpha: number = +backgroundAlphas[0];
     const overAlpha: number = backgroundAlphas[1] != null ? +backgroundAlphas[1] : normalAlpha;
     const onAlpha: number = backgroundAlphas[2] != null ? +backgroundAlphas[2] : normalAlpha;
-    this.findTextButtonByName(btnName).forEach(btn => {
+    this.findTextButtonByName(btnName).forEach((btn) => {
       btn.txtBtnNormalBackgroundAlpha = normalAlpha;
       btn.txtBtnOverBackgroundAlpha = overAlpha;
       btn.txtBtnOnBackgroundAlpha = onAlpha;
@@ -274,7 +274,7 @@ export class TextButtonLayer extends FrameAnimLayer {
 
   public findTextButtonByName(btnName: string): TextButton[] {
     const name = `TextButton ${btnName}`;
-    return this.textButtons.filter(l => l.name === name);
+    return this.textButtons.filter((l) => l.name === name);
   }
 
   public hasTextButton(): boolean {
@@ -283,32 +283,32 @@ export class TextButtonLayer extends FrameAnimLayer {
 
   public getButtons(): Button[] {
     const buttons: Button[] = [];
-    this.textButtons.forEach(textButton => {
+    this.textButtons.forEach((textButton) => {
       buttons.push(textButton as Button);
     });
     return buttons;
   }
 
   public lockButtons(): void {
-    this.textButtons.forEach(textButton => {
+    this.textButtons.forEach((textButton) => {
       textButton.setButtonStatus("disabled");
     });
   }
 
   public unlockButtons(): void {
-    this.textButtons.forEach(textButton => {
+    this.textButtons.forEach((textButton) => {
       textButton.setButtonStatus("normal");
     });
   }
 
   public lockSystemButtons(): void {
-    this.textButtons.forEach(textButton => {
+    this.textButtons.forEach((textButton) => {
       textButton.lockSystemButton();
     });
   }
 
   public unlockSystemButtons(): void {
-    this.textButtons.forEach(textButton => {
+    this.textButtons.forEach((textButton) => {
       textButton.unlockSystemButton();
     });
   }
@@ -317,7 +317,7 @@ export class TextButtonLayer extends FrameAnimLayer {
     const data: any = super.store(tick);
     // const me: any = this as any;
 
-    data.textButtons = this.textButtons.map(textButton => textButton.store(tick));
+    data.textButtons = this.textButtons.map((textButton) => textButton.store(tick));
 
     return data;
   }
@@ -350,7 +350,7 @@ export class TextButtonLayer extends FrameAnimLayer {
     super.copyTo(dest);
 
     dest.clearTextButtons();
-    this.textButtons.forEach(srcBtn => {
+    this.textButtons.forEach((srcBtn) => {
       const destBtn = new TextButton(name, dest.resource, dest.owner);
       dest.addChild(destBtn);
       dest.textButtons.push(destBtn);

@@ -252,7 +252,7 @@ export class Conductor {
       return false;
     }
     this.clearEventHandlerByName(eventName);
-    handlers.forEach(h => {
+    handlers.forEach((h) => {
       // Logger.debug("FIRE! ", eventName, h);
       h.fire();
     });
@@ -264,7 +264,7 @@ export class Conductor {
   }
 
   public clearEventHandler(eventHandler: PonEventHandler): void {
-    Object.keys(this.eventHandlers).forEach(eventName => {
+    Object.keys(this.eventHandlers).forEach((eventName) => {
       this.eventHandlers[eventName].forEach((eh: PonEventHandler, index: number) => {
         if (eh === eventHandler) {
           this.eventHandlers[eventName].splice(index, 1);

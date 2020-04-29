@@ -2,7 +2,7 @@ import { Ponkan } from "../ponkan";
 import { TagAction, TagActionResult, TagValue } from "../tag-action";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export default function(p: Ponkan): TagAction[] {
+export default function (p: Ponkan): TagAction[] {
   return [
     // ======================================================================
     // レイヤーフィルタ関係
@@ -22,7 +22,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.clearFilters();
         });
         return "continue";
@@ -49,7 +49,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("quality", "number", false, 4),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.addFilter("blur", {
             blurX: values.blurx,
             blurY: values.blury,
@@ -88,7 +88,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("blue", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.addFilter("color", values);
         });
         return "continue";

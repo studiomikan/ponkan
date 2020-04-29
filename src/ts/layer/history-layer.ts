@@ -336,7 +336,7 @@ class HistoryTextLayer extends BaseLayer {
 
   public get historyText(): string {
     let text = "";
-    this.lines.forEach(line => {
+    this.lines.forEach((line) => {
       text += line.join("") + "\n";
     });
     return text;

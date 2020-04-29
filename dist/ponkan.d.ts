@@ -2,7 +2,7 @@
 // Dependencies for this module:
 //   ../../pixi.js
 
-declare module 'ponkan' {
+declare module "ponkan" {
   import { BaseLayer } from "ponkan/base/base-layer";
   import { PonGame } from "ponkan/base/pon-game";
   import { PonKeyEvent } from "ponkan/base/pon-key-event";
@@ -15,256 +15,265 @@ declare module 'ponkan' {
   import { PonPlugin } from "ponkan/plugin/pon-plugin";
   import { Button } from "ponkan/layer/button";
   export enum SkipType {
-      INVALID = 0,
-      UNTIL_CLICK_WAIT = 1,
-      UNTIL_S = 2,
-      WHILE_PRESSING_CTRL = 3
+    INVALID = 0,
+    UNTIL_CLICK_WAIT = 1,
+    UNTIL_S = 2,
+    WHILE_PRESSING_CTRL = 3,
   }
   export type GlyphVerticalAlignType = "bottom" | "middle" | "top" | "text-top" | "text-middle";
   export class Ponkan extends PonGame {
-      raiseError: any;
-      skipMode: SkipType;
-      canSkipUnreadPart: boolean;
-      canSkipUnreadPartByCtrl: boolean;
-      autoModeFlag: boolean;
-      autoModeInterval: number;
-      autoModeStartTick: number;
-      autoModeLayerNum: number;
-      waitUntilStartTick: number;
-      waitUntilTime: number;
-      readonly tagActions: any;
-      protected _layerCount: number;
-      layerAlias: any;
-      forePrimaryLayer: PonLayer;
-      backPrimaryLayer: PonLayer;
-      get foreLayers(): PonLayer[];
-      get backLayers(): PonLayer[];
-      currentPage: "fore" | "back";
-      isQuaking: boolean;
-      protected quakeStartTick: number;
-      protected quakeTime: number;
-      protected quakeMaxX: number;
-      protected quakeMaxY: number;
-      protected isQuakePhase: boolean;
-      protected quakeFrameCount: number;
-      protected quakeIntervalFrame: number;
-      textSpeedMode: "user" | "system";
-      unreadTextSpeed: number;
-      readTextSpeed: number;
-      userUnreadTextSpeed: number;
-      userReadTextSpeed: number;
-      clickSkipEnabled: boolean;
-      nowaitModeFlag: boolean;
-      addCharWithBackFlag: boolean;
-      hideMessageFlag: boolean;
-      hideMessageByRClickFlag: boolean;
-      protected _messageLayerNum: number;
-      get messageLayerNum(): number;
-      set messageLayerNum(num: number);
-      protected _lineBreakGlyphLayerNum: number;
-      get lineBreakGlyphLayerNum(): number;
-      set lineBreakGlyphLayerNum(num: number);
-      lineBreakGlyphPos: "eol" | "relative" | "absolute";
-      lineBreakGlyphVerticalAlign: GlyphVerticalAlignType;
-      lineBreakGlyphX: number;
-      lineBreakGlyphY: number;
-      lineBreakGlyphMarginX: number;
-      lineBreakGlyphMarginY: number;
-      protected _pageBreakGlyphLayerNum: number;
-      get pageBreakGlyphLayerNum(): number;
-      set pageBreakGlyphLayerNum(num: number);
-      pageBreakGlyphPos: "eol" | "relative" | "absolute";
-      pageBreakGlyphVerticalAlign: GlyphVerticalAlignType;
-      pageBreakGlyphX: number;
-      pageBreakGlyphY: number;
-      pageBreakGlyphMarginX: number;
-      pageBreakGlyphMarginY: number;
-      rightClickJump: boolean;
-      rightClickCall: boolean;
-      rightClickFilePath: string | null;
-      rightClickLabel: string | null;
-      rightClickEnabled: boolean;
-      historyLayer: HistoryLayer;
-      enabledHistory: boolean;
-      soundBufferAlias: any;
-      soundBufferCount: number;
-      readonly soundBuffers: SoundBuffer[];
-      protected onSoundStopParamsList: IOnSoundStopParams[];
-      protected currentOnSoundStopParams: IOnSoundStopParams | null | undefined;
-      protected saveDataPrefix: string;
-      protected latestSaveComment: string;
-      protected latestSaveData: any;
-      protected tempSaveData: any;
-      get tmpVar(): any;
-      get gameVar(): any;
-      get systemVar(): any;
-      protected pluginMap: any;
-      protected plugins: PonPlugin[];
-      constructor(parentId: string, config?: any);
-      destroy(): void;
-      start(): Promise<void>;
-      stop(): void;
-      /**
-        * Ponkanを一時停止する。
-        * HTMLファイルによるシステム画面などを表示する際は、このメソッドで停止する。
-        * 再開にはresumeメソッドを使う。
-        */
-      pause(countPage?: boolean, stopSkip?: boolean): void;
-      resume(): void;
-      addPlugin(name: string, plugin: PonPlugin): void;
-      removePlugin(name: string): void;
-      getPlugin(name: string): PonPlugin;
-      protected update(tick: number): void;
-      protected beforeDraw(tick: number): void;
-      error(e: Error): void;
-      showLayerDebugInfo(): void;
-      hideLayerDebugInfo(): void;
-      getDebugInfo(): any;
-      dumpDebugInfo(): void;
-      protected get eventReceivesLayer(): BaseLayer;
-      onMouseEnter(e: PonMouseEvent): void;
-      onMouseLeave(e: PonMouseEvent): void;
-      onMouseMove(e: PonMouseEvent): void;
-      onMouseDown(e: PonMouseEvent): void;
-      onMouseUp(e: PonMouseEvent): void;
-      /** マウスホイールによる読み進め処理が連続して発生しないようにするためのフラグ */
-      protected onMouseWheelLocked: boolean;
-      onMouseWheel(e: PonWheelEvent): boolean;
-      onPrimaryClick(): boolean;
-      onPrimaryRightClick(): Promise<boolean>;
-      onKeyDown(e: PonKeyEvent): boolean;
-      onKeyUp(e: PonKeyEvent): boolean;
-      onKeyDownEnter(): Promise<void>;
-      /**
-        * ボタンのkeyindex省略時に設定する数値を取得する
-        */
-      getButtonKeyIndex(values: any): number;
-      /**
-        * 指定ページの表示中のボタンを取得
-        */
-      getPageButtons(pageLayers?: PonLayer[]): Button[];
-      focusNextButton(): void;
-      focusPrevButton(): void;
-      slideToLeft(): void;
-      slideToRight(): void;
-      addCommandShortcut(ch: string, command: string): void;
-      delCommandShortcut(ch: string): void;
-      execCommand(commandName: string, values?: any): void;
-      onTag(tag: Tag, line: number, tick: number): "continue" | "break";
-      onLabel(labelName: string, line: number, tick: number): "continue" | "break";
-      onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): "continue" | "break";
-      onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break";
-      onChangeStable(isStable: boolean): void;
-      onReturnSubroutin(forceStart?: boolean): void;
-      get isSkipping(): boolean;
-      startSkipByTag(): void;
-      startSkipByCtrl(): void;
-      stopWhilePressingCtrlSkip(): void;
-      stopUntilClickSkip(): void;
-      stopSkip(): void;
-      get autoModeLayer(): PonLayer;
-      startAutoMode(): void;
-      stopAutoMode(): void;
-      reserveAutoClick(tick: number): void;
-      getSoundBuffer(num: string): SoundBuffer;
-      onSoundStop(params: IOnSoundStopParams): Promise<void>;
-      onSoundFadeComplete(bufferNum: number): void;
-      waitSoundCompleteCallback(sb: SoundBuffer): void;
-      waitSoundStopClickCallback(sb: SoundBuffer): void;
-      waitSoundFadeCompleteCallback(sb: SoundBuffer): void;
-      waitSoundFadeClickCallback(sb: SoundBuffer): void;
-      get layerCount(): number;
-      set layerCount(layerCount: number);
-      /**
-        * レイヤを作成する。
-        * rendererへの追加は行わないので、他のレイヤの子レイヤにする必要がある。
-        */
-      createLayer(name: string): PonLayer;
-      /**
-        * 操作対象となるレイヤーを取得する
-        * @param pageLayers ページのレイヤー
-        * @param lay レイヤー指定の文字列
-        * @return 操作対象レイヤー
-        */
-      protected getTargetLayers(pageLayers: PonLayer[], lay: string): PonLayer[];
-      /**
-        * 操作対象ページのレイヤーのリストを取得する
-        * @param values レイヤーのリスト
-        */
-      getPageLayers(values: any): PonLayer[];
-      /**
-        * 操作対象のレイヤーを取得する
-        * @param values タグの値
-        */
-      getLayers(values: any): PonLayer[];
-      get hasMovingLayer(): boolean;
-      waitMoveClickCallback(): void;
-      waitMoveCompleteCallback(): void;
-      waitFrameAnimClickCallback(layers: PonLayer[]): void;
-      waitFrameAnimCompleteCallback(layers: PonLayer[]): void;
-      get hasPlayingVideoLayer(): boolean;
-      waitVideoClickCallback(): void;
-      waitVideoCompleteCallback(): void;
-      startQuake(tick: number, time: number, maxX: number, maxY: number): void;
-      stopQuake(): void;
-      protected quake(tick: number): void;
-      get textSpeed(): number;
-      /**
-        * メッセージレイヤ（表）
-        */
-      get messageLayer(): PonLayer;
-      get backMessageLayer(): PonLayer;
-      get lineBreakGlyphLayer(): PonLayer;
-      get pageBreakGlyphLayer(): PonLayer;
-      showLineBreakGlyph(tick: number): void;
-      showPageBreakGlyph(tick: number): void;
-      showBreakGlyph(tick: number, lay: PonLayer, pos: "eol" | "relative" | "absolute", verticalAlign: GlyphVerticalAlignType, x: number, y: number, marginX: number, marginY: number): void;
-      hideBreakGlyph(): void;
-      hideMessages(): void;
-      showMessages(): void;
-      hideMessagesByRightClick(): void;
-      showMessagesByRightClick(): void;
-      onAddChar(sender: PonLayer, ch: string): void;
-      onTextReturn(sender: PonLayer): void;
-      showHistoryLayer(): void;
-      hideHistoryLayer(): void;
-      historyTextReturn(): void;
-      addTextToHistory(text: string): void;
-      backlay(lay: string, exclude: string | null): void;
-      copylay(srclay: string, destlay: string, srcpage: string, destpage: string): void;
-      flipPrimaryLayers(): void;
-      /**
-        * [override]
-        * トランジション完了時にTransManagerから呼ばれる。
-        * この時点で表ページ・裏ページの入れ替えは完了している。
-        */
-      onCompleteTrans(): boolean;
-      waitTransClickCallback(): void;
-      waitTransCompleteCallback(): void;
-      onWindowClose(): boolean;
-      protected static ponkanSystemStoreParams: string[];
-      protected static ponkanSystemStoreIgnoreParams: string[];
-      saveSystemData(): void;
-      loadSystemData(saveDataPrefix: string): void;
-      protected getSaveDataName(num: number): string;
-      save(tick: number, num: number): void;
-      getNowDateStr(): string;
-      protected static ponkanStoreParams: string[];
-      protected generateSaveData(saveMarkName: string, comment: string, tick: number): any;
-      tempSave(tick: number, num: number): void;
-      load(tick: number, num: number): Promise<void>;
-      tempLoad(tick: number, num: number, sound?: boolean, toBack?: boolean): Promise<void>;
-      copySaveData(srcNum: number, destNum: number): void;
-      get emptySaveData(): any;
-      deleteSaveData(num: number): void;
-      getSaveDataInfo(num: number): any;
-      existSaveData(num: number): boolean;
-      getSaveDataScreenShot(num: number): string;
-      splitStrByLength(str: string, length: number): string[];
+    raiseError: any;
+    skipMode: SkipType;
+    canSkipUnreadPart: boolean;
+    canSkipUnreadPartByCtrl: boolean;
+    autoModeFlag: boolean;
+    autoModeInterval: number;
+    autoModeStartTick: number;
+    autoModeLayerNum: number;
+    waitUntilStartTick: number;
+    waitUntilTime: number;
+    readonly tagActions: any;
+    protected _layerCount: number;
+    layerAlias: any;
+    forePrimaryLayer: PonLayer;
+    backPrimaryLayer: PonLayer;
+    get foreLayers(): PonLayer[];
+    get backLayers(): PonLayer[];
+    currentPage: "fore" | "back";
+    isQuaking: boolean;
+    protected quakeStartTick: number;
+    protected quakeTime: number;
+    protected quakeMaxX: number;
+    protected quakeMaxY: number;
+    protected isQuakePhase: boolean;
+    protected quakeFrameCount: number;
+    protected quakeIntervalFrame: number;
+    textSpeedMode: "user" | "system";
+    unreadTextSpeed: number;
+    readTextSpeed: number;
+    userUnreadTextSpeed: number;
+    userReadTextSpeed: number;
+    clickSkipEnabled: boolean;
+    nowaitModeFlag: boolean;
+    addCharWithBackFlag: boolean;
+    hideMessageFlag: boolean;
+    hideMessageByRClickFlag: boolean;
+    protected _messageLayerNum: number;
+    get messageLayerNum(): number;
+    set messageLayerNum(num: number);
+    protected _lineBreakGlyphLayerNum: number;
+    get lineBreakGlyphLayerNum(): number;
+    set lineBreakGlyphLayerNum(num: number);
+    lineBreakGlyphPos: "eol" | "relative" | "absolute";
+    lineBreakGlyphVerticalAlign: GlyphVerticalAlignType;
+    lineBreakGlyphX: number;
+    lineBreakGlyphY: number;
+    lineBreakGlyphMarginX: number;
+    lineBreakGlyphMarginY: number;
+    protected _pageBreakGlyphLayerNum: number;
+    get pageBreakGlyphLayerNum(): number;
+    set pageBreakGlyphLayerNum(num: number);
+    pageBreakGlyphPos: "eol" | "relative" | "absolute";
+    pageBreakGlyphVerticalAlign: GlyphVerticalAlignType;
+    pageBreakGlyphX: number;
+    pageBreakGlyphY: number;
+    pageBreakGlyphMarginX: number;
+    pageBreakGlyphMarginY: number;
+    rightClickJump: boolean;
+    rightClickCall: boolean;
+    rightClickFilePath: string | null;
+    rightClickLabel: string | null;
+    rightClickEnabled: boolean;
+    historyLayer: HistoryLayer;
+    enabledHistory: boolean;
+    soundBufferAlias: any;
+    soundBufferCount: number;
+    readonly soundBuffers: SoundBuffer[];
+    protected onSoundStopParamsList: IOnSoundStopParams[];
+    protected currentOnSoundStopParams: IOnSoundStopParams | null | undefined;
+    protected saveDataPrefix: string;
+    protected latestSaveComment: string;
+    protected latestSaveData: any;
+    protected tempSaveData: any;
+    get tmpVar(): any;
+    get gameVar(): any;
+    get systemVar(): any;
+    protected pluginMap: any;
+    protected plugins: PonPlugin[];
+    constructor(parentId: string, config?: any);
+    destroy(): void;
+    start(): Promise<void>;
+    stop(): void;
+    /**
+     * Ponkanを一時停止する。
+     * HTMLファイルによるシステム画面などを表示する際は、このメソッドで停止する。
+     * 再開にはresumeメソッドを使う。
+     */
+    pause(countPage?: boolean, stopSkip?: boolean): void;
+    resume(): void;
+    addPlugin(name: string, plugin: PonPlugin): void;
+    removePlugin(name: string): void;
+    getPlugin(name: string): PonPlugin;
+    protected update(tick: number): void;
+    protected beforeDraw(tick: number): void;
+    error(e: Error): void;
+    showLayerDebugInfo(): void;
+    hideLayerDebugInfo(): void;
+    getDebugInfo(): any;
+    dumpDebugInfo(): void;
+    protected get eventReceivesLayer(): BaseLayer;
+    onMouseEnter(e: PonMouseEvent): void;
+    onMouseLeave(e: PonMouseEvent): void;
+    onMouseMove(e: PonMouseEvent): void;
+    onMouseDown(e: PonMouseEvent): void;
+    onMouseUp(e: PonMouseEvent): void;
+    /** マウスホイールによる読み進め処理が連続して発生しないようにするためのフラグ */
+    protected onMouseWheelLocked: boolean;
+    onMouseWheel(e: PonWheelEvent): boolean;
+    onPrimaryClick(): boolean;
+    onPrimaryRightClick(): Promise<boolean>;
+    onKeyDown(e: PonKeyEvent): boolean;
+    onKeyUp(e: PonKeyEvent): boolean;
+    onKeyDownEnter(): Promise<void>;
+    /**
+     * ボタンのkeyindex省略時に設定する数値を取得する
+     */
+    getButtonKeyIndex(values: any): number;
+    /**
+     * 指定ページの表示中のボタンを取得
+     */
+    getPageButtons(pageLayers?: PonLayer[]): Button[];
+    focusNextButton(): void;
+    focusPrevButton(): void;
+    slideToLeft(): void;
+    slideToRight(): void;
+    addCommandShortcut(ch: string, command: string): void;
+    delCommandShortcut(ch: string): void;
+    execCommand(commandName: string, values?: any): void;
+    onTag(tag: Tag, line: number, tick: number): "continue" | "break";
+    onLabel(labelName: string, line: number, tick: number): "continue" | "break";
+    onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): "continue" | "break";
+    onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break";
+    onChangeStable(isStable: boolean): void;
+    onReturnSubroutin(forceStart?: boolean): void;
+    get isSkipping(): boolean;
+    startSkipByTag(): void;
+    startSkipByCtrl(): void;
+    stopWhilePressingCtrlSkip(): void;
+    stopUntilClickSkip(): void;
+    stopSkip(): void;
+    get autoModeLayer(): PonLayer;
+    startAutoMode(): void;
+    stopAutoMode(): void;
+    reserveAutoClick(tick: number): void;
+    getSoundBuffer(num: string): SoundBuffer;
+    onSoundStop(params: IOnSoundStopParams): Promise<void>;
+    onSoundFadeComplete(bufferNum: number): void;
+    waitSoundCompleteCallback(sb: SoundBuffer): void;
+    waitSoundStopClickCallback(sb: SoundBuffer): void;
+    waitSoundFadeCompleteCallback(sb: SoundBuffer): void;
+    waitSoundFadeClickCallback(sb: SoundBuffer): void;
+    get layerCount(): number;
+    set layerCount(layerCount: number);
+    /**
+     * レイヤを作成する。
+     * rendererへの追加は行わないので、他のレイヤの子レイヤにする必要がある。
+     */
+    createLayer(name: string): PonLayer;
+    /**
+     * 操作対象となるレイヤーを取得する
+     * @param pageLayers ページのレイヤー
+     * @param lay レイヤー指定の文字列
+     * @return 操作対象レイヤー
+     */
+    protected getTargetLayers(pageLayers: PonLayer[], lay: string): PonLayer[];
+    /**
+     * 操作対象ページのレイヤーのリストを取得する
+     * @param values レイヤーのリスト
+     */
+    getPageLayers(values: any): PonLayer[];
+    /**
+     * 操作対象のレイヤーを取得する
+     * @param values タグの値
+     */
+    getLayers(values: any): PonLayer[];
+    get hasMovingLayer(): boolean;
+    waitMoveClickCallback(): void;
+    waitMoveCompleteCallback(): void;
+    waitFrameAnimClickCallback(layers: PonLayer[]): void;
+    waitFrameAnimCompleteCallback(layers: PonLayer[]): void;
+    get hasPlayingVideoLayer(): boolean;
+    waitVideoClickCallback(): void;
+    waitVideoCompleteCallback(): void;
+    startQuake(tick: number, time: number, maxX: number, maxY: number): void;
+    stopQuake(): void;
+    protected quake(tick: number): void;
+    get textSpeed(): number;
+    /**
+     * メッセージレイヤ（表）
+     */
+    get messageLayer(): PonLayer;
+    get backMessageLayer(): PonLayer;
+    get lineBreakGlyphLayer(): PonLayer;
+    get pageBreakGlyphLayer(): PonLayer;
+    showLineBreakGlyph(tick: number): void;
+    showPageBreakGlyph(tick: number): void;
+    showBreakGlyph(
+      tick: number,
+      lay: PonLayer,
+      pos: "eol" | "relative" | "absolute",
+      verticalAlign: GlyphVerticalAlignType,
+      x: number,
+      y: number,
+      marginX: number,
+      marginY: number,
+    ): void;
+    hideBreakGlyph(): void;
+    hideMessages(): void;
+    showMessages(): void;
+    hideMessagesByRightClick(): void;
+    showMessagesByRightClick(): void;
+    onAddChar(sender: PonLayer, ch: string): void;
+    onTextReturn(sender: PonLayer): void;
+    showHistoryLayer(): void;
+    hideHistoryLayer(): void;
+    historyTextReturn(): void;
+    addTextToHistory(text: string): void;
+    backlay(lay: string, exclude: string | null): void;
+    copylay(srclay: string, destlay: string, srcpage: string, destpage: string): void;
+    flipPrimaryLayers(): void;
+    /**
+     * [override]
+     * トランジション完了時にTransManagerから呼ばれる。
+     * この時点で表ページ・裏ページの入れ替えは完了している。
+     */
+    onCompleteTrans(): boolean;
+    waitTransClickCallback(): void;
+    waitTransCompleteCallback(): void;
+    onWindowClose(): boolean;
+    protected static ponkanSystemStoreParams: string[];
+    protected static ponkanSystemStoreIgnoreParams: string[];
+    saveSystemData(): void;
+    loadSystemData(saveDataPrefix: string): void;
+    protected getSaveDataName(num: number): string;
+    save(tick: number, num: number): void;
+    getNowDateStr(): string;
+    protected static ponkanStoreParams: string[];
+    protected generateSaveData(saveMarkName: string, comment: string, tick: number): any;
+    tempSave(tick: number, num: number): void;
+    load(tick: number, num: number): Promise<void>;
+    tempLoad(tick: number, num: number, sound?: boolean, toBack?: boolean): Promise<void>;
+    copySaveData(srcNum: number, destNum: number): void;
+    get emptySaveData(): any;
+    deleteSaveData(num: number): void;
+    getSaveDataInfo(num: number): any;
+    existSaveData(num: number): boolean;
+    getSaveDataScreenShot(num: number): string;
+    splitStrByLength(str: string, length: number): string[];
   }
 }
 
-declare module 'ponkan/base/base-layer' {
+declare module "ponkan/base/base-layer" {
   import * as PIXI from "pixi.js";
   import { PonGame } from "ponkan/base/pon-game";
   import { PonMouseEvent } from "ponkan/base/pon-mouse-event";
@@ -274,276 +283,285 @@ declare module 'ponkan/base/base-layer' {
   import { Resource } from "ponkan/base/resource";
   import { LayerTextCanvas } from "ponkan/base/layer-text-canvas";
   /**
-    * すべてのレイヤーの基本となるレイヤー
-    */
+   * すべてのレイヤーの基本となるレイヤー
+   */
   export class BaseLayer {
-      /** レイヤー名 */
-      name: string;
-      /** リソース */
-      protected resource: Resource;
-      /** 持ち主 */
-      protected owner: PonGame;
-      /** スプライト表示用コンテナ */
-      protected _container: PIXI.Container;
-      get container(): PIXI.Container;
-      /** レイヤサイズでクリッピングするためのマスク */
-      protected maskSprite: PIXI.Sprite;
-      /** デバッグ情報を出力するためのコンテナ */
-      protected debugContainer: PIXI.Container;
-      set debugInfoVisible(visible: boolean);
-      get debugInfoVisible(): boolean;
-      /** デバッグ情報: ボーダー */
-      protected debugBorder: PIXI.Graphics;
-      /** デバッグ情報: テキスト情報 */
-      protected debugText: PIXI.Text;
-      /** デバッグ情報: テキスト情報のスタイル */
-      debugTextStyle: PIXI.TextStyle;
-      /** 背景色用スプライト */
-      protected backgroundSprite: PonSprite;
-      protected hasBackgroundColor: boolean;
-      protected _backgroundColor: number;
-      protected _backgroundAlpha: number;
-      protected textContainer: PIXI.Container;
-      protected textSpriteCallbacks: IPonSpriteCallbacks;
-      protected childContainer: PIXI.Container;
-      protected childSpriteCallbacks: IPonSpriteCallbacks;
-      protected imageContainer: PIXI.Container;
-      protected imageSpriteCallbacks: IPonSpriteCallbacks;
-      protected canvasSpriteCallbacks: IPonVideoCallbacks;
-      protected videoCallbacks: IPonVideoCallbacks;
-      /** quakeを無視する */
-      ignoreQuake: boolean;
-      /** 読み込んでいる画像 */
-      protected image: HTMLImageElement | null;
-      protected imageFilePath: string | null;
-      /** 画像用スプライト */
-      protected imageSprite: PonSprite | null;
-      get imageWidth(): number;
-      get imageHeight(): number;
-      /** 読み込んでいるCanvas */
-      protected canvas: HTMLCanvasElement | null;
-      protected canvasSprite: PonSprite | null;
-      get canvasWidth(): number;
-      get canvasHeight(): number;
-      /** 動画スプライト */
-      protected videoFilePath: string | null;
-      video: PonVideo | null;
-      set videoWidth(width: number);
-      get videoWidth(): number;
-      set videoHeight(height: number);
-      get videoHeight(): number;
-      set videoLoop(loop: boolean);
-      get videoLoop(): boolean;
-      set videoVolume(volume: number);
-      get videoVolume(): number;
-      /** イベント遮断フラグ。trueにするとマウスイベントの伝播を遮断する。 */
-      blockLeftClickFlag: boolean;
-      blockRightClickFlag: boolean;
-      blockCenterClickFlag: boolean;
-      blockMouseMove: boolean;
-      blockWheelFlag: boolean;
-      textCanvas: LayerTextCanvas;
-      get children(): BaseLayer[];
-      get x(): number;
-      set x(x: number);
-      get y(): number;
-      set y(y: number);
-      get quakeOffsetX(): number;
-      set quakeOffsetX(x: number);
-      get quakeOffsetY(): number;
-      set quakeOffsetY(y: number);
-      get width(): number;
-      set width(width: number);
-      get height(): number;
-      set height(height: number);
-      get visible(): boolean;
-      set visible(visible: boolean);
-      get alpha(): number;
-      set alpha(alpha: number);
-      get backgroundColor(): number;
-      set backgroundColor(backgroundColor: number);
-      set backgroundAlpha(backgroundAlpha: number);
-      get backgroundAlpha(): number;
-      get imageX(): number;
-      set imageX(imageX: number);
-      get imageY(): number;
-      set imageY(imageY: number);
-      get canvasX(): number;
-      set canvasX(canvasX: number);
-      get canvasY(): number;
-      set canvasY(canvasY: number);
-      get scaleX(): number;
-      set scaleX(scaleX: number);
-      get scaleY(): number;
-      set scaleY(scaleY: number);
-      constructor(name: string, resource: Resource, owner: PonGame);
-      /**
-        * 破棄
-        */
-      destroy(): void;
-      addChild(childLayer: BaseLayer): BaseLayer;
-      /**
-        * 子レイヤーを削除する。
-        * 管理から削除されるだけで、レイヤー自体は初期化されたりしない。
-        */
-      deleteChildLayer(childLayer: BaseLayer): void;
-      /**
-        * 子レイヤーをすべて削除する。
-        * 管理から削除されるだけで、レイヤー自体は初期化されたりしない。
-        */
-      deleteAllChildren(): void;
-      child(index: number): BaseLayer;
-      update(tick: number): void;
-      beforeDraw(tick: number): void;
-      applyQuake(quakeX: number, quakeY: number): void;
-      clearQuake(): void;
-      /**
-        * 座標が、指定のレイヤーの内側かどうかを調査する
-        */
-      static isInsideOfLayer(layer: BaseLayer, x: number, y: number): boolean;
-      protected isInsideEvent(e: PonMouseEvent): boolean;
-      protected isBlockedEvent(e: PonMouseEvent | PonWheelEvent, eventName: string): boolean;
-      onMouseEnter(e: PonMouseEvent): void;
-      _onMouseEnter(e: PonMouseEvent): void;
-      onMouseLeave(e: PonMouseEvent): void;
-      _onMouseLeave(e: PonMouseEvent): void;
-      onMouseMove(e: PonMouseEvent): void;
-      _onMouseMove(e: PonMouseEvent): void;
-      /** onMouseEnter等を発生させるためのバッファ */
-      protected isInsideBuffer: boolean;
-      callMouseEnterTargetChild: BaseLayer[];
-      protected callMouseLeaveTargetChild: BaseLayer[];
-      _preCallMouseEnterLeave(e: PonMouseEvent): void;
-      _callOnMouseEnter(e: PonMouseEvent): void;
-      _callOnMouseLeave(e: PonMouseEvent): void;
-      onMouseDown(e: PonMouseEvent): void;
-      _onMouseDown(e: PonMouseEvent): void;
-      onMouseUp(e: PonMouseEvent): void;
-      _onMouseUp(e: PonMouseEvent): void;
-      onMouseWheel(e: PonWheelEvent): boolean;
-      onChangeStable(isStable: boolean): void;
-      /**
-        * 背景色を設定する
-        * @param color 色 0xRRGGBB
-        * @param alpha アルファ値 0.0〜1.0
-        */
-      setBackgroundColor(color: number, alpha?: number): void;
-      /**
-        * 背景色をクリアする
-        */
-      clearBackgroundColor(): void;
-      get text(): string;
-      /**
-        * 表示しているテキストの内容を文字列で取得
-        * @return テキスト
-        */
-      get messageText(): string;
-      /**
-        * レイヤにテキストを追加する
-        */
-      addText(text: string): void;
-      /**
-        * レイヤに1文字追加する
-        */
-      addChar(ch: string): void;
-      /**
-        * 次の文字の表示位置を取得する
-        * @param chWidth 追加しようとしている文字の横幅
-        * @return 表示位置
-        */
-      getNextTextPos(chWidth: number): {
-          x: number;
-          y: number;
-          newLineFlag: boolean;
-      };
-      /**
-        * テキストを改行する
-        */
-      addTextReturn(): void;
-      /**
-        * テキストの表示位置を指定する。
-        * 内部的には、指定前とは別の行として扱われる。
-        * @param x x座標
-        * @param y y座標
-        */
-      setCharLocate(x: number | null, y: number | null): void;
-      /**
-        * 現在のテキスト描画位置でインデントするように設定する
-        */
-      setIndentPoint(): void;
-      /**
-        * インデント位置をクリアする
-        */
-      clearIndentPoint(): void;
-      reserveRubyText(rubyText: string): void;
-      /**
-        * テキストをクリアする。
-        * 描画していたテキストは全削除される。
-        * テキストの描画開始位置は初期化される。
-        * インデント位置は初期化される。
-        */
-      clearText(): void;
-      /**
-        * 画像を読み込む。
-        * 同時に、レイヤサイズを画像に合わせて変更する。
-        * @param filePath ファイルパス
-        */
-      loadImage(filePath: string): Promise<void>;
-      /**
-        * 画像を開放する
-        */
-      freeImage(): void;
-      /**
-        * キャンバスを読み込む。
-        * 同時に、レイヤサイズをキャンバスに合わせて変更する。
-        * @param canvask
-        */
-      loadCanvas(canvas: HTMLCanvasElement): void;
-      /**
-        * 画像を開放する
-        */
-      freeCanvas(): void;
-      /**
-        * 動画を読み込む。
-        * @param filePath ファイルパス
-        * @param width 動画の幅
-        * @param height 動画の高さ
-        * @param autoPlay 自動再生するかどうか
-        * @param loop ループ再生するかどうか
-        * @param volume 音量
-        */
-      loadVideo(filePath: string, width: number, height: number, autoPlay: boolean, loop: boolean, volume: number): Promise<BaseLayer>;
-      playVideo(): void;
-      pauseVideo(): void;
-      stopVideo(): void;
-      freeVideo(): void;
-      get isPlayingVideo(): boolean;
-      get isLoopPlayingVideo(): boolean;
-      protected static baseLayerStoreParams: string[];
-      protected static baseLayerIgnoreParams: string[];
-      /**
-        * 保存する。
-        * 子レイヤーの状態は保存されないことに注意が必要。
-        */
-      store(tick: number): any;
-      /**
-        * 復元する。
-        * 子レイヤーの状態は変化しないことに注意。
-        * 継承先で子レイヤーを使用している場合は、継承先で独自に復元処理を実装する
-        */
-      restore(data: any, tick: number, clear: boolean): Promise<void>;
-      protected restoreAfterLoadImage(data: any, tick: number): void;
-      copyTo(dest: BaseLayer): void;
-      /**
-        * コンフィグを反映する。
-        * このメソッドでは単純に値の設定のみ行うため、
-        * 画像読み込みなどの非同期処理が必要なものには対応していない。
-        */
-      applyConfig(config: any): void;
+    /** レイヤー名 */
+    name: string;
+    /** リソース */
+    protected resource: Resource;
+    /** 持ち主 */
+    protected owner: PonGame;
+    /** スプライト表示用コンテナ */
+    protected _container: PIXI.Container;
+    get container(): PIXI.Container;
+    /** レイヤサイズでクリッピングするためのマスク */
+    protected maskSprite: PIXI.Sprite;
+    /** デバッグ情報を出力するためのコンテナ */
+    protected debugContainer: PIXI.Container;
+    set debugInfoVisible(visible: boolean);
+    get debugInfoVisible(): boolean;
+    /** デバッグ情報: ボーダー */
+    protected debugBorder: PIXI.Graphics;
+    /** デバッグ情報: テキスト情報 */
+    protected debugText: PIXI.Text;
+    /** デバッグ情報: テキスト情報のスタイル */
+    debugTextStyle: PIXI.TextStyle;
+    /** 背景色用スプライト */
+    protected backgroundSprite: PonSprite;
+    protected hasBackgroundColor: boolean;
+    protected _backgroundColor: number;
+    protected _backgroundAlpha: number;
+    protected textContainer: PIXI.Container;
+    protected textSpriteCallbacks: IPonSpriteCallbacks;
+    protected childContainer: PIXI.Container;
+    protected childSpriteCallbacks: IPonSpriteCallbacks;
+    protected imageContainer: PIXI.Container;
+    protected imageSpriteCallbacks: IPonSpriteCallbacks;
+    protected canvasSpriteCallbacks: IPonVideoCallbacks;
+    protected videoCallbacks: IPonVideoCallbacks;
+    /** quakeを無視する */
+    ignoreQuake: boolean;
+    /** 読み込んでいる画像 */
+    protected image: HTMLImageElement | null;
+    protected imageFilePath: string | null;
+    /** 画像用スプライト */
+    protected imageSprite: PonSprite | null;
+    get imageWidth(): number;
+    get imageHeight(): number;
+    /** 読み込んでいるCanvas */
+    protected canvas: HTMLCanvasElement | null;
+    protected canvasSprite: PonSprite | null;
+    get canvasWidth(): number;
+    get canvasHeight(): number;
+    /** 動画スプライト */
+    protected videoFilePath: string | null;
+    video: PonVideo | null;
+    set videoWidth(width: number);
+    get videoWidth(): number;
+    set videoHeight(height: number);
+    get videoHeight(): number;
+    set videoLoop(loop: boolean);
+    get videoLoop(): boolean;
+    set videoVolume(volume: number);
+    get videoVolume(): number;
+    /** イベント遮断フラグ。trueにするとマウスイベントの伝播を遮断する。 */
+    blockLeftClickFlag: boolean;
+    blockRightClickFlag: boolean;
+    blockCenterClickFlag: boolean;
+    blockMouseMove: boolean;
+    blockWheelFlag: boolean;
+    textCanvas: LayerTextCanvas;
+    get children(): BaseLayer[];
+    get x(): number;
+    set x(x: number);
+    get y(): number;
+    set y(y: number);
+    get quakeOffsetX(): number;
+    set quakeOffsetX(x: number);
+    get quakeOffsetY(): number;
+    set quakeOffsetY(y: number);
+    get width(): number;
+    set width(width: number);
+    get height(): number;
+    set height(height: number);
+    get visible(): boolean;
+    set visible(visible: boolean);
+    get alpha(): number;
+    set alpha(alpha: number);
+    get backgroundColor(): number;
+    set backgroundColor(backgroundColor: number);
+    set backgroundAlpha(backgroundAlpha: number);
+    get backgroundAlpha(): number;
+    get imageX(): number;
+    set imageX(imageX: number);
+    get imageY(): number;
+    set imageY(imageY: number);
+    get canvasX(): number;
+    set canvasX(canvasX: number);
+    get canvasY(): number;
+    set canvasY(canvasY: number);
+    get scaleX(): number;
+    set scaleX(scaleX: number);
+    get scaleY(): number;
+    set scaleY(scaleY: number);
+    constructor(name: string, resource: Resource, owner: PonGame);
+    /**
+     * 破棄
+     */
+    destroy(): void;
+    addChild(childLayer: BaseLayer): BaseLayer;
+    /**
+     * 子レイヤーを削除する。
+     * 管理から削除されるだけで、レイヤー自体は初期化されたりしない。
+     */
+    deleteChildLayer(childLayer: BaseLayer): void;
+    /**
+     * 子レイヤーをすべて削除する。
+     * 管理から削除されるだけで、レイヤー自体は初期化されたりしない。
+     */
+    deleteAllChildren(): void;
+    child(index: number): BaseLayer;
+    update(tick: number): void;
+    beforeDraw(tick: number): void;
+    applyQuake(quakeX: number, quakeY: number): void;
+    clearQuake(): void;
+    /**
+     * 座標が、指定のレイヤーの内側かどうかを調査する
+     */
+    static isInsideOfLayer(layer: BaseLayer, x: number, y: number): boolean;
+    protected isInsideEvent(e: PonMouseEvent): boolean;
+    protected isBlockedEvent(e: PonMouseEvent | PonWheelEvent, eventName: string): boolean;
+    onMouseEnter(e: PonMouseEvent): void;
+    _onMouseEnter(e: PonMouseEvent): void;
+    onMouseLeave(e: PonMouseEvent): void;
+    _onMouseLeave(e: PonMouseEvent): void;
+    onMouseMove(e: PonMouseEvent): void;
+    _onMouseMove(e: PonMouseEvent): void;
+    /** onMouseEnter等を発生させるためのバッファ */
+    protected isInsideBuffer: boolean;
+    callMouseEnterTargetChild: BaseLayer[];
+    protected callMouseLeaveTargetChild: BaseLayer[];
+    _preCallMouseEnterLeave(e: PonMouseEvent): void;
+    _callOnMouseEnter(e: PonMouseEvent): void;
+    _callOnMouseLeave(e: PonMouseEvent): void;
+    onMouseDown(e: PonMouseEvent): void;
+    _onMouseDown(e: PonMouseEvent): void;
+    onMouseUp(e: PonMouseEvent): void;
+    _onMouseUp(e: PonMouseEvent): void;
+    onMouseWheel(e: PonWheelEvent): boolean;
+    onChangeStable(isStable: boolean): void;
+    /**
+     * 背景色を設定する
+     * @param color 色 0xRRGGBB
+     * @param alpha アルファ値 0.0〜1.0
+     */
+    setBackgroundColor(color: number, alpha?: number): void;
+    /**
+     * 背景色をクリアする
+     */
+    clearBackgroundColor(): void;
+    get text(): string;
+    /**
+     * 表示しているテキストの内容を文字列で取得
+     * @return テキスト
+     */
+    get messageText(): string;
+    /**
+     * レイヤにテキストを追加する
+     */
+    addText(text: string): void;
+    /**
+     * レイヤに1文字追加する
+     */
+    addChar(ch: string): void;
+    /**
+     * 次の文字の表示位置を取得する
+     * @param chWidth 追加しようとしている文字の横幅
+     * @return 表示位置
+     */
+    getNextTextPos(
+      chWidth: number,
+    ): {
+      x: number;
+      y: number;
+      newLineFlag: boolean;
+    };
+    /**
+     * テキストを改行する
+     */
+    addTextReturn(): void;
+    /**
+     * テキストの表示位置を指定する。
+     * 内部的には、指定前とは別の行として扱われる。
+     * @param x x座標
+     * @param y y座標
+     */
+    setCharLocate(x: number | null, y: number | null): void;
+    /**
+     * 現在のテキスト描画位置でインデントするように設定する
+     */
+    setIndentPoint(): void;
+    /**
+     * インデント位置をクリアする
+     */
+    clearIndentPoint(): void;
+    reserveRubyText(rubyText: string): void;
+    /**
+     * テキストをクリアする。
+     * 描画していたテキストは全削除される。
+     * テキストの描画開始位置は初期化される。
+     * インデント位置は初期化される。
+     */
+    clearText(): void;
+    /**
+     * 画像を読み込む。
+     * 同時に、レイヤサイズを画像に合わせて変更する。
+     * @param filePath ファイルパス
+     */
+    loadImage(filePath: string): Promise<void>;
+    /**
+     * 画像を開放する
+     */
+    freeImage(): void;
+    /**
+     * キャンバスを読み込む。
+     * 同時に、レイヤサイズをキャンバスに合わせて変更する。
+     * @param canvask
+     */
+    loadCanvas(canvas: HTMLCanvasElement): void;
+    /**
+     * 画像を開放する
+     */
+    freeCanvas(): void;
+    /**
+     * 動画を読み込む。
+     * @param filePath ファイルパス
+     * @param width 動画の幅
+     * @param height 動画の高さ
+     * @param autoPlay 自動再生するかどうか
+     * @param loop ループ再生するかどうか
+     * @param volume 音量
+     */
+    loadVideo(
+      filePath: string,
+      width: number,
+      height: number,
+      autoPlay: boolean,
+      loop: boolean,
+      volume: number,
+    ): Promise<BaseLayer>;
+    playVideo(): void;
+    pauseVideo(): void;
+    stopVideo(): void;
+    freeVideo(): void;
+    get isPlayingVideo(): boolean;
+    get isLoopPlayingVideo(): boolean;
+    protected static baseLayerStoreParams: string[];
+    protected static baseLayerIgnoreParams: string[];
+    /**
+     * 保存する。
+     * 子レイヤーの状態は保存されないことに注意が必要。
+     */
+    store(tick: number): any;
+    /**
+     * 復元する。
+     * 子レイヤーの状態は変化しないことに注意。
+     * 継承先で子レイヤーを使用している場合は、継承先で独自に復元処理を実装する
+     */
+    restore(data: any, tick: number, clear: boolean): Promise<void>;
+    protected restoreAfterLoadImage(data: any, tick: number): void;
+    copyTo(dest: BaseLayer): void;
+    /**
+     * コンフィグを反映する。
+     * このメソッドでは単純に値の設定のみ行うため、
+     * 画像読み込みなどの非同期処理が必要なものには対応していない。
+     */
+    applyConfig(config: any): void;
   }
 }
 
-declare module 'ponkan/base/pon-game' {
+declare module "ponkan/base/pon-game" {
   import { BaseLayer } from "ponkan/base/base-layer";
   import { Conductor, IConductorEvent } from "ponkan/base/conductor";
   import { Logger } from "ponkan/base/logger";
@@ -556,102 +574,102 @@ declare module 'ponkan/base/pon-game' {
   import { Tag } from "ponkan/base/tag";
   import { TransManager } from "ponkan/base/trans-manager";
   export enum ScaleMode {
-      FIXED = 0,
-      FIT = 1,
-      FULLSCREEN = 2
+    FIXED = 0,
+    FIT = 1,
+    FULLSCREEN = 2,
   }
   export class PonGame implements IConductorEvent {
-      static ScaleMode: typeof ScaleMode;
-      static readonly Logger: typeof Logger;
-      readonly parentElm: HTMLElement;
-      config: any;
-      isLocked: boolean;
-      readonly resource: Resource;
-      readonly renderer: PonRenderer;
-      _fixedScaleWidth: number;
-      _fixedScaleHeight: number;
-      protected conductorStack: Conductor[];
-      readonly transManager: TransManager;
-      readonly screenShot: ScreenShot;
-      updateScreenShotFlag: boolean;
-      get width(): number;
-      get height(): number;
-      constructor(parentId: string, config?: any);
-      destroy(): void;
-      start(): void;
-      stop(): void;
-      lock(stop?: boolean): void;
-      unlock(restart?: boolean): void;
-      get scaleMode(): ScaleMode;
-      set scaleMode(scaleMode: ScaleMode);
-      onFullscreenChange(): void;
-      get fixedScaleWidth(): number;
-      get fixedScaleHeight(): number;
-      setFixedScaleSize(width: number, height: number): void;
-      onWindowResize(): void;
-      setCanvasScale(scaleX: number, scaleY: number): void;
-      protected update(tick: number): void;
-      protected beforeDraw(tick: number): void;
-      protected afterDraw(tick: number): void;
-      error(e: Error): void;
-      get conductor(): Conductor;
-      get mainConductor(): Conductor;
-      /**
-        * サブルーチンを呼び出す。
-        * @param file 移動先ファイル
-        * @param label 移動先ラベル
-        */
-      callSubroutine(filePath: string | null, label?: string | null, countPage?: boolean): Promise<void>;
-      /**
-        * サブルーチンから戻る
-        * @param forceStart 強制的にpb, lb, waitclickを終わらせるかどうか
-        * @param countPage 既読処理をするかどうか
-        */
-      returnSubroutine(forceStart?: boolean, countPage?: boolean): "continue" | "break";
-      goToMainConductor(): void;
-      onTag(tag: Tag, line: number, tick: number): "continue" | "break";
-      onLabel(labelName: string, line: number, tick: number): "continue" | "break";
-      onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): "continue" | "break";
-      onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break";
-      onChangeStable(isStable: boolean): void;
-      onReturnSubroutin(forceStart?: boolean): void;
-      onError(e: Error): void;
-      addForePrimaryLayer(layer: BaseLayer): BaseLayer;
-      addBackPrimaryLayer(layer: BaseLayer): BaseLayer;
-      removeForePrimaryLayer(layer: BaseLayer): void;
-      removeBackPrimaryLayer(layer: BaseLayer): void;
-      flip(): void;
-      /**
-        * レイヤの表と裏を入れ替える。
-        * レンダラーの入れ替えは実施しないため、これまで裏ページだったものが画面に表示される状態となる。
-        * トランジションが終わったらresetPrimaryLayersRendererを呼び、
-        * レンダラーとの紐付けを正しい状態に戻すこと。
-        */
-      flipPrimaryLayers(): void;
-      /**
-        * レンダラーの再設定
-        */
-      resetPrimaryLayersRenderer(): void;
-      lockScreenShot(): void;
-      unlockScreenShot(): void;
-      /**
-        * トランジション完了時にTransManagerから呼ばれる。
-        * この時点で表ページ・裏ページの入れ替えは完了している。
-        */
-      onCompleteTrans(): boolean;
-      onWindowClose(): boolean;
-      onMouseEnter(e: PonMouseEvent): void;
-      onMouseLeave(e: PonMouseEvent): void;
-      onMouseMove(e: PonMouseEvent): void;
-      onMouseDown(e: PonMouseEvent): void;
-      onMouseUp(e: PonMouseEvent): void;
-      onMouseWheel(e: PonWheelEvent): boolean;
-      onKeyDown(e: PonKeyEvent): boolean;
-      onKeyUp(e: PonKeyEvent): boolean;
+    static ScaleMode: typeof ScaleMode;
+    static readonly Logger: typeof Logger;
+    readonly parentElm: HTMLElement;
+    config: any;
+    isLocked: boolean;
+    readonly resource: Resource;
+    readonly renderer: PonRenderer;
+    _fixedScaleWidth: number;
+    _fixedScaleHeight: number;
+    protected conductorStack: Conductor[];
+    readonly transManager: TransManager;
+    readonly screenShot: ScreenShot;
+    updateScreenShotFlag: boolean;
+    get width(): number;
+    get height(): number;
+    constructor(parentId: string, config?: any);
+    destroy(): void;
+    start(): void;
+    stop(): void;
+    lock(stop?: boolean): void;
+    unlock(restart?: boolean): void;
+    get scaleMode(): ScaleMode;
+    set scaleMode(scaleMode: ScaleMode);
+    onFullscreenChange(): void;
+    get fixedScaleWidth(): number;
+    get fixedScaleHeight(): number;
+    setFixedScaleSize(width: number, height: number): void;
+    onWindowResize(): void;
+    setCanvasScale(scaleX: number, scaleY: number): void;
+    protected update(tick: number): void;
+    protected beforeDraw(tick: number): void;
+    protected afterDraw(tick: number): void;
+    error(e: Error): void;
+    get conductor(): Conductor;
+    get mainConductor(): Conductor;
+    /**
+     * サブルーチンを呼び出す。
+     * @param file 移動先ファイル
+     * @param label 移動先ラベル
+     */
+    callSubroutine(filePath: string | null, label?: string | null, countPage?: boolean): Promise<void>;
+    /**
+     * サブルーチンから戻る
+     * @param forceStart 強制的にpb, lb, waitclickを終わらせるかどうか
+     * @param countPage 既読処理をするかどうか
+     */
+    returnSubroutine(forceStart?: boolean, countPage?: boolean): "continue" | "break";
+    goToMainConductor(): void;
+    onTag(tag: Tag, line: number, tick: number): "continue" | "break";
+    onLabel(labelName: string, line: number, tick: number): "continue" | "break";
+    onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): "continue" | "break";
+    onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break";
+    onChangeStable(isStable: boolean): void;
+    onReturnSubroutin(forceStart?: boolean): void;
+    onError(e: Error): void;
+    addForePrimaryLayer(layer: BaseLayer): BaseLayer;
+    addBackPrimaryLayer(layer: BaseLayer): BaseLayer;
+    removeForePrimaryLayer(layer: BaseLayer): void;
+    removeBackPrimaryLayer(layer: BaseLayer): void;
+    flip(): void;
+    /**
+     * レイヤの表と裏を入れ替える。
+     * レンダラーの入れ替えは実施しないため、これまで裏ページだったものが画面に表示される状態となる。
+     * トランジションが終わったらresetPrimaryLayersRendererを呼び、
+     * レンダラーとの紐付けを正しい状態に戻すこと。
+     */
+    flipPrimaryLayers(): void;
+    /**
+     * レンダラーの再設定
+     */
+    resetPrimaryLayersRenderer(): void;
+    lockScreenShot(): void;
+    unlockScreenShot(): void;
+    /**
+     * トランジション完了時にTransManagerから呼ばれる。
+     * この時点で表ページ・裏ページの入れ替えは完了している。
+     */
+    onCompleteTrans(): boolean;
+    onWindowClose(): boolean;
+    onMouseEnter(e: PonMouseEvent): void;
+    onMouseLeave(e: PonMouseEvent): void;
+    onMouseMove(e: PonMouseEvent): void;
+    onMouseDown(e: PonMouseEvent): void;
+    onMouseUp(e: PonMouseEvent): void;
+    onMouseWheel(e: PonWheelEvent): boolean;
+    onKeyDown(e: PonKeyEvent): boolean;
+    onKeyUp(e: PonKeyEvent): boolean;
   }
 }
 
-declare module 'ponkan/base/pon-key-event' {
+declare module "ponkan/base/pon-key-event" {
   export class PonKeyEvent {
     constructor(e: KeyboardEvent);
     get key(): string;
@@ -661,7 +679,7 @@ declare module 'ponkan/base/pon-key-event' {
   }
 }
 
-declare module 'ponkan/base/pon-mouse-event' {
+declare module "ponkan/base/pon-mouse-event" {
   export class PonMouseEvent {
     readonly x: number;
     readonly y: number;
@@ -678,7 +696,7 @@ declare module 'ponkan/base/pon-mouse-event' {
   }
 }
 
-declare module 'ponkan/base/pon-wheel-event' {
+declare module "ponkan/base/pon-wheel-event" {
   export class PonWheelEvent {
     readonly deltaX: number;
     readonly deltaY: number;
@@ -688,7 +706,7 @@ declare module 'ponkan/base/pon-wheel-event' {
   }
 }
 
-declare module 'ponkan/base/sound' {
+declare module "ponkan/base/sound" {
   import { Resource } from "ponkan/base/resource";
   export interface IOnSoundStopParams {
     bufferNum: number;
@@ -708,7 +726,7 @@ declare module 'ponkan/base/sound' {
     Pause = 2,
     Fade = 3,
     Fadein = 4,
-    Fadeout = 5
+    Fadeout = 5,
   }
   export class SoundBuffer {
     readonly bufferNum: number;
@@ -765,7 +783,7 @@ declare module 'ponkan/base/sound' {
   }
 }
 
-declare module 'ponkan/base/tag' {
+declare module "ponkan/base/tag" {
   export class Tag {
     readonly name: string;
     readonly values: any;
@@ -777,7 +795,7 @@ declare module 'ponkan/base/tag' {
   }
 }
 
-declare module 'ponkan/layer/history-layer' {
+declare module "ponkan/layer/history-layer" {
   import { BaseLayer } from "ponkan/base/base-layer";
   import { PonGame } from "ponkan/base/pon-game";
   import { PonMouseEvent } from "ponkan/base/pon-mouse-event";
@@ -865,8 +883,8 @@ declare module 'ponkan/layer/history-layer' {
     get linesCount(): number;
   }
   /**
-    * 履歴レイヤ
-    */
+   * 履歴レイヤ
+   */
   export class HistoryLayer extends BaseLayer {
     protected config: any;
     protected textLayer: HistoryTextLayer;
@@ -906,663 +924,679 @@ declare module 'ponkan/layer/history-layer' {
   export {};
 }
 
-declare module 'ponkan/layer/pon-layer' {
+declare module "ponkan/layer/pon-layer" {
   import { BaseLayer } from "ponkan/base/base-layer";
   import { Resource } from "ponkan/base/resource";
   import { Ponkan } from "ponkan/ponkan";
   import { FilteredLayer } from "ponkan/layer/filtered-layer";
   export class PonLayer extends FilteredLayer {
-      autoHideWithMessage: boolean;
-      visibleBuffer: boolean;
-      childImages: BaseLayer[];
-      constructor(name: string, resource: Resource, owner: Ponkan);
-      /**
-        * [override]
-        */
-      addChar(ch: string): void;
-      /**
-        * [override]
-        */
-      addTextReturn(): void;
-      /**
-        * 画像を追加で読み込む。
-        * @param filePath ファイルパス
-        * @param x 描画先座標
-        * @param y 描画先座標
-        * @param alpha アルファ値
-        */
-      loadChildImage(filePath: string, x: number, y: number, alpha: number): Promise<void>;
-      freeChildImages(): void;
-      freeImage(): void;
-      protected static ponLayerStoreParams: string[];
-      storeVisible(): void;
-      restoreVisible(): void;
-      store(tick: number): any;
-      restore(data: any, tick: number, clear: boolean): Promise<void>;
-      copyTo(dest: PonLayer): void;
+    autoHideWithMessage: boolean;
+    visibleBuffer: boolean;
+    childImages: BaseLayer[];
+    constructor(name: string, resource: Resource, owner: Ponkan);
+    /**
+     * [override]
+     */
+    addChar(ch: string): void;
+    /**
+     * [override]
+     */
+    addTextReturn(): void;
+    /**
+     * 画像を追加で読み込む。
+     * @param filePath ファイルパス
+     * @param x 描画先座標
+     * @param y 描画先座標
+     * @param alpha アルファ値
+     */
+    loadChildImage(filePath: string, x: number, y: number, alpha: number): Promise<void>;
+    freeChildImages(): void;
+    freeImage(): void;
+    protected static ponLayerStoreParams: string[];
+    storeVisible(): void;
+    restoreVisible(): void;
+    store(tick: number): any;
+    restore(data: any, tick: number, clear: boolean): Promise<void>;
+    copyTo(dest: PonLayer): void;
   }
 }
 
-declare module 'ponkan/plugin/pon-plugin' {
+declare module "ponkan/plugin/pon-plugin" {
   /**
-    * Ponkanプラグイン
-    */
+   * Ponkanプラグイン
+   */
   export class PonPlugin {
-      /**
-        * プラグインを破棄するときに呼ばれる
-        */
-      destroy(): void;
-      /**
-        * セーブデータ保存時
-        * @param data 保存先のオブジェクト
-        */
-      onStore(data: any, tick: number): void;
-      /**
-        * セーブデータ復元時
-        * @param data 復元元データ
-        * @param tick 復元時の時間
-        * @param clear メッセージをクリアする場合はtrue
-        * @param sound 音声を復元する場合はtrue
-        * @param toBack 表ページを裏ページに復元する場合はtrue
-        */
-      onRestore(data: any, tick: number, clear: boolean, sound: boolean, toBack: boolean): Promise<void>;
-      /**
-        * 状態更新時
-        * @param tick 時間
-        */
-      onUpdate(tick: number): void;
-      /**
-        * 描画前
-        * @param tick 時間
-        */
-      beforeDraw(tick: number): void;
-      /**
-        * ゲーム進行の状態が変化したときに呼ばれる
-        * @param isStable 安定していればtrue
-        */
-      onChangeStable(isStable: boolean): void;
-      /**
-        * メッセージを一時的に隠す／戻すときに呼ばれる
-        * @param visible 隠すときfalse、表示するときtrue
-        */
-      onChangeMessageVisible(visible: boolean): void;
-      /**
-        * backlayなどでレイヤーがコピーされるときに呼ばれる
-        */
-      onBacklay(): void;
-      /**
-        * backlayなどでレイヤーがコピーされるときに呼ばれる
-        * @param srcLayers コピー元レイヤ
-        * @param destLayers コピー先レイヤ
-        * @param srcpage コピー元ページ
-        * @param destpage コピー先ページ
-        */
-      onCopylay(srcLayers: any[], destLayers: any[], srcpage: string, destpage: string): void;
-      /**
-        * レイヤーの表と裏が入れ替わった後に呼ばれる。
-        * 呼び出された時点で、すでにレイヤーは入れ替わっているため、
-        * ここではレイヤーが入れ替わったことで情報が矛盾するものを入れ替える。
-        * たとえば foreLayers や backLayers への参照を保持していた場合などは、
-        * ここで入れ替える必要がある。
-        */
-      onFlipLayers(): void;
-      /**
-        * システム変数（sv）を保存する直前に呼ばれる
-        */
-      onSaveSystemVariables(): void;
+    /**
+     * プラグインを破棄するときに呼ばれる
+     */
+    destroy(): void;
+    /**
+     * セーブデータ保存時
+     * @param data 保存先のオブジェクト
+     */
+    onStore(data: any, tick: number): void;
+    /**
+     * セーブデータ復元時
+     * @param data 復元元データ
+     * @param tick 復元時の時間
+     * @param clear メッセージをクリアする場合はtrue
+     * @param sound 音声を復元する場合はtrue
+     * @param toBack 表ページを裏ページに復元する場合はtrue
+     */
+    onRestore(data: any, tick: number, clear: boolean, sound: boolean, toBack: boolean): Promise<void>;
+    /**
+     * 状態更新時
+     * @param tick 時間
+     */
+    onUpdate(tick: number): void;
+    /**
+     * 描画前
+     * @param tick 時間
+     */
+    beforeDraw(tick: number): void;
+    /**
+     * ゲーム進行の状態が変化したときに呼ばれる
+     * @param isStable 安定していればtrue
+     */
+    onChangeStable(isStable: boolean): void;
+    /**
+     * メッセージを一時的に隠す／戻すときに呼ばれる
+     * @param visible 隠すときfalse、表示するときtrue
+     */
+    onChangeMessageVisible(visible: boolean): void;
+    /**
+     * backlayなどでレイヤーがコピーされるときに呼ばれる
+     */
+    onBacklay(): void;
+    /**
+     * backlayなどでレイヤーがコピーされるときに呼ばれる
+     * @param srcLayers コピー元レイヤ
+     * @param destLayers コピー先レイヤ
+     * @param srcpage コピー元ページ
+     * @param destpage コピー先ページ
+     */
+    onCopylay(srcLayers: any[], destLayers: any[], srcpage: string, destpage: string): void;
+    /**
+     * レイヤーの表と裏が入れ替わった後に呼ばれる。
+     * 呼び出された時点で、すでにレイヤーは入れ替わっているため、
+     * ここではレイヤーが入れ替わったことで情報が矛盾するものを入れ替える。
+     * たとえば foreLayers や backLayers への参照を保持していた場合などは、
+     * ここで入れ替える必要がある。
+     */
+    onFlipLayers(): void;
+    /**
+     * システム変数（sv）を保存する直前に呼ばれる
+     */
+    onSaveSystemVariables(): void;
   }
 }
 
-declare module 'ponkan/layer/button' {
+declare module "ponkan/layer/button" {
   import { BaseLayer } from "ponkan/base/base-layer";
   import { PonMouseEvent } from "ponkan/base/pon-mouse-event";
   export type ButtonStatus = "normal" | "over" | "on" | "disabled";
   export class Button extends BaseLayer {
-      protected insideFlag: boolean;
-      protected buttonStatus: ButtonStatus;
-      protected down: boolean;
-      /** キーボード操作時の選択インデックス */
-      keyIndex: number;
-      get isButton(): boolean;
-      initButton(keyIndex: number): void;
-      clearButton(): void;
-      setButtonStatus(status: ButtonStatus): void;
-      getButtonStatus(): ButtonStatus;
-      get isFocused(): boolean;
-      focus(): void;
-      blur(): void;
-      onMouseEnter(e: PonMouseEvent): void;
-      onMouseLeave(e: PonMouseEvent): void;
-      onMouseMove(e: PonMouseEvent): void;
-      onMouseDown(e: PonMouseEvent): void;
-      onMouseUp(e: PonMouseEvent): void;
-      submit(): Promise<void>;
-      protected static buttonStoreParams: string[];
-      store(tick: number): any;
-      restore(data: any, tick: number, clear: boolean): Promise<void>;
-      copyTo(dest: Button): void;
+    protected insideFlag: boolean;
+    protected buttonStatus: ButtonStatus;
+    protected down: boolean;
+    /** キーボード操作時の選択インデックス */
+    keyIndex: number;
+    get isButton(): boolean;
+    initButton(keyIndex: number): void;
+    clearButton(): void;
+    setButtonStatus(status: ButtonStatus): void;
+    getButtonStatus(): ButtonStatus;
+    get isFocused(): boolean;
+    focus(): void;
+    blur(): void;
+    onMouseEnter(e: PonMouseEvent): void;
+    onMouseLeave(e: PonMouseEvent): void;
+    onMouseMove(e: PonMouseEvent): void;
+    onMouseDown(e: PonMouseEvent): void;
+    onMouseUp(e: PonMouseEvent): void;
+    submit(): Promise<void>;
+    protected static buttonStoreParams: string[];
+    store(tick: number): any;
+    restore(data: any, tick: number, clear: boolean): Promise<void>;
+    copyTo(dest: Button): void;
   }
   /**
-    * textbuttonコマンドやimagebuttonコマンドで生成するボタンの機能
-    */
+   * textbuttonコマンドやimagebuttonコマンドで生成するボタンの機能
+   */
   export class CommandButton extends Button {
-      protected jump: boolean;
-      protected call: boolean;
-      protected filePath: string | null;
-      protected label: string | null;
-      protected countPage: boolean;
-      protected isSystemButton: boolean;
-      protected onEnterExp: string | null;
-      protected onLeaveExp: string | null;
-      protected onClickExp: string | null;
-      protected onEnterSoundBuf: string | null;
-      protected onLeaveSoundBuf: string | null;
-      protected onClickSoundBuf: string | null;
-      protected systemButtonLocked: boolean;
-      initCommandButton(jump?: boolean, call?: boolean, filePath?: string | null, label?: string | null, countPage?: boolean, isSystemButton?: boolean, onEnterExp?: string | null, onLeaveExp?: string | null, onClickExp?: string | null, onEnterSoundBuf?: string | null, onLeaveSoundBuf?: string | null, onClickSoundBuf?: string | null, keyIndex?: number | null): void;
-      clearCommandButton(): void;
-      lockSystemButton(): void;
-      unlockSystemButton(): void;
-      onChangeStable(isStable: boolean): void;
-      onMouseEnter(e: PonMouseEvent): void;
-      onMouseLeave(e: PonMouseEvent): void;
-      onMouseUp(e: PonMouseEvent): Promise<void>;
-      submit(): Promise<void>;
-      protected static commandButtonStoreParams: string[];
-      store(tick: number): any;
-      restore(data: any, tick: number, clear: boolean): Promise<void>;
-      restoreAfterLoadImage(data: any, tick: number): void;
-      copyTo(dest: CommandButton): void;
+    protected jump: boolean;
+    protected call: boolean;
+    protected filePath: string | null;
+    protected label: string | null;
+    protected countPage: boolean;
+    protected isSystemButton: boolean;
+    protected onEnterExp: string | null;
+    protected onLeaveExp: string | null;
+    protected onClickExp: string | null;
+    protected onEnterSoundBuf: string | null;
+    protected onLeaveSoundBuf: string | null;
+    protected onClickSoundBuf: string | null;
+    protected systemButtonLocked: boolean;
+    initCommandButton(
+      jump?: boolean,
+      call?: boolean,
+      filePath?: string | null,
+      label?: string | null,
+      countPage?: boolean,
+      isSystemButton?: boolean,
+      onEnterExp?: string | null,
+      onLeaveExp?: string | null,
+      onClickExp?: string | null,
+      onEnterSoundBuf?: string | null,
+      onLeaveSoundBuf?: string | null,
+      onClickSoundBuf?: string | null,
+      keyIndex?: number | null,
+    ): void;
+    clearCommandButton(): void;
+    lockSystemButton(): void;
+    unlockSystemButton(): void;
+    onChangeStable(isStable: boolean): void;
+    onMouseEnter(e: PonMouseEvent): void;
+    onMouseLeave(e: PonMouseEvent): void;
+    onMouseUp(e: PonMouseEvent): Promise<void>;
+    submit(): Promise<void>;
+    protected static commandButtonStoreParams: string[];
+    store(tick: number): any;
+    restore(data: any, tick: number, clear: boolean): Promise<void>;
+    restoreAfterLoadImage(data: any, tick: number): void;
+    copyTo(dest: CommandButton): void;
   }
 }
 
-declare module 'ponkan/base/pon-sprite' {
+declare module "ponkan/base/pon-sprite" {
   import * as PIXI from "pixi.js";
   /**
-    * PonSpriteのコールバック
-    */
+   * PonSpriteのコールバック
+   */
   export interface IPonSpriteCallbacks {
-      /**
-        * コンテナにスプライトを追加する
-        * @param child 追加するスプライト
-        */
-      pixiContainerAddChild(child: PIXI.DisplayObject): void;
-      /**
-        * コンテナからスプライトを削除する
-        * @param child 削除するスプライト
-        */
-      pixiContainerRemoveChild(child: PIXI.DisplayObject): void;
+    /**
+     * コンテナにスプライトを追加する
+     * @param child 追加するスプライト
+     */
+    pixiContainerAddChild(child: PIXI.DisplayObject): void;
+    /**
+     * コンテナからスプライトを削除する
+     * @param child 削除するスプライト
+     */
+    pixiContainerRemoveChild(child: PIXI.DisplayObject): void;
   }
   export enum SpriteType {
-      Unknown = 0,
-      Image = 1,
-      Color = 2,
-      Canvas = 3
+    Unknown = 0,
+    Image = 1,
+    Color = 2,
+    Canvas = 3,
   }
   /**
-    * スプライト
-    */
+   * スプライト
+   */
   export class PonSprite {
-      type: SpriteType;
-      get pixiDisplayObject(): PIXI.DisplayObject | null;
-      get spriteType(): SpriteType;
-      /** x座標 */
-      get x(): number;
-      /** x座標 */
-      set x(x: number);
-      /** y座標 */
-      get y(): number;
-      /** y座標 */
-      set y(y: number);
-      /** 幅 */
-      get width(): number;
-      /** 幅 */
-      set width(width: number);
-      /** 高さ */
-      get height(): number;
-      /** 高さ */
-      set height(height: number);
-      /** スケーリング x */
-      get scaleX(): number;
-      /** スケーリング x */
-      set scaleX(scaleX: number);
-      /** スケーリング y */
-      get scaleY(): number;
-      /** スケーリング y */
-      set scaleY(scaleY: number);
-      /** 表示状態 */
-      get visible(): boolean;
-      /** 表示状態 */
-      set visible(visible: boolean);
-      /**
-        * @param callbacks コールバック
-        */
-      constructor(callbacks: IPonSpriteCallbacks);
-      /**
-        * 破棄
-        */
-      destroy(): void;
-      /**
-        * スプライトをクリアする。
-        * 内部で保持しているPIXIのスプライトを開放する。
-        * このスプライトの保持している座標、サイズ、表示状態などはクリアされず、
-        * そのままの状態を保つ。
-        */
-      clear(): void;
-      /**
-        * スプライトを単色で塗りつぶす。
-        * これを使用する前に事前にスプライトの幅と高さを設定しておく必要がある。
-        * @param color 色 0xRRGGBB
-        * @param alpha アルファ値 0.0〜1.0
-        */
-      fillColor(color: number, alpha: number): void;
-      /**
-        * スプライトの塗りつぶしをクリアする
-        */
-      clearColor(): void;
-      /**
-        * 画像を設定する
-        * @param image 画像
-        */
-      setImage(image: HTMLImageElement): void;
-      /**
-        * キャンバスを設定する
-        * @param canvas キャンバス
-        */
-      setCanvas(canvas: HTMLCanvasElement): void;
-      beforeDraw(tick: number): void;
+    type: SpriteType;
+    get pixiDisplayObject(): PIXI.DisplayObject | null;
+    get spriteType(): SpriteType;
+    /** x座標 */
+    get x(): number;
+    /** x座標 */
+    set x(x: number);
+    /** y座標 */
+    get y(): number;
+    /** y座標 */
+    set y(y: number);
+    /** 幅 */
+    get width(): number;
+    /** 幅 */
+    set width(width: number);
+    /** 高さ */
+    get height(): number;
+    /** 高さ */
+    set height(height: number);
+    /** スケーリング x */
+    get scaleX(): number;
+    /** スケーリング x */
+    set scaleX(scaleX: number);
+    /** スケーリング y */
+    get scaleY(): number;
+    /** スケーリング y */
+    set scaleY(scaleY: number);
+    /** 表示状態 */
+    get visible(): boolean;
+    /** 表示状態 */
+    set visible(visible: boolean);
+    /**
+     * @param callbacks コールバック
+     */
+    constructor(callbacks: IPonSpriteCallbacks);
+    /**
+     * 破棄
+     */
+    destroy(): void;
+    /**
+     * スプライトをクリアする。
+     * 内部で保持しているPIXIのスプライトを開放する。
+     * このスプライトの保持している座標、サイズ、表示状態などはクリアされず、
+     * そのままの状態を保つ。
+     */
+    clear(): void;
+    /**
+     * スプライトを単色で塗りつぶす。
+     * これを使用する前に事前にスプライトの幅と高さを設定しておく必要がある。
+     * @param color 色 0xRRGGBB
+     * @param alpha アルファ値 0.0〜1.0
+     */
+    fillColor(color: number, alpha: number): void;
+    /**
+     * スプライトの塗りつぶしをクリアする
+     */
+    clearColor(): void;
+    /**
+     * 画像を設定する
+     * @param image 画像
+     */
+    setImage(image: HTMLImageElement): void;
+    /**
+     * キャンバスを設定する
+     * @param canvas キャンバス
+     */
+    setCanvas(canvas: HTMLCanvasElement): void;
+    beforeDraw(tick: number): void;
   }
 }
 
-declare module 'ponkan/base/pon-video' {
+declare module "ponkan/base/pon-video" {
   import * as PIXI from "pixi.js";
   /**
-    * PonVideoのコールバック
-    */
+   * PonVideoのコールバック
+   */
   export interface IPonVideoCallbacks {
-      /**
-        * コンテナに動画を追加する
-        * @param child 追加するスプライト
-        */
-      pixiContainerAddChild(child: PIXI.DisplayObject): void;
-      /**
-        * コンテナから動画を削除する
-        * @param child 削除するスプライト
-        */
-      pixiContainerRemoveChild(child: PIXI.DisplayObject): void;
+    /**
+     * コンテナに動画を追加する
+     * @param child 追加するスプライト
+     */
+    pixiContainerAddChild(child: PIXI.DisplayObject): void;
+    /**
+     * コンテナから動画を削除する
+     * @param child 削除するスプライト
+     */
+    pixiContainerRemoveChild(child: PIXI.DisplayObject): void;
   }
   /**
-    * 動画スプライト
-    */
+   * 動画スプライト
+   */
   export class PonVideo {
-      protected callbacks: IPonVideoCallbacks;
-      protected videoTexture: PIXI.Texture;
-      protected videoSprite: PIXI.Sprite;
-      get texture(): PIXI.Texture;
-      get sprite(): PIXI.Sprite;
-      get source(): HTMLVideoElement;
-      get width(): number;
-      set width(width: number);
-      get height(): number;
-      set height(height: number);
-      get loop(): boolean;
-      set loop(loop: boolean);
-      get volume(): number;
-      set volume(volume: number);
-      get playing(): boolean;
-      /**
-        * @param callbacks コールバック
-        */
-      constructor(videoTexture: PIXI.Texture, callbacks: IPonVideoCallbacks);
-      /**
-        * 破棄
-        */
-      destroy(): void;
-      /**
-        * スプライトをクリアする。
-        * 内部で保持しているPIXIのスプライトを開放する。
-        * このスプライトの保持している座標、サイズ、表示状態などはクリアされず、
-        * そのままの状態を保つ。
-        */
-      clear(): void;
-      play(): void;
-      stop(): void;
-      pause(): void;
+    protected callbacks: IPonVideoCallbacks;
+    protected videoTexture: PIXI.Texture;
+    protected videoSprite: PIXI.Sprite;
+    get texture(): PIXI.Texture;
+    get sprite(): PIXI.Sprite;
+    get source(): HTMLVideoElement;
+    get width(): number;
+    set width(width: number);
+    get height(): number;
+    set height(height: number);
+    get loop(): boolean;
+    set loop(loop: boolean);
+    get volume(): number;
+    set volume(volume: number);
+    get playing(): boolean;
+    /**
+     * @param callbacks コールバック
+     */
+    constructor(videoTexture: PIXI.Texture, callbacks: IPonVideoCallbacks);
+    /**
+     * 破棄
+     */
+    destroy(): void;
+    /**
+     * スプライトをクリアする。
+     * 内部で保持しているPIXIのスプライトを開放する。
+     * このスプライトの保持している座標、サイズ、表示状態などはクリアされず、
+     * そのままの状態を保つ。
+     */
+    clear(): void;
+    play(): void;
+    stop(): void;
+    pause(): void;
   }
 }
 
-declare module 'ponkan/base/resource' {
+declare module "ponkan/base/resource" {
   import { Macro } from "ponkan/base/macro";
   import { PonGame } from "ponkan/base/pon-game";
   import { Script } from "ponkan/base/script";
   import * as PIXI from "pixi.js";
   export class Resource {
-      gameVersion: string;
-      enableResourceCache: boolean;
-      tmpVar: any;
-      gameVar: any;
-      systemVar: any;
-      enabledScriptCache: boolean;
-      cursor: any;
-      readonly macroInfo: any;
-      macroParams: any | null;
-      commandShortcut: any;
-      constructor(ponGame: PonGame, basePath?: string, gameVersion?: string);
-      getCanvasElm(): HTMLCanvasElement;
-      saveSystemData(saveDataPrefix: string): void;
-      loadSystemData(saveDataPrefix: string): void;
-      existSystemData(saveDataPrefix: string): boolean;
-      debugClearSystemData(): void;
-      evalJs(js: string): any;
-      setMacroParams(params: any): void;
-      clearMacroParams(): void;
-      clearMacroInfo(): void;
-      /**
-        * リソースのパスを取得する。
-        * @param filePath ファイルパス（basePathからの相対パス）
-        * @return 補完後のパス
-        */
-      getPath(filePath: string): string;
-      hasMacro(name: string): boolean;
-      getMacro(name: string): Macro;
-      /**
-        * テキストを読み込む
-        * @param filePath ファイルパス（basePathからの相対パス）
-        * @return コールバックオブジェクト
-        */
-      loadText(filePath: string): Promise<string>;
-      /**
-        * スクリプトファイルを読み込む
-        * @param filePath ファイルパス（basePathからの相対パス）
-        * @return コールバックオブジェクト
-        */
-      loadScript(filePath: string): Promise<Script>;
-      /**
-        * 画像を読み込む
-        * @param filePath ファイルパス（basePathからの相対パス）
-        * @return コールバックオブジェクト
-        */
-      loadImage(filePath: string): Promise<HTMLImageElement>;
-      loadSoundHowler(filePath: string): Promise<Howl>;
-      loadVideoTexture(filePath: string, autoPlay: boolean): PIXI.Texture;
-      cloneVideoTexture(src: PIXI.Texture): PIXI.Texture;
-      isEnabledLocalStorage(): boolean;
-      storeToLocalStorage(name: string, data: string): void;
-      restoreFromLocalStorage(name: string): string;
-      copyLocalStorage(srcName: string, destName: string): boolean;
+    gameVersion: string;
+    enableResourceCache: boolean;
+    tmpVar: any;
+    gameVar: any;
+    systemVar: any;
+    enabledScriptCache: boolean;
+    cursor: any;
+    readonly macroInfo: any;
+    macroParams: any | null;
+    commandShortcut: any;
+    constructor(ponGame: PonGame, basePath?: string, gameVersion?: string);
+    getCanvasElm(): HTMLCanvasElement;
+    saveSystemData(saveDataPrefix: string): void;
+    loadSystemData(saveDataPrefix: string): void;
+    existSystemData(saveDataPrefix: string): boolean;
+    debugClearSystemData(): void;
+    evalJs(js: string): any;
+    setMacroParams(params: any): void;
+    clearMacroParams(): void;
+    clearMacroInfo(): void;
+    /**
+     * リソースのパスを取得する。
+     * @param filePath ファイルパス（basePathからの相対パス）
+     * @return 補完後のパス
+     */
+    getPath(filePath: string): string;
+    hasMacro(name: string): boolean;
+    getMacro(name: string): Macro;
+    /**
+     * テキストを読み込む
+     * @param filePath ファイルパス（basePathからの相対パス）
+     * @return コールバックオブジェクト
+     */
+    loadText(filePath: string): Promise<string>;
+    /**
+     * スクリプトファイルを読み込む
+     * @param filePath ファイルパス（basePathからの相対パス）
+     * @return コールバックオブジェクト
+     */
+    loadScript(filePath: string): Promise<Script>;
+    /**
+     * 画像を読み込む
+     * @param filePath ファイルパス（basePathからの相対パス）
+     * @return コールバックオブジェクト
+     */
+    loadImage(filePath: string): Promise<HTMLImageElement>;
+    loadSoundHowler(filePath: string): Promise<Howl>;
+    loadVideoTexture(filePath: string, autoPlay: boolean): PIXI.Texture;
+    cloneVideoTexture(src: PIXI.Texture): PIXI.Texture;
+    isEnabledLocalStorage(): boolean;
+    storeToLocalStorage(name: string, data: string): void;
+    restoreFromLocalStorage(name: string): string;
+    copyLocalStorage(srcName: string, destName: string): boolean;
   }
 }
 
-declare module 'ponkan/base/layer-text-canvas' {
+declare module "ponkan/base/layer-text-canvas" {
   import * as PIXI from "pixi.js";
   export type InEffectType = "alpha" | "move" | "alphamove";
   export type TextColor = string | number | string[] | number[] | CanvasGradient | CanvasPattern;
   export class TextSpriteCache {
-      static MAX_SIZE: number;
-      static ENABLED: boolean;
-      get(ch: string, style: TextStyle): PIXI.Sprite | null;
-      set(ch: string, style: TextStyle, text: PIXI.Text): void;
+    static MAX_SIZE: number;
+    static ENABLED: boolean;
+    get(ch: string, style: TextStyle): PIXI.Sprite | null;
+    set(ch: string, style: TextStyle, text: PIXI.Text): void;
   }
   /**
-    * テキストスタイル
-    */
+   * テキストスタイル
+   */
   export class TextStyle extends PIXI.TextStyle {
-      pitch: number;
-      inEffectTypes: InEffectType[];
-      inEffectTime: number;
-      inEffectEase: "none" | "in" | "out" | "both";
-      inEffectOptions: any;
-      constructor(opts?: any);
-      surroundFontFamily(): void;
-      setGradientType(type: "vertical" | "horizontal"): void;
-      set edgeColor(edgeColor: number | string);
-      get edgeColor(): number | string;
-      set edgeAlpha(edgeAlpha: number);
-      get edgeAlpha(): number;
-      checkOptions(): void;
-      clone(): TextStyle;
-      static assign(target: any, source: any): TextStyle;
-      applyConfig(config: any): void;
-      store(tick: number): any;
-      restore(data: any, tick: number, clear: boolean): Promise<void>;
-      toJson(): any;
+    pitch: number;
+    inEffectTypes: InEffectType[];
+    inEffectTime: number;
+    inEffectEase: "none" | "in" | "out" | "both";
+    inEffectOptions: any;
+    constructor(opts?: any);
+    surroundFontFamily(): void;
+    setGradientType(type: "vertical" | "horizontal"): void;
+    set edgeColor(edgeColor: number | string);
+    get edgeColor(): number | string;
+    set edgeAlpha(edgeAlpha: number);
+    get edgeAlpha(): number;
+    checkOptions(): void;
+    clone(): TextStyle;
+    static assign(target: any, source: any): TextStyle;
+    applyConfig(config: any): void;
+    store(tick: number): any;
+    restore(data: any, tick: number, clear: boolean): Promise<void>;
+    toJson(): any;
   }
   /**
-    * レイヤーに描画する文字の情報。
-    * 文字と位置などの情報のみ持ち、canvasなどは持たない。
-    */
+   * レイヤーに描画する文字の情報。
+   * 文字と位置などの情報のみ持ち、canvasなどは持たない。
+   */
   export class LayerChar {
-      static textCache: TextSpriteCache;
-      readonly pixiSprite: PIXI.Sprite;
-      readonly fromCache: boolean;
-      readonly ch: string;
-      readonly style: TextStyle;
-      set x(x: number);
-      get x(): number;
-      set y(y: number);
-      get y(): number;
-      set width(width: number);
-      get width(): number;
-      set alpha(alpha: number);
-      get alpha(): number;
-      constructor(ch: string, style: TextStyle, x: number, y: number);
-      addTo(container: PIXI.Container): LayerChar;
-      static CloneParams: string[];
-      clone(): LayerChar;
-      destroy(): void;
-      /**
-        * 描画前の更新
-        * @param tick 時刻
-        * @return 更新があった場合はtrue
-        */
-      beforeDraw(tick: number): boolean;
+    static textCache: TextSpriteCache;
+    readonly pixiSprite: PIXI.Sprite;
+    readonly fromCache: boolean;
+    readonly ch: string;
+    readonly style: TextStyle;
+    set x(x: number);
+    get x(): number;
+    set y(y: number);
+    get y(): number;
+    set width(width: number);
+    get width(): number;
+    set alpha(alpha: number);
+    get alpha(): number;
+    constructor(ch: string, style: TextStyle, x: number, y: number);
+    addTo(container: PIXI.Container): LayerChar;
+    static CloneParams: string[];
+    clone(): LayerChar;
+    destroy(): void;
+    /**
+     * 描画前の更新
+     * @param tick 時刻
+     * @return 更新があった場合はtrue
+     */
+    beforeDraw(tick: number): boolean;
   }
   export class LayerTextLine {
-      readonly container: PIXI.Container;
-      lineHeight: number;
-      set x(x: number);
-      get x(): number;
-      set y(y: number);
-      get y(): number;
-      get text(): string;
-      get ruby(): string;
-      get textX(): number;
-      get tailChar(): string;
-      get length(): number;
-      get width(): number;
-      forEach(func: (ch: LayerChar, index: number) => void): void;
-      destroy(): void;
-      addTo(container: PIXI.Container): LayerTextLine;
-      clear(): void;
-      addChar(ch: string, style: TextStyle, lineHeight: number): void;
-      reserveRubyText(rubyText: string, rubyOffset: number, rubyStyle: TextStyle): void;
-      getCh(index: number): LayerChar;
-      getTailCh(): LayerChar;
-      backspace(): void;
-      /**
-        * 描画前更新
-        * @param tick 時刻
-        */
-      beforeDraw(tick: number): void;
-      copyTo(dest: LayerTextLine): void;
+    readonly container: PIXI.Container;
+    lineHeight: number;
+    set x(x: number);
+    get x(): number;
+    set y(y: number);
+    get y(): number;
+    get text(): string;
+    get ruby(): string;
+    get textX(): number;
+    get tailChar(): string;
+    get length(): number;
+    get width(): number;
+    forEach(func: (ch: LayerChar, index: number) => void): void;
+    destroy(): void;
+    addTo(container: PIXI.Container): LayerTextLine;
+    clear(): void;
+    addChar(ch: string, style: TextStyle, lineHeight: number): void;
+    reserveRubyText(rubyText: string, rubyOffset: number, rubyStyle: TextStyle): void;
+    getCh(index: number): LayerChar;
+    getTailCh(): LayerChar;
+    backspace(): void;
+    /**
+     * 描画前更新
+     * @param tick 時刻
+     */
+    beforeDraw(tick: number): void;
+    copyTo(dest: LayerTextLine): void;
   }
   export class LayerTextCanvas {
-      /** 禁則文字（行頭禁則文字） */
-      static headProhibitionChar: string;
-      /** 禁則文字（行末禁則文字） */
-      static tailProhibitionChar: string;
-      readonly container: PIXI.Container;
-      style: TextStyle;
-      lineHeight: number;
-      linePitch: number;
-      rubyStyle: TextStyle;
-      marginTop: number;
-      marginRight: number;
-      marginBottom: number;
-      marginLeft: number;
-      autoReturn: boolean;
-      locatePoint: number | null;
-      indentPoint: number | null;
-      reservedIndentPoint: number | null;
-      reservedIndentClear: boolean;
-      align: "left" | "center" | "right";
-      rubyOffset: number;
-      get width(): number;
-      set width(width: number);
-      get height(): number;
-      set height(height: number);
-      get text(): string;
-      constructor();
-      addTo(parent: PIXI.Container): LayerTextCanvas;
-      beforeDraw(tick: number): void;
-      get currentLine(): LayerTextLine;
-      addText(text: string): void;
-      addChar(ch: string): void;
-      /**
-        * 次の文字の表示位置を取得する。
-        * ただし文字揃え前の位置である点に注意が必要。
-        * @param chWidth 追加しようとしている文字の横幅
-        * @return 表示位置
-        */
-      getNextTextPos(chWidth: number): {
-          x: number;
-          y: number;
-          newLineFlag: boolean;
-      };
-      /**
-        * 改行が必要かどうかを返す（自動改行の判定用）
-        * @param chWidth 追加する文字の幅
-        * @return 改行が必要ならtrue
-        */
-      protected shouldBeNewTextLine(chWidth?: number): boolean;
-      /**
-        * テキストを改行する
-        */
-      addTextReturn(): void;
-      /**
-        * 現在描画中のテキスト行をの位置をtextAlignにそろえる
-        */
-      protected alignCurrentTextLine(): void;
-      /**
-        * テキスト行の描画時、ベースとなる点(x)を取得する。
-        * 左揃えの時: 左端の位置
-        * 中央揃えの時：中央の位置
-        * 右揃えの時：右端の位置
-        */
-      protected getTextLineBasePoint(): number;
-      /**
-        * テキストの表示位置を指定する。
-        * 内部的には、指定前とは別の行として扱われる。
-        * @param x x座標
-        * @param y y座標
-        */
-      setCharLocate(x: number | null, y: number | null): void;
-      /**
-        * 現在のテキスト描画位置でインデントするように設定する
-        */
-      setIndentPoint(): void;
-      /**
-        * インデント位置をクリアする
-        */
-      clearIndentPoint(): void;
-      /**
-        * ルビの設定を予約
-        * @param rubyText ルビ文字
-        */
-      reserveRubyText(rubyText: string): void;
-      /**
-        * テキストをクリアする。
-        * 描画していたテキストは全削除される。
-        * テキストの描画開始位置は初期化される。
-        * インデント位置は初期化される。
-        */
-      clear(): void;
-      copyTo(dest: LayerTextCanvas): void;
-      store(tick: number): any;
-      restore(data: any, tick: number, clear: boolean): Promise<void>;
-      /**
-        * コンフィグを反映する。
-        * このメソッドでは単純に値の設定のみ行うため、
-        * 画像読み込みなどの非同期処理が必要なものには対応していない。
-        */
-      applyConfig(config: any): void;
+    /** 禁則文字（行頭禁則文字） */
+    static headProhibitionChar: string;
+    /** 禁則文字（行末禁則文字） */
+    static tailProhibitionChar: string;
+    readonly container: PIXI.Container;
+    style: TextStyle;
+    lineHeight: number;
+    linePitch: number;
+    rubyStyle: TextStyle;
+    marginTop: number;
+    marginRight: number;
+    marginBottom: number;
+    marginLeft: number;
+    autoReturn: boolean;
+    locatePoint: number | null;
+    indentPoint: number | null;
+    reservedIndentPoint: number | null;
+    reservedIndentClear: boolean;
+    align: "left" | "center" | "right";
+    rubyOffset: number;
+    get width(): number;
+    set width(width: number);
+    get height(): number;
+    set height(height: number);
+    get text(): string;
+    constructor();
+    addTo(parent: PIXI.Container): LayerTextCanvas;
+    beforeDraw(tick: number): void;
+    get currentLine(): LayerTextLine;
+    addText(text: string): void;
+    addChar(ch: string): void;
+    /**
+     * 次の文字の表示位置を取得する。
+     * ただし文字揃え前の位置である点に注意が必要。
+     * @param chWidth 追加しようとしている文字の横幅
+     * @return 表示位置
+     */
+    getNextTextPos(
+      chWidth: number,
+    ): {
+      x: number;
+      y: number;
+      newLineFlag: boolean;
+    };
+    /**
+     * 改行が必要かどうかを返す（自動改行の判定用）
+     * @param chWidth 追加する文字の幅
+     * @return 改行が必要ならtrue
+     */
+    protected shouldBeNewTextLine(chWidth?: number): boolean;
+    /**
+     * テキストを改行する
+     */
+    addTextReturn(): void;
+    /**
+     * 現在描画中のテキスト行をの位置をtextAlignにそろえる
+     */
+    protected alignCurrentTextLine(): void;
+    /**
+     * テキスト行の描画時、ベースとなる点(x)を取得する。
+     * 左揃えの時: 左端の位置
+     * 中央揃えの時：中央の位置
+     * 右揃えの時：右端の位置
+     */
+    protected getTextLineBasePoint(): number;
+    /**
+     * テキストの表示位置を指定する。
+     * 内部的には、指定前とは別の行として扱われる。
+     * @param x x座標
+     * @param y y座標
+     */
+    setCharLocate(x: number | null, y: number | null): void;
+    /**
+     * 現在のテキスト描画位置でインデントするように設定する
+     */
+    setIndentPoint(): void;
+    /**
+     * インデント位置をクリアする
+     */
+    clearIndentPoint(): void;
+    /**
+     * ルビの設定を予約
+     * @param rubyText ルビ文字
+     */
+    reserveRubyText(rubyText: string): void;
+    /**
+     * テキストをクリアする。
+     * 描画していたテキストは全削除される。
+     * テキストの描画開始位置は初期化される。
+     * インデント位置は初期化される。
+     */
+    clear(): void;
+    copyTo(dest: LayerTextCanvas): void;
+    store(tick: number): any;
+    restore(data: any, tick: number, clear: boolean): Promise<void>;
+    /**
+     * コンフィグを反映する。
+     * このメソッドでは単純に値の設定のみ行うため、
+     * 画像読み込みなどの非同期処理が必要なものには対応していない。
+     */
+    applyConfig(config: any): void;
   }
 }
 
-declare module 'ponkan/base/conductor' {
+declare module "ponkan/base/conductor" {
   import { PonEventHandler } from "ponkan/base/pon-event-handler";
   import { ReadUnread } from "ponkan/base/read-unread";
   import { Resource } from "ponkan/base/resource";
   import { Script } from "ponkan/base/script";
   import { Tag } from "ponkan/base/tag";
   export interface IConductorEvent {
-      onLabel(labelName: string, line: number, tick: number): "continue" | "break";
-      onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): "continue" | "break";
-      onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break";
-      onTag(tag: Tag, line: number, tick: number): "continue" | "break";
-      onChangeStable(isStable: boolean): void;
-      onError(e: any): void;
+    onLabel(labelName: string, line: number, tick: number): "continue" | "break";
+    onSaveMark(saveMarkName: string, comment: string, line: number, tick: number): "continue" | "break";
+    onJs(js: string, printFlag: boolean, line: number, tick: number): "continue" | "break";
+    onTag(tag: Tag, line: number, tick: number): "continue" | "break";
+    onChangeStable(isStable: boolean): void;
+    onError(e: any): void;
   }
   export enum ConductorState {
-      Stop = 0,
-      Run = 1,
-      Sleep = 2
+    Stop = 0,
+    Run = 1,
+    Sleep = 2,
   }
   export class Conductor {
-      protected resource: Resource;
-      readonly name: string;
-      protected eventCallbacks: IConductorEvent;
-      latestScriptFilePath: string;
-      protected _script: Script;
-      get script(): Script;
-      protected _status: ConductorState;
-      get status(): ConductorState;
-      protected sleepStartTick: number;
-      protected sleepTime: number;
-      sleepSender: string;
-      protected stableBuffer: boolean;
-      protected eventHandlers: any;
-      protected eventHandlersStack: any[];
-      latestSaveMarkName: string;
-      readUnread: ReadUnread;
-      constructor(resource: Resource, name: string, eventCallbacks: IConductorEvent);
-      loadScript(filePath: string): Promise<void>;
-      /**
-        * 指定のファイル・ラベルの位置へ移動する。
-        * ラベルが省略されたときは、ファイルの先頭となる。
-        * ファイルが省略されたときは、現在のファイル内でラベル移動のみ行う。
-        * @param file 移動先ファイル
-        * @param label 移動先ラベル
-        * @param countPage 既読処理をするかどうか
-        */
-      jump(filePath: string | null, label?: string | null, countPage?: boolean): Promise<void>;
-      isPassed(labelName: string): boolean;
-      isPassedLatestSaveMark(): boolean;
-      passSaveMark(saveMarkName: string): void;
-      passLatestSaveMark(): void;
-      conduct(tick: number): void;
-      start(): "continue" | "break";
-      stop(): "continue" | "break";
-      sleep(tick: number, sleepTime: number, sender: string): "continue" | "break";
-      get isStable(): boolean;
-      addEventHandler(handler: PonEventHandler): void;
-      hasEventHandler(eventName: string): boolean;
-      /**
-        * イベントハンドラの引き金を引く
-        * @param eventName イベント名
-        * @return イベントハンドラが1つ以上実行されればtrue
-        */
-      trigger(eventName: string): boolean;
-      clearAllEventHandler(): void;
-      clearEventHandler(eventHandler: PonEventHandler): void;
-      clearEventHandlerByName(eventName: string): void;
-      protected static conductorStoreParams: string[];
-      store(saveMarkName: string, tick: number): any;
-      restore(data: any, tick: number): Promise<void>;
+    protected resource: Resource;
+    readonly name: string;
+    protected eventCallbacks: IConductorEvent;
+    latestScriptFilePath: string;
+    protected _script: Script;
+    get script(): Script;
+    protected _status: ConductorState;
+    get status(): ConductorState;
+    protected sleepStartTick: number;
+    protected sleepTime: number;
+    sleepSender: string;
+    protected stableBuffer: boolean;
+    protected eventHandlers: any;
+    protected eventHandlersStack: any[];
+    latestSaveMarkName: string;
+    readUnread: ReadUnread;
+    constructor(resource: Resource, name: string, eventCallbacks: IConductorEvent);
+    loadScript(filePath: string): Promise<void>;
+    /**
+     * 指定のファイル・ラベルの位置へ移動する。
+     * ラベルが省略されたときは、ファイルの先頭となる。
+     * ファイルが省略されたときは、現在のファイル内でラベル移動のみ行う。
+     * @param file 移動先ファイル
+     * @param label 移動先ラベル
+     * @param countPage 既読処理をするかどうか
+     */
+    jump(filePath: string | null, label?: string | null, countPage?: boolean): Promise<void>;
+    isPassed(labelName: string): boolean;
+    isPassedLatestSaveMark(): boolean;
+    passSaveMark(saveMarkName: string): void;
+    passLatestSaveMark(): void;
+    conduct(tick: number): void;
+    start(): "continue" | "break";
+    stop(): "continue" | "break";
+    sleep(tick: number, sleepTime: number, sender: string): "continue" | "break";
+    get isStable(): boolean;
+    addEventHandler(handler: PonEventHandler): void;
+    hasEventHandler(eventName: string): boolean;
+    /**
+     * イベントハンドラの引き金を引く
+     * @param eventName イベント名
+     * @return イベントハンドラが1つ以上実行されればtrue
+     */
+    trigger(eventName: string): boolean;
+    clearAllEventHandler(): void;
+    clearEventHandler(eventHandler: PonEventHandler): void;
+    clearEventHandlerByName(eventName: string): void;
+    protected static conductorStoreParams: string[];
+    store(saveMarkName: string, tick: number): any;
+    restore(data: any, tick: number): Promise<void>;
   }
 }
 
-declare module 'ponkan/base/logger' {
+declare module "ponkan/base/logger" {
   export class Logger {
     static LEVEL_ERROR: number;
     static LEVEL_WARN: number;
@@ -1578,7 +1612,7 @@ declare module 'ponkan/base/logger' {
   }
 }
 
-declare module 'ponkan/base/pon-renderer' {
+declare module "ponkan/base/pon-renderer" {
   import * as PIXI from "pixi.js";
   export class PonRenderer {
     readonly renderer: PIXI.Renderer;
@@ -1601,7 +1635,7 @@ declare module 'ponkan/base/pon-renderer' {
   }
 }
 
-declare module 'ponkan/base/screen-shot' {
+declare module "ponkan/base/screen-shot" {
   export class ScreenShot {
     readonly nodata: string;
     constructor(config: any);
@@ -1610,18 +1644,21 @@ declare module 'ponkan/base/screen-shot' {
   }
 }
 
-declare module 'ponkan/base/trans-manager' {
+declare module "ponkan/base/trans-manager" {
   import { PonGame } from "ponkan/base/pon-game";
   import { Resource } from "ponkan/base/resource";
   export class TransManager {
     constructor(game: PonGame, resource: Resource);
-    initTrans(time: number, method: "scroll-to-right" | "scroll-to-left" | "scroll-to-top" | "scroll-to-bottom" | "univ" | "crossfade"): Promise<void>;
+    initTrans(
+      time: number,
+      method: "scroll-to-right" | "scroll-to-left" | "scroll-to-top" | "scroll-to-bottom" | "univ" | "crossfade",
+    ): Promise<void>;
     initUnivTrans(time: number, ruleFilePath: string, vague?: number): Promise<void>;
     get isRunning(): boolean;
     /**
-      * トランジションを停止する。
-      * PonGameのonCompleteTransも呼び出される。
-      */
+     * トランジションを停止する。
+     * PonGameのonCompleteTransも呼び出される。
+     */
     stop(): void;
     start(): void;
     draw(tick: number): void;
@@ -1632,7 +1669,7 @@ declare module 'ponkan/base/trans-manager' {
   }
 }
 
-declare module 'ponkan/layer/filtered-layer' {
+declare module "ponkan/layer/filtered-layer" {
   import { Resource } from "ponkan/base/resource";
   import { Ponkan } from "ponkan/ponkan";
   import { MovableLayer } from "ponkan/layer/movable-layer";
@@ -1653,7 +1690,7 @@ declare module 'ponkan/layer/filtered-layer' {
   }
 }
 
-declare module 'ponkan/base/macro' {
+declare module "ponkan/base/macro" {
   import { Tag } from "ponkan/base/tag";
   export class Macro {
     readonly name: string;
@@ -1664,135 +1701,135 @@ declare module 'ponkan/base/macro' {
     clone(): Macro;
     getCurrentTag(): Tag | null;
     /**
-      * 次のタグを取得する。
-      * スクリプトファイル終端の場合はnullが返る
-      * @return 次のタグ。終端の場合はnull
-      */
+     * 次のタグを取得する。
+     * スクリプトファイル終端の場合はnullが返る
+     * @return 次のタグ。終端の場合はnull
+     */
     getNextTag(): Tag | null;
     clearTagPoint(): void;
   }
 }
 
-declare module 'ponkan/base/script' {
+declare module "ponkan/base/script" {
   import { Macro } from "ponkan/base/macro";
   import { Resource } from "ponkan/base/resource";
   import { ScriptParser } from "ponkan/base/script-parser";
   import { Tag } from "ponkan/base/tag";
   export interface IForLoopInfo {
-      startTagPoint: number;
-      indexVarName: string;
-      loops: number;
-      count: number;
+    startTagPoint: number;
+    indexVarName: string;
+    loops: number;
+    count: number;
   }
   export class Script {
-      protected resource: Resource;
-      protected _filePath: string;
-      get filePath(): string;
-      protected parser: ScriptParser;
-      protected tagPoint: number;
-      protected latestTagBuffer: Tag | null;
-      protected forLoopStack: IForLoopInfo[];
-      protected ifDepth: number;
-      protected macroStack: Macro[];
-      constructor(resource: Resource, filePath: string, scriptText: string | null);
-      debugPrint(): void;
-      clone(): Script;
-      goToStart(): void;
-      goTo(point: number): void;
-      getPoint(): number;
-      /**
-        * 指定のラベルの位置へ移動する。
-        * ファイル内に同じラベルが2つ以上あった場合は、1番目の位置へ移動する。
-        * ラベルが見つからなかった場合はエラーになる。
-        * @param label 移動先ラベル
-        */
-      goToLabel(label: string): void;
-      /**
-        * 指定のセーブマーク位置まで移動する
-        * ファイル内に同じセーブマークが2つ以上あった場合は、1番目の位置へ移動する。
-        * ラベルが見つからなかった場合はエラーになる。
-        * @param saveMarkName セーブマーク名
-        */
-      goToSaveMark(saveMarkName: string): void;
-      /**
-        * 現在実行中のタグを取得する。
-        * @return 実行中のタグ。終端の場合はnull
-        */
-      getCurrentTag(): Tag | null;
-      /**
-        * 次のタグを取得する。
-        * スクリプトファイル終端の場合はnullが返る
-        * @return 次のタグ。終端の場合はnull
-        */
-      getNextTag(): Tag | null;
-      protected callMacro(tag: Tag): void;
-      isInsideOfMacro(): boolean;
-      callCommandShortcut(orgTag: Tag, commandName: string): Tag;
-      /**
-        * 最後に取得されたタグを返す。
-        */
-      getLatestTag(): Tag | null;
-      /**
-        * マクロを定義する
-        * @param name マクロ名
-        */
-      defineMacro(name: string): Macro;
-      /**
-        * 次のタグを取得する。マクロの呼び出しを行わない。
-        */
-      protected getNextTagWithoutMacro(): Tag | null;
-      /**
-        * 次のタグを取得する。マクロの呼び出しを行わない。
-        * ただしマクロの中で呼び出されたときはそのマクロ内部で移動する。
-        */
-      protected getNextTagForIf(): Tag | null;
-      /**
-        * 条件分岐を開始
-        * @param tagAction タグ動作定義マップ
-        */
-      ifJump(exp: string, tagActions: any): void;
-      /**
-        * elseかelsifかendifまでジャンプする。
-        * elsifの場合は条件式の評価も行って判定する。
-        * @param tagAction タグ動作定義マップ
-        */
-      protected goToElseFromIf(tagActions: any): void;
-      /**
-        * elsifタグの動作
-        */
-      elsifJump(): void;
-      /**
-        * elseタグの動作
-        */
-      elseJump(): void;
-      /**
-        * endifタグの動作
-        */
-      endif(): void;
-      /**
-        * endifまでジャンプする。
-        */
-      protected goToEndifFromElse(): void;
-      isInsideOfIf(): boolean;
-      /**
-        * forループを開始
-        * @param loops 繰り返し回数
-        * @param indexVarName indexを格納する一時変数の名前。
-        */
-      startForLoop(loops: number, indexVarName?: string): void;
-      /**
-        * forLoopの終わり
-        */
-      endForLoop(): void;
-      /**
-        * forLoopから抜け出す
-        */
-      breakForLoop(): void;
-      isInsideOfForLoop(): boolean;
+    protected resource: Resource;
+    protected _filePath: string;
+    get filePath(): string;
+    protected parser: ScriptParser;
+    protected tagPoint: number;
+    protected latestTagBuffer: Tag | null;
+    protected forLoopStack: IForLoopInfo[];
+    protected ifDepth: number;
+    protected macroStack: Macro[];
+    constructor(resource: Resource, filePath: string, scriptText: string | null);
+    debugPrint(): void;
+    clone(): Script;
+    goToStart(): void;
+    goTo(point: number): void;
+    getPoint(): number;
+    /**
+     * 指定のラベルの位置へ移動する。
+     * ファイル内に同じラベルが2つ以上あった場合は、1番目の位置へ移動する。
+     * ラベルが見つからなかった場合はエラーになる。
+     * @param label 移動先ラベル
+     */
+    goToLabel(label: string): void;
+    /**
+     * 指定のセーブマーク位置まで移動する
+     * ファイル内に同じセーブマークが2つ以上あった場合は、1番目の位置へ移動する。
+     * ラベルが見つからなかった場合はエラーになる。
+     * @param saveMarkName セーブマーク名
+     */
+    goToSaveMark(saveMarkName: string): void;
+    /**
+     * 現在実行中のタグを取得する。
+     * @return 実行中のタグ。終端の場合はnull
+     */
+    getCurrentTag(): Tag | null;
+    /**
+     * 次のタグを取得する。
+     * スクリプトファイル終端の場合はnullが返る
+     * @return 次のタグ。終端の場合はnull
+     */
+    getNextTag(): Tag | null;
+    protected callMacro(tag: Tag): void;
+    isInsideOfMacro(): boolean;
+    callCommandShortcut(orgTag: Tag, commandName: string): Tag;
+    /**
+     * 最後に取得されたタグを返す。
+     */
+    getLatestTag(): Tag | null;
+    /**
+     * マクロを定義する
+     * @param name マクロ名
+     */
+    defineMacro(name: string): Macro;
+    /**
+     * 次のタグを取得する。マクロの呼び出しを行わない。
+     */
+    protected getNextTagWithoutMacro(): Tag | null;
+    /**
+     * 次のタグを取得する。マクロの呼び出しを行わない。
+     * ただしマクロの中で呼び出されたときはそのマクロ内部で移動する。
+     */
+    protected getNextTagForIf(): Tag | null;
+    /**
+     * 条件分岐を開始
+     * @param tagAction タグ動作定義マップ
+     */
+    ifJump(exp: string, tagActions: any): void;
+    /**
+     * elseかelsifかendifまでジャンプする。
+     * elsifの場合は条件式の評価も行って判定する。
+     * @param tagAction タグ動作定義マップ
+     */
+    protected goToElseFromIf(tagActions: any): void;
+    /**
+     * elsifタグの動作
+     */
+    elsifJump(): void;
+    /**
+     * elseタグの動作
+     */
+    elseJump(): void;
+    /**
+     * endifタグの動作
+     */
+    endif(): void;
+    /**
+     * endifまでジャンプする。
+     */
+    protected goToEndifFromElse(): void;
+    isInsideOfIf(): boolean;
+    /**
+     * forループを開始
+     * @param loops 繰り返し回数
+     * @param indexVarName indexを格納する一時変数の名前。
+     */
+    startForLoop(loops: number, indexVarName?: string): void;
+    /**
+     * forLoopの終わり
+     */
+    endForLoop(): void;
+    /**
+     * forLoopから抜け出す
+     */
+    breakForLoop(): void;
+    isInsideOfForLoop(): boolean;
   }
 }
 
-declare module 'ponkan/base/pon-event-handler' {
+declare module "ponkan/base/pon-event-handler" {
   export class PonEventHandler {
     readonly eventName: string;
     readonly callback: () => void;
@@ -1802,7 +1839,7 @@ declare module 'ponkan/base/pon-event-handler' {
   }
 }
 
-declare module 'ponkan/base/read-unread' {
+declare module "ponkan/base/read-unread" {
   import { Resource } from "ponkan/base/resource";
   import { Script } from "ponkan/base/script";
   export class ReadUnread {
@@ -1816,77 +1853,85 @@ declare module 'ponkan/base/read-unread' {
   }
 }
 
-declare module 'ponkan/layer/movable-layer' {
+declare module "ponkan/layer/movable-layer" {
   import { Resource } from "ponkan/base/resource";
   import { Ponkan } from "ponkan/ponkan";
   import { SliderLayer } from "ponkan/layer/slider-layer";
   export interface IMovePosInfo {
-      x: number;
-      y: number;
-      alpha: number;
-      scalex: number;
-      scaley: number;
+    x: number;
+    y: number;
+    alpha: number;
+    scalex: number;
+    scaley: number;
   }
   export class MovableLayer extends SliderLayer {
-      protected _isMoving: boolean;
-      protected moveType: "linear" | "bezier2" | "bezier3" | "catmullrom";
-      protected moveEase: "none" | "in" | "out" | "both";
-      protected movePosList: IMovePosInfo[];
-      protected movePoint: number;
-      protected moveTime: number;
-      protected moveDelay: number;
-      protected moveLoop: boolean;
-      protected moveTotalTime: number;
-      protected moveStartTick: number;
-      protected moveDelayStartTick: number;
-      get isMoving(): boolean;
-      get isLoopMoving(): boolean;
-      constructor(name: string, resource: Resource, owner: Ponkan);
-      startMove(tick: number, time: number, delay: number, path: IMovePosInfo[], type: "linear" | "bezier2" | "bezier3" | "catmullrom", ease: "none" | "in" | "out" | "both", loop: boolean): void;
-      stopMove(triggerEvent?: boolean): void;
-      update(tick: number): void;
-      /**
-        * 直線移動する
-        * @param tick 時刻
-        * @param phase フェーズ（0～1の値）
-        */
-      protected moveLinear(tick: number, phase: number): void;
-      /**
-        * 2次ベジエ曲線で移動する
-        * @param tick 時刻
-        * @param phase フェーズ（0～1の値）
-        */
-      protected moveBezierCurve2(tick: number, phase: number): void;
-      /**
-        * 3次ベジエ曲線で移動する
-        * @param tick 時刻
-        * @param phase フェーズ（0～1の値）
-        */
-      protected moveBezierCurve3(tick: number, phase: number): void;
-      /**
-        * CatmullRomスプラインで移動する
-        * @param tick 時刻
-        * @param phase フェーズ（0～1の値）
-        */
-      protected moveCatmullRom(tick: number, phase: number): void;
-      /**
-        * CatmullRom補間
-        * @param p0 点0
-        * @param p1 点1
-        * @param p2 点2
-        * @param p3 点3
-        * @param t 時間
-        * @return 補間後の点
-        */
-      protected catmullRom(p0: number, p1: number, p2: number, p3: number, t: number): number;
-      protected static movableLayerStoreParams: string[];
-      store(tick: number): any;
-      restore(data: any, tick: number, clear: boolean): Promise<void>;
-      copyTo(dest: MovableLayer): void;
+    protected _isMoving: boolean;
+    protected moveType: "linear" | "bezier2" | "bezier3" | "catmullrom";
+    protected moveEase: "none" | "in" | "out" | "both";
+    protected movePosList: IMovePosInfo[];
+    protected movePoint: number;
+    protected moveTime: number;
+    protected moveDelay: number;
+    protected moveLoop: boolean;
+    protected moveTotalTime: number;
+    protected moveStartTick: number;
+    protected moveDelayStartTick: number;
+    get isMoving(): boolean;
+    get isLoopMoving(): boolean;
+    constructor(name: string, resource: Resource, owner: Ponkan);
+    startMove(
+      tick: number,
+      time: number,
+      delay: number,
+      path: IMovePosInfo[],
+      type: "linear" | "bezier2" | "bezier3" | "catmullrom",
+      ease: "none" | "in" | "out" | "both",
+      loop: boolean,
+    ): void;
+    stopMove(triggerEvent?: boolean): void;
+    update(tick: number): void;
+    /**
+     * 直線移動する
+     * @param tick 時刻
+     * @param phase フェーズ（0～1の値）
+     */
+    protected moveLinear(tick: number, phase: number): void;
+    /**
+     * 2次ベジエ曲線で移動する
+     * @param tick 時刻
+     * @param phase フェーズ（0～1の値）
+     */
+    protected moveBezierCurve2(tick: number, phase: number): void;
+    /**
+     * 3次ベジエ曲線で移動する
+     * @param tick 時刻
+     * @param phase フェーズ（0～1の値）
+     */
+    protected moveBezierCurve3(tick: number, phase: number): void;
+    /**
+     * CatmullRomスプラインで移動する
+     * @param tick 時刻
+     * @param phase フェーズ（0～1の値）
+     */
+    protected moveCatmullRom(tick: number, phase: number): void;
+    /**
+     * CatmullRom補間
+     * @param p0 点0
+     * @param p1 点1
+     * @param p2 点2
+     * @param p3 点3
+     * @param t 時間
+     * @return 補間後の点
+     */
+    protected catmullRom(p0: number, p1: number, p2: number, p3: number, t: number): number;
+    protected static movableLayerStoreParams: string[];
+    store(tick: number): any;
+    restore(data: any, tick: number, clear: boolean): Promise<void>;
+    copyTo(dest: MovableLayer): void;
   }
 }
 
-declare module 'ponkan/filter/layer-filter' {
+declare module "ponkan/filter/layer-filter" {
   export class LayerFilter {
     static readonly filterName: string;
     get filterName(): string;
@@ -1899,29 +1944,29 @@ declare module 'ponkan/filter/layer-filter' {
   }
 }
 
-declare module 'ponkan/base/script-parser' {
+declare module "ponkan/base/script-parser" {
   import { Resource } from "ponkan/base/resource";
   import { Tag } from "ponkan/base/tag";
   export class ScriptParser {
-      get tags(): Tag[];
-      constructor(resource: Resource, scriptText: string);
-      debugPrint(): void;
-      /**
-        * 指定のラベルの位置を返す。
-        * @param labelName ラベル名
-        * @return ラベルの位置。見つからなかったときは-1
-        */
-      getLabelPos(labelName: string): number;
-      /**
-        * 指定のセーブマークの位置を返す。
-        * @param labelName セーブマーク名
-        * @return セーブマークの位置。見つからなかったときは-1
-        */
-      getSaveMarkPos(saveMarkName: string): number;
+    get tags(): Tag[];
+    constructor(resource: Resource, scriptText: string);
+    debugPrint(): void;
+    /**
+     * 指定のラベルの位置を返す。
+     * @param labelName ラベル名
+     * @return ラベルの位置。見つからなかったときは-1
+     */
+    getLabelPos(labelName: string): number;
+    /**
+     * 指定のセーブマークの位置を返す。
+     * @param labelName セーブマーク名
+     * @return セーブマークの位置。見つからなかったときは-1
+     */
+    getSaveMarkPos(saveMarkName: string): number;
   }
 }
 
-declare module 'ponkan/layer/slider-layer' {
+declare module "ponkan/layer/slider-layer" {
   import { BaseLayer } from "ponkan/base/base-layer";
   import { PonGame } from "ponkan/base/pon-game";
   import { PonMouseEvent } from "ponkan/base/pon-mouse-event";
@@ -1940,8 +1985,8 @@ declare module 'ponkan/layer/slider-layer' {
     slideToRight(): void;
   }
   /**
-    * スライダー
-    */
+   * スライダー
+   */
   export class Slider extends BaseLayer {
     protected foreImage: BaseLayer;
     readonly button: SliderButton;
@@ -1953,7 +1998,17 @@ declare module 'ponkan/layer/slider-layer' {
     protected onChange: string | ((v: number) => void);
     protected down: boolean;
     constructor(name: string, resource: Resource, owner: PonGame);
-    initSlider(value: number, onStart: string | ((v: number) => void), onSlide: string | ((v: number) => void), onEnd: string | ((v: number) => void), onChange: string | ((v: number) => void), backImagePath: string, foreImagePath: string, buttonImagePath: string, keyIndex: number): Promise<void>;
+    initSlider(
+      value: number,
+      onStart: string | ((v: number) => void),
+      onSlide: string | ((v: number) => void),
+      onEnd: string | ((v: number) => void),
+      onChange: string | ((v: number) => void),
+      backImagePath: string,
+      foreImagePath: string,
+      buttonImagePath: string,
+      keyIndex: number,
+    ): Promise<void>;
     clearSlider(): void;
     lock(): void;
     unlock(): void;
@@ -1974,7 +2029,19 @@ declare module 'ponkan/layer/slider-layer' {
     copyTo(dest: Slider): void;
   }
   export class SliderLayer extends ToggleButtonLayer {
-    addSlider(x: number, y: number, value: number, onStart: string | ((v: number) => void), onSlide: string | ((v: number) => void), onEnd: string | ((v: number) => void), onChange: string | ((v: number) => void), backImagePath: string, foreImagePath: string, buttonImagePath: string, keyIndex: number): Promise<void>;
+    addSlider(
+      x: number,
+      y: number,
+      value: number,
+      onStart: string | ((v: number) => void),
+      onSlide: string | ((v: number) => void),
+      onEnd: string | ((v: number) => void),
+      onChange: string | ((v: number) => void),
+      backImagePath: string,
+      foreImagePath: string,
+      buttonImagePath: string,
+      keyIndex: number,
+    ): Promise<void>;
     clearSliders(): void;
     hasSlider(): boolean;
     lockSliders(): void;
@@ -1987,7 +2054,7 @@ declare module 'ponkan/layer/slider-layer' {
   }
 }
 
-declare module 'ponkan/layer/toggle-button-layer' {
+declare module "ponkan/layer/toggle-button-layer" {
   import { ImageButtonLayer } from "ponkan/layer/image-button-layer";
   import { Button, CommandButton, ButtonStatus } from "ponkan/layer/button";
   export class ImageToggleButton extends CommandButton {
@@ -1995,7 +2062,24 @@ declare module 'ponkan/layer/toggle-button-layer' {
     protected varName: string;
     protected toggleState: boolean;
     protected offImageFile: string;
-    initImageToggleButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, isSystemButton: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, imageFile: string, direction: "horizontal" | "vertical", onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string, keyIndex: number | null | undefined, varName: string): Promise<void>;
+    initImageToggleButton(
+      jump: boolean | undefined,
+      call: boolean | undefined,
+      filePath: string | null | undefined,
+      label: string | null | undefined,
+      countPage: boolean | undefined,
+      isSystemButton: boolean | undefined,
+      onEnterExp: string | null | undefined,
+      onLeaveExp: string | null | undefined,
+      onClickExp: string | null | undefined,
+      imageFile: string,
+      direction: "horizontal" | "vertical",
+      onEnterSoundBuf: string,
+      onLeaveSoundBuf: string,
+      onClickSoundBuf: string,
+      keyIndex: number | null | undefined,
+      varName: string,
+    ): Promise<void>;
     clearCommandButton(): void;
     setButtonStatus(status: ButtonStatus): void;
     submit(): Promise<void>;
@@ -2006,7 +2090,26 @@ declare module 'ponkan/layer/toggle-button-layer' {
     copyTo(dest: ImageToggleButton): void;
   }
   export class ToggleButtonLayer extends ImageButtonLayer {
-    addToggleButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, imageFile: string, x: number, y: number, direction: "horizontal" | "vertical", isSystemButton: boolean, onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string, keyIndex: number | null | undefined, varName: string): Promise<void>;
+    addToggleButton(
+      jump: boolean | undefined,
+      call: boolean | undefined,
+      filePath: string | null | undefined,
+      label: string | null | undefined,
+      countPage: boolean | undefined,
+      onEnterExp: string | null | undefined,
+      onLeaveExp: string | null | undefined,
+      onClickExp: string | null | undefined,
+      imageFile: string,
+      x: number,
+      y: number,
+      direction: "horizontal" | "vertical",
+      isSystemButton: boolean,
+      onEnterSoundBuf: string,
+      onLeaveSoundBuf: string,
+      onClickSoundBuf: string,
+      keyIndex: number | null | undefined,
+      varName: string,
+    ): Promise<void>;
     clearToggleButtons(): void;
     hasToggleButton(): boolean;
     getButtons(): Button[];
@@ -2021,12 +2124,28 @@ declare module 'ponkan/layer/toggle-button-layer' {
   }
 }
 
-declare module 'ponkan/layer/image-button-layer' {
+declare module "ponkan/layer/image-button-layer" {
   import { CommandButton, ButtonStatus, Button } from "ponkan/layer/button";
   import { TextButtonLayer } from "ponkan/layer/text-button-layer";
   export class CommandImageButton extends CommandButton {
     protected direction: "horizontal" | "vertical";
-    initImageButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, isSystemButton: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, file: string, direction: "horizontal" | "vertical", onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string, keyIndex?: number | null): Promise<void>;
+    initImageButton(
+      jump: boolean | undefined,
+      call: boolean | undefined,
+      filePath: string | null | undefined,
+      label: string | null | undefined,
+      countPage: boolean | undefined,
+      isSystemButton: boolean | undefined,
+      onEnterExp: string | null | undefined,
+      onLeaveExp: string | null | undefined,
+      onClickExp: string | null | undefined,
+      file: string,
+      direction: "horizontal" | "vertical",
+      onEnterSoundBuf: string,
+      onLeaveSoundBuf: string,
+      onClickSoundBuf: string,
+      keyIndex?: number | null,
+    ): Promise<void>;
     clearCommandButton(): void;
     setButtonStatus(status: ButtonStatus): void;
     resetImageButtonPosition(status: ButtonStatus): void;
@@ -2037,7 +2156,25 @@ declare module 'ponkan/layer/image-button-layer' {
     copyTo(dest: CommandImageButton): void;
   }
   export class ImageButtonLayer extends TextButtonLayer {
-    addImageButton(jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, file: string, x: number, y: number, direction: "horizontal" | "vertical", isSystemButton: boolean, onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string, keyIndex?: number | null): Promise<void>;
+    addImageButton(
+      jump: boolean | undefined,
+      call: boolean | undefined,
+      filePath: string | null | undefined,
+      label: string | null | undefined,
+      countPage: boolean | undefined,
+      onEnterExp: string | null | undefined,
+      onLeaveExp: string | null | undefined,
+      onClickExp: string | null | undefined,
+      file: string,
+      x: number,
+      y: number,
+      direction: "horizontal" | "vertical",
+      isSystemButton: boolean,
+      onEnterSoundBuf: string,
+      onLeaveSoundBuf: string,
+      onClickSoundBuf: string,
+      keyIndex?: number | null,
+    ): Promise<void>;
     clearImageButtons(): void;
     hasImageButton(): boolean;
     getButtons(): Button[];
@@ -2052,51 +2189,99 @@ declare module 'ponkan/layer/image-button-layer' {
   }
 }
 
-declare module 'ponkan/layer/text-button-layer' {
+declare module "ponkan/layer/text-button-layer" {
   import { CommandButton, Button, ButtonStatus } from "ponkan/layer/button";
   import { FrameAnimLayer } from "ponkan/layer/frame-anim-layer";
   /**
-    * テキストと背景色を指定できるボタン
-    */
+   * テキストと背景色を指定できるボタン
+   */
   export class TextButton extends CommandButton {
-      txtBtnNormalBackgroundColor: number;
-      txtBtnOverBackgroundColor: number;
-      txtBtnOnBackgroundColor: number;
-      txtBtnNormalBackgroundAlpha: number;
-      txtBtnOverBackgroundAlpha: number;
-      txtBtnOnBackgroundAlpha: number;
-      initTextButton(jump?: boolean, call?: boolean, filePath?: string | null, label?: string | null, countPage?: boolean, isSystemButton?: boolean, onEnterExp?: string | null, onLeaveExp?: string | null, onClickExp?: string | null, text?: string, normalBackgroundColor?: number, overBackgroundColor?: number, onBackgroundColor?: number, normalBackgroundAlpha?: number, overBackgroundAlpha?: number, onBackgroundAlpha?: number, onEnterSoundBuf?: string, onLeaveSoundBuf?: string, onClickSoundBuf?: string, keyIndex?: number | null): void;
-      clearCommandButton(): void;
-      setButtonStatus(status: ButtonStatus): void;
-      resetTextButtonColors(): void;
-      protected static textButtonStoreParams: string[];
-      store(tick: number): any;
-      restoreAfterLoadImage(data: any, tick: number): void;
-      copyTo(dest: TextButton): void;
+    txtBtnNormalBackgroundColor: number;
+    txtBtnOverBackgroundColor: number;
+    txtBtnOnBackgroundColor: number;
+    txtBtnNormalBackgroundAlpha: number;
+    txtBtnOverBackgroundAlpha: number;
+    txtBtnOnBackgroundAlpha: number;
+    initTextButton(
+      jump?: boolean,
+      call?: boolean,
+      filePath?: string | null,
+      label?: string | null,
+      countPage?: boolean,
+      isSystemButton?: boolean,
+      onEnterExp?: string | null,
+      onLeaveExp?: string | null,
+      onClickExp?: string | null,
+      text?: string,
+      normalBackgroundColor?: number,
+      overBackgroundColor?: number,
+      onBackgroundColor?: number,
+      normalBackgroundAlpha?: number,
+      overBackgroundAlpha?: number,
+      onBackgroundAlpha?: number,
+      onEnterSoundBuf?: string,
+      onLeaveSoundBuf?: string,
+      onClickSoundBuf?: string,
+      keyIndex?: number | null,
+    ): void;
+    clearCommandButton(): void;
+    setButtonStatus(status: ButtonStatus): void;
+    resetTextButtonColors(): void;
+    protected static textButtonStoreParams: string[];
+    store(tick: number): any;
+    restoreAfterLoadImage(data: any, tick: number): void;
+    copyTo(dest: TextButton): void;
   }
   /**
-    * テキストボタンを配置できるレイヤー
-    */
+   * テキストボタンを配置できるレイヤー
+   */
   export class TextButtonLayer extends FrameAnimLayer {
-      addTextButton(btnName: string | undefined, jump: boolean | undefined, call: boolean | undefined, filePath: string | null | undefined, label: string | null | undefined, countPage: boolean | undefined, onEnterExp: string | null | undefined, onLeaveExp: string | null | undefined, onClickExp: string | null | undefined, text: string, x: number, y: number, width: number, height: number, backgroundColors: number[], backgroundAlphas: number[], isSystemButton: boolean, textMarginTop: number | undefined, textMarginRight: number | undefined, textMarginBottom: number | undefined, textMarginLeft: number | undefined, textAlign: "left" | "center" | "right" | undefined, onEnterSoundBuf: string, onLeaveSoundBuf: string, onClickSoundBuf: string, keyIndex?: number | null): void;
-      clearTextButtons(): void;
-      changeTextButtonColors(btnName: string, backgroundColors: number[]): void;
-      changeTextButtonAlphas(btnName: string, backgroundAlphas: number[]): void;
-      findTextButtonByName(btnName: string): TextButton[];
-      hasTextButton(): boolean;
-      getButtons(): Button[];
-      lockButtons(): void;
-      unlockButtons(): void;
-      lockSystemButtons(): void;
-      unlockSystemButtons(): void;
-      store(tick: number): any;
-      restore(data: any, tick: number, clear: boolean): Promise<void>;
-      protected restoreAfterLoadImage(data: any, tick: number): void;
-      copyTo(dest: TextButtonLayer): void;
+    addTextButton(
+      btnName: string | undefined,
+      jump: boolean | undefined,
+      call: boolean | undefined,
+      filePath: string | null | undefined,
+      label: string | null | undefined,
+      countPage: boolean | undefined,
+      onEnterExp: string | null | undefined,
+      onLeaveExp: string | null | undefined,
+      onClickExp: string | null | undefined,
+      text: string,
+      x: number,
+      y: number,
+      width: number,
+      height: number,
+      backgroundColors: number[],
+      backgroundAlphas: number[],
+      isSystemButton: boolean,
+      textMarginTop: number | undefined,
+      textMarginRight: number | undefined,
+      textMarginBottom: number | undefined,
+      textMarginLeft: number | undefined,
+      textAlign: "left" | "center" | "right" | undefined,
+      onEnterSoundBuf: string,
+      onLeaveSoundBuf: string,
+      onClickSoundBuf: string,
+      keyIndex?: number | null,
+    ): void;
+    clearTextButtons(): void;
+    changeTextButtonColors(btnName: string, backgroundColors: number[]): void;
+    changeTextButtonAlphas(btnName: string, backgroundAlphas: number[]): void;
+    findTextButtonByName(btnName: string): TextButton[];
+    hasTextButton(): boolean;
+    getButtons(): Button[];
+    lockButtons(): void;
+    unlockButtons(): void;
+    lockSystemButtons(): void;
+    unlockSystemButtons(): void;
+    store(tick: number): any;
+    restore(data: any, tick: number, clear: boolean): Promise<void>;
+    protected restoreAfterLoadImage(data: any, tick: number): void;
+    copyTo(dest: TextButtonLayer): void;
   }
 }
 
-declare module 'ponkan/layer/frame-anim-layer' {
+declare module "ponkan/layer/frame-anim-layer" {
   import { BaseLayer } from "ponkan/base/base-layer";
   export class FrameAnimLayer extends BaseLayer {
     protected _frameAnimLoop: boolean;
@@ -2114,8 +2299,8 @@ declare module 'ponkan/layer/frame-anim-layer' {
     stopFrameAnim(triggerEvent?: boolean): void;
     deleteFrameAnim(): void;
     /**
-      * [override]
-      */
+     * [override]
+     */
     update(tick: number): void;
     freeImage(): void;
     protected static frameAnimLayerStoreParams: string[];
@@ -2125,4 +2310,3 @@ declare module 'ponkan/layer/frame-anim-layer' {
     copyTo(dest: FrameAnimLayer): void;
   }
 }
-

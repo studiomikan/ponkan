@@ -3,7 +3,7 @@ import { TagAction, TagActionResult, TagValue } from "../tag-action";
 import { PonEventHandler } from "../base/pon-event-handler";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export default function(p: Ponkan): TagAction[] {
+export default function (p: Ponkan): TagAction[] {
   return [
     // ======================================================================
     // スクリプト制御

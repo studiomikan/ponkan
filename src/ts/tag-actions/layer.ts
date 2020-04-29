@@ -2,7 +2,7 @@ import { Ponkan } from "../ponkan";
 import { TagAction, TagActionResult, TagValue } from "../tag-action";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export default function(p: Ponkan): TagAction[] {
+export default function (p: Ponkan): TagAction[] {
   return [
     // ======================================================================
     // レイヤー関係
@@ -200,7 +200,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("alpha", "number", false, 1.0),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.setBackgroundColor(values.color, values.alpha);
         });
         return "continue";
@@ -221,7 +221,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.clearBackgroundColor();
         });
         return "continue";
@@ -272,7 +272,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("blockwheel", "boolean", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           values.visible != null && (layer.visible = values.visible);
           values.x != null && (layer.x = values.x);
           values.y != null && (layer.y = values.y);
@@ -319,7 +319,7 @@ export default function(p: Ponkan): TagAction[] {
       ],
       (values: any, tick: number): TagActionResult => {
         const task: Promise<void>[] = [];
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           task.push(
             ((): Promise<void> => {
               values.x != null && (layer.x = values.x);
@@ -368,7 +368,7 @@ export default function(p: Ponkan): TagAction[] {
       ],
       (values: any, tick: number): TagActionResult => {
         const task: Promise<void>[] = [];
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           task.push(layer.loadChildImage(values.file, values.x, values.y, values.alpha));
         });
         Promise.all(task)
@@ -396,7 +396,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.freeImage();
           layer.freeChildImages();
         });

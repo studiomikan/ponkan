@@ -126,7 +126,7 @@ export class TextStyle extends PIXI.TextStyle {
     // そうなると、キャッシュの時などにちょっと困るので、先回りして先に囲んでおくことが必要。
     if (Array.isArray(this.fontFamily)) {
       const families: string[] = [];
-      this.fontFamily.forEach(family => {
+      this.fontFamily.forEach((family) => {
         family = family.trim();
         if (!/(["'])[^'"]+\1/.test(family) && genericFontFamilies.indexOf(family) < 0) {
           family = `"${family}"`;
@@ -302,7 +302,7 @@ export class LayerChar {
   public clone(): LayerChar {
     const me: any = this as any;
     const c: any = new LayerChar(this.ch, this.style.clone(), this.x, this.y) as any;
-    LayerChar.CloneParams.forEach(param => {
+    LayerChar.CloneParams.forEach((param) => {
       c[param] = me[param];
     });
     return c;
@@ -404,10 +404,10 @@ export class LayerTextLine {
     return this.container.y;
   }
   public get text(): string {
-    return this.chList.map(layerChar => layerChar.ch).join("");
+    return this.chList.map((layerChar) => layerChar.ch).join("");
   }
   public get ruby(): string {
-    return this.rubyList.map(layerChar => layerChar.ch).join("");
+    return this.rubyList.map((layerChar) => layerChar.ch).join("");
   }
   public get textX(): number {
     return this._textX;
@@ -423,7 +423,7 @@ export class LayerTextLine {
       return 0;
     }
     let width = 0;
-    this.chList.forEach(layerChar => {
+    this.chList.forEach((layerChar) => {
       width += layerChar.width;
     });
     width -= this.chList[this.chList.length - 1].style.pitch; // 最後の一文字pitchは幅に含めない
@@ -529,7 +529,7 @@ export class LayerTextLine {
    * @param tick 時刻
    */
   public beforeDraw(tick: number): void {
-    this.chList.forEach(ch => {
+    this.chList.forEach((ch) => {
       ch.beforeDraw(tick);
     });
   }
@@ -550,7 +550,7 @@ export class LayerTextLine {
 
     const me: any = this as any;
     const you: any = dest as any;
-    LayerTextLine.storeParams.forEach(p => (you[p] = me[p]));
+    LayerTextLine.storeParams.forEach((p) => (you[p] = me[p]));
 
     this.chList.forEach((layerChar: LayerChar) => {
       dest.chList.push(layerChar.clone().addTo(dest.container));
@@ -609,7 +609,7 @@ export class LayerTextCanvas {
   }
 
   public get text(): string {
-    return this.lines.map(line => line.text).join("\n");
+    return this.lines.map((line) => line.text).join("\n");
   }
 
   public constructor() {
@@ -626,7 +626,7 @@ export class LayerTextCanvas {
   }
 
   public beforeDraw(tick: number): void {
-    this.lines.forEach(line => {
+    this.lines.forEach((line) => {
       line.beforeDraw(tick);
     });
   }
@@ -882,7 +882,7 @@ export class LayerTextCanvas {
    * インデント位置は初期化される。
    */
   public clear(): void {
-    this.lines.forEach(line => {
+    this.lines.forEach((line) => {
       line.destroy();
     });
     this.lines = [];
@@ -923,10 +923,10 @@ export class LayerTextCanvas {
 
     const me = this as any;
     const you = dest as any;
-    LayerTextCanvas.storeParams.forEach(p => (you[p] = me[p]));
+    LayerTextCanvas.storeParams.forEach((p) => (you[p] = me[p]));
 
     dest.lines = [];
-    this.lines.forEach(line => {
+    this.lines.forEach((line) => {
       const destLine = new LayerTextLine().addTo(dest.container);
       line.copyTo(destLine);
       dest.lines.push(destLine);
@@ -936,7 +936,7 @@ export class LayerTextCanvas {
   public store(tick: number): any {
     const data: any = {};
     const me: any = this as any;
-    LayerTextCanvas.storeParams.forEach(p => (data[p] = me[p]));
+    LayerTextCanvas.storeParams.forEach((p) => (data[p] = me[p]));
     // data.lines = [];
     // this.lines.forEach(line => {
     //   data.lines.push(line.store(tick));
@@ -951,7 +951,7 @@ export class LayerTextCanvas {
 
   public async restore(data: any, tick: number, clear: boolean): Promise<void> {
     const me: any = this as any;
-    LayerTextCanvas.storeParams.forEach(p => (me[p] = data[p]));
+    LayerTextCanvas.storeParams.forEach((p) => (me[p] = data[p]));
 
     if (clear) {
       this.clear();
@@ -979,7 +979,7 @@ export class LayerTextCanvas {
   public applyConfig(config: any): void {
     if (config != null) {
       const me = this as any;
-      Object.keys(config).forEach(key => {
+      Object.keys(config).forEach((key) => {
         if (key in me) {
           me[key] = config[key];
         }

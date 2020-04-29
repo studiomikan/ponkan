@@ -30,7 +30,7 @@
  * @return オブジェクト
  */
 export function objExtend(base: any, obj: any): any {
-  Object.keys(obj).forEach(key => {
+  Object.keys(obj).forEach((key) => {
     if (Array.isArray(obj[key])) {
       base[key] = obj[key].slice();
     } else if (typeof obj[key] === "object") {
@@ -58,7 +58,7 @@ export function objSort(obj: any): any {
   const dest: any = {};
   Object.keys(obj)
     .sort()
-    .forEach(key => {
+    .forEach((key) => {
       dest[key] = obj[key];
     });
   return obj;

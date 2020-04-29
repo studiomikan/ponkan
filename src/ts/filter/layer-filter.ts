@@ -19,7 +19,7 @@ export class LayerFilter {
 
   protected permitParams(params: any, list: string[]): any {
     const newParams: any = {};
-    list.forEach(key => {
+    list.forEach((key) => {
       if (params[key] != null) {
         newParams[key] = params[key];
       }

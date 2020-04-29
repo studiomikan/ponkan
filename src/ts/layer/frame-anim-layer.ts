@@ -150,6 +150,6 @@ export class FrameAnimLayer extends BaseLayer {
     // その他のパラメータのコピー
     const me: any = this as any;
     const you: any = dest as any;
-    FrameAnimLayer.frameAnimLayerStoreParams.forEach(p => (you[p] = me[p]));
+    FrameAnimLayer.frameAnimLayerStoreParams.forEach((p) => (you[p] = me[p]));
   }
 }

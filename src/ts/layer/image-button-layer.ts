@@ -176,7 +176,7 @@ export class ImageButtonLayer extends TextButtonLayer {
   }
 
   public clearImageButtons(): void {
-    this.imageButtons.forEach(imageButton => {
+    this.imageButtons.forEach((imageButton) => {
       imageButton.clearCommandButton();
       imageButton.destroy();
       this.deleteChildLayer(imageButton);
@@ -190,7 +190,7 @@ export class ImageButtonLayer extends TextButtonLayer {
 
   public getButtons(): Button[] {
     const buttons: Button[] = super.getButtons();
-    this.imageButtons.forEach(imageButton => {
+    this.imageButtons.forEach((imageButton) => {
       buttons.push(imageButton as Button);
     });
     return buttons;
@@ -198,28 +198,28 @@ export class ImageButtonLayer extends TextButtonLayer {
 
   public lockButtons(): void {
     super.lockButtons();
-    this.imageButtons.forEach(imageButton => {
+    this.imageButtons.forEach((imageButton) => {
       imageButton.setButtonStatus("disabled");
     });
   }
 
   public unlockButtons(): void {
     super.unlockButtons();
-    this.imageButtons.forEach(imageButton => {
+    this.imageButtons.forEach((imageButton) => {
       imageButton.setButtonStatus("normal");
     });
   }
 
   public lockSystemButtons(): void {
     super.lockSystemButtons();
-    this.imageButtons.forEach(imageButton => {
+    this.imageButtons.forEach((imageButton) => {
       imageButton.lockSystemButton();
     });
   }
 
   public unlockSystemButtons(): void {
     super.unlockSystemButtons();
-    this.imageButtons.forEach(imageButton => {
+    this.imageButtons.forEach((imageButton) => {
       imageButton.unlockSystemButton();
     });
   }
@@ -228,7 +228,7 @@ export class ImageButtonLayer extends TextButtonLayer {
     const data: any = super.store(tick);
     // const me: any = this as any;
 
-    data.imageButtons = this.imageButtons.map(imageButton => imageButton.store(tick));
+    data.imageButtons = this.imageButtons.map((imageButton) => imageButton.store(tick));
 
     return data;
   }
@@ -273,7 +273,7 @@ export class ImageButtonLayer extends TextButtonLayer {
     super.copyTo(dest);
 
     dest.clearImageButtons();
-    this.imageButtons.forEach(srcBtn => {
+    this.imageButtons.forEach((srcBtn) => {
       const destBtn = new CommandImageButton(srcBtn.name, dest.resource, dest.owner);
       dest.addChild(destBtn);
       dest.imageButtons.push(destBtn);

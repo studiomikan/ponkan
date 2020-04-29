@@ -390,7 +390,7 @@ export class SliderLayer extends ToggleButtonLayer {
   }
 
   public clearSliders(): void {
-    this.sliders.forEach(slider => {
+    this.sliders.forEach((slider) => {
       slider.clearSlider();
       slider.destroy();
       this.deleteChildLayer(slider);
@@ -403,16 +403,16 @@ export class SliderLayer extends ToggleButtonLayer {
   }
 
   public lockSliders(): void {
-    this.sliders.forEach(slider => slider.lock());
+    this.sliders.forEach((slider) => slider.lock());
   }
 
   public unlockSliders(): void {
-    this.sliders.forEach(slider => slider.unlock());
+    this.sliders.forEach((slider) => slider.unlock());
   }
 
   public getButtons(): Button[] {
     const buttons: Button[] = super.getButtons();
-    this.sliders.forEach(slider => {
+    this.sliders.forEach((slider) => {
       buttons.push(slider.button as Button);
     });
     return buttons;
@@ -420,7 +420,7 @@ export class SliderLayer extends ToggleButtonLayer {
 
   public store(tick: number): any {
     const data: any = super.store(tick);
-    data.sliders = this.sliders.map(slider => slider.store(tick));
+    data.sliders = this.sliders.map((slider) => slider.store(tick));
     return data;
   }
 
@@ -466,7 +466,7 @@ export class SliderLayer extends ToggleButtonLayer {
     super.copyTo(dest);
 
     dest.clearSliders();
-    this.sliders.forEach(srcSlider => {
+    this.sliders.forEach((srcSlider) => {
       const destSlider = new Slider(this.name, dest.resource, dest.owner);
       dest.addChild(destSlider);
       dest.sliders.push(destSlider);

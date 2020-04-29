@@ -344,7 +344,7 @@ export class SoundBuffer {
   public async restore(data: any, tick: number): Promise<void> {
     const me: any = this as any;
     const ignore: string[] = ["hasSound", "state"];
-    const restoreParams = SoundBuffer.soundBufferStoreParams.filter(param => ignore.indexOf(param) === -1);
+    const restoreParams = SoundBuffer.soundBufferStoreParams.filter((param) => ignore.indexOf(param) === -1);
     restoreParams.forEach((param: string) => {
       me[param] = data[param];
     });

@@ -3,7 +3,7 @@ import { TagAction, TagActionResult, TagValue } from "../tag-action";
 import { PonEventHandler } from "../base/pon-event-handler";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export default function(p: Ponkan): TagAction[] {
+export default function (p: Ponkan): TagAction[] {
   return [
     // ======================================================================
     // 動画再生関係
@@ -51,7 +51,7 @@ export default function(p: Ponkan): TagAction[] {
       ],
       (values: any, tick: number): TagActionResult => {
         const task: Promise<unknown>[] = [];
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           task.push(
             ((): Promise<unknown> => {
               if (values.x != null) {
@@ -81,7 +81,7 @@ export default function(p: Ponkan): TagAction[] {
           .then(() => {
             p.conductor.start();
           })
-          .catch(e => {
+          .catch((e) => {
             console.error(e);
             p.error(new Error(`動画読み込みに失敗しました。(${values.file})`));
           });
@@ -104,7 +104,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.freeVideo();
         });
         return "continue";
@@ -129,7 +129,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("loop", "boolean", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           if (values.volume != null) {
             layer.videoVolume = values.volume;
           }
@@ -155,7 +155,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.playVideo();
         });
         return "continue";
@@ -177,7 +177,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.pauseVideo();
         });
         return "continue";
@@ -198,7 +198,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("page", "string", false, "current"),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.stopVideo();
         });
         return "continue";

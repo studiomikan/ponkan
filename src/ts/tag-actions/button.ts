@@ -2,7 +2,7 @@ import { Ponkan } from "../ponkan";
 import { TagAction, TagActionResult, TagValue } from "../tag-action";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export default function(p: Ponkan): TagAction[] {
+export default function (p: Ponkan): TagAction[] {
   return [
     // ======================================================================
     // ボタン関係
@@ -76,7 +76,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("keyindex", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           let keyIndex: number | null = values.keyindex;
           if (keyIndex == null || keyIndex == undefined) {
             keyIndex = p.getButtonKeyIndex(values);
@@ -135,7 +135,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("bgalphas", "array", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           if (values.bgcolors) {
             layer.changeTextButtonColors(values.btnname, values.bgcolors);
           }
@@ -161,7 +161,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.clearTextButtons();
           layer.clearImageButtons();
           layer.clearToggleButtons();
@@ -184,7 +184,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.clearTextButtons();
         });
         return "continue";
@@ -241,7 +241,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("keyindex", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           let keyIndex: number | null = values.keyindex;
           if (keyIndex == null || keyIndex == undefined) {
             keyIndex = p.getButtonKeyIndex(values);
@@ -291,7 +291,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.clearImageButtons();
         });
         return "continue";
@@ -356,7 +356,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("keyindex", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           let keyIndex: number | null = values.keyindex;
           if (keyIndex == null || keyIndex == undefined) {
             keyIndex = p.getButtonKeyIndex(values);
@@ -407,7 +407,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.clearToggleButtons();
         });
         return "continue";
@@ -428,7 +428,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.lockButtons();
         });
         return "continue";
@@ -450,7 +450,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.unlockButtons();
         });
         return "continue";
@@ -471,7 +471,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.lockSystemButtons();
         });
         return "continue";
@@ -492,7 +492,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.unlockSystemButtons();
         });
         return "continue";
@@ -543,7 +543,7 @@ export default function(p: Ponkan): TagAction[] {
         // new TagValue("clickbuf", "string", false, ""),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           let keyIndex: number | null = values.keyindex;
           if (keyIndex == null || keyIndex == undefined) {
             keyIndex = p.getButtonKeyIndex(values);
@@ -587,7 +587,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.lockSliders();
         });
         return "continue";
@@ -608,7 +608,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.unlockSliders();
         });
         return "continue";
@@ -629,7 +629,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.clearSliders();
         });
         return "continue";

@@ -14,7 +14,7 @@ describe("PonSprite", () => {
       if (this.children.length == 0) {
         throw new Error("pixiContainerRemoveChild: addとremoveが対応していない。");
       } else {
-        this.children = this.children.filter(c => c != child);
+        this.children = this.children.filter((c) => c != child);
       }
     }
   }
@@ -48,7 +48,7 @@ describe("PonSprite", () => {
   };
 
   const loadImage = (): Promise<HTMLImageElement> => {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const image = new Image();
       image.src = ImagePath;
       image.onload = (): void => {

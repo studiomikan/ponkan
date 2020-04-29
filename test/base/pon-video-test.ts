@@ -14,7 +14,7 @@ describe("PonVideo", () => {
       if (this.children.length == 0) {
         throw new Error("pixiContainerRemoveChild: addとremoveが対応していない。");
       } else {
-        this.children = this.children.filter(c => c != child);
+        this.children = this.children.filter((c) => c != child);
       }
     }
   }
@@ -61,7 +61,7 @@ describe("PonVideo", () => {
     });
 
     it("再生中かどうか取得できる", async () => {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         expect(pv.playing).to.be.false;
         pv.play();
         expect(pv.playing).to.be.true;
@@ -74,7 +74,7 @@ describe("PonVideo", () => {
     });
 
     it("一時停止できる", () => {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         pv.play();
         expect(pv.playing).to.be.true;
         setTimeout(() => {

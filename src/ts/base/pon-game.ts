@@ -26,7 +26,10 @@ export class PonGame implements IConductorEvent {
   public isLocked: boolean = false;
 
   public readonly resource: Resource;
-  private loopFlag: boolean = false;
+  private updateLoopFlag: boolean = false;
+  private drawLoopFlag: boolean = false;
+  private updateLoopTimer: number | null = null;
+  private drawLoopTimer: number | null = null;
   private fpsPreTick: number = 0;
   private fpsCount: number = 0;
   private fps: number = 0;
@@ -96,21 +99,47 @@ export class PonGame implements IConductorEvent {
 
   public start(): void {
     this.stop();
-    this.loopFlag = true;
-    this.fpsPreTick = Date.now();
-    window.setTimeout(() => {
+    this.startUpdateLoop();
+    this.startDrawLoop();
+  }
+
+  public startUpdateLoop(): void {
+    this.updateLoopFlag = true;
+    this.updateLoopTimer = window.setTimeout(() => {
       this.updateLoop();
     }, 0);
+  }
+
+  public startDrawLoop(): void {
+    this.fpsPreTick = Date.now();
+    this.drawLoopFlag = true;
     window.setTimeout(() => {
       this.drawLoop();
     }, 60);
   }
 
   public stop(): void {
-    this.loopFlag = false;
+    this.stopUpdateLoop();
+    this.stopDrawLoop();
+  }
+
+  public stopUpdateLoop(): void {
+    this.updateLoopFlag = false;
+    if (this.updateLoopTimer != null) {
+      window.clearTimeout(this.updateLoopTimer);
+      this.updateLoopTimer = null;
+    }
+  }
+
+  public stopDrawLoop(): void {
     this.fpsPreTick = 0;
     this.fpsCount = 0;
     this.fps = 0;
+    this.drawLoopFlag = false;
+    if (this.drawLoopTimer != null) {
+      window.cancelAnimationFrame(this.drawLoopTimer);
+      this.drawLoopTimer = null;
+    }
   }
 
   public lock(stop = true): void {
@@ -282,12 +311,12 @@ export class PonGame implements IConductorEvent {
 
   private updateLoop(): void {
     try {
-      if (!this.loopFlag) {
+      if (!this.updateLoopFlag) {
         return;
       }
       const tick: number = Date.now();
       this.update(tick);
-      window.setTimeout(() => this.updateLoop(), 1);
+      this.updateLoopTimer = window.setTimeout(() => this.updateLoop(), 1);
     } catch (e) {
       console.error(e);
       this.error(e);
@@ -296,7 +325,7 @@ export class PonGame implements IConductorEvent {
 
   private drawLoop(): void {
     try {
-      if (!this.loopFlag) {
+      if (!this.drawLoopFlag) {
         return;
       }
       const tick: number = Date.now();
@@ -320,7 +349,7 @@ export class PonGame implements IConductorEvent {
       }
 
       this.fpsCount++;
-      window.requestAnimationFrame(() => this.drawLoop());
+      this.drawLoopTimer = window.requestAnimationFrame(() => this.drawLoop());
     } catch (e) {
       console.error(e);
       this.error(e);
@@ -464,12 +493,12 @@ export class PonGame implements IConductorEvent {
   }
 
   public removeForePrimaryLayer(layer: BaseLayer): void {
-    this.forePrimaryLayers = this.forePrimaryLayers.filter(a => a !== layer);
+    this.forePrimaryLayers = this.forePrimaryLayers.filter((a) => a !== layer);
     this.renderer.removeFromFore(layer.container);
   }
 
   public removeBackPrimaryLayer(layer: BaseLayer): void {
-    this.backPrimaryLayers = this.backPrimaryLayers.filter(a => a !== layer);
+    this.backPrimaryLayers = this.backPrimaryLayers.filter((a) => a !== layer);
     this.renderer.removeFromBack(layer.container);
   }
 
@@ -495,17 +524,17 @@ export class PonGame implements IConductorEvent {
    */
   public resetPrimaryLayersRenderer(): void {
     // レンダラーとの紐付けを解除
-    this.forePrimaryLayers.forEach(fore => {
+    this.forePrimaryLayers.forEach((fore) => {
       fore.container.parent.removeChild(fore.container);
     });
-    this.backPrimaryLayers.forEach(back => {
+    this.backPrimaryLayers.forEach((back) => {
       back.container.parent.removeChild(back.container);
     });
     // 新しくレンダラーに紐付ける
-    this.forePrimaryLayers.forEach(fore => {
+    this.forePrimaryLayers.forEach((fore) => {
       this.renderer.addToFore(fore.container);
     });
-    this.backPrimaryLayers.forEach(back => {
+    this.backPrimaryLayers.forEach((back) => {
       this.renderer.addToBack(back.container);
     });
   }
@@ -553,13 +582,13 @@ export class PonGame implements IConductorEvent {
 
   private removeEvents(): void {
     const removeFromHandlers = (handlers: any): void => {
-      Object.keys(handlers).forEach(key => {
+      Object.keys(handlers).forEach((key) => {
         window.removeEventListener(key, handlers[key]);
       });
     };
 
     if (this.eventHandlers != null) {
-      Object.keys(this.eventHandlers).forEach(key => {
+      Object.keys(this.eventHandlers).forEach((key) => {
         removeFromHandlers(this.eventHandlers[key]);
       });
     }

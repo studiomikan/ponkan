@@ -119,7 +119,7 @@ export class MovableLayer extends SliderLayer {
     const path: IMovePosInfo[] = [];
     orgPath.forEach((p: any) => {
       const obj: any = {};
-      Object.keys(p).forEach(key => {
+      Object.keys(p).forEach((key) => {
         obj[key] = p[key];
       });
       path.push(obj);
@@ -413,6 +413,6 @@ export class MovableLayer extends SliderLayer {
     super.copyTo(dest);
     const me: any = this as any;
     const you: any = dest as any;
-    MovableLayer.movableLayerStoreParams.forEach(p => (you[p] = me[p]));
+    MovableLayer.movableLayerStoreParams.forEach((p) => (you[p] = me[p]));
   }
 }

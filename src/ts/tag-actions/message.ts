@@ -4,7 +4,7 @@ import { PonEventHandler } from "../base/pon-event-handler";
 import { PonLayer } from "../layer/pon-layer";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export default function(p: Ponkan): TagAction[] {
+export default function (p: Ponkan): TagAction[] {
   return [
     // ======================================================================
     // メッセージ関係
@@ -222,12 +222,12 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("text", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.addChar(values.text);
         });
         if (values.page === "fore" && p.addCharWithBackFlag) {
           values.page = "back";
-          p.getLayers(values).forEach(layer => {
+          p.getLayers(values).forEach((layer) => {
             layer.addChar(values.text);
           });
         }
@@ -256,7 +256,7 @@ export default function(p: Ponkan): TagAction[] {
       ],
       (values: any, tick: number): TagActionResult => {
         if (values.text != null) {
-          p.getLayers(values).forEach(layer => {
+          p.getLayers(values).forEach((layer) => {
             layer.reserveRubyText(values.text);
           });
         }
@@ -314,7 +314,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("edgealpha", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           if (values.offset != null) {
             layer.textCanvas.rubyOffset = values.offset;
           }
@@ -389,7 +389,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.addTextReturn();
         });
         return "continue";
@@ -411,7 +411,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.clearText();
         });
         return "continue";
@@ -507,7 +507,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("y", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.setCharLocate(values.x, values.y);
         });
         return "continue";
@@ -531,7 +531,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("history", "boolean", false, true),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.setIndentPoint();
         });
         if (values.history) {
@@ -557,7 +557,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("history", "boolean", false, true),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.clearIndentPoint();
         });
         if (values.history) {

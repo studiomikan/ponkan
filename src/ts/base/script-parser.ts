@@ -26,7 +26,7 @@ export class ScriptParser {
   }
 
   public debugPrint(): void {
-    this.tags.forEach(tag => {
+    this.tags.forEach((tag) => {
       tag.debugPrint();
     });
   }

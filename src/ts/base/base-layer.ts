@@ -376,7 +376,7 @@ export class BaseLayer {
     this.debugContainer.destroy();
     this.container.destroy();
 
-    this.children.forEach(child => {
+    this.children.forEach((child) => {
       child.destroy();
     });
     this._children = [];
@@ -394,7 +394,7 @@ export class BaseLayer {
    */
   public deleteChildLayer(childLayer: BaseLayer): void {
     const tmp: BaseLayer[] = [];
-    this.children.forEach(child => {
+    this.children.forEach((child) => {
       if (child !== childLayer) {
         tmp.push(child);
       }
@@ -415,7 +415,7 @@ export class BaseLayer {
   }
 
   public update(tick: number): void {
-    this.children.forEach(child => {
+    this.children.forEach((child) => {
       child.update(tick);
     });
   }
@@ -439,7 +439,7 @@ export class BaseLayer {
       this.canvasSprite.beforeDraw(tick);
     }
     // 子レイヤーのイベント呼ぶ
-    this.children.forEach(child => {
+    this.children.forEach((child) => {
       child.beforeDraw(tick);
     });
   }
@@ -1110,7 +1110,7 @@ export class BaseLayer {
   public store(tick: number): any {
     const data: any = {};
     const me: any = this as any;
-    BaseLayer.baseLayerStoreParams.forEach(p => (data[p] = me[p]));
+    BaseLayer.baseLayerStoreParams.forEach((p) => (data[p] = me[p]));
     data.textCanvas = this.textCanvas.store(tick);
     return data;
   }
@@ -1125,9 +1125,9 @@ export class BaseLayer {
     const storeParams = (): void => {
       const me: any = this as any;
       const restoreParams = BaseLayer.baseLayerStoreParams.filter(
-        param => BaseLayer.baseLayerIgnoreParams.indexOf(param) === -1,
+        (param) => BaseLayer.baseLayerIgnoreParams.indexOf(param) === -1,
       );
-      restoreParams.forEach(p => (me[p] = data[p]));
+      restoreParams.forEach((p) => (me[p] = data[p]));
     };
 
     // テキスト
@@ -1227,9 +1227,9 @@ export class BaseLayer {
     const me: any = this as any;
     const you: any = dest as any;
     const params = BaseLayer.baseLayerStoreParams.filter(
-      param => BaseLayer.baseLayerIgnoreParams.indexOf(param) === -1,
+      (param) => BaseLayer.baseLayerIgnoreParams.indexOf(param) === -1,
     );
-    params.forEach(p => (you[p] = me[p]));
+    params.forEach((p) => (you[p] = me[p]));
 
     // テキストのコピー
     dest.clearText();
@@ -1244,7 +1244,7 @@ export class BaseLayer {
   public applyConfig(config: any): void {
     if (config != null) {
       const me = this as any;
-      Object.keys(config).forEach(key => {
+      Object.keys(config).forEach((key) => {
         if (key in me) {
           me[key] = config[key];
         }

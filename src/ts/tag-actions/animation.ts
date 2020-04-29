@@ -3,7 +3,7 @@ import { TagAction, TagActionResult, TagValue } from "../tag-action";
 import { PonEventHandler } from "../base/pon-event-handler";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export default function(p: Ponkan): TagAction[] {
+export default function (p: Ponkan): TagAction[] {
   return [
     // ======================================================================
     // アニメーション関係
@@ -34,7 +34,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("frames", "array", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.initFrameAnim(values.loop, values.time, values.width, values.height, values.frames);
         });
         return "continue";
@@ -55,7 +55,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.startFrameAnim(tick);
         });
         return "continue";
@@ -78,7 +78,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.deleteFrameAnim();
         });
         return "continue";
@@ -102,7 +102,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("canskip", "boolean", false, true),
       ],
       (values: any, tick: number): TagActionResult => {
-        const layers = p.getLayers(values).filter(l => l.frameAnimRunning && !l.frameAnimLoop);
+        const layers = p.getLayers(values).filter((l) => l.frameAnimRunning && !l.frameAnimLoop);
         if (layers.length === 0) {
           return "continue";
         }
@@ -162,7 +162,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("loop", "boolean", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.startMove(tick, values.time, values.delay, values.path, values.type, values.ease, values.loop);
         });
         return "continue";
@@ -184,7 +184,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.stopMove();
         });
         return "continue";
