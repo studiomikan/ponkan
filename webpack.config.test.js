@@ -43,4 +43,5 @@ module.exports = {
     ]),
     new WriteFilePlugin(),
   ],
+  devtool: 'source-map',
 };

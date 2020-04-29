@@ -22,4 +22,5 @@ module.exports = merge(common, {
     disableHostCheck: true,
     contentBase: path.join(__dirname, "dist_dev"),
   },
+  devtool: 'source-map',
 });
