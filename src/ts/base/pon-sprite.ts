@@ -54,6 +54,10 @@ export class PonSprite {
     return this.type;
   }
 
+  public get isEmpty(): boolean {
+    return this.type === SpriteType.Unknown;
+  }
+
   /** x座標 */
   public get x(): number {
     return this._x;

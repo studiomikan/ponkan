@@ -278,6 +278,8 @@ declare module 'ponkan/base/base-layer' {
     * すべてのレイヤーの基本となるレイヤー
     */
   export class BaseLayer {
+      /** レイヤーID */
+      readonly id: string;
       /** レイヤー名 */
       name: string;
       /** リソース */
@@ -520,6 +522,8 @@ declare module 'ponkan/base/base-layer' {
       freeVideo(): void;
       get isPlayingVideo(): boolean;
       get isLoopPlayingVideo(): boolean;
+      setMaskLayer(layer: BaseLayer): void;
+      clearMaskLayer(): void;
       protected static baseLayerStoreParams: string[];
       protected static baseLayerIgnoreParams: string[];
       /**
@@ -541,6 +545,10 @@ declare module 'ponkan/base/base-layer' {
         * 画像読み込みなどの非同期処理が必要なものには対応していない。
         */
       applyConfig(config: any): void;
+      protected static layers: Map<string, BaseLayer>;
+      protected static addLayer(layer: BaseLayer): void;
+      protected static removeLayer(layer: BaseLayer): void;
+      static getFromId(id: string): BaseLayer | undefined;
   }
 }
 
@@ -1111,6 +1119,7 @@ declare module 'ponkan/base/pon-sprite' {
       type: SpriteType;
       get pixiDisplayObject(): PIXI.DisplayObject | null;
       get spriteType(): SpriteType;
+      get isEmpty(): boolean;
       /** x座標 */
       get x(): number;
       /** x座標 */

@@ -349,7 +349,7 @@ export default function (p: Ponkan): TagAction[] {
     /// @details
     ///   [`loadimage`](#loadimage-image) コマンドとは別に、追加で画像を読み込みます。
     new TagAction(
-      ["loadchildimage", "childimage", ""],
+      ["loadchildimage", "childimage"],
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -399,6 +399,92 @@ export default function (p: Ponkan): TagAction[] {
         p.getLayers(values).forEach((layer) => {
           layer.freeImage();
           layer.freeChildImages();
+        });
+        return "continue";
+      },
+    ),
+    /// @category レイヤー操作
+    /// @description レイヤーにマスクレイヤーを設定する
+    /// @details
+    ///   レイヤーにマスクレイヤーを設定します。
+    ///
+    ///   マスクレイヤーに読み込まれている画像を、マスクとして使用します。
+    ///   マスクレイヤーに画像が読み込まれていない場合は何もしません。
+    ///   マスクレイヤーを複数指定することはできません。
+    ///
+    ///   マスクを指定すると、マスクレイヤーに読み込まれた画像によってマスク処理が行われます。
+    ///   マスク画像の白（#FFFFFF）の部分は表示され、黒（#000000）の部分は非表示になります。
+    ///
+    ///   マスク画像自体のalpha値も考慮されます。（レイヤーのalpha値ではなく、png画像などのalpha値です。）
+    ///
+    ///   マスクレイヤーのページは、対象レイヤーとは別に指定します。
+    ///   また、マスクレイヤーの指定は、backlayやpretransなどでコピーされません。
+    ///   たとえば、表レイヤー0に対して、表レイヤー1をマスクレイヤーとして指定したとします。
+    ///   この後、backlayなどで表ページ->裏ページにコピーします。
+    ///   このとき、裏レイヤー0に指定されているマスクは、表レイヤー1のままです。
+    ///   さらにこの後にflipでページを入れ替えたとすると、裏レイヤー1がマスクレイヤーになります。
+    ///   ```
+    ///   # マスクをするレイヤー
+    ///   ;image lay: 0, file: "image/img1.png", visible: true
+    ///   # マスクとして使用するレイヤー。非表示にしておく方がよい。
+    ///   ;image lay: 1, file: "image/mask.png", visible: false
+    ///   # レイヤー0のマスクとして、レイヤー1を指定する
+    ///   ;setmasklay lay: 0, page: "fore", masklay: 1, maskpage: "fore"
+    ///   # 表ページ -> 裏ページにコピー
+    ///   ;backlay
+    ///
+    ///   # このとき { lay: 0, page: "back" } に指定されているマスクレイヤーは { lay: 1, page: "fore" }
+    ///
+    ///   # 表ページ <-> 裏ページ入れ替え
+    ///   ;flip
+    ///
+    ///   # このとき { lay: 0, page: "back" } に指定されているマスクレイヤーは { lay: 1, page: "back" }
+    ///   # また、{ lay: 0, page: "fore" } に指定されているマスクレイヤーは { lay: 1, page: "back" }
+    ///   # になります。最初に指定したレイヤーがページに関係なくそのまま設定され続けることに注意してください。
+    ///   ```
+    new TagAction(
+      ["setmasklay", "setmask"],
+      [
+        /// @param 対象レイヤー（マスクを設定するレイヤー）
+        new TagValue("lay", "string", true, null),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
+        /// @param マスクとして使用するレイヤー。一つのみ指定できます。
+        new TagValue("masklay", "string", true, null),
+        /// @param マスクとして使用するレイヤーのページ
+        new TagValue("maskpage", "string", false, "current"),
+      ],
+      (values: any, tick: number): TagActionResult => {
+        const maskLayers = p.getLayers({ lay: values.masklay, page: values.page });
+        if (maskLayers.length !== 1) {
+          p.error(new Error("マスク用レイヤーを複数指定することはできません。"));
+          return "continue";
+        }
+        p.getLayers(values).forEach((layer) => {
+          layer.setMaskLayer(maskLayers[0]);
+        });
+        return "continue";
+      },
+    ),
+    /// @category レイヤー操作
+    /// @description マスクレイヤーを解除する
+    /// @details
+    ///   レイヤーに設定されたマスクレイヤー設定を解除します。
+    new TagAction(
+      ["clearmasklay", "clearmask"],
+      [
+        /// @param 対象レイヤー
+        new TagValue("lay", "string", true, null),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
+      ],
+      (values: any, tick: number): TagActionResult => {
+        p.getLayers(values).forEach((layer) => {
+          layer.clearMaskLayer();
         });
         return "continue";
       },

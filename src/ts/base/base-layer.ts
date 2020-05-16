@@ -13,6 +13,8 @@ import { LayerTextCanvas } from "./layer-text-canvas";
  * すべてのレイヤーの基本となるレイヤー
  */
 export class BaseLayer {
+  /** レイヤーID */
+  public readonly id: string = `${Date.now()}-${Math.floor(Math.random() * 9999)}-${PIXI.utils.uid()}`;
   /** レイヤー名 */
   public name: string;
   /** リソース */
@@ -72,6 +74,10 @@ export class BaseLayer {
   private _quakeOffsetY: number = 0;
   /** quakeを無視する */
   public ignoreQuake: boolean = false;
+  /** このレイヤーのマスクとして使う他レイヤー */
+  private exMaskLayerId: string | null = null;
+  /** このレイヤーをマスクとして使っている他レイヤーのリスト */
+  private referencedAsMaskIdList: string[] = [];
 
   /** 読み込んでいる画像 */
   protected image: HTMLImageElement | null = null;
@@ -181,7 +187,8 @@ export class BaseLayer {
     return this.maskSprite.width;
   }
   public set width(width: number) {
-    this.maskSprite.width = this.backgroundSprite.width = width;
+    this.maskSprite.width = width;
+    this.backgroundSprite.width = width;
     if (this.textCanvas.width != width) {
       this.clearText();
       this.textCanvas.width = width;
@@ -191,7 +198,8 @@ export class BaseLayer {
     return this.maskSprite.height;
   }
   public set height(height: number) {
-    this.maskSprite.height = this.backgroundSprite.height = height;
+    this.maskSprite.height = height;
+    this.backgroundSprite.height = height;
     if (this.textCanvas.height != height) {
       this.clearText();
       this.textCanvas.height = height;
@@ -271,6 +279,8 @@ export class BaseLayer {
   }
 
   public constructor(name: string, resource: Resource, owner: PonGame) {
+    BaseLayer.addLayer(this);
+
     this.name = name;
     this.resource = resource;
     this.owner = owner;
@@ -354,6 +364,8 @@ export class BaseLayer {
    * 破棄
    */
   public destroy(): void {
+    BaseLayer.removeLayer(this);
+
     this.clearText();
     this.freeImage();
     this.freeCanvas();
@@ -393,13 +405,7 @@ export class BaseLayer {
    * 管理から削除されるだけで、レイヤー自体は初期化されたりしない。
    */
   public deleteChildLayer(childLayer: BaseLayer): void {
-    const tmp: BaseLayer[] = [];
-    this.children.forEach((child) => {
-      if (child !== childLayer) {
-        tmp.push(child);
-      }
-    });
-    this._children = tmp;
+    this._children = this.children.filter((child) => child !== childLayer);
   }
 
   /**
@@ -899,6 +905,11 @@ export class BaseLayer {
    * 画像を開放する
    */
   public freeImage(): void {
+    if (this.referencedAsMaskIdList.length > 0) {
+      this.referencedAsMaskIdList.forEach((id) => {
+        BaseLayer.getFromId(id)?.clearMaskLayer();
+      });
+    }
     if (this.imageSprite != null) {
       this.imageSprite.destroy();
     }
@@ -1032,6 +1043,26 @@ export class BaseLayer {
     return this.video != null && this.video.loop;
   }
 
+  public setMaskLayer(layer: BaseLayer): void {
+    if (layer.imageSprite != null && !layer.imageSprite.isEmpty) {
+      this.clearMaskLayer();
+      this.exMaskLayerId = layer.id;
+      layer.referencedAsMaskIdList.push(this.id);
+      this.container.mask = layer.imageSprite?.pixiDisplayObject as PIXI.Container;
+    }
+  }
+
+  public clearMaskLayer(): void {
+    if (this.exMaskLayerId == null) {
+      return;
+    }
+    const maskLayer = BaseLayer.getFromId(this.exMaskLayerId);
+    if (maskLayer != null) {
+      maskLayer.referencedAsMaskIdList = maskLayer.referencedAsMaskIdList.filter((id) => id != this.id);
+    }
+    this.container.mask = this.maskSprite;
+  }
+
   protected static baseLayerStoreParams: string[] = [
     "name",
     "x",
@@ -1048,8 +1079,8 @@ export class BaseLayer {
     "backgroundAlpha",
     "hasBackgroundColor",
     "ignoreQuake",
-    "ignoreQuakeX",
-    "ignoreQuakeY",
+    "exMaskLayerId",
+    "referencedAsMaskIdList",
     "imageFilePath",
     "imageX",
     "imageY",
@@ -1147,6 +1178,13 @@ export class BaseLayer {
       // 画像がある場合は非同期で読み込んでその後にサイズ等を復元する
       await this.loadImage(data.imageFilePath);
       storeParams();
+      // このレイヤーをマスクとして使っているレイヤーがあれば復元
+      if (this.referencedAsMaskIdList.length > 0) {
+        this.referencedAsMaskIdList.forEach((id) => {
+          BaseLayer.getFromId(id)?.setMaskLayer(this);
+        });
+      }
+      // その他の復元
       this.restoreAfterLoadImage(data, tick);
       // asyncTask.add((params: any, index: number): AsyncCallbacks => {
       //   const cb = this.loadImage(data.imageFilePath);
@@ -1234,6 +1272,14 @@ export class BaseLayer {
     // テキストのコピー
     dest.clearText();
     this.textCanvas.copyTo(dest.textCanvas);
+
+    // マスクのコピー
+    if (this.exMaskLayerId != null) {
+      const maskLayer = BaseLayer.getFromId(this.exMaskLayerId);
+      if (maskLayer != null) {
+        dest.setMaskLayer(maskLayer);
+      }
+    }
   }
 
   /**
@@ -1253,5 +1299,19 @@ export class BaseLayer {
         this.textCanvas.applyConfig(config.textCanvasConfig);
       }
     }
+  }
+
+  protected static layers = new Map<string, BaseLayer>();
+
+  protected static addLayer(layer: BaseLayer): void {
+    BaseLayer.layers.set(layer.id, layer);
+  }
+
+  protected static removeLayer(layer: BaseLayer): void {
+    BaseLayer.layers.delete(layer.id);
+  }
+
+  public static getFromId(id: string): BaseLayer | undefined {
+    return BaseLayer.layers.get(id);
   }
 }
