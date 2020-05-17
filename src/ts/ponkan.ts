@@ -1791,7 +1791,7 @@ export class Ponkan extends PonGame {
     });
     this.waitUntilStartTick = -1;
 
-    // layer
+    // layer, history layer
     // TODO: 並列化
     await this.forePrimaryLayer.restore(data.forePrimaryLayer, tick, true);
     await this.backPrimaryLayer.restore(data.backPrimaryLayer, tick, true);
@@ -1799,9 +1799,16 @@ export class Ponkan extends PonGame {
       await this.foreLayers[i].restore(data.foreLayers[i], tick, true);
       await this.backLayers[i].restore(data.backLayers[i], tick, true);
     }
-
-    // history layer
     await this.historyLayer.restore(data.historyLayer, tick, false);
+
+    // layer.afterRestore
+    await this.forePrimaryLayer.afterRestore(data.forePrimaryLayer, tick, true);
+    await this.backPrimaryLayer.afterRestore(data.backPrimaryLayer, tick, true);
+    for (let i = 0; i < data.foreLayers.length; i++) {
+      await this.foreLayers[i].afterRestore(data.foreLayers[i], tick, true);
+      await this.backLayers[i].afterRestore(data.backLayers[i], tick, true);
+    }
+    await this.historyLayer.afterRestore(data.historyLayer, tick, false);
 
     // sound
     this.soundBuffers.forEach((sb) => {

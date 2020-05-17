@@ -16,7 +16,7 @@ export class BaseLayer {
   /** レイヤーID */
   public readonly id: string = `${Date.now()}-${Math.floor(Math.random() * 9999)}-${PIXI.utils.uid()}`;
   /** レイヤー名 */
-  public name: string;
+  public readonly name: string;
   /** リソース */
   protected resource: Resource;
   /** 持ち主 */
@@ -819,23 +819,6 @@ export class BaseLayer {
     this.textCanvas.addTextReturn();
   }
 
-  // /**
-  //  * 現在描画中のテキスト行をの位置をtextAlignにそろえる
-  //  */
-  // public alignCurrentTextLine(): void {
-  //   switch (this.textAlign) {
-  //     case "left":
-  //       this.currentTextLine.x = this.getTextLineBasePoint();
-  //       break;
-  //     case "center":
-  //       this.currentTextLine.x = this.getTextLineBasePoint() - this.currentTextLine.width / 2;
-  //       break;
-  //     case "right":
-  //       this.currentTextLine.x = this.getTextLineBasePoint() - this.currentTextLine.width;
-  //       break;
-  //   }
-  // }
-
   /**
    * テキストの表示位置を指定する。
    * 内部的には、指定前とは別の行として扱われる。
@@ -1064,6 +1047,7 @@ export class BaseLayer {
   }
 
   protected static baseLayerStoreParams: string[] = [
+    "id",
     "name",
     "x",
     "y",
@@ -1092,38 +1076,6 @@ export class BaseLayer {
     "videoLoop",
     "videoVolume",
     "isPlayingVideo",
-    // "textFontFamily",
-    // "textFontSize",
-    // "textFontWeight",
-    // "textFontStyle",
-    // "textColor",
-    // "textShadowVisible",
-    // "textShadowAlpha",
-    // "textShadowAngle",
-    // "textShadowBlur",
-    // "textShadowColor",
-    // "textShadowDistance",
-    // "textEdgeColor",
-    // "textEdgeWidth",
-    // "textMarginTop",
-    // "textMarginRight",
-    // "textMarginBottom",
-    // "textMarginLeft",
-    // "textPitch",
-    // "textLineHeight",
-    // "textLinePitch",
-    // "textAutoReturn",
-    // "textLocatePoint",
-    // "textIndentPoint",
-    // "reservedTextIndentPoint",
-    // "textAlign",
-    // "rubyFontSize",
-    // "rubyOffset",
-    // "rubyPitch",
-    // "textInEffectTypes",
-    // "textInEffectTime",
-    // "textInEffectEase",
-    // "textInEffectOptions",
   ];
 
   protected static baseLayerIgnoreParams: string[] = [
@@ -1178,22 +1130,8 @@ export class BaseLayer {
       // 画像がある場合は非同期で読み込んでその後にサイズ等を復元する
       await this.loadImage(data.imageFilePath);
       storeParams();
-      // このレイヤーをマスクとして使っているレイヤーがあれば復元
-      if (this.referencedAsMaskIdList.length > 0) {
-        this.referencedAsMaskIdList.forEach((id) => {
-          BaseLayer.getFromId(id)?.setMaskLayer(this);
-        });
-      }
       // その他の復元
       this.restoreAfterLoadImage(data, tick);
-      // asyncTask.add((params: any, index: number): AsyncCallbacks => {
-      //   const cb = this.loadImage(data.imageFilePath);
-      //   cb.done(() => {
-      //     storeParams();
-      //     this.restoreAfterLoadImage(data, tick);
-      //   });
-      //   // return cb;
-      // });
     } else if (
       data.videoFilePath != null &&
       data.videoFilePath != "" &&
@@ -1212,15 +1150,6 @@ export class BaseLayer {
       );
       storeParams();
       this.restoreAfterLoadImage(data, tick);
-      // asyncTask.add((params: any, index: number): AsyncCallbacks => {
-      //   const cb = this.loadVideo(data.videoFilePath, data.videoWidth, data.videoHeight,
-      //                             data.isPlayingVideo, data.videoLoop, data.videoVolume);
-      //   cb.done(() => {
-      //     storeParams();
-      //     this.restoreAfterLoadImage(data, tick);
-      //   });
-      //   return cb;
-      // });
     } else {
       storeParams();
       this.restoreAfterLoadImage(data, tick);
@@ -1229,6 +1158,18 @@ export class BaseLayer {
 
   protected restoreAfterLoadImage(data: any, tick: number): void {
     // 継承先でオーバーライドして使うこと
+  }
+
+  // 一旦全レイヤーのrestoreが終わった後に呼ばれる。
+  // restore内ではまだ他レイヤのidが復元されていないことがあるため、
+  // 復元時にidを参照したい場合、このタイミングで復元する。
+  public async afterRestore(data: any, tick: number, clear: boolean): Promise<void> {
+    // このレイヤーをマスクとして使っているレイヤーがあれば復元
+    if (this.referencedAsMaskIdList.length > 0) {
+      this.referencedAsMaskIdList.forEach((id) => {
+        BaseLayer.getFromId(id)?.setMaskLayer(this);
+      });
+    }
   }
 
   public copyTo(dest: BaseLayer): void {
@@ -1301,16 +1242,30 @@ export class BaseLayer {
     }
   }
 
+  /** レイヤーIDによる管理用マップ。キー：id、値：BaseLayer  */
   protected static layers = new Map<string, BaseLayer>();
 
+  /**
+   * レイヤー管理に追加する
+   * @param layer レイヤー
+   */
   protected static addLayer(layer: BaseLayer): void {
     BaseLayer.layers.set(layer.id, layer);
   }
 
+  /**
+   * レイヤー管理から削除する
+   * @param layer 削除するレイヤー
+   */
   protected static removeLayer(layer: BaseLayer): void {
     BaseLayer.layers.delete(layer.id);
   }
 
+  /**
+   * レイヤーIDからレイヤーを取得する。
+   * @param id レイヤーID
+   * @return レイヤー。存在しない場合はundefined
+   */
   public static getFromId(id: string): BaseLayer | undefined {
     return BaseLayer.layers.get(id);
   }

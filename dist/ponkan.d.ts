@@ -281,7 +281,7 @@ declare module 'ponkan/base/base-layer' {
       /** レイヤーID */
       readonly id: string;
       /** レイヤー名 */
-      name: string;
+      readonly name: string;
       /** リソース */
       protected resource: Resource;
       /** 持ち主 */
@@ -538,6 +538,7 @@ declare module 'ponkan/base/base-layer' {
         */
       restore(data: any, tick: number, clear: boolean): Promise<void>;
       protected restoreAfterLoadImage(data: any, tick: number): void;
+      afterRestore(data: any, tick: number, clear: boolean): Promise<void>;
       copyTo(dest: BaseLayer): void;
       /**
         * コンフィグを反映する。
@@ -545,9 +546,23 @@ declare module 'ponkan/base/base-layer' {
         * 画像読み込みなどの非同期処理が必要なものには対応していない。
         */
       applyConfig(config: any): void;
+      /** レイヤーIDによる管理用マップ。キー：id、値：BaseLayer  */
       protected static layers: Map<string, BaseLayer>;
+      /**
+        * レイヤー管理に追加する
+        * @param layer レイヤー
+        */
       protected static addLayer(layer: BaseLayer): void;
+      /**
+        * レイヤー管理から削除する
+        * @param layer 削除するレイヤー
+        */
       protected static removeLayer(layer: BaseLayer): void;
+      /**
+        * レイヤーIDからレイヤーを取得する。
+        * @param id レイヤーID
+        * @return レイヤー。存在しない場合はundefined
+        */
       static getFromId(id: string): BaseLayer | undefined;
   }
 }
