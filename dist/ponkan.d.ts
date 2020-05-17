@@ -1858,7 +1858,7 @@ declare module 'ponkan/layer/movable-layer' {
       constructor(name: string, resource: Resource, owner: Ponkan);
       startMove(tick: number, time: number, delay: number, path: IMovePosInfo[], type: "linear" | "bezier2" | "bezier3" | "catmullrom", ease: "none" | "in" | "out" | "both", loop: boolean): void;
       stopMove(triggerEvent?: boolean): void;
-      update(tick: number): void;
+      beforeDraw(tick: number): void;
       /**
         * 直線移動する
         * @param tick 時刻

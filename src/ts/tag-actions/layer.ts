@@ -426,7 +426,7 @@ export default function (p: Ponkan): TagAction[] {
     ///   ```
     ///   # マスクをするレイヤー
     ///   ;image lay: 0, file: "image/img1.png", visible: true
-    ///   # マスクとして使用するレイヤー。非表示にしておく方がよい。
+    ///   # マスクとして使用するレイヤー。
     ///   ;image lay: 1, file: "image/mask.png", visible: false
     ///   # レイヤー0のマスクとして、レイヤー1を指定する
     ///   ;setmasklay lay: 0, page: "fore", masklay: 1, maskpage: "fore"
@@ -438,10 +438,17 @@ export default function (p: Ponkan): TagAction[] {
     ///   # 表ページ <-> 裏ページ入れ替え
     ///   ;flip
     ///
-    ///   # このとき { lay: 0, page: "back" } に指定されているマスクレイヤーは { lay: 1, page: "back" }
-    ///   # また、{ lay: 0, page: "fore" } に指定されているマスクレイヤーは { lay: 1, page: "back" }
-    ///   # になります。最初に指定したレイヤーがページに関係なくそのまま設定され続けることに注意してください。
+    ///   # このとき、
+    ///   # { lay: 0, page: "back" } に指定されているマスクレイヤーは { lay: 1, page: "back" }
+    ///   # { lay: 0, page: "fore" } に指定されているマスクレイヤーは { lay: 1, page: "back" }
+    ///   # となります。最初に指定したレイヤーがページに関係なくそのまま設定され続けることに注意してください。
+    ///   # また、{ lay: 1, page: "fore" } のレイヤはマスク画像がコピーされていますが、
+    ///   # マスク設定はされていないため、マスク画像自体が表示されてしまうことに注意してください。
     ///   ```
+    ///
+    ///   マスクレイヤーが非表示でもマスクとして動作しますが、
+    ///   非表示状態ではマスクレイヤーを移動させたりしても反映されません。
+    ///   表示状態であれば、マスクレイヤーの移動に合わせて、マスク位置も移動します。
     new TagAction(
       ["setmasklay", "setmask"],
       [

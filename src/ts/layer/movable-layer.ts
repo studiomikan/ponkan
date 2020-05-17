@@ -128,8 +128,8 @@ export class MovableLayer extends SliderLayer {
   }
 
   // [override]
-  public update(tick: number): void {
-    super.update(tick);
+  public beforeDraw(tick: number): void {
+    super.beforeDraw(tick);
     if (this._isMoving) {
       if (this.moveDelayStartTick === -1) {
         this.moveDelayStartTick = tick;
