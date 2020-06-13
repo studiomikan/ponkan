@@ -999,8 +999,8 @@ export class Ponkan extends PonGame {
       primaryLayer.setBackgroundColor(0x000000, 1.0);
     });
     for (let i = 0; i < this.layerCount; i++) {
-      this.forePrimaryLayer.addChild(this.createLayer(`fore layer ${i}`));
-      this.backPrimaryLayer.addChild(this.createLayer(`back layer ${i}`));
+      this.forePrimaryLayer.addChild(this.createLayer(`pageA layer ${i}`));
+      this.backPrimaryLayer.addChild(this.createLayer(`pageB layer ${i}`));
     }
 
     // デフォルト設定の反映
@@ -1013,6 +1013,7 @@ export class Ponkan extends PonGame {
   public get layerCount(): number {
     return this._layerCount;
   }
+
   public set layerCount(layerCount: number) {
     if (layerCount < this._layerCount) {
       // 減少するとき
@@ -1028,9 +1029,11 @@ export class Ponkan extends PonGame {
       });
     } else {
       // 増加するとき
+      const nameA: string = this.forePrimaryLayer.name.substring(0, "pageA layer ".length);
+      const nameB: string = this.forePrimaryLayer.name.substring(0, "pageB layer ".length);
       for (let i = this.foreLayers.length; i < layerCount; i++) {
-        this.forePrimaryLayer.addChild(this.createLayer(`fore layer ${i}`));
-        this.backPrimaryLayer.addChild(this.createLayer(`back layer ${i}`));
+        this.forePrimaryLayer.addChild(this.createLayer(`${nameA}${i}`));
+        this.backPrimaryLayer.addChild(this.createLayer(`${nameB}${i}`));
       }
     }
     this._layerCount = layerCount;

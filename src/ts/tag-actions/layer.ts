@@ -454,13 +454,13 @@ export default function (p: Ponkan): TagAction[] {
       [
         /// @param 対象レイヤー（マスクを設定するレイヤー）
         new TagValue("lay", "string", true, null),
-        /// @param 対象ページ
+        /// @param 対象ページ（マスクを設定するレイヤーのぺージ）
         new TagValue("page", "string", false, "current"),
         /// @param 対象外レイヤー
         new TagValue("exclude", "string", false, null),
         /// @param マスクとして使用するレイヤー。一つのみ指定できます。
         new TagValue("masklay", "string", true, null),
-        /// @param マスクとして使用するレイヤーのページ
+        /// @param マスクとして使用（マスクを設定するレイヤーから対象外とするレイヤー）するレイヤーのページ
         new TagValue("maskpage", "string", false, "current"),
       ],
       (values: any, tick: number): TagActionResult => {
