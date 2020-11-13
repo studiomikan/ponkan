@@ -185,6 +185,7 @@ export default function (p: Ponkan): TagAction[] {
     /// @description レイヤーを塗りつぶす
     /// @details
     ///   指定されたレイヤーを単色で塗りつぶします。
+    ///   読み込まれていた画像などは解放されます。
     new TagAction(
       ["fillcolor", "fill"],
       [
