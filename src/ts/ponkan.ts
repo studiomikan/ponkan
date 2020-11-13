@@ -999,8 +999,8 @@ export class Ponkan extends PonGame {
       primaryLayer.setBackgroundColor(0x000000, 1.0);
     });
     for (let i = 0; i < this.layerCount; i++) {
-      this.forePrimaryLayer.addChild(this.createLayer(`fore layer ${i}`));
-      this.backPrimaryLayer.addChild(this.createLayer(`back layer ${i}`));
+      this.forePrimaryLayer.addChild(this.createLayer(`pageA layer ${i}`));
+      this.backPrimaryLayer.addChild(this.createLayer(`pageB layer ${i}`));
     }
 
     // デフォルト設定の反映
@@ -1028,9 +1028,11 @@ export class Ponkan extends PonGame {
       });
     } else {
       // 増加するとき
+      const nameA: string = this.forePrimaryLayer.name.substring(0, "pageA layer ".length);
+      const nameB: string = this.forePrimaryLayer.name.substring(0, "pageB layer ".length);
       for (let i = this.foreLayers.length; i < layerCount; i++) {
-        this.forePrimaryLayer.addChild(this.createLayer(`fore layer ${i}`));
-        this.backPrimaryLayer.addChild(this.createLayer(`back layer ${i}`));
+        this.forePrimaryLayer.addChild(this.createLayer(`${nameA}${i}`));
+        this.backPrimaryLayer.addChild(this.createLayer(`${nameB}${i}`));
       }
     }
     this._layerCount = layerCount;
@@ -1097,7 +1099,8 @@ export class Ponkan extends PonGame {
 
   /**
    * 操作対象ページのレイヤーのリストを取得する
-   * @param values レイヤーのリスト
+   * @param values タグの値
+   * @return レイヤーのリスト
    */
   public getPageLayers(values: any): PonLayer[] {
     let page: string = ("" + values.page) as string;
@@ -1112,8 +1115,26 @@ export class Ponkan extends PonGame {
   }
 
   /**
+   * 操作対象ページのプライマリレイヤーを取得する
+   * @param values タグの値
+   * @return プライマリレイヤー
+   */
+  public getPagePrimaryLayer(values: any): PonLayer {
+    let page: string = ("" + values.page) as string;
+    if (values.page == null || values.page === "current") {
+      page = this.currentPage;
+    }
+    if (page === "back") {
+      return this.backPrimaryLayer;
+    } else {
+      return this.forePrimaryLayer;
+    }
+  }
+
+  /**
    * 操作対象のレイヤーを取得する
    * @param values タグの値
+   * @return レイヤーのリスト
    */
   public getLayers(values: any): PonLayer[] {
     const lay: string = ("" + values.lay) as string;
@@ -1512,9 +1533,7 @@ export class Ponkan extends PonGame {
   // [override]
   public flipPrimaryLayers(): void {
     super.flipPrimaryLayers();
-    const tmp = this.forePrimaryLayer;
-    this.forePrimaryLayer = this.backPrimaryLayer;
-    this.backPrimaryLayer = tmp;
+    [this.forePrimaryLayer, this.backPrimaryLayer] = [this.backPrimaryLayer, this.forePrimaryLayer];
     this.plugins.forEach((p) => {
       if (p.onFlipLayers != null) {
         p.onFlipLayers();
@@ -1641,6 +1660,10 @@ export class Ponkan extends PonGame {
   public save(tick: number, num: number): void {
     Logger.debug("SAVE START");
     Logger.debug(num, this.latestSaveData);
+
+    if (Object.keys(this.latestSaveData).length === 0) {
+      throw new Error("セーブマークを通過していないため、セーブできません");
+    }
 
     // セーブデータの保存
     let saveStr: string;

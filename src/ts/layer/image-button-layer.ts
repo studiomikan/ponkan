@@ -234,7 +234,7 @@ export class ImageButtonLayer extends TextButtonLayer {
   }
 
   public async restore(data: any, tick: number, clear: boolean): Promise<void> {
-    if (data.imageButtons.length > 0) {
+    if (data.imageButtons != null && data.imageButtons.length > 0) {
       if (data.imageButtons.length === this.imageButtons.length) {
         // 数が同じ場合（たとえばtemploadなどでロードしたときなど）は読み込み直さない
         await Promise.all(

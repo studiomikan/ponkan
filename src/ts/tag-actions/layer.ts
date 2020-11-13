@@ -185,6 +185,7 @@ export default function (p: Ponkan): TagAction[] {
     /// @description レイヤーを塗りつぶす
     /// @details
     ///   指定されたレイヤーを単色で塗りつぶします。
+    ///   読み込まれていた画像などは解放されます。
     new TagAction(
       ["fillcolor", "fill"],
       [
@@ -349,7 +350,7 @@ export default function (p: Ponkan): TagAction[] {
     /// @details
     ///   [`loadimage`](#loadimage-image) コマンドとは別に、追加で画像を読み込みます。
     new TagAction(
-      ["loadchildimage", "childimage", ""],
+      ["loadchildimage", "childimage"],
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
@@ -399,6 +400,50 @@ export default function (p: Ponkan): TagAction[] {
         p.getLayers(values).forEach((layer) => {
           layer.freeImage();
           layer.freeChildImages();
+        });
+        return "continue";
+      },
+    ),
+    /// @category レイヤー操作
+    /// @description レイヤーマスクを設定する
+    /// @details
+    ///   レイヤーに読み込まれた画像でマスクするように設定します。
+    new TagAction(
+      ["setlayermask", "setlaymask"],
+      [
+        /// @param 対象レイヤー（マスクを設定するレイヤ）
+        new TagValue("lay", "string", true, null),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
+        /// @param マスクとして使うレイヤー
+        new TagValue("mask", "number", true, null),
+      ],
+      (values: any, tick: number): TagActionResult => {
+        p.getLayers(values).forEach((layer) => {
+          layer.setMaskSibling(values.mask);
+        });
+        return "continue";
+      },
+    ),
+    /// @category レイヤー操作
+    /// @description レイヤーマスクを解除する
+    /// @details
+    ///   レイヤーに読み込まれた画像でマスクするように設定します。
+    new TagAction(
+      ["clearlayermask", "clearlaymask"],
+      [
+        /// @param 対象レイヤー（マスクを解除するレイヤ）
+        new TagValue("lay", "string", true, null),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
+      ],
+      (values: any, tick: number): TagActionResult => {
+        p.getLayers(values).forEach((layer) => {
+          layer.clearMaskSibling();
         });
         return "continue";
       },
