@@ -159,7 +159,7 @@ export default function (p: Ponkan): TagAction[] {
         /// @param 自動移動の入り・抜きの指定。"none" | "in" | "out" | "both"
         new TagValue("ease", "string", false, "none"),
         /// @param 自動移動をループさせるかどうか。タイプが "linear" か "catmullrom" の場合のみ有効
-        new TagValue("loop", "boolean", false, null),
+        new TagValue("loop", "boolean", false, false),
       ],
       (values: any, tick: number): TagActionResult => {
         p.getLayers(values).forEach((layer) => {

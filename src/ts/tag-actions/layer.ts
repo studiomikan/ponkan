@@ -349,7 +349,7 @@ export default function (p: Ponkan): TagAction[] {
     /// @details
     ///   [`loadimage`](#loadimage-image) コマンドとは別に、追加で画像を読み込みます。
     new TagAction(
-      ["loadchildimage", "childimage", ""],
+      ["loadchildimage", "childimage"],
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),

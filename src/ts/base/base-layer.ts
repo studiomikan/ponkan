@@ -14,11 +14,11 @@ import { LayerTextCanvas } from "./layer-text-canvas";
  */
 export class BaseLayer {
   /** レイヤー名 */
-  public name: string;
+  public readonly name: string;
   /** リソース */
-  protected resource: Resource;
+  protected readonly resource: Resource;
   /** 持ち主 */
-  protected owner: PonGame;
+  protected readonly owner: PonGame;
 
   /** スプライト表示用コンテナ */
   protected _container: PIXI.Container;
@@ -181,7 +181,8 @@ export class BaseLayer {
     return this.maskSprite.width;
   }
   public set width(width: number) {
-    this.maskSprite.width = this.backgroundSprite.width = width;
+    this.maskSprite.width = width;
+    this.backgroundSprite.width = width;
     if (this.textCanvas.width != width) {
       this.clearText();
       this.textCanvas.width = width;
@@ -191,7 +192,8 @@ export class BaseLayer {
     return this.maskSprite.height;
   }
   public set height(height: number) {
-    this.maskSprite.height = this.backgroundSprite.height = height;
+    this.maskSprite.height = height;
+    this.backgroundSprite.height = height;
     if (this.textCanvas.height != height) {
       this.clearText();
       this.textCanvas.height = height;
@@ -393,13 +395,7 @@ export class BaseLayer {
    * 管理から削除されるだけで、レイヤー自体は初期化されたりしない。
    */
   public deleteChildLayer(childLayer: BaseLayer): void {
-    const tmp: BaseLayer[] = [];
-    this.children.forEach((child) => {
-      if (child !== childLayer) {
-        tmp.push(child);
-      }
-    });
-    this._children = tmp;
+    this._children = this._children.filter((child) => child !== childLayer);
   }
 
   /**
@@ -415,9 +411,9 @@ export class BaseLayer {
   }
 
   public update(tick: number): void {
-    this.children.forEach((child) => {
+    for (const child of this.children) {
       child.update(tick);
-    });
+    }
   }
 
   public beforeDraw(tick: number): void {
@@ -439,9 +435,9 @@ export class BaseLayer {
       this.canvasSprite.beforeDraw(tick);
     }
     // 子レイヤーのイベント呼ぶ
-    this.children.forEach((child) => {
+    for (const child of this.children) {
       child.beforeDraw(tick);
-    });
+    }
   }
 
   public applyQuake(quakeX: number, quakeY: number): void {
@@ -1048,8 +1044,6 @@ export class BaseLayer {
     "backgroundAlpha",
     "hasBackgroundColor",
     "ignoreQuake",
-    "ignoreQuakeX",
-    "ignoreQuakeY",
     "imageFilePath",
     "imageX",
     "imageY",
@@ -1061,38 +1055,6 @@ export class BaseLayer {
     "videoLoop",
     "videoVolume",
     "isPlayingVideo",
-    // "textFontFamily",
-    // "textFontSize",
-    // "textFontWeight",
-    // "textFontStyle",
-    // "textColor",
-    // "textShadowVisible",
-    // "textShadowAlpha",
-    // "textShadowAngle",
-    // "textShadowBlur",
-    // "textShadowColor",
-    // "textShadowDistance",
-    // "textEdgeColor",
-    // "textEdgeWidth",
-    // "textMarginTop",
-    // "textMarginRight",
-    // "textMarginBottom",
-    // "textMarginLeft",
-    // "textPitch",
-    // "textLineHeight",
-    // "textLinePitch",
-    // "textAutoReturn",
-    // "textLocatePoint",
-    // "textIndentPoint",
-    // "reservedTextIndentPoint",
-    // "textAlign",
-    // "rubyFontSize",
-    // "rubyOffset",
-    // "rubyPitch",
-    // "textInEffectTypes",
-    // "textInEffectTime",
-    // "textInEffectEase",
-    // "textInEffectOptions",
   ];
 
   protected static baseLayerIgnoreParams: string[] = [
@@ -1148,14 +1110,6 @@ export class BaseLayer {
       await this.loadImage(data.imageFilePath);
       storeParams();
       this.restoreAfterLoadImage(data, tick);
-      // asyncTask.add((params: any, index: number): AsyncCallbacks => {
-      //   const cb = this.loadImage(data.imageFilePath);
-      //   cb.done(() => {
-      //     storeParams();
-      //     this.restoreAfterLoadImage(data, tick);
-      //   });
-      //   // return cb;
-      // });
     } else if (
       data.videoFilePath != null &&
       data.videoFilePath != "" &&
@@ -1174,15 +1128,6 @@ export class BaseLayer {
       );
       storeParams();
       this.restoreAfterLoadImage(data, tick);
-      // asyncTask.add((params: any, index: number): AsyncCallbacks => {
-      //   const cb = this.loadVideo(data.videoFilePath, data.videoWidth, data.videoHeight,
-      //                             data.isPlayingVideo, data.videoLoop, data.videoVolume);
-      //   cb.done(() => {
-      //     storeParams();
-      //     this.restoreAfterLoadImage(data, tick);
-      //   });
-      //   return cb;
-      // });
     } else {
       storeParams();
       this.restoreAfterLoadImage(data, tick);
