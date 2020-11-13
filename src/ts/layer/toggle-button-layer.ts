@@ -245,7 +245,7 @@ export class ToggleButtonLayer extends ImageButtonLayer {
   }
 
   public async restore(data: any, tick: number, clear: boolean): Promise<void> {
-    if (data.imageToggleButtons.length > 0) {
+    if (data.imageToggleButtons != null && data.imageToggleButtons.length > 0) {
       if (data.imageToggleButtons.length === this.imageToggleButtons.length) {
         // 数が同じ場合（たとえばtemploadなどでロードしたときなど）は読み込み直さない
         await Promise.all(

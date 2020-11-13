@@ -403,6 +403,50 @@ export default function (p: Ponkan): TagAction[] {
         return "continue";
       },
     ),
+    /// @category レイヤー操作
+    /// @description レイヤーマスクを設定する
+    /// @details
+    ///   レイヤーに読み込まれた画像でマスクするように設定します。
+    new TagAction(
+      ["setlayermask", "setlaymask"],
+      [
+        /// @param 対象レイヤー（マスクを設定するレイヤ）
+        new TagValue("lay", "string", true, null),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
+        /// @param マスクとして使うレイヤー
+        new TagValue("mask", "number", true, null),
+      ],
+      (values: any, tick: number): TagActionResult => {
+        p.getLayers(values).forEach((layer) => {
+          layer.setMaskSibling(values.mask);
+        });
+        return "continue";
+      },
+    ),
+    /// @category レイヤー操作
+    /// @description レイヤーマスクを解除する
+    /// @details
+    ///   レイヤーに読み込まれた画像でマスクするように設定します。
+    new TagAction(
+      ["clearlayermask", "clearlaymask"],
+      [
+        /// @param 対象レイヤー（マスクを解除するレイヤ）
+        new TagValue("lay", "string", true, null),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
+      ],
+      (values: any, tick: number): TagActionResult => {
+        p.getLayers(values).forEach((layer) => {
+          layer.clearMaskSibling();
+        });
+        return "continue";
+      },
+    ),
   ];
 }
 /* eslint-enalble @typescript-eslint/no-unused-vars */
