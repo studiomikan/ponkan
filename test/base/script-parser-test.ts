@@ -4,9 +4,9 @@ import { Ponkan } from "../../src/ts/ponkan";
 import * as Helper from "../helper";
 
 const testScript01 = `#コメント行
-;layopt { "width":100, "height":200, "visible":true }
-;     layopt    {      "width"   :   100     , "height"   :   200 ,    "visible"   :   true    }
-;meslay{"width":100,"height":200,"visible":true,"file":"hogehoge.png"}
+;layopt { "width":100, "height":200, "visible":true };
+;     layopt    {      "width"   :   100     , "height"   :   200 ,    "visible"   :   true    };
+;meslay{"width":100,"height":200,"visible":true,"file":"hogehoge.png"};
 ## 22文字
 吾輩は猫である。名前はまだない。
 二行目だよ。
@@ -37,8 +37,8 @@ const testScript01 = `#コメント行
 
 const testScript02 = `# コメントはタグではない。あと改行は__line_break__のタグ。
 ;layopt width: 100, height: 200
-;   layopt   {    width   :    100   , "height":200 }
-;layopt{width:100,height:200}
+;   layopt   {    width   :    100   , "height":200 };
+;layopt{width:100,height:200};
 ;br
 *sample-label
 -console.log("hoge")
@@ -105,7 +105,7 @@ describe("ScriptParser", () => {
       assert.equal(sp.tags[sp.tags.length - 1].name, "s");
     });
     it("コマンド", () => {
-      const testScript = `;meslay{"width":100,"height":200,"visible":true,"file":"hogehoge.png"}`;
+      const testScript = `;meslay{"width":100,"height":200,"visible":true,"file":"hogehoge.png"};`;
       const sp = new ScriptParser(ponkan.resource, testScript);
       assert.equal(sp.tags[0].name, "meslay");
       assert.deepEqual(sp.tags[0].values, {
@@ -113,7 +113,7 @@ describe("ScriptParser", () => {
         height: 200,
         visible: true,
         file: "hogehoge.png",
-        __body__: `meslay{"width":100,"height":200,"visible":true,"file":"hogehoge.png"}`,
+        __body__: `meslay{"width":100,"height":200,"visible":true,"file":"hogehoge.png"};`,
       });
     });
     it("ラベル", () => {
