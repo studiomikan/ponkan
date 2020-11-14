@@ -9,12 +9,14 @@ dist/layer
 dist/tag-actions
 dist/plugin
 dist/tag-action.d.ts
+dist/gamedata
 dist_dev/
 dist_test/
 game_template/node_modules/
 game_template/public/
 game_template/dist/
 games/
+src/gamedata
 tags
 .DS_Store
 .vscode

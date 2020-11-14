@@ -27,4 +27,8 @@ module.exports = {
     ]),
     new WriteFilePlugin(),
   ],
+  watchOptions: {
+    aggregateTimeout: 500,
+    poll: 1000
+  }
 };
