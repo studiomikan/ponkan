@@ -153,7 +153,6 @@ export class ScriptParser {
           valuesStr = `{${valuesStr}}`;
         } else {
           // { を省略していないとき
-          console.log("valuesStr", valuesStr);
           while (valuesStr[valuesStr.length - 1] !== ";") {
             const line: string | null = this.getLine();
             if (line === null) {

@@ -7,35 +7,3 @@
 ;fill lay: 0, color: 0xff00ff
 ;image lay: 1, file: "rule/time.png", visible: true, x: 0, y: 0
 
-;setlayermask lay: 0, mask: 1
-;p
-
-;move {
-  lay: "0,1",
-  time: 1000,
-  path: [
-    {x: 300, y: 0},
-    {x: 300, y: 300},
-    {x: 0, y: 300},
-  ],
-  loop: true
-}
-;p
-
-;stopmove lay: "0,1",
-;layopt lay: "0,1", x: 0, y: 0
-
-~save001
-;save num: 1
-
-flip
-;p
-;pretrans
-;clearlayermask lay: 0
-;flip
-# ;setlayermask lay: 0, mask: 1
-
-OK.
-;p
-
-;load num: 1
