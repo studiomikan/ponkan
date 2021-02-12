@@ -32,7 +32,7 @@
   width: 1240,
   height: 680,
   visible: true
-}
+};
 ;messageopt {
   lay: "message",
   fontfamily: ["GenShinGothic", "monospace"],
@@ -57,7 +57,7 @@
   marginr: 20,
   marginb: 20,
   marginl: 20
-}
+};
 #;image lay: "mes", file: "sysimage/message.png"
 ;fillcolor lay: "message", color: 0x000000, alpha: 0.75
 ;textspeed unread: 20, read: 20
@@ -76,7 +76,7 @@ for (var i = 1; i < 15; i++) { frames.push({x: 256 - 16 * i, y: 0}); }
 ;image {
   lay: "linebreak",
   file: "sysimage/linebreak.png"
-}
+};
 ;frameanim {
   lay: "linebreak",
   loop: true,
@@ -84,7 +84,7 @@ for (var i = 1; i < 15; i++) { frames.push({x: 256 - 16 * i, y: 0}); }
   width: 16,
   height: 16,
   frames: "&tv.lineBreakFrames"
-}
+};
 
 
 #=============================================
@@ -99,7 +99,7 @@ for (var i = 1; i < 15; i++) { frames.push({"x": 256 - 16 * i, "y": 0}); }
 ;image {
   lay: "pagebreak",
   file: "sysimage/pagebreak.png"
-}
+};
 ;frameanim {
   lay: "pagebreak",
   loop: true,
@@ -107,7 +107,7 @@ for (var i = 1; i < 15; i++) { frames.push({"x": 256 - 16 * i, "y": 0}); }
   width: 16,
   height: 16,
   frames: "&tv.pageBreakFrames"
-}
+};
 
 
 #=============================================
@@ -119,7 +119,7 @@ for (var i = 1; i < 15; i++) { frames.push({"x": 256 - 16 * i, "y": 0}); }
   x: 10,
   y: 10,
   visible: false
-}
+};
 ;image lay: "automode", file: "sysimage/automode.png"
 
 
