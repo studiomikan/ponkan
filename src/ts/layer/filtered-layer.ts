@@ -45,7 +45,7 @@ export class FilteredLayer extends MovableLayer {
   protected addLayerFilter(filter: LayerFilter): void {
     this.filters.push(filter);
     const buf: Array<PIXI.Filter> = [];
-    this.filters.forEach(f => {
+    this.filters.forEach((f) => {
       buf.push(f.pixiFilter);
     });
     this.container.filters = buf;
@@ -65,7 +65,7 @@ export class FilteredLayer extends MovableLayer {
     // FilteredLayer.filteredLayerStoreParams.forEach((p) => data[p] = me[p]);
 
     data.filters = [];
-    this.filters.forEach(filter => {
+    this.filters.forEach((filter) => {
       data.filters.push({
         filterName: filter.filterName,
         data: filter.store(),

@@ -4,7 +4,7 @@ import { PonEventHandler } from "../base/pon-event-handler";
 import { SoundBuffer } from "../base/sound";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export default function(p: Ponkan): TagAction[] {
+export default function (p: Ponkan): TagAction[] {
   return [
     // ======================================================================
     // サウンド関係
@@ -65,7 +65,7 @@ export default function(p: Ponkan): TagAction[] {
       (values: any, tick: number): TagActionResult => {
         p.getSoundBuffer(values.buf)
           .loadSound(values.file)
-          .then(sb => {
+          .then((sb) => {
             p.conductor.start();
           })
           .catch(() => {

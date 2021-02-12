@@ -41,18 +41,24 @@ $ npm run build
 ## Docker
 
 ```bash
+# Dockerfile needs an environment variable $CURRENT_UID like user_id:group_id .
+# Does not work without $CURRENT_UID
+# exsample: 1000:1000
+$ export CURRENT_UID=$(id -u):$(id -g)
+
+# build
 $ docker-compose build
 
-# 開発向けに起動
-# 起動後に http://localhost:8080/ を開く
+# Run develop server.
+# Open http://localhost:8080/index.html
 $ docker-compose up
 
-# MANUAL=1のとき、サーバーを自動起動せずコンテナ起動
-# Mac, Linux
+# Run test server.
+# Open http://localhost:8080/dist_test/test.html
+$ WEBTEST=1 docker-compose up
+
+# Launch container only. (do not start server.)
 $ MANUAL=1 docker-compose up
-# Windows
-> set MANUAL=1
-> docker-compose up
 ```
 
 ## ブラウザサポート

@@ -13,7 +13,7 @@ export class Macro {
 
   public clone(): Macro {
     const newTags: Tag[] = [];
-    this.tags.forEach(tag => {
+    this.tags.forEach((tag) => {
       newTags.push(tag.clone());
     });
     return new Macro(this.name, newTags);

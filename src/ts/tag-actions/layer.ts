@@ -2,7 +2,7 @@ import { Ponkan } from "../ponkan";
 import { TagAction, TagActionResult, TagValue } from "../tag-action";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export default function(p: Ponkan): TagAction[] {
+export default function (p: Ponkan): TagAction[] {
   return [
     // ======================================================================
     // レイヤー関係
@@ -185,6 +185,7 @@ export default function(p: Ponkan): TagAction[] {
     /// @description レイヤーを塗りつぶす
     /// @details
     ///   指定されたレイヤーを単色で塗りつぶします。
+    ///   読み込まれていた画像などは解放されます。
     new TagAction(
       ["fillcolor", "fill"],
       [
@@ -192,13 +193,15 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param 塗りつぶし色(0xRRGGBB)
         new TagValue("color", "number", true, null),
         /// @param 塗りつぶしのAlpha(0.0〜1.0)
         new TagValue("alpha", "number", false, 1.0),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.setBackgroundColor(values.color, values.alpha);
         });
         return "continue";
@@ -215,9 +218,11 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.clearBackgroundColor();
         });
         return "continue";
@@ -234,6 +239,8 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param 表示非表示
         new TagValue("visible", "boolean", false, null),
         /// @param x座標(px)
@@ -266,7 +273,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("blockwheel", "boolean", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           values.visible != null && (layer.visible = values.visible);
           values.x != null && (layer.x = values.x);
           values.y != null && (layer.y = values.y);
@@ -298,6 +305,8 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param 読み込む画像ファイルパス
         new TagValue("file", "string", true, null),
         /// @param 表示非表示
@@ -311,7 +320,7 @@ export default function(p: Ponkan): TagAction[] {
       ],
       (values: any, tick: number): TagActionResult => {
         const task: Promise<void>[] = [];
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           task.push(
             ((): Promise<void> => {
               values.x != null && (layer.x = values.x);
@@ -341,12 +350,14 @@ export default function(p: Ponkan): TagAction[] {
     /// @details
     ///   [`loadimage`](#loadimage-image) コマンドとは別に、追加で画像を読み込みます。
     new TagAction(
-      ["loadchildimage", "childimage", ""],
+      ["loadchildimage", "childimage"],
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param 読み込む画像ファイルパス
         new TagValue("file", "string", true, null),
         /// @param x座標(px)
@@ -358,7 +369,7 @@ export default function(p: Ponkan): TagAction[] {
       ],
       (values: any, tick: number): TagActionResult => {
         const task: Promise<void>[] = [];
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           task.push(layer.loadChildImage(values.file, values.x, values.y, values.alpha));
         });
         Promise.all(task)
@@ -382,11 +393,57 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.freeImage();
           layer.freeChildImages();
+        });
+        return "continue";
+      },
+    ),
+    /// @category レイヤー操作
+    /// @description レイヤーマスクを設定する
+    /// @details
+    ///   レイヤーに読み込まれた画像でマスクするように設定します。
+    new TagAction(
+      ["setlayermask", "setlaymask"],
+      [
+        /// @param 対象レイヤー（マスクを設定するレイヤ）
+        new TagValue("lay", "string", true, null),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
+        /// @param マスクとして使うレイヤー
+        new TagValue("mask", "number", true, null),
+      ],
+      (values: any, tick: number): TagActionResult => {
+        p.getLayers(values).forEach((layer) => {
+          layer.setMaskSibling(values.mask);
+        });
+        return "continue";
+      },
+    ),
+    /// @category レイヤー操作
+    /// @description レイヤーマスクを解除する
+    /// @details
+    ///   レイヤーに読み込まれた画像でマスクするように設定します。
+    new TagAction(
+      ["clearlayermask", "clearlaymask"],
+      [
+        /// @param 対象レイヤー（マスクを解除するレイヤ）
+        new TagValue("lay", "string", true, null),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
+      ],
+      (values: any, tick: number): TagActionResult => {
+        p.getLayers(values).forEach((layer) => {
+          layer.clearMaskSibling();
         });
         return "continue";
       },

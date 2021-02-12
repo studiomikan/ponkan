@@ -2,7 +2,7 @@ import { Ponkan } from "../ponkan";
 import { TagAction, TagActionResult, TagValue } from "../tag-action";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export default function(p: Ponkan): TagAction[] {
+export default function (p: Ponkan): TagAction[] {
   return [
     // ======================================================================
     // ボタン関係
@@ -20,6 +20,8 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param ボタンの名前
         new TagValue("btnname", "string", false, null),
         /// @param ボタン押下時にjumpする場合はtrue
@@ -31,7 +33,7 @@ export default function(p: Ponkan): TagAction[] {
         /// @param ボタン押下時にjumpまたはcallするラベル名
         new TagValue("label", "string", false, null),
         /// @param マウスポインタが重なったタイミングで実行するJavaScript
-        new TagValue("onclick", "string", false, null),
+        new TagValue("onenter", "string", false, null),
         /// @param マウスポインタが出ていったタイミングで実行するJavaScript
         new TagValue("onleave", "string", false, null),
         /// @param ボタン押下時に実行するJavaScript
@@ -70,9 +72,15 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("leavebuf", "string", false, ""),
         /// @param ボタン押下時に再生する音声の音声バッファ
         new TagValue("clickbuf", "string", false, ""),
+        /// @param キーボードでボタンを選択するときの選択順。小さい順に選択される。省略時は追加した順となる。
+        new TagValue("keyindex", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
+          let keyIndex: number | null = values.keyindex;
+          if (keyIndex == null || keyIndex == undefined) {
+            keyIndex = p.getButtonKeyIndex(values);
+          }
           layer.addTextButton(
             values.btnname,
             values.jump,
@@ -99,6 +107,7 @@ export default function(p: Ponkan): TagAction[] {
             values.enterbuf,
             values.leavebuf,
             values.clickbuf,
+            keyIndex,
           );
         });
         return "continue";
@@ -116,6 +125,8 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param 対象のボタンの名前
         new TagValue("btnname", "string", true, null),
         /// @param 背景色の配列(0xRRGGBB)。通常時、マウスオーバー時、マウス押下時の順。例：[0xFF0000, 0x00FF00, 0x0000FF]
@@ -124,7 +135,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("bgalphas", "array", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           if (values.bgcolors) {
             layer.changeTextButtonColors(values.btnname, values.bgcolors);
           }
@@ -146,9 +157,11 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.clearTextButtons();
           layer.clearImageButtons();
           layer.clearToggleButtons();
@@ -167,9 +180,11 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.clearTextButtons();
         });
         return "continue";
@@ -188,6 +203,8 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param ボタン押下時にjumpする場合はtrue
         new TagValue("jump", "boolean", false, true),
         /// @param ボタン押下時にcallする場合はtrue
@@ -197,7 +214,7 @@ export default function(p: Ponkan): TagAction[] {
         /// @param ボタン押下時にjumpまたはcallするラベル名
         new TagValue("label", "string", false, null),
         /// @param マウスポインタが重なったタイミングで実行するJavaScript
-        new TagValue("onclick", "string", false, null),
+        new TagValue("onenter", "string", false, null),
         /// @param マウスポインタが出ていったタイミングで実行するJavaScript
         new TagValue("onleave", "string", false, null),
         /// @param ボタン押下時に実行するJavaScript
@@ -208,7 +225,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("x", "number", false, 0),
         /// @param y座標(px)
         new TagValue("y", "number", false, 0),
-        /// @param ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"
+        /// @param ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び
         new TagValue("direction", "string", false, "horizontal"),
         /// @param システム用ボタンとする場合はtrue
         new TagValue("system", "boolean", false, false),
@@ -220,9 +237,15 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("leavebuf", "string", false, ""),
         /// @param ボタン押下時に再生する音声の音声バッファ
         new TagValue("clickbuf", "string", false, ""),
+        /// @param キーボードでボタンを選択するときの選択順。小さい順に選択される。省略時は追加した順となる。
+        new TagValue("keyindex", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
+          let keyIndex: number | null = values.keyindex;
+          if (keyIndex == null || keyIndex == undefined) {
+            keyIndex = p.getButtonKeyIndex(values);
+          }
           layer
             .addImageButton(
               values.jump,
@@ -241,6 +264,7 @@ export default function(p: Ponkan): TagAction[] {
               values.enterbuf,
               values.leavebuf,
               values.clickbuf,
+              keyIndex,
             )
             .then(() => {
               p.conductor.start();
@@ -263,9 +287,11 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.clearImageButtons();
         });
         return "continue";
@@ -279,7 +305,10 @@ export default function(p: Ponkan): TagAction[] {
     ///   `unlockbuttons` コマンドでロック状態を解除することで、押下できるようになります。
     ///
     ///   トグルボタンは通常のボタンと異なり、オン・オフの二種類の状態を持ちます。
-    ///   機能のオン・オフの切り替えなどに利用することがｄけいます。
+    ///   機能のオン・オフの切り替えなどに利用することができます。
+    ///
+    ///   オン状態のとき、statevarで設定した一時変数にtrueが設定されます。
+    ///   オフ状態のときはfalseが設定されます。
     new TagAction(
       ["togglebutton", "tglbtn"],
       [
@@ -287,32 +316,71 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
+        /// @param 選択状態を格納する一時変数の名前。
+        new TagValue("statevar", "string", true, null),
+        /// @param ボタン押下時にjumpする場合はtrue
+        new TagValue("jump", "boolean", false, true),
+        /// @param ボタン押下時にcallする場合はtrue
+        new TagValue("call", "boolean", false, null),
+        /// @param ボタン押下時にjumpまたはcallするスクリプトファイル名
+        new TagValue("file", "string", false, null),
+        /// @param ボタン押下時にjumpまたはcallするラベル名
+        new TagValue("label", "string", false, null),
+        /// @param マウスポインタが重なったタイミングで実行するJavaScript
+        new TagValue("onenter", "string", false, null),
+        /// @param マウスポインタが出ていったタイミングで実行するJavaScript
+        new TagValue("onleave", "string", false, null),
         /// @param ボタン押下時に実行するJavaScript
-        new TagValue("exp", "string", false, null),
-        /// @param ボタンにする画像ファイル
+        new TagValue("onclick", "string", false, null),
+        /// @param トグルボタンにする画像ファイル
         new TagValue("imagefile", "string", true, null),
         /// @param x座標(px)
         new TagValue("x", "number", false, 0),
         /// @param y座標(px)
         new TagValue("y", "number", false, 0),
-        /// @param 選択状態を格納する一時変数の名前
-        new TagValue("statevar", "string", true, null),
-        /// @param ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び"
+        /// @param ボタン画像ファイルの向き。"horizontal"なら横並び、"vertical"なら縦並び
         new TagValue("direction", "string", false, "horizontal"),
         /// @param システム用ボタンとする場合はtrue
         new TagValue("system", "boolean", false, false),
+        /// @param 現在の位置を既読にするかどうか
+        new TagValue("countpage", "boolean", false, true),
+        /// @param マウスポインタが重なったタイミングで再生する音声の音声バッファ
+        new TagValue("enterbuf", "string", false, ""),
+        /// @param マウスポインタが出て行ったタイミングで再生する音声の音声バッファ
+        new TagValue("leavebuf", "string", false, ""),
+        /// @param ボタン押下時に再生する音声の音声バッファ
+        new TagValue("clickbuf", "string", false, ""),
+        /// @param キーボードでボタンを選択するときの選択順。小さい順に選択される。省略時は追加した順となる。
+        new TagValue("keyindex", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
+          let keyIndex: number | null = values.keyindex;
+          if (keyIndex == null || keyIndex == undefined) {
+            keyIndex = p.getButtonKeyIndex(values);
+          }
           layer
             .addToggleButton(
+              values.jump,
+              values.call,
+              values.file,
+              values.label,
+              values.countpage,
+              values.onenter,
+              values.onleave,
+              values.onclick,
               values.imagefile,
               values.x,
               values.y,
-              values.statevar,
-              values.system,
-              values.exp,
               values.direction,
+              values.system,
+              values.enterbuf,
+              values.leavebuf,
+              values.clickbuf,
+              keyIndex,
+              values.statevar,
             )
             .then(() => {
               p.conductor.start();
@@ -335,9 +403,11 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.clearToggleButtons();
         });
         return "continue";
@@ -354,9 +424,11 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", false, "all"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.lockButtons();
         });
         return "continue";
@@ -366,7 +438,7 @@ export default function(p: Ponkan): TagAction[] {
     /// @description ボタンをアンロックする
     /// @details
     ///   指定されたレイヤーのボタンのロックを解除し、押下できる状態にします。\n
-    ///   このコマンドでボタンを押下可能にした後は、直後に`s` コマンドでスクリプトの実行を停止してください。
+    ///   このコマンドでボタンを押下可能にした後は、直後に `s` コマンドでスクリプトの実行を停止してください。
     new TagAction(
       ["unlockbuttons", "unlockbutton", "unlock"],
       [
@@ -374,9 +446,11 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", false, "all"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.unlockButtons();
         });
         return "continue";
@@ -393,9 +467,11 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", false, "all"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.lockSystemButtons();
         });
         return "continue";
@@ -412,9 +488,11 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", false, "all"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.unlockSystemButtons();
         });
         return "continue";
@@ -433,22 +511,30 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
-        /// @param 値変更時に実行する関数
-        new TagValue("onchange", "string", false, null),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param x座標(px)
         new TagValue("x", "number", false, 0),
         /// @param y座標(px)
         new TagValue("y", "number", false, 0),
-        /// @param スライダーの値が変わったときに実行するJavaScript
-        new TagValue("exp", "string|function", false, ""),
         /// @param 初期値(0.0～1.0)
         new TagValue("value", "number", false, 0),
+        /// @param スライダー操作の開始時に実行するJavaScript
+        new TagValue("onstart", "string|function", false, ""),
+        /// @param スライダー操作のスライド中に実行するJavaScript
+        new TagValue("onslide", "string|function", false, ""),
+        /// @param スライダー操作の終了時に実行するJavaScript
+        new TagValue("onend", "string|function", false, ""),
+        /// @param 値変更時に実行するJavaScript。onendより後に実行される。
+        new TagValue("onchange", "string|function", false, ""),
         /// @param スライダーの背景用画像のファイルパス
         new TagValue("back", "string", true, null),
         /// @param スライダーの表面画像のファイルパス
         new TagValue("fore", "string", true, null),
         /// @param スライダーの表面画像のファイルパス
         new TagValue("button", "string", true, null),
+        /// @param キーボードでボタンを選択するときの選択順。小さい順に選択される。省略時は追加した順となる。
+        new TagValue("keyindex", "number", false, null),
         // /// @param マウスポインタがスライダーに重なったタイミングで再生する音声の音声バッファ
         // new TagValue("enterbuf", "string", false, ""),
         // /// @param マウスポインタがスライダーから出て行ったタイミングで再生する音声の音声バッファ
@@ -457,9 +543,25 @@ export default function(p: Ponkan): TagAction[] {
         // new TagValue("clickbuf", "string", false, ""),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
+          let keyIndex: number | null = values.keyindex;
+          if (keyIndex == null || keyIndex == undefined) {
+            keyIndex = p.getButtonKeyIndex(values);
+          }
           layer
-            .addSlider(values.x, values.y, values.value, values.exp, values.back, values.fore, values.button)
+            .addSlider(
+              values.x,
+              values.y,
+              values.value,
+              values.onstart,
+              values.onslide,
+              values.onend,
+              values.onchange,
+              values.back,
+              values.fore,
+              values.button,
+              keyIndex,
+            )
             .then(() => {
               p.conductor.start();
             })
@@ -481,9 +583,11 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", false, "all"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.lockSliders();
         });
         return "continue";
@@ -500,10 +604,33 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", false, "all"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.unlockSliders();
+        });
+        return "continue";
+      },
+    ),
+    /// @category ボタン
+    /// @description スライダーをクリアする
+    /// @details
+    ///   指定されたレイヤーのスライダーを解放します。
+    new TagAction(
+      ["clearsliders", "clearslider"],
+      [
+        /// @param 対象レイヤー
+        new TagValue("lay", "string", true, null),
+        /// @param 対象ページ
+        new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
+      ],
+      (values: any, tick: number): TagActionResult => {
+        p.getLayers(values).forEach((layer) => {
+          layer.clearSliders();
         });
         return "continue";
       },

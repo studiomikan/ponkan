@@ -26,7 +26,7 @@ export class ScriptParser {
   }
 
   public debugPrint(): void {
-    this.tags.forEach(tag => {
+    this.tags.forEach((tag) => {
       tag.debugPrint();
     });
   }
@@ -153,13 +153,15 @@ export class ScriptParser {
           valuesStr = `{${valuesStr}}`;
         } else {
           // { を省略していないとき
-          while (valuesStr.charAt(valuesStr.length - 1) !== "}") {
+          console.log("valuesStr", valuesStr);
+          while (valuesStr[valuesStr.length - 1] !== ";") {
             const line: string | null = this.getLine();
             if (line === null) {
               break;
             }
             valuesStr += " " + line.trim();
           }
+          valuesStr = valuesStr.substring(0, valuesStr.length - 1);
         }
         // values = JSON.parse(valuesStr);
         values = this.resource.evalJs(`(${valuesStr})`);

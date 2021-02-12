@@ -4,7 +4,7 @@ import { PonEventHandler } from "../base/pon-event-handler";
 import { PonLayer } from "../layer/pon-layer";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export default function(p: Ponkan): TagAction[] {
+export default function (p: Ponkan): TagAction[] {
   return [
     // ======================================================================
     // メッセージ関係
@@ -20,6 +20,8 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param フォント名の配列
         new TagValue("fontfamily", "array", false, null),
         /// @param フォントサイズ(px)
@@ -170,6 +172,8 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param エフェクトの種類の配列。"alpha" | "move"。例：["alpha", "move"]
         new TagValue("type", "string|array", false, null),
         /// @param エフェクトにかける時間(ms)。ゲーム起動時には120msに設定されています。
@@ -212,16 +216,18 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param 出力する文字
         new TagValue("text", "string", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.addChar(values.text);
         });
         if (values.page === "fore" && p.addCharWithBackFlag) {
           values.page = "back";
-          p.getLayers(values).forEach(layer => {
+          p.getLayers(values).forEach((layer) => {
             layer.addChar(values.text);
           });
         }
@@ -243,12 +249,14 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param ルビ
         new TagValue("text", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
         if (values.text != null) {
-          p.getLayers(values).forEach(layer => {
+          p.getLayers(values).forEach((layer) => {
             layer.reserveRubyText(values.text);
           });
         }
@@ -266,6 +274,8 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param ルビとメッセージ間の距離(px)。
         new TagValue("offset", "number", false, null),
         /// @param フォント名の配列
@@ -304,7 +314,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("edgealpha", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           if (values.offset != null) {
             layer.textCanvas.rubyOffset = values.offset;
           }
@@ -355,11 +365,9 @@ export default function(p: Ponkan): TagAction[] {
           }
           if (values.edgecolor != null) {
             layer.textCanvas.rubyStyle.edgeColor = values.edgecolor;
-            console.log(layer.textCanvas.rubyStyle.stroke);
           }
           if (values.edgealpha != null) {
             layer.textCanvas.rubyStyle.edgeAlpha = values.edgealpha;
-            console.log(layer.textCanvas.rubyStyle.stroke);
           }
         });
         return "continue";
@@ -377,9 +385,11 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.addTextReturn();
         });
         return "continue";
@@ -389,17 +399,19 @@ export default function(p: Ponkan): TagAction[] {
     /// @description テキストをクリアする
     /// @details
     ///   指定したレイヤーのテキストをクリアします。
-    ///   デフォルトでは全レイヤーが対象です。
+    ///   デフォルトではメッセージレイヤーが対象です。
     new TagAction(
       ["clear", "c"],
       [
         /// @param 対象レイヤー
-        new TagValue("lay", "string", false, "all"),
+        new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.clearText();
         });
         return "continue";
@@ -487,13 +499,15 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param x座標
         new TagValue("x", "number", false, null),
         /// @param x座標
         new TagValue("y", "number", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.setCharLocate(values.x, values.y);
         });
         return "continue";
@@ -511,11 +525,13 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param メッセージ履歴もインデントするかどうか
         new TagValue("history", "boolean", false, true),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.setIndentPoint();
         });
         if (values.history) {
@@ -535,11 +551,13 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", false, "message"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param メッセージ履歴もインデント解除するか
         new TagValue("history", "boolean", false, true),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.clearIndentPoint();
         });
         if (values.history) {

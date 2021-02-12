@@ -1,5 +1,4 @@
 import * as PIXI from "pixi.js";
-// import { Logger } from "./logger";
 import { PonGame } from "./pon-game";
 import { PonMouseEvent } from "./pon-mouse-event";
 import { IPonSpriteCallbacks, PonSprite } from "./pon-sprite";
@@ -7,18 +6,25 @@ import { IPonVideoCallbacks, PonVideo } from "./pon-video";
 import { PonWheelEvent } from "./pon-wheel-event";
 import { Resource } from "./resource";
 import { Logger } from "./logger";
-import { LayerTextCanvas } from "./base-layer-text";
+import { LayerTextCanvas } from "./layer-text-canvas";
 
 /**
  * すべてのレイヤーの基本となるレイヤー
  */
 export class BaseLayer {
+  /** 親レイヤー */
+  protected parent: BaseLayer | null = null;
   /** レイヤー名 */
-  public name: string;
+  public readonly name: string;
   /** リソース */
-  protected resource: Resource;
+  protected readonly resource: Resource;
   /** 持ち主 */
-  protected owner: PonGame;
+  protected readonly owner: PonGame;
+
+  /** マスクとして使う兄弟レイヤーのインデックス */
+  private maskSibling: number | null = null;
+  /** 子レイヤーのマスクが更新されたのを検知する用フラグ */
+  private childrenMaskUpdated: boolean = false;
 
   /** スプライト表示用コンテナ */
   protected _container: PIXI.Container;
@@ -26,7 +32,7 @@ export class BaseLayer {
     return this._container;
   }
   /** レイヤサイズでクリッピングするためのマスク */
-  protected maskSprite: PIXI.Sprite;
+  protected defaultMaskSprite: PIXI.Sprite;
   /** デバッグ情報を出力するためのコンテナ */
   protected debugContainer: PIXI.Container;
   public set debugInfoVisible(visible: boolean) {
@@ -178,20 +184,22 @@ export class BaseLayer {
     this.container.y = this._y + this._quakeOffsetY;
   }
   public get width(): number {
-    return this.maskSprite.width;
+    return this.defaultMaskSprite.width;
   }
   public set width(width: number) {
-    this.maskSprite.width = this.backgroundSprite.width = width;
+    this.defaultMaskSprite.width = width;
+    this.backgroundSprite.width = width;
     if (this.textCanvas.width != width) {
       this.clearText();
       this.textCanvas.width = width;
     }
   }
   public get height(): number {
-    return this.maskSprite.height;
+    return this.defaultMaskSprite.height;
   }
   public set height(height: number) {
-    this.maskSprite.height = this.backgroundSprite.height = height;
+    this.defaultMaskSprite.height = height;
+    this.backgroundSprite.height = height;
     if (this.textCanvas.height != height) {
       this.clearText();
       this.textCanvas.height = height;
@@ -227,7 +235,7 @@ export class BaseLayer {
     return this.imageSprite === null ? 0 : this.imageSprite.x;
   }
   public set imageX(imageX: number) {
-    if (this.imageSprite !== null) {
+    if (this.imageSprite != null) {
       this.imageSprite.x = imageX;
     }
   }
@@ -235,7 +243,7 @@ export class BaseLayer {
     return this.imageSprite === null ? 0 : this.imageSprite.y;
   }
   public set imageY(imageY: number) {
-    if (this.imageSprite !== null) {
+    if (this.imageSprite != null) {
       this.imageSprite.y = imageY;
     }
   }
@@ -244,7 +252,7 @@ export class BaseLayer {
     return this.canvasSprite === null ? 0 : this.canvasSprite.x;
   }
   public set canvasX(canvasX: number) {
-    if (this.canvasSprite !== null) {
+    if (this.canvasSprite != null) {
       this.canvasSprite.x = canvasX;
     }
   }
@@ -252,7 +260,7 @@ export class BaseLayer {
     return this.canvasSprite === null ? 0 : this.canvasSprite.y;
   }
   public set canvasY(canvasY: number) {
-    if (this.canvasSprite !== null) {
+    if (this.canvasSprite != null) {
       this.canvasSprite.y = canvasY;
     }
   }
@@ -277,11 +285,11 @@ export class BaseLayer {
 
     this._container = new PIXI.Container();
 
-    this.maskSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
-    this.maskSprite.width = 32;
-    this.maskSprite.height = 32;
-    this.container.addChild(this.maskSprite);
-    this.container.mask = this.maskSprite;
+    this.defaultMaskSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
+    this.defaultMaskSprite.width = 32;
+    this.defaultMaskSprite.height = 32;
+    this.container.addChild(this.defaultMaskSprite);
+    this.container.mask = this.defaultMaskSprite;
 
     this.imageContainer = new PIXI.Container();
     this.container.addChild(this.imageContainer);
@@ -358,7 +366,7 @@ export class BaseLayer {
     this.freeImage();
     this.freeCanvas();
     this.freeVideo();
-    this.maskSprite.destroy();
+    this.defaultMaskSprite.destroy();
     this.backgroundSprite.destroy();
     if (this.imageSprite != null) {
       this.imageSprite.destroy();
@@ -376,7 +384,7 @@ export class BaseLayer {
     this.debugContainer.destroy();
     this.container.destroy();
 
-    this.children.forEach(child => {
+    this.children.forEach((child) => {
       child.destroy();
     });
     this._children = [];
@@ -385,6 +393,7 @@ export class BaseLayer {
   public addChild(childLayer: BaseLayer): BaseLayer {
     this.children.push(childLayer);
     this.container.addChild(childLayer.container);
+    childLayer.parent = this;
     return childLayer;
   }
 
@@ -393,13 +402,11 @@ export class BaseLayer {
    * 管理から削除されるだけで、レイヤー自体は初期化されたりしない。
    */
   public deleteChildLayer(childLayer: BaseLayer): void {
-    const tmp: BaseLayer[] = [];
-    this.children.forEach(child => {
-      if (child !== childLayer) {
-        tmp.push(child);
-      }
-    });
-    this._children = tmp;
+    const index = this._children.indexOf(childLayer);
+    if (index >= 0) {
+      this._children.splice(index, 1);
+      childLayer.parent = null;
+    }
   }
 
   /**
@@ -407,6 +414,9 @@ export class BaseLayer {
    * 管理から削除されるだけで、レイヤー自体は初期化されたりしない。
    */
   public deleteAllChildren(): void {
+    for (const child of this._children) {
+      child.parent = null;
+    }
     this._children = [];
   }
 
@@ -414,10 +424,35 @@ export class BaseLayer {
     return this.children[index];
   }
 
+  public setMaskSibling(maskSibling: number): void {
+    this.maskSibling = maskSibling;
+    if (this.parent != null) this.parent.childrenMaskUpdated = true;
+  }
+
+  public clearMaskSibling(): void {
+    this.maskSibling = null;
+    if (this.parent != null) this.parent.childrenMaskUpdated = true;
+  }
+
+  private applyChildrenMask(): void {
+    for (const child of this.children) {
+      if (child.maskSibling == null) {
+        child.container.mask = child.defaultMaskSprite;
+      } else {
+        const maskLay = this.children[child.maskSibling];
+        if (maskLay == null || maskLay.imageSprite == null) {
+          child.container.mask = child.defaultMaskSprite;
+        } else {
+          child.container.mask = maskLay.imageSprite?.pixiDisplayObject as PIXI.Container;
+        }
+      }
+    }
+  }
+
   public update(tick: number): void {
-    this.children.forEach(child => {
+    for (const child of this.children) {
       child.update(tick);
-    });
+    }
   }
 
   public beforeDraw(tick: number): void {
@@ -438,10 +473,15 @@ export class BaseLayer {
     if (this.visible && this.canvas !== null && this.canvasSprite !== null) {
       this.canvasSprite.beforeDraw(tick);
     }
+    // マスク反映
+    if (this.childrenMaskUpdated) {
+      this.applyChildrenMask();
+      this.childrenMaskUpdated = false;
+    }
     // 子レイヤーのイベント呼ぶ
-    this.children.forEach(child => {
+    for (const child of this.children) {
       child.beforeDraw(tick);
-    });
+    }
   }
 
   public applyQuake(quakeX: number, quakeY: number): void {
@@ -601,6 +641,9 @@ export class BaseLayer {
     // 孫レイヤーについて処理
     for (let i = this.children.length - 1; i >= 0; i--) {
       const child: BaseLayer = this.children[i];
+      if (!child.visible) {
+        continue;
+      }
       const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
       child._callOnMouseEnter(e2);
       if (e2.stopPropagationFlag) {
@@ -617,6 +660,9 @@ export class BaseLayer {
     // このレイヤの子レイヤーについて、予約されているイベントを呼ぶ
     for (let i = this.callMouseEnterTargetChild.length - 1; i >= 0; i--) {
       const child = this.callMouseEnterTargetChild[i];
+      if (!child.visible) {
+        continue;
+      }
       const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
       child._onMouseEnter(e2);
       if (e2.stopPropagationFlag) {
@@ -633,6 +679,9 @@ export class BaseLayer {
     // 孫レイヤーについて処理
     for (let i = this.children.length - 1; i >= 0; i--) {
       const child: BaseLayer = this.children[i];
+      if (!child.visible) {
+        continue;
+      }
       const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
       child._callOnMouseLeave(e2);
       if (e2.stopPropagationFlag) {
@@ -660,52 +709,6 @@ export class BaseLayer {
       }
     }
   }
-
-  // // 子レイヤーのonMouseEnter/onMouseLeaveを発生させる
-  // private callChildrenMouseEnterLeave(e: PonMouseEvent): void {
-  //   // イベント発生フラグを立てる
-  //   const enterTargets = [];
-  //   const leaveTargets = [];
-  //   for (let i = this.children.length - 1; i >= 0; i--) {
-  //     const child: BaseLayer = this.children[i];
-  //     if (!child.visible) {
-  //       continue;
-  //     }
-  //     const isInside = BaseLayer.isInsideOfLayer(child, e.x, e.y);
-  //     if (isInside !== child.isInsideBuffer) {
-  //       const e2 = new PonMouseEvent(e.x - child.x, e.y - child.y, e.button);
-  //       if (isInside) {
-  //         enterTargets.push({ child, e2 });
-  //       } else {
-  //         leaveTargets.push({ child, e2 });
-  //       }
-  //     }
-  //     child.isInsideBuffer = isInside;
-  //   }
-  //   // leave -> enter の順に発生させる
-  //   for (let i = 0; i < leaveTargets.length; i++) {
-  //     const info = leaveTargets[i];
-  //     info.child._onMouseLeave(info.e2);
-  //     if (info.e2.stopPropagationFlag) {
-  //       e.stopPropagation();
-  //     }
-  //     if (info.e2.forceStopFlag) {
-  //       e.forceStop();
-  //       return;
-  //     }
-  //   }
-  //   for (let i = 0; i < enterTargets.length; i++) {
-  //     const info = enterTargets[i];
-  //     info.child._onMouseEnter(info.e2);
-  //     if (info.e2.stopPropagationFlag) {
-  //       e.stopPropagation();
-  //     }
-  //     if (info.e2.forceStopFlag) {
-  //       e.forceStop();
-  //       return;
-  //     }
-  //   }
-  // }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public onMouseDown(e: PonMouseEvent): void {
@@ -850,23 +853,6 @@ export class BaseLayer {
     this.textCanvas.addTextReturn();
   }
 
-  // /**
-  //  * 現在描画中のテキスト行をの位置をtextAlignにそろえる
-  //  */
-  // public alignCurrentTextLine(): void {
-  //   switch (this.textAlign) {
-  //     case "left":
-  //       this.currentTextLine.x = this.getTextLineBasePoint();
-  //       break;
-  //     case "center":
-  //       this.currentTextLine.x = this.getTextLineBasePoint() - this.currentTextLine.width / 2;
-  //       break;
-  //     case "right":
-  //       this.currentTextLine.x = this.getTextLineBasePoint() - this.currentTextLine.width;
-  //       break;
-  //   }
-  // }
-
   /**
    * テキストの表示位置を指定する。
    * 内部的には、指定前とは別の行として扱われる。
@@ -926,6 +912,7 @@ export class BaseLayer {
       this.height = this.imageSprite.height;
       this.imageX = 0;
       this.imageY = 0;
+      if (this.parent != null) this.parent.childrenMaskUpdated = true;
     } catch (e) {
       Logger.error(e);
       throw e;
@@ -942,6 +929,7 @@ export class BaseLayer {
     this.imageSprite = null;
     this.image = null;
     this.imageFilePath = null;
+    if (this.parent != null) this.parent.childrenMaskUpdated = true;
   }
 
   /**
@@ -969,7 +957,7 @@ export class BaseLayer {
   }
 
   /**
-   * 画像を開放する
+   * キャンバスを開放する
    */
   public freeCanvas(): void {
     if (this.canvasSprite != null) {
@@ -1071,6 +1059,7 @@ export class BaseLayer {
 
   protected static baseLayerStoreParams: string[] = [
     "name",
+    "maskSibling",
     "x",
     "y",
     "quakeOffsetX",
@@ -1085,8 +1074,6 @@ export class BaseLayer {
     "backgroundAlpha",
     "hasBackgroundColor",
     "ignoreQuake",
-    "ignoreQuakeX",
-    "ignoreQuakeY",
     "imageFilePath",
     "imageX",
     "imageY",
@@ -1098,38 +1085,6 @@ export class BaseLayer {
     "videoLoop",
     "videoVolume",
     "isPlayingVideo",
-    // "textFontFamily",
-    // "textFontSize",
-    // "textFontWeight",
-    // "textFontStyle",
-    // "textColor",
-    // "textShadowVisible",
-    // "textShadowAlpha",
-    // "textShadowAngle",
-    // "textShadowBlur",
-    // "textShadowColor",
-    // "textShadowDistance",
-    // "textEdgeColor",
-    // "textEdgeWidth",
-    // "textMarginTop",
-    // "textMarginRight",
-    // "textMarginBottom",
-    // "textMarginLeft",
-    // "textPitch",
-    // "textLineHeight",
-    // "textLinePitch",
-    // "textAutoReturn",
-    // "textLocatePoint",
-    // "textIndentPoint",
-    // "reservedTextIndentPoint",
-    // "textAlign",
-    // "rubyFontSize",
-    // "rubyOffset",
-    // "rubyPitch",
-    // "textInEffectTypes",
-    // "textInEffectTime",
-    // "textInEffectEase",
-    // "textInEffectOptions",
   ];
 
   protected static baseLayerIgnoreParams: string[] = [
@@ -1147,7 +1102,7 @@ export class BaseLayer {
   public store(tick: number): any {
     const data: any = {};
     const me: any = this as any;
-    BaseLayer.baseLayerStoreParams.forEach(p => (data[p] = me[p]));
+    BaseLayer.baseLayerStoreParams.forEach((p) => (data[p] = me[p]));
     data.textCanvas = this.textCanvas.store(tick);
     return data;
   }
@@ -1162,9 +1117,9 @@ export class BaseLayer {
     const storeParams = (): void => {
       const me: any = this as any;
       const restoreParams = BaseLayer.baseLayerStoreParams.filter(
-        param => BaseLayer.baseLayerIgnoreParams.indexOf(param) === -1,
+        (param) => BaseLayer.baseLayerIgnoreParams.indexOf(param) === -1,
       );
-      restoreParams.forEach(p => (me[p] = data[p]));
+      restoreParams.forEach((p) => (me[p] = data[p]));
     };
 
     // テキスト
@@ -1185,14 +1140,6 @@ export class BaseLayer {
       await this.loadImage(data.imageFilePath);
       storeParams();
       this.restoreAfterLoadImage(data, tick);
-      // asyncTask.add((params: any, index: number): AsyncCallbacks => {
-      //   const cb = this.loadImage(data.imageFilePath);
-      //   cb.done(() => {
-      //     storeParams();
-      //     this.restoreAfterLoadImage(data, tick);
-      //   });
-      //   // return cb;
-      // });
     } else if (
       data.videoFilePath != null &&
       data.videoFilePath != "" &&
@@ -1211,15 +1158,6 @@ export class BaseLayer {
       );
       storeParams();
       this.restoreAfterLoadImage(data, tick);
-      // asyncTask.add((params: any, index: number): AsyncCallbacks => {
-      //   const cb = this.loadVideo(data.videoFilePath, data.videoWidth, data.videoHeight,
-      //                             data.isPlayingVideo, data.videoLoop, data.videoVolume);
-      //   cb.done(() => {
-      //     storeParams();
-      //     this.restoreAfterLoadImage(data, tick);
-      //   });
-      //   return cb;
-      // });
     } else {
       storeParams();
       this.restoreAfterLoadImage(data, tick);
@@ -1264,9 +1202,9 @@ export class BaseLayer {
     const me: any = this as any;
     const you: any = dest as any;
     const params = BaseLayer.baseLayerStoreParams.filter(
-      param => BaseLayer.baseLayerIgnoreParams.indexOf(param) === -1,
+      (param) => BaseLayer.baseLayerIgnoreParams.indexOf(param) === -1,
     );
-    params.forEach(p => (you[p] = me[p]));
+    params.forEach((p) => (you[p] = me[p]));
 
     // テキストのコピー
     dest.clearText();
@@ -1281,7 +1219,7 @@ export class BaseLayer {
   public applyConfig(config: any): void {
     if (config != null) {
       const me = this as any;
-      Object.keys(config).forEach(key => {
+      Object.keys(config).forEach((key) => {
         if (key in me) {
           me[key] = config[key];
         }

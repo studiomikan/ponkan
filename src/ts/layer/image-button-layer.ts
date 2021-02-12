@@ -1,4 +1,4 @@
-import { CommandButton } from "./button";
+import { CommandButton, ButtonStatus, Button } from "./button";
 import { TextButtonLayer } from "./text-button-layer";
 
 export class CommandImageButton extends CommandButton {
@@ -19,6 +19,7 @@ export class CommandImageButton extends CommandButton {
     onEnterSoundBuf: string,
     onLeaveSoundBuf: string,
     onClickSoundBuf: string,
+    keyIndex: number | null = null,
   ): Promise<void> {
     this.clearCommandButton();
     this.freeImage();
@@ -35,6 +36,7 @@ export class CommandImageButton extends CommandButton {
       onEnterSoundBuf,
       onLeaveSoundBuf,
       onClickSoundBuf,
+      keyIndex,
     );
     this.direction = direction;
     await this.loadImage(file);
@@ -44,6 +46,7 @@ export class CommandImageButton extends CommandButton {
       this.width = Math.floor(this.imageWidth / 3);
     }
     this.setButtonStatus("disabled");
+    this.resetImageButtonPosition("normal");
   }
 
   public clearCommandButton(): void {
@@ -51,13 +54,18 @@ export class CommandImageButton extends CommandButton {
     this.direction = "horizontal";
   }
 
-  public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
+  public setButtonStatus(status: ButtonStatus): void {
     super.setButtonStatus(status);
+    this.resetImageButtonPosition(status);
+  }
 
+  public resetImageButtonPosition(status: ButtonStatus): void {
     if (this.direction === "vertical") {
       switch (status) {
-        case "normal":
         case "disabled":
+          // disabledの時は直前の表示を引き継ぐ
+          break;
+        case "normal":
           this.imageY = 0;
           break;
         case "over":
@@ -69,8 +77,10 @@ export class CommandImageButton extends CommandButton {
       }
     } else {
       switch (status) {
-        case "normal":
         case "disabled":
+          // disabledの時は直前の表示を引き継ぐ
+          break;
+        case "normal":
           this.imageX = 0;
           break;
         case "over":
@@ -137,6 +147,7 @@ export class ImageButtonLayer extends TextButtonLayer {
     onEnterSoundBuf: string,
     onLeaveSoundBuf: string,
     onClickSoundBuf: string,
+    keyIndex: number | null = null,
   ): Promise<void> {
     const name = `ImageButton ${this.imageButtons.length}`;
     const btn = new CommandImageButton(name, this.resource, this.owner);
@@ -160,11 +171,12 @@ export class ImageButtonLayer extends TextButtonLayer {
       onEnterSoundBuf,
       onLeaveSoundBuf,
       onClickSoundBuf,
+      keyIndex,
     );
   }
 
   public clearImageButtons(): void {
-    this.imageButtons.forEach(imageButton => {
+    this.imageButtons.forEach((imageButton) => {
       imageButton.clearCommandButton();
       imageButton.destroy();
       this.deleteChildLayer(imageButton);
@@ -172,30 +184,42 @@ export class ImageButtonLayer extends TextButtonLayer {
     this.imageButtons = [];
   }
 
+  public hasImageButton(): boolean {
+    return this.imageButtons.length > 0;
+  }
+
+  public getButtons(): Button[] {
+    const buttons: Button[] = super.getButtons();
+    this.imageButtons.forEach((imageButton) => {
+      buttons.push(imageButton as Button);
+    });
+    return buttons;
+  }
+
   public lockButtons(): void {
     super.lockButtons();
-    this.imageButtons.forEach(imageButton => {
+    this.imageButtons.forEach((imageButton) => {
       imageButton.setButtonStatus("disabled");
     });
   }
 
   public unlockButtons(): void {
     super.unlockButtons();
-    this.imageButtons.forEach(imageButton => {
+    this.imageButtons.forEach((imageButton) => {
       imageButton.setButtonStatus("normal");
     });
   }
 
   public lockSystemButtons(): void {
     super.lockSystemButtons();
-    this.imageButtons.forEach(imageButton => {
+    this.imageButtons.forEach((imageButton) => {
       imageButton.lockSystemButton();
     });
   }
 
   public unlockSystemButtons(): void {
     super.unlockSystemButtons();
-    this.imageButtons.forEach(imageButton => {
+    this.imageButtons.forEach((imageButton) => {
       imageButton.unlockSystemButton();
     });
   }
@@ -204,13 +228,13 @@ export class ImageButtonLayer extends TextButtonLayer {
     const data: any = super.store(tick);
     // const me: any = this as any;
 
-    data.imageButtons = this.imageButtons.map(imageButton => imageButton.store(tick));
+    data.imageButtons = this.imageButtons.map((imageButton) => imageButton.store(tick));
 
     return data;
   }
 
   public async restore(data: any, tick: number, clear: boolean): Promise<void> {
-    if (data.imageButtons.length > 0) {
+    if (data.imageButtons != null && data.imageButtons.length > 0) {
       if (data.imageButtons.length === this.imageButtons.length) {
         // 数が同じ場合（たとえばtemploadなどでロードしたときなど）は読み込み直さない
         await Promise.all(
@@ -249,7 +273,7 @@ export class ImageButtonLayer extends TextButtonLayer {
     super.copyTo(dest);
 
     dest.clearImageButtons();
-    this.imageButtons.forEach(srcBtn => {
+    this.imageButtons.forEach((srcBtn) => {
       const destBtn = new CommandImageButton(srcBtn.name, dest.resource, dest.owner);
       dest.addChild(destBtn);
       dest.imageButtons.push(destBtn);

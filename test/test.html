@@ -48,7 +48,11 @@
   <script src="../node_modules/chai/chai.js"></script>
 
   <script>
-    mocha.setup('bdd')
+    mocha.setup({
+      ui: 'bdd',
+      timeout: 10000,
+      globals: ['__REACT_DEVTOOLS_COMPONENT_FILTERS__', '__REACT_DEVTOOLS_APPEND_COMPONENT_STACK__']
+    });
   </script>
   <script src="test.js"></script>
   <script>

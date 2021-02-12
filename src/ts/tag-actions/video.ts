@@ -3,7 +3,7 @@ import { TagAction, TagActionResult, TagValue } from "../tag-action";
 import { PonEventHandler } from "../base/pon-event-handler";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export default function(p: Ponkan): TagAction[] {
+export default function (p: Ponkan): TagAction[] {
   return [
     // ======================================================================
     // 動画再生関係
@@ -26,6 +26,8 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param 動画ファイル
         new TagValue("file", "string", true, null),
         /// @param 動画の幅(px)
@@ -49,7 +51,7 @@ export default function(p: Ponkan): TagAction[] {
       ],
       (values: any, tick: number): TagActionResult => {
         const task: Promise<unknown>[] = [];
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           task.push(
             ((): Promise<unknown> => {
               if (values.x != null) {
@@ -79,7 +81,7 @@ export default function(p: Ponkan): TagAction[] {
           .then(() => {
             p.conductor.start();
           })
-          .catch(e => {
+          .catch((e) => {
             console.error(e);
             p.error(new Error(`動画読み込みに失敗しました。(${values.file})`));
           });
@@ -98,9 +100,11 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.freeVideo();
         });
         return "continue";
@@ -117,13 +121,15 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param 音量(0.0〜1.0)
         new TagValue("volume", "number", false, null),
         /// @param ループ再生するかどうか
         new TagValue("loop", "boolean", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           if (values.volume != null) {
             layer.videoVolume = values.volume;
           }
@@ -145,9 +151,11 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.playVideo();
         });
         return "continue";
@@ -165,9 +173,11 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.pauseVideo();
         });
         return "continue";
@@ -182,11 +192,13 @@ export default function(p: Ponkan): TagAction[] {
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", true, null),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.stopVideo();
         });
         return "continue";

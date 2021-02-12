@@ -38,6 +38,9 @@ export class TextSpriteCache {
 
   public set(ch: string, style: TextStyle, text: PIXI.Text): void {
     if (TextSpriteCache.ENABLED) {
+      // PIXI.js の TextStyle#toFontString() の処理が、fontFamilyの各フォント名を勝手に "" で囲む。
+      // キー名が変わってしまうので、先に囲んでおくことが必要。
+      style.surroundFontFamily();
       const key: string = this.genKey(ch, style);
       this.map.set(key, text);
       // キャッシュ数を抑制
@@ -47,8 +50,6 @@ export class TextSpriteCache {
     }
   }
 }
-
-const textCache = new TextSpriteCache();
 
 const defaultTextStyle = {
   // for PIXI.TextStyle
@@ -100,6 +101,8 @@ const defaultRubyTextStyle = objExtend(objClone(defaultTextStyle), {
   pitch: 0,
 });
 
+const genericFontFamilies = ["serif", "sans-serif", "monospace", "cursive", "fantasy", "system-ui"];
+
 /**
  * テキストスタイル
  */
@@ -116,6 +119,22 @@ export class TextStyle extends PIXI.TextStyle {
   constructor(opts: any = defaultTextStyle) {
     super(opts);
     this.edgeAlpha = 1;
+  }
+
+  public surroundFontFamily(): void {
+    // PIXI.js の TextStyle#toFontString() の処理が、fontFamilyの各フォント名を勝手に "" で囲む。
+    // そうなると、キャッシュの時などにちょっと困るので、先回りして先に囲んでおくことが必要。
+    if (Array.isArray(this.fontFamily)) {
+      const families: string[] = [];
+      this.fontFamily.forEach((family) => {
+        family = family.trim();
+        if (!/(["'])[^'"]+\1/.test(family) && genericFontFamilies.indexOf(family) < 0) {
+          family = `"${family}"`;
+        }
+        families.push(family);
+      });
+      this.fontFamily = families;
+    }
   }
 
   public setGradientType(type: "vertical" | "horizontal"): void {
@@ -210,6 +229,7 @@ export class TextStyle extends PIXI.TextStyle {
  * 文字と位置などの情報のみ持ち、canvasなどは持たない。
  */
 export class LayerChar {
+  public static textCache: TextSpriteCache = new TextSpriteCache();
   public readonly pixiSprite: PIXI.Sprite;
   public readonly fromCache: boolean;
   public readonly ch: string;
@@ -237,10 +257,10 @@ export class LayerChar {
     return this.pixiSprite.y;
   }
   public set width(width: number) {
-    this.pixiSprite.width = width;
+    this.pixiSprite.width = width - this.style.pitch;
   }
   public get width(): number {
-    return this.pixiSprite.width;
+    return this.pixiSprite.width + this.style.pitch;
   }
   public set alpha(alpha: number) {
     this.pixiSprite.alpha = alpha;
@@ -253,20 +273,19 @@ export class LayerChar {
     this.style = style.clone();
     this.ch = ch;
 
-    const cacheSprite = textCache.get(this.ch, this.style);
+    const cacheSprite = LayerChar.textCache.get(this.ch, this.style);
     if (cacheSprite != null) {
       this.pixiSprite = cacheSprite;
       this.fromCache = true;
     } else {
       const text: PIXI.Text = new PIXI.Text(ch, this.style);
-      textCache.set(this.ch, this.style, text);
+      LayerChar.textCache.set(this.ch, this.style, text);
       this.pixiSprite = text;
       this.fromCache = false;
     }
 
     this.x = x;
     this.y = y;
-    this.width = this.pixiSprite.width + style.pitch;
     this.style.checkOptions();
     if (this.style.inEffectTypes != null && this.style.inEffectTypes.length > 0) {
       this.inEffectState = InEffectState.Run;
@@ -283,7 +302,7 @@ export class LayerChar {
   public clone(): LayerChar {
     const me: any = this as any;
     const c: any = new LayerChar(this.ch, this.style.clone(), this.x, this.y) as any;
-    LayerChar.CloneParams.forEach(param => {
+    LayerChar.CloneParams.forEach((param) => {
       c[param] = me[param];
     });
     return c;
@@ -293,7 +312,11 @@ export class LayerChar {
     if (this.pixiSprite.parent) {
       this.pixiSprite.parent.removeChild(this.pixiSprite);
       if (this.fromCache) {
-        this.pixiSprite.destroy();
+        this.pixiSprite.destroy({
+          children: false,
+          texture: false,
+          baseTexture: false,
+        });
       }
     }
   }
@@ -381,7 +404,10 @@ export class LayerTextLine {
     return this.container.y;
   }
   public get text(): string {
-    return this.chList.map(layerChar => layerChar.ch).join("");
+    return this.chList.map((layerChar) => layerChar.ch).join("");
+  }
+  public get ruby(): string {
+    return this.rubyList.map((layerChar) => layerChar.ch).join("");
   }
   public get textX(): number {
     return this._textX;
@@ -397,7 +423,7 @@ export class LayerTextLine {
       return 0;
     }
     let width = 0;
-    this.chList.forEach(layerChar => {
+    this.chList.forEach((layerChar) => {
       width += layerChar.width;
     });
     width -= this.chList[this.chList.length - 1].style.pitch; // 最後の一文字pitchは幅に含めない
@@ -455,7 +481,6 @@ export class LayerTextLine {
   }
 
   private addRubyText(targetChar: LayerChar): void {
-    console.log(this.rubyStyle);
     const rubyStyle = this.rubyStyle;
     const rubyText = this.rubyText;
     const pitch = this.rubyStyle.pitch;
@@ -504,7 +529,7 @@ export class LayerTextLine {
    * @param tick 時刻
    */
   public beforeDraw(tick: number): void {
-    this.chList.forEach(ch => {
+    this.chList.forEach((ch) => {
       ch.beforeDraw(tick);
     });
   }
@@ -525,7 +550,7 @@ export class LayerTextLine {
 
     const me: any = this as any;
     const you: any = dest as any;
-    LayerTextLine.storeParams.forEach(p => (you[p] = me[p]));
+    LayerTextLine.storeParams.forEach((p) => (you[p] = me[p]));
 
     this.chList.forEach((layerChar: LayerChar) => {
       dest.chList.push(layerChar.clone().addTo(dest.container));
@@ -544,7 +569,7 @@ export class LayerTextCanvas {
   /** 禁則文字（行末禁則文字） */
   public static tailProhibitionChar: string = "\\$([{｢‘“（〔［｛〈《「『【￥＄￡";
 
-  private container: PIXI.Container;
+  public readonly container: PIXI.Container;
   private _width: number = 32;
   private _height: number = 32;
 
@@ -566,8 +591,6 @@ export class LayerTextCanvas {
   public reservedIndentClear: boolean = false;
   public align: "left" | "center" | "right" = "left";
   public rubyOffset: number = 5;
-  // public rubyFontSize: number = 10;
-  // public rubyPitch: number = 2;
 
   public get width(): number {
     return this._width;
@@ -586,14 +609,12 @@ export class LayerTextCanvas {
   }
 
   public get text(): string {
-    return this.lines.map(line => line.text).join("\n");
+    return this.lines.map((line) => line.text).join("\n");
   }
 
   public constructor() {
     this.lineHeight = +this.style.fontSize;
     this.container = new PIXI.Container();
-    // this.container.width = 800;
-    // this.container.height = 32;
     this.container.x = 0;
     this.container.y = 0;
     this.clear();
@@ -605,7 +626,7 @@ export class LayerTextCanvas {
   }
 
   public beforeDraw(tick: number): void {
-    this.lines.forEach(line => {
+    this.lines.forEach((line) => {
       line.beforeDraw(tick);
     });
   }
@@ -626,6 +647,9 @@ export class LayerTextCanvas {
   public addChar(ch: string): void {
     if (ch == null || ch == "") {
       return;
+    }
+    if (typeof ch !== "string") {
+      ch = "" + ch;
     }
     if (ch.length > 1) {
       return this.addText(ch);
@@ -661,7 +685,8 @@ export class LayerTextCanvas {
   }
 
   /**
-   * 次の文字の表示位置を取得する
+   * 次の文字の表示位置を取得する。
+   * ただし文字揃え前の位置である点に注意が必要。
    * @param chWidth 追加しようとしている文字の横幅
    * @return 表示位置
    */
@@ -747,7 +772,7 @@ export class LayerTextCanvas {
   /**
    * 現在描画中のテキスト行をの位置をtextAlignにそろえる
    */
-  public alignCurrentTextLine(): void {
+  protected alignCurrentTextLine(): void {
     const currentLine = this.currentLine;
     switch (this.align) {
       case "left":
@@ -777,8 +802,8 @@ export class LayerTextCanvas {
         return this.indentPoint == null ? this.marginLeft : this.indentPoint;
       case "center":
         return this.indentPoint == null
-          ? (this.width - this.marginLeft - this.marginRight) / 2
-          : (this.width - this.indentPoint - this.marginRight) / 2;
+          ? this.marginLeft + (this.width - this.marginLeft - this.marginRight) / 2
+          : this.indentPoint + (this.width - this.indentPoint - this.marginRight) / 2;
       case "right":
         return this.indentPoint == null ? this.width - this.marginRight : this.indentPoint;
     }
@@ -857,7 +882,7 @@ export class LayerTextCanvas {
    * インデント位置は初期化される。
    */
   public clear(): void {
-    this.lines.forEach(line => {
+    this.lines.forEach((line) => {
       line.destroy();
     });
     this.lines = [];
@@ -898,10 +923,10 @@ export class LayerTextCanvas {
 
     const me = this as any;
     const you = dest as any;
-    LayerTextCanvas.storeParams.forEach(p => (you[p] = me[p]));
+    LayerTextCanvas.storeParams.forEach((p) => (you[p] = me[p]));
 
     dest.lines = [];
-    this.lines.forEach(line => {
+    this.lines.forEach((line) => {
       const destLine = new LayerTextLine().addTo(dest.container);
       line.copyTo(destLine);
       dest.lines.push(destLine);
@@ -911,7 +936,7 @@ export class LayerTextCanvas {
   public store(tick: number): any {
     const data: any = {};
     const me: any = this as any;
-    LayerTextCanvas.storeParams.forEach(p => (data[p] = me[p]));
+    LayerTextCanvas.storeParams.forEach((p) => (data[p] = me[p]));
     // data.lines = [];
     // this.lines.forEach(line => {
     //   data.lines.push(line.store(tick));
@@ -926,7 +951,7 @@ export class LayerTextCanvas {
 
   public async restore(data: any, tick: number, clear: boolean): Promise<void> {
     const me: any = this as any;
-    LayerTextCanvas.storeParams.forEach(p => (me[p] = data[p]));
+    LayerTextCanvas.storeParams.forEach((p) => (me[p] = data[p]));
 
     if (clear) {
       this.clear();
@@ -954,7 +979,7 @@ export class LayerTextCanvas {
   public applyConfig(config: any): void {
     if (config != null) {
       const me = this as any;
-      Object.keys(config).forEach(key => {
+      Object.keys(config).forEach((key) => {
         if (key in me) {
           me[key] = config[key];
         }

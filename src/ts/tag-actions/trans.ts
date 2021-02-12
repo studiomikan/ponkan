@@ -3,7 +3,7 @@ import { TagAction, TagActionResult, TagValue } from "../tag-action";
 import { PonEventHandler } from "../base/pon-event-handler";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export default function(p: Ponkan): TagAction[] {
+export default function (p: Ponkan): TagAction[] {
   return [
     // ======================================================================
     // トランジション
@@ -17,9 +17,11 @@ export default function(p: Ponkan): TagAction[] {
       [
         /// @param 対象レイヤー
         new TagValue("lay", "string", false, "all"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.backlay(values.lay);
+        p.backlay(values.lay, values.exclude);
         return "continue";
       },
     ),
@@ -74,7 +76,7 @@ export default function(p: Ponkan): TagAction[] {
       ["preparetrans", "pretrans"],
       [],
       (values: any, tick: number): TagActionResult => {
-        p.backlay("all");
+        p.backlay("all", null);
         p.currentPage = "back";
         return "continue";
       },
@@ -111,7 +113,7 @@ export default function(p: Ponkan): TagAction[] {
                 p.transManager.start();
                 p.conductor.start();
               })
-              .catch(e => {
+              .catch((e) => {
                 console.error(e);
                 p.error(new Error(`トランジションの処理に失敗しました。(${values.method}, ${values.rule})`));
               });
@@ -123,7 +125,7 @@ export default function(p: Ponkan): TagAction[] {
                 p.transManager.start();
                 p.conductor.start();
               })
-              .catch(e => {
+              .catch((e) => {
                 console.error(e);
                 p.error(new Error(`トランジションの処理に失敗しました。(${values.method})`));
               });

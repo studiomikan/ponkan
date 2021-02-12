@@ -16,7 +16,7 @@ describe("PonRenderer", () => {
     renderer.destroy();
   });
 
-  const createGraphics = function(color = 0xff0000, width = 100, height = 100): PIXI.Graphics {
+  const createGraphics = function (color = 0xff0000, width = 100, height = 100): PIXI.Graphics {
     const g = new PIXI.Graphics();
     g.x = 0;
     g.y = 0;
@@ -28,7 +28,7 @@ describe("PonRenderer", () => {
     return g;
   };
 
-  const getContext = function(): CanvasRenderingContext2D {
+  const getContext = function (): CanvasRenderingContext2D {
     const extract = renderer.renderer.plugins.extract;
     const canvas = extract.canvas(renderer.primaryContainer);
     const context = canvas.getContext("2d");
@@ -38,7 +38,7 @@ describe("PonRenderer", () => {
     return context;
   };
 
-  const getPixelData = function(x: number, y: number): number[] {
+  const getPixelData = function (x: number, y: number): number[] {
     const p = getContext().getImageData(x, y, 1, 1).data;
     return [p[0], p[1], p[2], p[3]];
   };

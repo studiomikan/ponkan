@@ -3,9 +3,9 @@ import { Ponkan } from "../../src/ts/ponkan";
 import { Script } from "../../src/ts/base/script";
 import * as Helper from "../helper";
 
-let ponkan: Ponkan;
-
 describe("Script", () => {
+  let ponkan: Ponkan;
+
   before(() => {
     ponkan = Helper.createPonkan();
   });

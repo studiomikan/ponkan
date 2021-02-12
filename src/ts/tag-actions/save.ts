@@ -2,7 +2,7 @@ import { Ponkan } from "../ponkan";
 import { TagAction, TagActionResult, TagValue } from "../tag-action";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export default function(p: Ponkan): TagAction[] {
+export default function (p: Ponkan): TagAction[] {
   return [
     // ======================================================================
     // セーブ＆ロード関係
@@ -38,7 +38,7 @@ export default function(p: Ponkan): TagAction[] {
           .then(() => {
             p.conductor.start();
           })
-          .catch(e => {
+          .catch((e) => {
             console.error(e);
             throw new Error(`セーブデータのロードに失敗しました(${values.num})`);
           });
@@ -88,7 +88,7 @@ export default function(p: Ponkan): TagAction[] {
           .then(() => {
             p.conductor.start();
           })
-          .catch(e => {
+          .catch((e) => {
             console.error(e);
             p.error(new Error(`セーブデータのロードに失敗しました(${values.num})`));
           });

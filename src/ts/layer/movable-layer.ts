@@ -119,7 +119,7 @@ export class MovableLayer extends SliderLayer {
     const path: IMovePosInfo[] = [];
     orgPath.forEach((p: any) => {
       const obj: any = {};
-      Object.keys(p).forEach(key => {
+      Object.keys(p).forEach((key) => {
         obj[key] = p[key];
       });
       path.push(obj);
@@ -128,8 +128,8 @@ export class MovableLayer extends SliderLayer {
   }
 
   // [override]
-  public update(tick: number): void {
-    super.update(tick);
+  public beforeDraw(tick: number): void {
+    super.beforeDraw(tick);
     if (this._isMoving) {
       if (this.moveDelayStartTick === -1) {
         this.moveDelayStartTick = tick;
@@ -413,6 +413,6 @@ export class MovableLayer extends SliderLayer {
     super.copyTo(dest);
     const me: any = this as any;
     const you: any = dest as any;
-    MovableLayer.movableLayerStoreParams.forEach(p => (you[p] = me[p]));
+    MovableLayer.movableLayerStoreParams.forEach((p) => (you[p] = me[p]));
   }
 }

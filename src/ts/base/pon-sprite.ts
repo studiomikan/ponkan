@@ -54,6 +54,10 @@ export class PonSprite {
     return this.type;
   }
 
+  public get isEmpty(): boolean {
+    return this.type === SpriteType.Unknown;
+  }
+
   /** x座標 */
   public get x(): number {
     return this._x;
@@ -160,7 +164,14 @@ export class PonSprite {
     try {
       if (this.pixiSprite != null) {
         this.callbacks.pixiContainerRemoveChild(this.pixiSprite);
-        this.pixiSprite.destroy();
+        this.pixiSprite.destroy({
+          children: true,
+          // MEMO: textureを破棄すると、画像を連続して読み込んだ時にPIXI.jsが
+          //         Cannot read property 'uvsFloat32' of null
+          //       というエラーを吐くので、破棄しない。
+          // texture: true,
+          // baseTexture: true
+        });
       }
       this.pixiSprite = null;
       this.type = SpriteType.Unknown;

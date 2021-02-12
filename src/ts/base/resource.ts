@@ -91,7 +91,7 @@ export class Resource {
   }
 
   public debugClearSystemData(): void {
-    Object.keys(this.systemVar).forEach(key => {
+    Object.keys(this.systemVar).forEach((key) => {
       delete this.systemVar[key];
     });
   }
@@ -104,7 +104,7 @@ export class Resource {
     const sv = this.systemVar;
     const mp = this.macroParams;
     /* eslint-enable */
-    return (function(): any {
+    return (function (): any {
       return eval(js);
     })();
   }
@@ -118,7 +118,7 @@ export class Resource {
   }
 
   public clearMacroInfo(): void {
-    Object.keys(this.macroInfo).forEach(key => delete this.macroInfo[key]);
+    Object.keys(this.macroInfo).forEach((key) => delete this.macroInfo[key]);
   }
 
   /**
@@ -141,9 +141,7 @@ export class Resource {
     if (this.enableResourceCache) {
       path += `?v=${this.gameVersion}`;
     } else {
-      path += `?x=${Math.random()
-        .toString(36)
-        .slice(-8)}`;
+      path += `?x=${Math.random().toString(36).slice(-8)}`;
     }
     return path;
   }

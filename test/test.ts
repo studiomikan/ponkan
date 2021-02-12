@@ -1,3 +1,8 @@
+require("./base/layer-text-canvas-test");
+require("./base/tag-test");
+require("./base/sound-test");
+require("./base/read-unread-test");
+require("./base/pon-video-test");
 require("./base/pon-sprite-test");
 require("./base/pon-renderer-test");
 require("./base/macro-test");

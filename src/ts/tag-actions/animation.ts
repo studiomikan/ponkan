@@ -3,7 +3,7 @@ import { TagAction, TagActionResult, TagValue } from "../tag-action";
 import { PonEventHandler } from "../base/pon-event-handler";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export default function(p: Ponkan): TagAction[] {
+export default function (p: Ponkan): TagAction[] {
   return [
     // ======================================================================
     // アニメーション関係
@@ -20,6 +20,8 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param アニメーションをループさせるかどうか
         new TagValue("loop", "boolean", false, false),
         /// @param 1フレームの時間
@@ -32,7 +34,7 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("frames", "array", true, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.initFrameAnim(values.loop, values.time, values.width, values.height, values.frames);
         });
         return "continue";
@@ -49,9 +51,11 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.startFrameAnim(tick);
         });
         return "continue";
@@ -70,9 +74,11 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.deleteFrameAnim();
         });
         return "continue";
@@ -90,11 +96,13 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param スキップ可能かどうか
         new TagValue("canskip", "boolean", false, true),
       ],
       (values: any, tick: number): TagActionResult => {
-        const layers = p.getLayers(values).filter(l => l.frameAnimRunning && !l.frameAnimLoop);
+        const layers = p.getLayers(values).filter((l) => l.frameAnimRunning && !l.frameAnimLoop);
         if (layers.length === 0) {
           return "continue";
         }
@@ -138,6 +146,8 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", true, null),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
         /// @param 自動移動させる時間
         new TagValue("time", "number", true, null),
         /// @param 開始までの遅延時間(ms)
@@ -149,10 +159,10 @@ export default function(p: Ponkan): TagAction[] {
         /// @param 自動移動の入り・抜きの指定。"none" | "in" | "out" | "both"
         new TagValue("ease", "string", false, "none"),
         /// @param 自動移動をループさせるかどうか。タイプが "linear" か "catmullrom" の場合のみ有効
-        new TagValue("loop", "boolean", false, null),
+        new TagValue("loop", "boolean", false, false),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.startMove(tick, values.time, values.delay, values.path, values.type, values.ease, values.loop);
         });
         return "continue";
@@ -170,9 +180,11 @@ export default function(p: Ponkan): TagAction[] {
         new TagValue("lay", "string", false, "all"),
         /// @param 対象ページ
         new TagValue("page", "string", false, "current"),
+        /// @param 対象外レイヤー
+        new TagValue("exclude", "string", false, null),
       ],
       (values: any, tick: number): TagActionResult => {
-        p.getLayers(values).forEach(layer => {
+        p.getLayers(values).forEach((layer) => {
           layer.stopMove();
         });
         return "continue";

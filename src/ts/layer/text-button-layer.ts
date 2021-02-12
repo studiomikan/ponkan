@@ -1,4 +1,4 @@
-import { CommandButton } from "./button";
+import { CommandButton, Button, ButtonStatus } from "./button";
 import { FrameAnimLayer } from "./frame-anim-layer";
 
 /**
@@ -33,6 +33,7 @@ export class TextButton extends CommandButton {
     onEnterSoundBuf = "",
     onLeaveSoundBuf = "",
     onClickSoundBuf = "",
+    keyIndex: number | null = null,
   ): void {
     this.clearCommandButton();
     this.freeImage();
@@ -51,6 +52,7 @@ export class TextButton extends CommandButton {
       onEnterSoundBuf,
       onLeaveSoundBuf,
       onClickSoundBuf,
+      keyIndex,
     );
 
     this.txtBtnText = text;
@@ -78,7 +80,7 @@ export class TextButton extends CommandButton {
     this.txtBtnOnBackgroundAlpha = 1.0;
   }
 
-  public setButtonStatus(status: "normal" | "over" | "on" | "disabled"): void {
+  public setButtonStatus(status: ButtonStatus): void {
     super.setButtonStatus(status);
     this.resetTextButtonColors();
   }
@@ -87,8 +89,10 @@ export class TextButton extends CommandButton {
     let color: number | null = null;
     let alpha: number | null = null;
     switch (this.buttonStatus) {
-      case "normal":
       case "disabled":
+        // disabledの時は直前の表示を引き継ぐ
+        break;
+      case "normal":
         color = this.txtBtnNormalBackgroundColor;
         alpha = this.txtBtnNormalBackgroundAlpha;
         break;
@@ -101,13 +105,9 @@ export class TextButton extends CommandButton {
         alpha = this.txtBtnOnBackgroundAlpha;
         break;
     }
-    if (color == null) {
-      color = this.txtBtnNormalBackgroundColor;
+    if (color != null && alpha != null) {
+      this.setBackgroundColor(color, alpha);
     }
-    if (alpha == null) {
-      alpha = this.txtBtnNormalBackgroundAlpha;
-    }
-    this.setBackgroundColor(color, alpha);
   }
 
   protected static textButtonStoreParams: string[] = [
@@ -159,7 +159,7 @@ export class TextButton extends CommandButton {
  * テキストボタンを配置できるレイヤー
  */
 export class TextButtonLayer extends FrameAnimLayer {
-  protected textButtons: TextButton[] = [];
+  private textButtons: TextButton[] = [];
 
   public addTextButton(
     btnName = "",
@@ -187,6 +187,7 @@ export class TextButtonLayer extends FrameAnimLayer {
     onEnterSoundBuf: string,
     onLeaveSoundBuf: string,
     onClickSoundBuf: string,
+    keyIndex: number | null = null,
   ): void {
     if (btnName == null || btnName === "") {
       btnName = `${this.textButtons.length}`;
@@ -234,11 +235,12 @@ export class TextButtonLayer extends FrameAnimLayer {
       onEnterSoundBuf,
       onLeaveSoundBuf,
       onClickSoundBuf,
+      keyIndex,
     );
   }
 
   public clearTextButtons(): void {
-    this.textButtons.forEach(textButton => {
+    this.textButtons.forEach((textButton) => {
       textButton.clearCommandButton();
       textButton.destroy();
       this.deleteChildLayer(textButton);
@@ -250,7 +252,7 @@ export class TextButtonLayer extends FrameAnimLayer {
     const normal: number = +backgroundColors[0];
     const over: number = backgroundColors[1] != null ? +backgroundColors[1] : normal;
     const on: number = backgroundColors[2] != null ? +backgroundColors[2] : normal;
-    this.findTextButtonByName(btnName).forEach(btn => {
+    this.findTextButtonByName(btnName).forEach((btn) => {
       btn.txtBtnNormalBackgroundColor = normal;
       btn.txtBtnOverBackgroundColor = over;
       btn.txtBtnOnBackgroundColor = on;
@@ -262,7 +264,7 @@ export class TextButtonLayer extends FrameAnimLayer {
     const normalAlpha: number = +backgroundAlphas[0];
     const overAlpha: number = backgroundAlphas[1] != null ? +backgroundAlphas[1] : normalAlpha;
     const onAlpha: number = backgroundAlphas[2] != null ? +backgroundAlphas[2] : normalAlpha;
-    this.findTextButtonByName(btnName).forEach(btn => {
+    this.findTextButtonByName(btnName).forEach((btn) => {
       btn.txtBtnNormalBackgroundAlpha = normalAlpha;
       btn.txtBtnOverBackgroundAlpha = overAlpha;
       btn.txtBtnOnBackgroundAlpha = onAlpha;
@@ -270,31 +272,43 @@ export class TextButtonLayer extends FrameAnimLayer {
     });
   }
 
-  protected findTextButtonByName(btnName: string): TextButton[] {
+  public findTextButtonByName(btnName: string): TextButton[] {
     const name = `TextButton ${btnName}`;
-    return this.textButtons.filter(l => l.name === name);
+    return this.textButtons.filter((l) => l.name === name);
+  }
+
+  public hasTextButton(): boolean {
+    return this.textButtons.length > 0;
+  }
+
+  public getButtons(): Button[] {
+    const buttons: Button[] = [];
+    this.textButtons.forEach((textButton) => {
+      buttons.push(textButton as Button);
+    });
+    return buttons;
   }
 
   public lockButtons(): void {
-    this.textButtons.forEach(textButton => {
+    this.textButtons.forEach((textButton) => {
       textButton.setButtonStatus("disabled");
     });
   }
 
   public unlockButtons(): void {
-    this.textButtons.forEach(textButton => {
+    this.textButtons.forEach((textButton) => {
       textButton.setButtonStatus("normal");
     });
   }
 
   public lockSystemButtons(): void {
-    this.textButtons.forEach(textButton => {
+    this.textButtons.forEach((textButton) => {
       textButton.lockSystemButton();
     });
   }
 
   public unlockSystemButtons(): void {
-    this.textButtons.forEach(textButton => {
+    this.textButtons.forEach((textButton) => {
       textButton.unlockSystemButton();
     });
   }
@@ -303,7 +317,7 @@ export class TextButtonLayer extends FrameAnimLayer {
     const data: any = super.store(tick);
     // const me: any = this as any;
 
-    data.textButtons = this.textButtons.map(textButton => textButton.store(tick));
+    data.textButtons = this.textButtons.map((textButton) => textButton.store(tick));
 
     return data;
   }
@@ -336,7 +350,7 @@ export class TextButtonLayer extends FrameAnimLayer {
     super.copyTo(dest);
 
     dest.clearTextButtons();
-    this.textButtons.forEach(srcBtn => {
+    this.textButtons.forEach((srcBtn) => {
       const destBtn = new TextButton(name, dest.resource, dest.owner);
       dest.addChild(destBtn);
       dest.textButtons.push(destBtn);

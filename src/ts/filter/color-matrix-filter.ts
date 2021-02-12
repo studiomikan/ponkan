@@ -12,7 +12,7 @@ export class ColorMatrixFilter extends LayerFilter {
   public constructor(params: any) {
     super(params);
     const filter = (this._filter = new PIXI.filters.ColorMatrixFilter());
-    console.log("ColorMatrixFilter type:", params.type);
+    // console.log("ColorMatrixFilter type:", params.type);
     switch (params.type.toLowerCase()) {
       case "negative":
         filter.negative(true);
