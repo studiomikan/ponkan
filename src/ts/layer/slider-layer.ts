@@ -428,7 +428,6 @@ export class SliderLayer extends ToggleButtonLayer {
     await super.restore(data, tick, clear);
 
     if (data.sliders != null && data.sliders.length > 0) {
-      // console.log("sliders", data.sliders);
       if (data.sliders.length === this.sliders.length) {
         // 数が同じ場合
         await Promise.all(

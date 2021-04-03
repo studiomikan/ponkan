@@ -2,8 +2,3 @@
 ;call file: "script/init_system.pon"
 
 こんにちは。
-
-;image lay: 0, file: "image/bg01.jpg", visible: true, x: 0, y: 0
-;fill lay: 0, color: 0xff00ff
-;image lay: 1, file: "rule/time.png", visible: true, x: 0, y: 0
-

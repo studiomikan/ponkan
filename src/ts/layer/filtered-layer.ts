@@ -32,7 +32,6 @@ export class FilteredLayer extends MovableLayer {
   }
 
   public static registerFilter(filterName: string, createFunction: any): void {
-    // console.log("@@ register ", filterName, createFunction);
     FilteredLayer.filterClassList[filterName] = createFunction;
   }
 

@@ -131,16 +131,6 @@ export class PonLayer extends FilteredLayer {
     }
   }
 
-  // protected restoreAfterLoadImage(data: any, tick: number): void {
-  //   super.restoreAfterLoadImage(data, tick);
-  //   console.log("#########", data.childImages, this.childImages);
-  //   if (data.childImages != null && data.childImages.length > 0) {
-  //     for (let i = 0; i < data.childImages.length; i++) {
-  //       (this.childImages[i] as PonLayer).restoreAfterLoadImage(data.childImages[i], tick);
-  //     }
-  //   }
-  // }
-
   public copyTo(dest: PonLayer): void {
     super.copyTo(dest);
     const me: any = this as any;
