@@ -574,9 +574,19 @@ export class PonGame implements IConductorEvent {
         this.onWindowClose();
       }),
     );
+    window.addEventListener(
+      "blur",
+      (handlers.beforeunload = (): void => {
+        this.onWindowBlur();
+      }),
+    );
   }
 
   public onWindowClose(): boolean {
+    return true;
+  }
+
+  public onWindowBlur(): boolean {
     return true;
   }
 

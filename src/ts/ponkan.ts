@@ -1565,14 +1565,19 @@ export class Ponkan extends PonGame {
     this.conductor.start();
   }
 
-  // =========================================================
-  // セーブ・ロード
-  // =========================================================
-
   public onWindowClose(): boolean {
     this.saveSystemData();
     return true;
   }
+
+  public onWindowBlur(): boolean {
+    this.stopWhilePressingCtrlSkip();
+    return true;
+  }
+
+  // =========================================================
+  // セーブ・ロード
+  // =========================================================
 
   protected static ponkanSystemStoreParams: string[] = [
     "scaleMode",
