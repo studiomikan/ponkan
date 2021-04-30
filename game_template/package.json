@@ -14,7 +14,7 @@
   },
   "build": {
     "appId": "net.studiomikan.ponkan.template",
-    "productName": "PonkanTemplate",
+    "productName": "PonkanGameTemplate",
     "win": {
       "icon": "build/icon.ico",
       "target": [
@@ -46,8 +46,8 @@
     }
   },
   "devDependencies": {
-    "electron": "^8.2.1",
-    "electron-builder": "^22.4.1",
-    "http-server": "^0.12.1"
+    "electron": "^12.0.2",
+    "electron-builder": "^22.10.5",
+    "http-server": "^0.12.3"
   }
 }
