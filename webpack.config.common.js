@@ -10,6 +10,10 @@ module.exports = {
   output: {
     path: path.join(__dirname, "dist"),
     filename: "[name].js",
+    library: "",
+    libraryTarget: "umd",
+    libraryExport: "",
+    globalObject: "this",
   },
   resolve: {
     extensions: [".ts", ".js", ".json"],
