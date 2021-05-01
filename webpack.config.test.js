@@ -37,7 +37,7 @@ module.exports = {
       { from: "src/fonts", to: "fonts" },
       { from: "src/index.html", to: "index.html" },
       { from: "src/favicon.ico", to: "favicon.ico" },
-      { from: "src/settings.js", to: "settings.js" },
+      { from: "src/style.css", to: "style.css" },
       { from: "test/testdata", to: "testdata" },
       { from: "test/test.html", to: "test.html" },
     ]),

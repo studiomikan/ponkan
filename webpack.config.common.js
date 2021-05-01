@@ -18,6 +18,9 @@ module.exports = {
   resolve: {
     extensions: [".ts", ".js", ".json"],
   },
+  performance: {
+    hints: false
+  },
   plugins: [
     new webpack.ProvidePlugin({
       PIXI: "pixi.js",
@@ -27,7 +30,7 @@ module.exports = {
       { from: "src/fonts", to: "fonts" },
       { from: "src/index.html", to: "index.html" },
       { from: "src/favicon.ico", to: "favicon.ico" },
-      { from: "src/settings.js", to: "settings.js" },
+      { from: "src/style.css", to: "style.css" },
     ]),
     new WriteFilePlugin(),
   ],
