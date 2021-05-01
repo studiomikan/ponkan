@@ -4,50 +4,18 @@
   <meta charset="UTF-8">
   <title>Ponkan</title>
   <link rel="shortcut icon" href="favicon.ico">
-  <style>
-    @font-face {
-      font-family: 'GenShinGothic';
-      font-weight: 400;
-      src: url('./fonts/GenShinGothic-Monospace-Regular-sub.woff') format('woff')
-    }
-    @font-face {
-      font-family: 'GenShinGothic';
-      font-weight: 700;
-      src: url('./fonts/GenShinGothic-Monospace-Bold-sub.woff') format('woff')
-    }
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      background: #000000;
-    }
-    .ponkan-game-wrapper {
-      position: relative;
-      display: block;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-    }
-    .ponkan-game-wrapper canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      transform-origin: 0 0;
-    }
-  </style>
+  <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
   <div id="ponkangame" class="ponkan-game-wrapper"></div>
   <script src="./ponkan.js"></script>
-  <script src="./settings.js"></script>
   <script>
     Ponkan.Logger.level = Ponkan.Logger.LEVEL_INFO;
     Ponkan.WebFont.load({
       classes: false,
       custom: { families: ["GenShinGothic"] },
       active: function () {
-        var ponkan = window.ponkan = new Ponkan("ponkangame", PONKAN_SETTINGS);
+        var ponkan = window.ponkan = new Ponkan("ponkangame");
         ponkan.start();
       },
       inactive: function () {

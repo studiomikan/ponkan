@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // Ponkan 設定ファイル
 //--------------------------------------------------------------------------------------
-window.PONKAN_SETTINGS = {
+const config = {
   // ゲームバージョン
   // ゲームのバージョン番号を設定します。
   // バージョンアップして再公開する場合は、必ずここの値を変更してください。
@@ -56,12 +56,10 @@ window.PONKAN_SETTINGS = {
 
   // デフォルトのレイヤ設定
   // レイヤーのデフォルト値を変更したい場合は、ここで設定することもできます。
-  layersDefault: {
-  },
+  layersDefault: {},
 
   // 履歴（バックログ）の設定
   history: {
-
     // 履歴の背景画像
     backgroundImage: "sysimage/history.png",
 
@@ -102,7 +100,7 @@ window.PONKAN_SETTINGS = {
 
         styleConfig: {
           // 履歴テキストの文字色
-          fill: 0xFFFFFF,
+          fill: 0xffffff,
 
           // 履歴テキストのフォント種別
           fontFamily: ["GenShinGothic"],
@@ -136,8 +134,8 @@ window.PONKAN_SETTINGS = {
 
           // 履歴テキストの縁取りのalpha
           edgeAlpha: 0x000000,
-        }
-      }
+        },
+      },
     },
 
     // 履歴の上スクロールボタンの設定
@@ -181,16 +179,19 @@ window.PONKAN_SETTINGS = {
       height: 500,
 
       // スクロールバーの背景色
-      backgroundColor: 0xFFFFFF,
+      backgroundColor: 0xffffff,
 
       // スクロールバーの背景
       backgroundAlpha: 0.5,
 
       // スクロールバー上のボタンの色
-      bgColors: [0xFFFFFF, 0xFFFFFF, 0xFFFFFF],
+      bgColors: [0xffffff, 0xffffff, 0xffffff],
 
       // スクロールバー上のボタンのalpha
-      bgAlphas: [1.0, 1.0, 1.0]
-    }
-  }
-};
+      bgAlphas: [1.0, 1.0, 1.0],
+    },
+  },
+} as const;
+
+export default config;
+export type PonkanConfig = typeof config;

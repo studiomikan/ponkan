@@ -14,6 +14,7 @@ import { PonPlugin } from "./plugin/pon-plugin";
 import { applyJsEntity, castTagValues, generateTagActions, TagAction, TagValue } from "./tag-action";
 import { Button } from "./layer/button";
 import { SliderButton } from "./layer/slider-layer";
+import defaultConfig from "./default-config";
 
 export enum SkipType {
   INVALID = 0,
@@ -157,7 +158,7 @@ export class Ponkan extends PonGame {
   protected pluginMap: any = {};
   protected plugins: PonPlugin[] = [];
 
-  public constructor(parentId: string, config: any = {}) {
+  public constructor(parentId: string, config: any = defaultConfig) {
     super(parentId, config);
     if (config.saveDataPrefix != null) {
       this.saveDataPrefix = config.saveDataPrefix;
@@ -1995,7 +1996,6 @@ export class Ponkan extends PonGame {
   }
 }
 
-PIXI.utils.skipHello();
+(PIXI as any).utils?.skipHello();
 (Ponkan as any).PIXI = PIXI;
 (Ponkan as any).WebFont = require("webfontloader");
-(window as any).Ponkan = Ponkan;

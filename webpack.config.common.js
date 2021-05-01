@@ -10,9 +10,16 @@ module.exports = {
   output: {
     path: path.join(__dirname, "dist"),
     filename: "[name].js",
+    library: "",
+    libraryTarget: "umd",
+    libraryExport: "",
+    globalObject: "this",
   },
   resolve: {
     extensions: [".ts", ".js", ".json"],
+  },
+  performance: {
+    hints: false
   },
   plugins: [
     new webpack.ProvidePlugin({
@@ -23,7 +30,7 @@ module.exports = {
       { from: "src/fonts", to: "fonts" },
       { from: "src/index.html", to: "index.html" },
       { from: "src/favicon.ico", to: "favicon.ico" },
-      { from: "src/settings.js", to: "settings.js" },
+      { from: "src/style.css", to: "style.css" },
     ]),
     new WriteFilePlugin(),
   ],
